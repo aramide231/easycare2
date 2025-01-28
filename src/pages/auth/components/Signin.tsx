@@ -25,11 +25,11 @@ const Signin = () => {
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       {/* Email */}
       <div>
-        <label className="block text-sm font-medium">Username</label>
+        <label className="block text-lg font-medium">Username</label>
         <input
           type="username"
           {...register("username", { required: true })}
-          className="w-full border-b focus:outline-none focus:border-blue-500"
+          className="w-full border-b-2 focus:outline-none focus:border-blue-500"
         />
         {errors.username && (
           <span className="text-red-500">username Address is required</span>
@@ -38,12 +38,12 @@ const Signin = () => {
 
       {/* Password */}
       <div>
-        <label className="block text-sm font-medium">Password</label>
+        <label className="block text-lg font-medium">Password</label>
         <div className="relative p-2">
           <input
             type={showPassword ? "text" : "password"}
             {...register("password", { required: true })}
-            className="w-full border-b focus:outline-none focus:border-blue-500"
+            className="w-full border-b-2 focus:outline-none focus:border-blue-500"
           />
           <span
             className="absolute right-2 top-2 text-xl cursor-pointer"
@@ -60,7 +60,7 @@ const Signin = () => {
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full bg-gradient-to-r from-[#eaeaea] to-[#573fd7] text-white py-4 rounded"
+        className="w-full bg-[#573fd7] text-white py-4 rounded"
       >
         Sign In
       </button>

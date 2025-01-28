@@ -78,11 +78,11 @@ const Signup = () => {
         <div className="flex  items-center gap-x-2">
           {/* First Name */}
           <div className="w-1/2">
-            <label className="block text-sm font-medium">First Name</label>
+            <label className="block text-lg font-medium">First Name</label>
             <input
               type="text"
               {...register("firstName", { required: true })}
-              className="w-full border-b focus:outline-none focus:border-blue-500"
+              className="w-full border-b-2 focus:outline-none focus:border-blue-500"
             />
             {errors.firstName && (
               <span className="text-red-500">First Name is required</span>
@@ -91,11 +91,11 @@ const Signup = () => {
 
           {/* Last Name */}
           <div className="w-1/2">
-            <label className="block text-sm font-medium">Last Name</label>
+            <label className="block text-lg font-medium">Last Name</label>
             <input
               type="text"
               {...register("lastName", { required: true })}
-              className="w-full  border-b focus:outline-none focus:border-blue-500"
+              className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
             />
             {errors.lastName && (
               <span className="text-red-500">Last Name is required</span>
@@ -105,12 +105,12 @@ const Signup = () => {
 
         {/* Phone Number */}
         <div>
-          <label className="block text-sm font-medium">Phone Number</label>
+          <label className="block text-lg font-medium">Phone Number</label>
           <div className="flex gap-2">
             {/* Country Code Dropdown */}
             <select
               {...register("countryCode", { required: true })}
-              className="w-1/4 p-2 border-b focus:outline-none focus:border-blue-500"
+              className="w-1/4 p-2 border-b-2 focus:outline-none focus:border-blue-500"
             >
               <option value="+1">+1 </option>
               <option value="+44">+44 </option>
@@ -124,7 +124,7 @@ const Signup = () => {
             <input
               type="text"
               {...register("phoneNumber", { required: true })}
-              className="w-2/4 border-b focus:outline-none focus:border-blue-500"
+              className="w-2/4 border-b-2 focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -136,11 +136,11 @@ const Signup = () => {
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium">Email Address</label>
+          <label className="block text-lg font-medium">Email Address</label>
           <input
             type="email"
             {...register("email", { required: true })}
-            className="w-full  border-b focus:outline-none focus:border-blue-500"
+            className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
           />
           {errors.email && (
             <span className="text-red-500">Email Address is required</span>
@@ -149,11 +149,11 @@ const Signup = () => {
 
         {/* Home Address */}
         <div>
-          <label className="block text-sm font-medium">Home Address</label>
+          <label className="block text-lg font-medium">Home Address</label>
           <input
             type="text"
             {...register("homeAddress", { required: true })}
-            className="w-full  border-b focus:outline-none focus:border-blue-500"
+            className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
           />
           {errors.homeAddress && (
             <span className="text-red-500">Home Address is required</span>
@@ -163,10 +163,10 @@ const Signup = () => {
         {/* User Role and Designation */}
         <div className="flex gap-4">
           <div className="w-1/2">
-            <label className="block text-sm font-medium">User Role</label>
+            <label className="block text-lg font-medium">User Role</label>
             <select
               {...register("userRole", { required: true })}
-              className="w-full p-2 border-b focus:outline-none focus:border-blue-500"
+              className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
             >
               {userRoles.map((role) => (
                 <option key={role} value={role}>
@@ -180,12 +180,12 @@ const Signup = () => {
           </div>
 
           <div className="w-1/2">
-            <label className="block text-sm font-medium">
+            <label className="block text-lg font-medium">
               User Designation
             </label>
             <select
               {...register("userDesignation", { required: true })}
-              className="w-full p-2 border-b focus:outline-none focus:border-blue-500"
+              className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
             >
               {userDesignations.map((designation) => (
                 <option key={designation} value={designation}>
@@ -202,13 +202,13 @@ const Signup = () => {
         {/* Security Questions */}
         <div className="flex gap-x-2">
           <div className="w-1/2">
-            <label className="block text-sm font-medium">
+            <label className="block text-lg font-medium">
               Security Questions
             </label>
             <input
               type="text"
               {...register("securityQuestions", { required: true })}
-              className="w-full  border-b focus:outline-none focus:border-blue-500"
+              className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
             />
             {errors.securityQuestions && (
               <span className="text-red-500">
@@ -220,11 +220,11 @@ const Signup = () => {
           <div className="w-1/2">
             {/* Username */}
 
-            <label className="block text-sm font-medium">Username</label>
+            <label className="block text-lg font-medium">Username</label>
             <input
               type="text"
               {...register("username", { required: true })}
-              className="w-full  border-b focus:outline-none focus:border-blue-500"
+              className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
             />
             {errors.username && (
               <span className="text-red-500">Username is required</span>
@@ -235,14 +235,14 @@ const Signup = () => {
         <div className="flex gap-x-3">
           {/* Password */}
           <div className="w-1/2">
-            <label className="block text-sm font-medium">Password</label>
+            <label className="block text-lg font-medium">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password", {
                   required: "Password is required",
                 })}
-                className="w-full p-2 border-b focus:outline-none focus:border-blue-500"
+                className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
               />
               <span
                 className="absolute right-2 top-2 text-xl cursor-pointer"
@@ -258,7 +258,7 @@ const Signup = () => {
 
           {/* Confirm Password */}
           <div className="w-1/2">
-            <label className="block text-sm font-medium">
+            <label className="block text-lg font-medium">
               Confirm Password
             </label>
             <div className="relative">
@@ -269,7 +269,7 @@ const Signup = () => {
                   validate: (value) =>
                     value === password || "Passwords do not match",
                 })}
-                className="w-full p-2 border-b focus:outline-none focus:border-blue-500"
+                className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
               />
               <span
                 className="absolute right-2 top-2 text-xl cursor-pointer"
@@ -288,7 +288,7 @@ const Signup = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-[#eaeaea] to-[#573fd7] text-white py-4 rounded"
+          className="w-full bg-[#573fd7] text-white py-4 rounded"
         >
           Sign Up
         </button>
