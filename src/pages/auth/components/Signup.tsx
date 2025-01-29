@@ -2,7 +2,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-// Define the form data structure
+// form data structure
 interface FormData {
   firstName: string;
   lastName: string;
@@ -16,6 +16,8 @@ interface FormData {
   password: string;
   confirmPassword: string;
   countryCode: number;
+  gender: string;
+  userGender: string;
 }
 
 const Signup = () => {
@@ -71,11 +73,15 @@ const Signup = () => {
     "X-ray",
   ].sort();
 
+  // Gender
+
+  const userGender = ["Male", "Female"];
+
   return (
     <div>
       {/* Right Section */}
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex  items-center gap-x-2">
+        <div className="flex  items-center gap-4">
           {/* First Name */}
           <div className="w-1/2">
             <label className="block text-lg font-medium">First Name</label>
@@ -117,7 +123,6 @@ const Signup = () => {
               <option value="+91">+91 </option>
               <option value="+234">+234</option>
               <option value="+61">+61 </option>
-              {/* Add more country codes as needed */}
             </select>
 
             {/* Phone Number Input */}
@@ -147,17 +152,38 @@ const Signup = () => {
           )}
         </div>
 
-        {/* Home Address */}
-        <div>
-          <label className="block text-lg font-medium">Home Address</label>
-          <input
-            type="text"
-            {...register("homeAddress", { required: true })}
-            className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-          />
-          {errors.homeAddress && (
-            <span className="text-red-500">Home Address is required</span>
-          )}
+        {/* Gender */}
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            {/* Username */}
+
+            <label className="block text-lg font-medium">Username</label>
+            <input
+              type="text"
+              {...register("username", { required: true })}
+              className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
+            />
+            {errors.username && (
+              <span className="text-red-500">Username is required</span>
+            )}
+          </div>
+
+          <div className="w-1/2">
+            <label className="block text-lg font-medium">Gender</label>
+            <select
+              {...register("userGender", { required: true })}
+              className="w-full border-b-2 focus:outline-none focus:border-blue-500"
+            >
+              {userGender.map((gender) => (
+                <option key={gender} value={gender}>
+                  {gender}
+                </option>
+              ))}
+            </select>
+            {errors.userGender && (
+              <span className="text-red-500">Gender is required</span>
+            )}
+          </div>
         </div>
 
         {/* User Role and Designation */}
@@ -200,36 +226,21 @@ const Signup = () => {
         </div>
 
         {/* Security Questions */}
-        <div className="flex gap-x-2">
-          <div className="w-1/2">
-            <label className="block text-lg font-medium">
-              Security Questions
-            </label>
-            <input
-              type="text"
-              {...register("securityQuestions", { required: true })}
-              className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-            />
-            {errors.securityQuestions && (
-              <span className="text-red-500">
-                Security Questions are required
-              </span>
-            )}
-          </div>
 
-          <div className="w-1/2">
-            {/* Username */}
-
-            <label className="block text-lg font-medium">Username</label>
-            <input
-              type="text"
-              {...register("username", { required: true })}
-              className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-            />
-            {errors.username && (
-              <span className="text-red-500">Username is required</span>
-            )}
-          </div>
+        <div className="">
+          <label className="block text-lg font-medium">
+            Security Questions
+          </label>
+          <input
+            type="text"
+            {...register("securityQuestions", { required: true })}
+            className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
+          />
+          {errors.securityQuestions && (
+            <span className="text-red-500">
+              Security Questions are required
+            </span>
+          )}
         </div>
 
         <div className="flex gap-x-3">
@@ -288,7 +299,7 @@ const Signup = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-[#573fd7] text-white py-4 rounded"
+          className="w-full bg-[#573fd7] text-white py-4 rounded font-bold"
         >
           Sign Up
         </button>

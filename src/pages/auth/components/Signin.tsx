@@ -60,7 +60,7 @@ const Signin = () => {
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full bg-[#573fd7] text-white py-4 rounded"
+        className="w-full bg-[#573fd7] text-white py-4 rounded font-bold"
       >
         Sign In
       </button>

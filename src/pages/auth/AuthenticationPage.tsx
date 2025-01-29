@@ -27,21 +27,25 @@ const AuthenticationPage = () => {
 
         {/* Right Section */}
         <div className="bg-white flex-1 p-8 rounded-r-[40px]">
-          <div className="px-24 py-2">
+          <div className="px-20 py-2">
             {/* Tab Navigation */}
             <div className="mb-8">
-              <ul className="flex justify-center gap-4">
+              <ul className="flex justify-center gap-4 font-lg">
                 <li
-                  className={`font-semibold cursor-pointer ${
-                    activeTab === "Signup" ? "text-blue-500" : "text-gray-500"
+                  className={`font-semibold cursor-pointer font-lg ${
+                    activeTab === "Signup"
+                      ? "text-[#573fd7] underline"
+                      : "text-gray-500"
                   }`}
                   onClick={() => setActiveTab("Signup")}
                 >
                   Sign Up
                 </li>
                 <li
-                  className={`font-semibold cursor-pointer ${
-                    activeTab === "Signin" ? "text-blue-500" : "text-gray-500"
+                  className={`font-semibold cursor-pointer font-lg ${
+                    activeTab === "Signin"
+                      ? "text-[#573fd7] underline"
+                      : "text-gray-500"
                   }`}
                   onClick={() => setActiveTab("Signin")}
                 >
