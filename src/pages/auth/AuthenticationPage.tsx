@@ -1,40 +1,52 @@
 import { useState } from "react";
-
-import imageFile from "../../assets/image/Frame 2.png";
-
+import Logo from "@/assets/icon/Frame 121.svg";
+import ImageScreen from "@/assets/image/Signup Img.png";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
+import hospitalIcon from "@/assets/icon/Frame 5.svg";
 
 const AuthenticationPage = () => {
   const [activeTab, setActiveTab] = useState<"Signup" | "Signin">("Signup");
 
   return (
-    <div className="h-screen w-full bg-[#eaeaea] flex items-center justify-center">
-      <div className="flex w-[80%] h-[800px] mx-auto bg-white overflow-hidden rounded-[40px] shadow-lg">
+    <div className="flex w-10/12 m-auto min-h-screen p-12">
+      <div className="flex w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Left Section */}
-        <div className="bg-gradient-to-t from-[#eaeaea] to-[#573fd7] flex-1 items-center p-8 rounded-l-[40px]">
-          <h2 className="font-bold font-mono text-lg">EasyCare</h2>
-          <p className="text-white">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Asperiores
-            totam, magnam veniam similique temporibus nostrum! Nobis rem
-            consequatur rerum. Cupiditate porro sit aspernatur hic quis, facere
-            pariatur doloribus doloremque minus.
+        <div className="w-1/2 p-12 bg-purple-100 flex flex-col">
+          <img src={Logo} className="text-purple-800 w-[120px]" />
+          <p className="text-gray-700 text-lg mt-2">
+            Powering hospitals with seamless patient management from check-in to{" "}
+            <br />
+            prescriptions all in one place.
           </p>
-          <div className="flex justify-center pt-20">
-            <img src={imageFile} alt="illustration" className="w-[50%]" />
-          </div>
+          <img
+            src={ImageScreen}
+            alt="Healthcare"
+            className="mt-12 rounded-lg"
+          />
         </div>
 
         {/* Right Section */}
-        <div className="bg-white flex-1 p-8 rounded-r-[40px]">
-          <div className="px-20 py-2">
+        <div className="w-1/2 p-14">
+          <div className="w-full shadow-none border-none">
+            <div className="flex gap-3">
+              <div className="icon-imag">
+                <img src={hospitalIcon} alt="" />
+              </div>
+              <div className="">
+                <h4 className="text-lg font-bold">St James Hospital</h4>
+                <p className="text-sm">
+                  Optimize Patient Care with St. James—Sign Up in Minute
+                </p>
+              </div>
+            </div>
             {/* Tab Navigation */}
-            <div className="mb-8">
+            <div className="mb-10 mt-6">
               <ul className="flex justify-center gap-4 font-lg">
                 <li
                   className={`font-semibold cursor-pointer font-lg ${
                     activeTab === "Signup"
-                      ? "text-[#573fd7] underline"
+                      ? "text-[#573fd1] underline"
                       : "text-gray-500"
                   }`}
                   onClick={() => setActiveTab("Signup")}
@@ -44,7 +56,7 @@ const AuthenticationPage = () => {
                 <li
                   className={`font-semibold cursor-pointer font-lg ${
                     activeTab === "Signin"
-                      ? "text-[#573fd7] underline"
+                      ? "text-[#573fd1] underline"
                       : "text-gray-500"
                   }`}
                   onClick={() => setActiveTab("Signin")}
