@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 // Define the form data structure
 interface FormData {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import Logo from "@/assets/icon/Frame 121.svg";
 import ImageScreen from "@/assets/image/Signup Img.png";
 import hospitalIcon from "@/assets/icon/Frame 5.svg";
