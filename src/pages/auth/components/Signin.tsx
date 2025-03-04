@@ -25,7 +25,7 @@ const Signin = () => {
   return (
     <div>
       <div className="my-5">
-        <h4 className="text-lg font-bold">
+        <h4 className="text-[20px] font-bold">
           Log in to your hospital’s dashboard
         </h4>
         <p className="text-sm">Enter your username and password to continue</p>
@@ -34,7 +34,7 @@ const Signin = () => {
         {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Username
+            Username/Email
           </label>
           <div className="relative mt-1">
             {/* Profile Icon */}
