@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Logo from "@/assets/icon/Frame 121.svg";
-import ImageScreen from "@/assets/image/Signup Img.png";
 import hospitalIcon from "@/assets/icon/Frame 5.svg";
+import ImageCarousel from "@/components/ui/carousel";
 
 const Verification = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -44,11 +44,12 @@ const Verification = () => {
             <br />
             prescriptions all in one place.
           </p>
-          <img
+          {/* <img
             src={ImageScreen}
             alt="Healthcare"
             className="mt-12 rounded-lg"
-          />
+          /> */}
+          <ImageCarousel />
         </div>
 
         {/* Right Section */}

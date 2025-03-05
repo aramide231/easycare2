@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Logo from "@/assets/icon/Frame 121.svg";
-import ImageScreen from "@/assets/image/Signup Img.png";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import hospitalIcon from "@/assets/icon/Frame 5.svg";
+import ImageCarousel from "@/components/ui/carousel";
 
 const AuthenticationPage = () => {
   const [activeTab, setActiveTab] = useState<"Signup" | "Signin">("Signup");
@@ -19,11 +19,12 @@ const AuthenticationPage = () => {
             <br />
             prescriptions all in one place.
           </p>
-          <img
+          {/* <img
             src={ImageScreen}
             alt="Healthcare"
             className="mt-12 rounded-lg"
-          />
+          /> */}
+          <ImageCarousel />
         </div>
 
         {/* Right Section */}

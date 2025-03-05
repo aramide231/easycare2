@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Logo from "@/assets/icon/Frame 121.svg";
-import ImageScreen from "@/assets/image/Signup Img.png";
 import hospitalIcon from "@/assets/icon/Frame 5.svg";
 import ForgotPasswordReset from "./ForgotPasswordReset";
-import UpdatePassword from "./UpdatePassword";
+
 import VerifyEmailPassword from "./VerifyEmailPassword";
+import ImageCarousel from "@/components/ui/carousel";
 
 const ForgotPassword = () => {
   const [activeTab, setActiveTab] = useState<
@@ -21,11 +21,7 @@ const ForgotPassword = () => {
             <br />
             prescriptions all in one place.
           </p>
-          <img
-            src={ImageScreen}
-            alt="Healthcare"
-            className="mt-12 rounded-lg"
-          />
+          <ImageCarousel />
         </div>
 
         {/* Right Section */}
@@ -49,9 +45,7 @@ const ForgotPassword = () => {
               <ForgotPasswordReset setActiveTab={setActiveTab} />
             ) : activeTab === "VerifyEmailPassword" ? (
               <VerifyEmailPassword />
-            ) : (
-              <UpdatePassword />
-            )}
+            ) : null}
           </div>
         </div>
       </div>
