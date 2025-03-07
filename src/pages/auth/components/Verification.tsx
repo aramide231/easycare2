@@ -5,10 +5,12 @@ import { Card } from "@/components/ui/card";
 import Logo from "@/assets/icon/Frame 121.svg";
 import hospitalIcon from "@/assets/icon/Frame 5.svg";
 import ImageCarousel from "@/components/ui/carousel";
+import { useNavigate } from "react-router-dom";
 
 const Verification = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [isVerified, setIsVerified] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -31,6 +33,10 @@ const Verification = () => {
     if (otp.join("").length === 6) {
       setIsVerified(true); // Show success message
     }
+  };
+
+  const onSubmit = () => {
+    navigate("/dashboard");
   };
 
   return (
@@ -78,7 +84,10 @@ const Verification = () => {
                     You can now access your dashboard and manage patient care.
                   </p>
                   <div className="flex justify-center">
-                    <Button className="w-[80%] h-[50px] bg-[#573fd1] text-white hover:bg-purple-700">
+                    <Button
+                      className="w-[80%] h-[50px] bg-[#573fd1] text-white hover:bg-purple-700"
+                      onClick={onSubmit}
+                    >
                       Go To Dashboard
                     </Button>
                   </div>

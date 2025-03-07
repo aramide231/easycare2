@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Icon } from "@iconify/react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   password: string;
@@ -15,6 +16,7 @@ const VerifyEmailPassword = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -48,6 +50,10 @@ const VerifyEmailPassword = () => {
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log("Password Updated:", data);
+  };
+
+  const onSubmitSignin = () => {
+    navigate("/");
   };
 
   return (
@@ -144,6 +150,7 @@ const VerifyEmailPassword = () => {
                 <button
                   type="submit"
                   className="w-full bg-purple-600 text-white py-3 rounded-md font-bold hover:bg-purple-700 transition"
+                  onClick={onSubmitSignin}
                 >
                   Update Password
                 </button>

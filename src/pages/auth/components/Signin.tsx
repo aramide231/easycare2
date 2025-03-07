@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Define the form data structure
 interface FormData {
@@ -10,6 +11,7 @@ interface FormData {
 }
 
 const Signin = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -20,6 +22,7 @@ const Signin = () => {
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log("Sign In Data", data);
+    navigate("/dashboard");
   };
 
   return (
