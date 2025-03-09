@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaSearch, FaChartBar } from "react-icons/fa";
 
-const PatientsLog = () => {
+const VisitationLog = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const patients = [
@@ -70,4 +70,4 @@ const PatientsLog = () => {
   );
 };
 
-export default PatientsLog;
+export default VisitationLog;

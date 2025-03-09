@@ -128,3 +128,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* added this css style because of the calendar */
+.react-calendar{
+  width: 100% !important;
+  border: none !important;
+}
+/* the style ends here */
