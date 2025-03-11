@@ -7,6 +7,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import VerifyEmailPassword from "./pages/auth/components/VerifyEmailPassword";
 import Visitation from "./pages/visitation";
 import PatientForm from "./pages/registration";
+import ManageAccess from "./pages/manage-access/ManageAccess";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/visitation-log" element={<Visitation />} />
         <Route path="/registration" element={<PatientForm />} />
+        <Route path="/manage-access" element={<ManageAccess />} />
         {/* <Route path="signin" element={<Signin/>}/>
         <Route path="signup" element={<Signup/>}/> */}
       </Routes>
