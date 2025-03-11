@@ -1,35 +1,28 @@
-import { Card } from "@/components/ui/card";
-import Sidebar from "./components/sidebar";
-import Topbar from "./components/topbar";
+import Sidebar from "../../constant/sidebar";
+import Topbar from "../../constant/topbar";
 import PatientsLog from "./components/patientLog";
 import DashboardSummary from "./components/summary";
+import CustomCalendar from "./components/calendar";
+import PatientCard from "../../constant/patientCard";
 
 const Dashboard = () => {
   return (
     <div className="flex h-screen w-full">
       <Sidebar />
 
-      <main className="flex-1 p-6">
+      {/* Added `ml-72` to shift the main content to the right */}
+      <main className="flex-1 p-6 ml-72">
         <Topbar />
 
-        
-
         <div className="flex gap-6 mt-6">
-          <div className="flex-[2]">
+          <div className="flex-[3]">
             <DashboardSummary />
             <PatientsLog />
           </div>
 
           <div className="flex-[1]">
-            <Card className="p-4">
-              <h2 className="font-bold">Juwon Fajemirokun</h2>
-              <p>ID: P-2025001</p>
-              <h3 className="mt-2 font-bold">Previous Vital Signs</h3>
-              <p>Blood Pressure: 120/80 mmHg</p>
-              <p>Heart Rate: 75 bpm</p>
-              <p>Weight: 85 kg</p>
-              <p>Height: 5'9"</p>
-            </Card>
+            <CustomCalendar />
+            <PatientCard />
           </div>
         </div>
       </main>
@@ -38,3 +31,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
