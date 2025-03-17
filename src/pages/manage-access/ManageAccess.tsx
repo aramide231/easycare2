@@ -287,7 +287,7 @@ const ManageAccess = () => {
               className="mx-auto"
             />
             <p className="text-lg font-semibold mt-4">
-              You have successfully Blocked this Patient!
+              You have successfully blocked this Patient!
             </p>
             <Button
               className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-4"
