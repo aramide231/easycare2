@@ -1,29 +1,55 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaHospital, FaTachometerAlt, FaUserPlus, FaCalendarCheck, FaUserLock, FaBell, FaIdCard, FaUserMd, FaSyringe, FaBaby, FaChild, FaSmile, FaUsers } from "react-icons/fa";
+import {
+  FaHospital,
+  FaTachometerAlt,
+  FaUserPlus,
+  FaCalendarCheck,
+  FaUserLock,
+  FaBell,
+  FaIdCard,
+  FaUserMd,
+  FaSyringe,
+  FaBaby,
+  FaChild,
+  FaSmile,
+  FaUsers,
+} from "react-icons/fa";
 
 const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
-    { name: "Visitation Log", icon: <FaCalendarCheck />, path: "/visitation-log" },
+    {
+      name: "Visitation Log",
+      icon: <FaCalendarCheck />,
+      path: "/visitation-log",
+    },
   ];
 
   const performActions = [
     { name: "Manage Access", icon: <FaUserLock />, path: "/manage-access" },
-    { name: "Set Reminder", icon: <FaBell />, path: "/set-reminder" },
     { name: "Manage Card", icon: <FaIdCard />, path: "/manage-card" },
+    { name: "Set Reminder", icon: <FaBell />, path: "/set-reminder" },
   ];
 
   const reports = [
-    { name: "Doctor Assignments", icon: <FaUserMd />, path: "/doctor-assignments" },
+    {
+      name: "Doctor Assignments",
+      icon: <FaUserMd />,
+      path: "/doctor-assignments",
+    },
     { name: "Immunization", icon: <FaSyringe />, path: "/immunization" },
     { name: "Ante Natal", icon: <FaBaby />, path: "/ante-natal" },
     { name: "Child Birth", icon: <FaChild />, path: "/child-birth" },
     { name: "Post Natal", icon: <FaSmile />, path: "/post-natal" },
     { name: "Registration", icon: <FaUserPlus />, path: "/registration" },
     { name: "Family Planning", icon: <FaUsers />, path: "/family-planning" },
-    { name: "Visitation Log", icon: <FaCalendarCheck />, path: "/visitation-log" },
+    {
+      name: "Visitation Log",
+      icon: <FaCalendarCheck />,
+      path: "/visitation-log",
+    },
   ];
 
   return (
@@ -43,7 +69,9 @@ const Sidebar = () => {
       {/* Scrollable Sidebar Content */}
       <div className="flex-1 overflow-y-auto">
         <div>
-          <h3 className="text-gray-700 font-semibold text-xs mb-2">MAIN MENU</h3>
+          <h3 className="text-gray-700 font-semibold text-xs mb-2">
+            MAIN MENU
+          </h3>
           {menuItems.map((item) => (
             <Link
               key={item.name}
@@ -59,7 +87,9 @@ const Sidebar = () => {
           ))}
         </div>
         <div className="mt-5">
-          <h3 className="text-gray-700 font-semibold text-xs mb-2">PERFORM ACTION</h3>
+          <h3 className="text-gray-700 font-semibold text-xs mb-2">
+            PERFORM ACTION
+          </h3>
           {performActions.map((item) => (
             <Link
               key={item.name}
