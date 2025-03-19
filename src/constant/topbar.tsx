@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
+import clientimage from '../assets/image/haywhy.jpg'
 
 const Topbar = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -25,7 +26,7 @@ const Topbar = () => {
       <div className="text-gray-600">{formattedTime}</div>
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full overflow-hidden">
-          <img src="https://via.placeholder.com/40" alt="User" className="w-full h-full object-cover" />
+          <img src={clientimage} alt="User" className="w-full h-full object-cover" />
         </div>
         <div>
           <h3 className="text-sm font-semibold">Joseph Adeoye</h3>
