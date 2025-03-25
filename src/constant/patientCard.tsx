@@ -1,4 +1,5 @@
 import { FaExpandArrowsAlt, FaArrowLeft } from "react-icons/fa";
+import clientimage from '../assets/image/haywhy.jpg'
 
 const PatientCard = () => {
   return (
@@ -6,7 +7,7 @@ const PatientCard = () => {
       {/* Patient Image & Name */}
       <div className="flex items-center gap-3">
         <img
-          src="https://via.placeholder.com/60"
+          src={clientimage}
           alt="Patient"
           className="w-14 h-14 rounded-full object-cover"
         />

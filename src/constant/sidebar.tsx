@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   FaHospital,
@@ -13,18 +14,25 @@ import {
   FaChild,
   FaSmile,
   FaUsers,
+  FaChevronDown,
+  FaChevronRight,
 } from "react-icons/fa";
 
 const Sidebar = () => {
   const location = useLocation();
+  const [openSections, setOpenSections] = useState({
+    mainMenu: true,
+    performActions: false,
+    reports: false,
+  });
+
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
-    {
-      name: "Visitation Log",
-      icon: <FaCalendarCheck />,
-      path: "/visitation-log",
-    },
+    { name: "Visitation Log", icon: <FaCalendarCheck />, path: "/visitation-log" },
   ];
 
   const performActions = [
@@ -34,22 +42,13 @@ const Sidebar = () => {
   ];
 
   const reports = [
-    {
-      name: "Doctor Assignments",
-      icon: <FaUserMd />,
-      path: "/doctor-assignments",
-    },
+    { name: "Doctor Assignments", icon: <FaUserMd />, path: "/doctor-assignments" },
     { name: "Immunization", icon: <FaSyringe />, path: "/immunization" },
     { name: "Ante Natal", icon: <FaBaby />, path: "/ante-natal" },
     { name: "Child Birth", icon: <FaChild />, path: "/child-birth" },
     { name: "Post Natal", icon: <FaSmile />, path: "/post-natal" },
     { name: "Registration", icon: <FaUserPlus />, path: "/registration" },
     { name: "Family Planning", icon: <FaUsers />, path: "/family-planning" },
-    {
-      name: "Visitation Log",
-      icon: <FaCalendarCheck />,
-      path: "/visitation-log",
-    },
   ];
 
   return (
@@ -69,48 +68,66 @@ const Sidebar = () => {
       {/* Scrollable Sidebar Content */}
       <div className="flex-1 overflow-y-auto">
         <div>
-          <h3 className="text-gray-700 font-semibold text-xs mb-2">
-            MAIN MENU
+          <h3
+            className="text-gray-700 font-semibold text-xs mb-2 cursor-pointer flex justify-between items-center"
+            onClick={() => toggleSection("mainMenu")}
+          >
+            MAIN MENU {openSections.mainMenu ? <FaChevronDown /> : <FaChevronRight />}
           </h3>
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
-                location.pathname === item.path
-                  ? "bg-purple-100 text-purple-700"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              {item.icon} {item.name}
-            </Link>
-          ))}
+          {openSections.mainMenu &&
+            menuItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
+    location.pathname === item.path ? "bg-purple-100 text-purple-700" : "text-gray-700 hover:bg-gray-100"
+  }`}
+              >
+                {item.icon} {item.name}
+              </Link>
+            ))}
         </div>
+
         <div className="mt-5">
-          <h3 className="text-gray-700 font-semibold text-xs mb-2">
-            PERFORM ACTION
+          <h3
+            className="text-gray-700 font-semibold text-xs mb-2 cursor-pointer flex justify-between items-center"
+            onClick={() => toggleSection("performActions")}
+          >
+            PERFORM ACTION {openSections.performActions ? <FaChevronDown /> : <FaChevronRight />}
           </h3>
-          {performActions.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className="w-full flex items-center gap-3 p-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition"
-            >
-              {item.icon} {item.name}
-            </Link>
-          ))}
+          {openSections.performActions &&
+            performActions.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
+    location.pathname === item.path ? "bg-purple-100 text-purple-700" : "text-gray-700 hover:bg-gray-100"
+  }`}
+              >
+                {item.icon} {item.name}
+              </Link>
+            ))}
         </div>
+
         <div className="mt-5">
-          <h3 className="text-gray-700 font-semibold text-xs mb-2">REPORTS</h3>
-          {reports.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className="w-full flex items-center gap-3 p-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition"
-            >
-              {item.icon} {item.name}
-            </Link>
-          ))}
+          <h3
+            className="text-gray-700 font-semibold text-xs mb-2 cursor-pointer flex justify-between items-center"
+            onClick={() => toggleSection("reports")}
+          >
+            REPORTS {openSections.reports ? <FaChevronDown /> : <FaChevronRight />}
+          </h3>
+          {openSections.reports &&
+            reports.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
+    location.pathname === item.path ? "bg-purple-100 text-purple-700" : "text-gray-700 hover:bg-gray-100"
+  }`}
+              >
+                {item.icon} {item.name}
+              </Link>
+            ))}
         </div>
       </div>
     </div>
