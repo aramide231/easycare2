@@ -157,8 +157,9 @@ const ManageAccess = () => {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false); // Modal state
-  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [blockSuccessModalOpen, setBlockSuccessModalOpen] = useState(false);
+  const [unblockSuccessModalOpen, setUnblockSuccessModalOpen] = useState(false);
   const [unblockModalOpen, setUnblockModalOpen] = useState(false);
   const [reasonForUnblock, setReasonForUnblock] = useState("");
   const [reason, setReason] = useState("");
@@ -187,12 +188,19 @@ const ManageAccess = () => {
 
   const handleConfirmBlock = () => {
     setModalOpen(false); // Close the first modal
-    setTimeout(() => setSuccessModalOpen(true), 300); // Open success modal
+    setTimeout(() => setBlockSuccessModalOpen(true), 300); // Open success modal
   };
 
   const handleUnblockConfirm = () => {
-    setUnblockModalOpen(false);
-    setSuccessModalOpen(true);
+    if (!reasonForUnblock || !permittedBy) {
+      alert("Please fill all fields before confirming.");
+      return;
+    }
+
+    console.log("Unblocking patient with reason:", reasonForUnblock);
+    console.log("Permitted by:", permittedBy);
+    setUnblockSuccessModalOpen(true); // Open the success
+    setUnblockModalOpen(false); // Close the dialog after unblocking
   };
 
   return (
@@ -277,7 +285,10 @@ const ManageAccess = () => {
             </Button>
           </DialogContent>
         </Dialog>
-        <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
+        <Dialog
+          open={blockSuccessModalOpen}
+          onOpenChange={setBlockSuccessModalOpen}
+        >
           <DialogContent className="max-w-sm text-center">
             <img
               src={LockIcon}
@@ -291,7 +302,7 @@ const ManageAccess = () => {
             </p>
             <Button
               className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-4"
-              onClick={() => setSuccessModalOpen(false)}
+              onClick={() => setBlockSuccessModalOpen(false)}
             >
               Back to Dashboard
             </Button>
@@ -345,7 +356,10 @@ const ManageAccess = () => {
         </Dialog>
 
         {/* Success Modal */}
-        <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
+        <Dialog
+          open={unblockSuccessModalOpen}
+          onOpenChange={setUnblockSuccessModalOpen}
+        >
           <DialogContent className="max-w-md text-center">
             <img
               src={LockIconGreen}
@@ -359,7 +373,7 @@ const ManageAccess = () => {
             </p>
             <Button
               className="mt-4 bg-purple-600 hover:bg-purple-700 text-white w-full"
-              onClick={() => setSuccessModalOpen(false)}
+              onClick={() => setUnblockSuccessModalOpen(false)}
             >
               Back to Dashboard
             </Button>
@@ -402,17 +416,30 @@ const ManageAccess = () => {
                   <TableCell>{patient.lastSeen}</TableCell>
                   <TableCell>{patient.gender}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{patient.patientType}</Badge>
+                    <Badge
+                      variant="outline"
+                      className={`px-2 py-1 border-2 ${
+                        patient.patientType === "COMPANY"
+                          ? "border-purple-500 text-purple-500 bg-purple-100"
+                          : patient.patientType === "PRIVATE"
+                          ? "border-blue-700 text-blue-700 bg-blue-100"
+                          : patient.patientType === "HMO"
+                          ? "border-orange-500 text-orange-500 bg-orange-100"
+                          : ""
+                      }`}
+                    >
+                      {patient.patientType}
+                    </Badge>
                   </TableCell>
                   <TableCell>{patient.staff}</TableCell>
                   <TableCell>{patient.permittedBy}</TableCell>
                   <TableCell>
                     <Badge
-                      className={
+                      className={`p-2 ${
                         patient.status === "ACTIVE"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }
+                          ? "bg-green-600 text-white"
+                          : "bg-red-600 text-white"
+                      }`}
                     >
                       {patient.status}
                     </Badge>

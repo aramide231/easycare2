@@ -1,319 +1,9 @@
-// import { useForm, SubmitHandler } from "react-hook-form";
-// import { useState } from "react";
-// import { FiEye, FiEyeOff } from "react-icons/fi";
-// // import { Router } from "lucide-react";
-// import { useNavigate } from "react-router-dom";
-
-// // form data structure
-// interface FormData {
-//   firstName: string;
-//   lastName: string;
-//   phoneNumber: string;
-//   email: string;
-//   homeAddress: string;
-//   username: string;
-//   userRole: string;
-//   userDesignation: string;
-//   securityQuestions: string;
-//   password: string;
-//   confirmPassword: string;
-//   countryCode: number;
-//   gender: string;
-//   userGender: string;
-// }
-
-// const Signup = () => {
-//   const navigate = useNavigate();
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-//   const {
-//     register,
-//     handleSubmit,
-//     watch,
-//     formState: { errors },
-//   } = useForm<FormData>();
-//   // Submit handler with typed form data
-//   const onSubmit: SubmitHandler<FormData> = (data) => {
-//     console.log("Form Data", data);
-
-//     navigate("/auth/Verification");
-//   };
-//   const password = watch("password");
-//   // User roles and designations
-//   const userRoles = [
-//     "Accounts Officer",
-//     "Cashier",
-//     "Clinician",
-//     "Consultant",
-//     "Diagnostics Officer",
-//     "Director",
-//     "Front Desk Officer",
-//     "Health Maintenance Officer (HMO)",
-//     "Human Resource Manager (HRM)",
-//     "IT",
-//     "Nursing Officer",
-//     "Pharm Officer",
-//     "Protocol Officer",
-//   ].sort();
-
-//   const userDesignations = [
-//     "Accountant",
-//     "Admin",
-//     "Cashier",
-//     "HMO",
-//     "IT",
-//     "Laboratory",
-//     "Matron",
-//     "Nursing",
-//     "Pharmacist",
-//     "Physician",
-//     "Protocols",
-//     "Receptionist",
-//     "Scan",
-//     "Specialist",
-//     "X-ray",
-//   ].sort();
-
-//   // Gender
-
-//   const userGender = ["Male", "Female"];
-//   return (
-//     <div>
-//       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-//         <div className="flex  items-center gap-4">
-//           {/* First Name */}
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">First Name</label>
-//             <input
-//               type="text"
-//               {...register("firstName", { required: true })}
-//               className="w-full border-b-2 focus:outline-none focus:border-blue-500"
-//             />
-//             {errors.firstName && (
-//               <span className="text-red-500">First Name is required</span>
-//             )}
-//           </div>
-
-//           {/* Last Name */}
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">Last Name</label>
-//             <input
-//               type="text"
-//               {...register("lastName", { required: true })}
-//               className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-//             />
-//             {errors.lastName && (
-//               <span className="text-red-500">Last Name is required</span>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Phone Number */}
-//         <div>
-//           <label className="block text-lg font-medium">Phone Number</label>
-//           <div className="flex gap-2">
-//             {/* Country Code Dropdown */}
-//             <select
-//               {...register("countryCode", { required: true })}
-//               className="w-1/4 p-2 border-b-2 focus:outline-none focus:border-blue-500"
-//             >
-//               <option value="+1">+1 </option>
-//               <option value="+44">+44 </option>
-//               <option value="+91">+91 </option>
-//               <option value="+234">+234</option>
-//               <option value="+61">+61 </option>
-//             </select>
-
-//             {/* Phone Number Input */}
-//             <input
-//               type="text"
-//               {...register("phoneNumber", { required: true })}
-//               className="w-2/4 border-b-2 focus:outline-none focus:border-blue-500"
-//             />
-//           </div>
-
-//           {/* Error Message */}
-//           {errors.phoneNumber && (
-//             <span className="text-red-500">Phone Number is required</span>
-//           )}
-//         </div>
-
-//         {/* Email */}
-//         <div>
-//           <label className="block text-lg font-medium">Email Address</label>
-//           <input
-//             type="email"
-//             {...register("email", { required: true })}
-//             className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-//           />
-//           {errors.email && (
-//             <span className="text-red-500">Email Address is required</span>
-//           )}
-//         </div>
-
-//         {/* Gender */}
-//         <div className="flex gap-4">
-//           <div className="w-1/2">
-//             {/* Username */}
-
-//             <label className="block text-lg font-medium">Username</label>
-//             <input
-//               type="text"
-//               {...register("username", { required: true })}
-//               className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-//             />
-//             {errors.username && (
-//               <span className="text-red-500">Username is required</span>
-//             )}
-//           </div>
-
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">Gender</label>
-//             <select
-//               {...register("userGender", { required: true })}
-//               className="w-full border-b-2 focus:outline-none focus:border-blue-500"
-//             >
-//               {userGender.map((gender) => (
-//                 <option key={gender} value={gender}>
-//                   {gender}
-//                 </option>
-//               ))}
-//             </select>
-//             {errors.userGender && (
-//               <span className="text-red-500">Gender is required</span>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* User Role and Designation */}
-//         <div className="flex gap-4">
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">User Role</label>
-//             <select
-//               {...register("userRole", { required: true })}
-//               className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
-//             >
-//               {userRoles.map((role) => (
-//                 <option key={role} value={role}>
-//                   {role}
-//                 </option>
-//               ))}
-//             </select>
-//             {errors.userRole && (
-//               <span className="text-red-500">User Role is required</span>
-//             )}
-//           </div>
-
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">
-//               User Designation
-//             </label>
-//             <select
-//               {...register("userDesignation", { required: true })}
-//               className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
-//             >
-//               {userDesignations.map((designation) => (
-//                 <option key={designation} value={designation}>
-//                   {designation}
-//                 </option>
-//               ))}
-//             </select>
-//             {errors.userDesignation && (
-//               <span className="text-red-500">User Designation is required</span>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Security Questions */}
-
-//         <div className="">
-//           <label className="block text-lg font-medium">
-//             Security Questions
-//           </label>
-//           <input
-//             type="text"
-//             {...register("securityQuestions", { required: true })}
-//             className="w-full  border-b-2 focus:outline-none focus:border-blue-500"
-//           />
-//           {errors.securityQuestions && (
-//             <span className="text-red-500">
-//               Security Questions are required
-//             </span>
-//           )}
-//         </div>
-
-//         <div className="flex gap-x-3">
-//           {/* Password */}
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">Password</label>
-//             <div className="relative">
-//               <input
-//                 type={showPassword ? "text" : "password"}
-//                 {...register("password", {
-//                   required: "Password is required",
-//                 })}
-//                 className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
-//               />
-//               <span
-//                 className="absolute right-2 top-2 text-xl cursor-pointer"
-//                 onClick={() => setShowPassword(!showPassword)}
-//               >
-//                 {showPassword ? <FiEyeOff /> : <FiEye />}
-//               </span>
-//             </div>
-//             {errors.password && (
-//               <span className="text-red-500">{errors.password.message}</span>
-//             )}
-//           </div>
-
-//           {/* Confirm Password */}
-//           <div className="w-1/2">
-//             <label className="block text-lg font-medium">
-//               Confirm Password
-//             </label>
-//             <div className="relative">
-//               <input
-//                 type={showConfirmPassword ? "text" : "password"}
-//                 {...register("confirmPassword", {
-//                   required: "Confirm Password is required",
-//                   validate: (value) =>
-//                     value === password || "Passwords do not match",
-//                 })}
-//                 className="w-full p-2 border-b-2 focus:outline-none focus:border-blue-500"
-//               />
-//               <span
-//                 className="absolute right-2 top-2 text-xl cursor-pointer"
-//                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-//               >
-//                 {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-//               </span>
-//             </div>
-//             {errors.confirmPassword && (
-//               <span className="text-red-500">
-//                 {errors.confirmPassword.message}
-//               </span>
-//             )}
-//           </div>
-//         </div>
-//         {/* Submit Button */}
-//         <button
-//           type="submit"
-//           className="w-full bg-[#573fd7] text-white py-4 rounded font-bold"
-//         >
-//           Sign Up
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default Signup;
-
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 interface FormData {
   firstName: string;
@@ -330,6 +20,14 @@ interface FormData {
   userGender: string;
 }
 
+const countryPhoneLength: { [key: string]: number } = {
+  us: 10, // United States
+  uk: 10, // United Kingdom
+  in: 10, // India
+  ng: 10, // Nigeria
+  au: 9, // Australia
+};
+
 const SignupForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -339,6 +37,7 @@ const SignupForm = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -349,6 +48,14 @@ const SignupForm = () => {
   };
 
   const password = watch("password");
+
+  const handlePhoneChange = (value: string, country: any) => {
+    const maxLength = countryPhoneLength[country?.countryCode] || 10; // Default length if country not listed
+    const numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
+    const trimmedValue = numericValue.slice(0, maxLength); // Limit to max length
+
+    setValue("phoneNumber", trimmedValue, { shouldValidate: true });
+  };
 
   // User roles for the dropdown
   const userRoles = [
@@ -638,45 +345,21 @@ const SignupForm = () => {
           </div>
           {/* Phone Number */}
           <div className="w-1/2">
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label className="block text-sm font-medium text-gray-700">
               Phone Number
             </label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              {/* Country Code Dropdown */}
-              <select
-                {...register("countryCode", {
-                  required: "Country Code is required",
-                })}
-                className="flex-shrink-0 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                <option value="+1">+1 (US)</option>
-                <option value="+44">+44 (UK)</option>
-                <option value="+91">+91 (IN)</option>
-                <option value="+234">+234 (NG)</option>
-                <option value="+61">+61 (AU)</option>
-              </select>
-              {/* Phone Number Input */}
-              <input
-                id="phoneNumber"
-                type="text"
-                {...register("phoneNumber", {
-                  required: "Phone Number is required",
-                })}
-                className="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="8012345678"
+            <div className="mt-1">
+              <PhoneInput
+                country={"ng"} // Default country
+                enableSearch={true}
+                inputClass="!w-full !border-gray-300"
+                dropdownClass="!border-gray-300"
+                onChange={handlePhoneChange}
               />
             </div>
             {errors.phoneNumber && (
               <p className="text-sm text-red-500">
                 {errors.phoneNumber.message}
-              </p>
-            )}
-            {errors.countryCode && (
-              <p className="text-sm text-red-500">
-                {errors.countryCode.message}
               </p>
             )}
           </div>

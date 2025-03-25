@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ChevronDown } from "lucide-react";
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
-
+import success from "@/assets/image/Succes 2 (1).png";
 const ManageCard = () => {
   const [selectedOption, setSelectedOption] = useState("convert-card");
   const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false);
@@ -63,7 +62,6 @@ const ManageCard = () => {
               <Select onValueChange={setSelectedOption} value={selectedOption}>
                 <SelectTrigger className="w-44 flex items-center justify-between">
                   <SelectValue placeholder="Convert Card" />
-                  <ChevronDown className="w-4 h-4" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="convert-card">Convert Card</SelectItem>
@@ -80,7 +78,7 @@ const ManageCard = () => {
                     setFormData((prev) => ({ ...prev, previousType: value }))
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="p-2">
                     <SelectValue placeholder="Select patient type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -132,8 +130,8 @@ const ManageCard = () => {
             </div>
             <div className="mt-6 text-center">
               <Button
-                className={`px-6 py-2 rounded ${
-                  isFormValid ? "bg-purple-600 text-white" : "bg-gray-400"
+                className={`px-8 py-3 rounded ${
+                  isFormValid ? "bg-purple-600 text-white" : "bg-gray-600"
                 }`}
                 onClick={handleSubmit}
                 disabled={!isFormValid}
@@ -147,7 +145,7 @@ const ManageCard = () => {
 
       {/* Convert Card Dialog */}
       <Dialog open={isConvertDialogOpen} onOpenChange={setIsConvertDialogOpen}>
-        <DialogContent className="text-center p-6">
+        <DialogContent className="text-center p-10 h-[26%]">
           <p className="text-lg font-semibold mb-4">
             Do you want to convert this card with the patient’s bill?
           </p>
@@ -155,11 +153,12 @@ const ManageCard = () => {
             <Button
               variant="outline"
               onClick={() => setIsConvertDialogOpen(false)}
+              className="border-purple-600 text-purple-600 p-4"
             >
               No
             </Button>
             <Button
-              className="bg-purple-600 text-white"
+              className="bg-purple-600 text-white p-4"
               onClick={handleConfirmConvert}
             >
               Yes
@@ -170,7 +169,7 @@ const ManageCard = () => {
 
       {/* Merge Profile Dialog */}
       <Dialog open={isMergeDialogOpen} onOpenChange={setIsMergeDialogOpen}>
-        <DialogContent className="text-center p-6">
+        <DialogContent className="text-center p-10 h-[26%]">
           <p className="text-lg font-semibold mb-4">
             Do you want to merge this patient with the patient’s bill?
           </p>
@@ -178,11 +177,12 @@ const ManageCard = () => {
             <Button
               variant="outline"
               onClick={() => setIsMergeDialogOpen(false)}
+              className="border-purple-600 text-purple-600 p-4"
             >
               No
             </Button>
             <Button
-              className="bg-purple-600 text-white"
+              className="bg-purple-600 text-white p-4"
               onClick={handleConfirmMerge}
             >
               Yes
@@ -194,12 +194,12 @@ const ManageCard = () => {
       {/* Convert Card Success Dialog */}
       <Dialog open={isConvertSuccess} onOpenChange={setIsConvertSuccess}>
         <DialogContent className="text-center p-6">
-          <img src="/success-icon.png" alt="Success" className="mx-auto mb-4" />
+          <img src={success} alt="Success" className="mx-auto mb-2" />
           <p className="text-lg font-semibold mb-4">
             You have successfully converted this card!
           </p>
           <Button
-            className="bg-purple-600 text-white"
+            className="bg-purple-600 text-white p-4"
             onClick={() => setIsConvertSuccess(false)}
           >
             Back to Dashboard
@@ -210,12 +210,12 @@ const ManageCard = () => {
       {/* Merge Profile Success Dialog */}
       <Dialog open={isMergeSuccess} onOpenChange={setIsMergeSuccess}>
         <DialogContent className="text-center p-6">
-          <img src="/success-icon.png" alt="Success" className="mx-auto mb-4" />
+          <img src={success} alt="Success" className="mx-auto mb-2" />
           <p className="text-lg font-semibold mb-4">
             You have successfully merged this profile!
           </p>
           <Button
-            className="bg-purple-600 text-white"
+            className="bg-purple-600 text-white p-4"
             onClick={() => setIsMergeSuccess(false)}
           >
             Back to Dashboard

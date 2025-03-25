@@ -1,0 +1,71 @@
+/* Custom DatePicker Styles */
+.custom-datepicker {
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.react-datepicker__header {
+  background-color: white;
+  border-bottom: none;
+}
+
+.react-datepicker__month-container {
+  width: 100%;
+}
+
+.react-datepicker__day--selected {
+  background-color: #6b46c1 !important; /* Purple highlight */
+  color: white !important;
+  border-radius: 50%;
+}
+
+.react-datepicker__day--disabled {
+  color: #ccc !important;
+  pointer-events: none;
+}
+
+.react-datepicker__time-container {
+  border-left: none;
+}
+
+.react-datepicker__time-box {
+  width: 100%;
+}
+
+.react-datepicker__navigation {
+  top: 12px;
+}
+
+.react-datepicker__navigation--previous {
+  left: 12px;
+}
+
+.react-datepicker__navigation--next {
+  right: 12px;
+}
+
+/* Cancel & Schedule buttons */
+.custom-datepicker .react-datepicker__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.custom-datepicker .react-datepicker__footer button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-datepicker .react-datepicker__footer button:first-child {
+  background: #e0e0e0; /* Cancel */
+  color: black;
+}
+
+.custom-datepicker .react-datepicker__footer button:last-child {
+  background: #6b46c1; /* Schedule */
+  color: white;
+}

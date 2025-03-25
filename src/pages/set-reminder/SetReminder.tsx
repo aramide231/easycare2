@@ -4,10 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-// import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { useState, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "react-calendar/dist/Calendar.css";
+import { format } from "date-fns";
+import calendartime from "@/assets/icon/calendar_clock.png";
+import "@/styles/datepicker.css";
 
 type FormData = {
   patientId: string;
@@ -23,7 +26,9 @@ const SetReminder = () => {
     setValue,
     formState: { errors },
   } = useForm<FormData>();
-  const [date, setDate] = useState<Date | null>(null);
+
+  const [date, setDate] = useState<Date | null>(new Date());
+  const datepickerRef = useRef<any>(null);
 
   const onSubmit = (data: FormData) => {
     console.log("Form Data:", data);
@@ -58,29 +63,47 @@ const SetReminder = () => {
                   )}
                 </div>
 
-                {/* Updated Calendar with Time Selection */}
+                {/* Calendar with Time Selection */}
                 <div>
-                  <label>Reminder Time</label>
-                  <div className="relative">
-                    <DatePicker
-                      selected={date}
-                      onChange={(d) => {
-                        setDate(d);
-                        setValue("reminderTime", d);
-                      }}
-                      showTimeSelect
-                      dateFormat="MMMM d, yyyy h:mm aa"
-                      placeholderText="Select Reminder Date & Time"
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none"
+                  <label className="block text-sm font-medium">
+                    Reminder Time
+                  </label>
+                  <div className="relative mt-2">
+                    {/* Clickable Input Field */}
+                    <input
+                      type="text"
+                      value={date ? format(date, "dd-MM-yyyy / hh:mm a") : ""}
+                      placeholder="dd-mm-yyyy / hh:mm A"
+                      readOnly
+                      className="w-full px-3 py-3 border rounded-md focus:outline-none bg-gray-100 text-gray-400 cursor-pointer"
+                      onClick={() => datepickerRef.current?.setOpen(true)} // Open DatePicker when clicked
                     />
-                    {/* <CalendarIcon className="w-5 h-5 absolute right-10 top-1/2 transform -translate-y-1/2 cursor-pointer" />
-                    <Clock className="w-5 h-5 absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer" /> */}
+
+                    {/* Clickable Calendar/Clock Image */}
+                    <div
+                      className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                      onClick={() => datepickerRef.current?.setOpen(true)}
+                    >
+                      <img
+                        src={calendartime}
+                        alt="Calendar"
+                        className="h-6 w-6"
+                      />
+                    </div>
+
+                    {/* Custom Styled DatePicker */}
+                    <DatePicker
+                      ref={datepickerRef}
+                      selected={date}
+                      onChange={(d) => setDate(d)}
+                      showTimeSelect
+                      dateFormat="dd-MM-yyyy / hh:mm a"
+                      minDate={new Date()} // Disable past dates
+                      timeIntervals={30} // Time interval selection
+                      customInput={<></>} // Hide default input
+                      popperClassName="custom-datepicker" // Apply custom styles
+                    />
                   </div>
-                  {errors.reminderTime && (
-                    <p className="text-red-500 text-sm">
-                      Reminder Time is required.
-                    </p>
-                  )}
                 </div>
 
                 <div>
@@ -96,13 +119,14 @@ const SetReminder = () => {
                   )}
                 </div>
               </div>
-
-              <Button
-                type="submit"
-                className="mt-4 w-full bg-[#6c5ce7] text-white"
-              >
-                Save Reminder
-              </Button>
+              <div className="mt-6 text-center">
+                <Button
+                  className="px-8 py-3 rounded bg-[#6c5ce7] text-white"
+                  type="submit"
+                >
+                  Save Reminder
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>
