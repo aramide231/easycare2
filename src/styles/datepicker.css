@@ -69,3 +69,136 @@
   background: #6b46c1; /* Schedule */
   color: white;
 }
+
+.react-datepicker__time-container {
+  border-left: none;
+  width: 100%;
+}
+
+.react-datepicker__time-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.react-datepicker__time-list {
+  display: flex;
+  justify-content: center;
+}
+
+.react-datepicker__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.custom-datepicker .react-datepicker {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  overflow: hidden; /* Prevents unwanted scrollbar */
+}
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box {
+  width: 200px;
+  overflow-x: hidden;
+  margin: 0 auto;
+  text-align: center;
+  border-bottom-right-radius: 0.3rem;
+}
+
+.custom-datepicker .react-datepicker__time-container {
+  width: 100%;
+  border-left: none;
+}
+
+.custom-datepicker .react-datepicker__time-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.custom-datepicker .react-datepicker__time-list {
+  display: flex;
+  justify-content: center;
+}
+
+.custom-datepicker .react-datepicker__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-top: 1px solid #ddd;
+}
+
+.custom-datepicker button {
+  font-size: 14px;
+  font-weight: 500;
+}
+.react-time-picker {
+  width: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease-in-out;
+}
+
+.react-time-picker__inputGroup__input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 16px;
+  text-align: center;
+  background: white;
+}
+
+.react-time-picker:focus-within {
+  border-color: #6c5ce7;
+  box-shadow: 0 0 4px rgba(108, 92, 231, 0.5);
+}
+
+.react-time-picker__wrapper {
+  border: none !important;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.react-time-picker__inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.react-time-picker__inputGroup__input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 16px;
+  background: white;
+  transition: border 0.3s ease;
+}
+
+.react-time-picker__inputGroup__input:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+.react-time-picker__inputGroup__divider {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+.react-time-picker__clear-button,
+.react-time-picker__clock-button {
+  display: none !important;
+}
