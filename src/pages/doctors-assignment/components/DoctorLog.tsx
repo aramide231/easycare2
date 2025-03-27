@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
+import ExportButton from "@/constant/ExportButton";
 
 const DoctorLog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const tableRef = useRef<HTMLTableElement>(null);
 
   const handleSearchChange = (e: any) => {
     setSearch(e.target.value);
@@ -260,7 +262,7 @@ const DoctorLog = () => {
           </button>
 
           {/* Export Button */}
-          <button className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium">
+          {/* <button className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium">
             <svg
               className="w-4 h-4 mr-2 text-purple-600"
               fill="none"
@@ -276,13 +278,14 @@ const DoctorLog = () => {
               ></path>
             </svg>
             Export
-          </button>
+          </button> */}
+          <ExportButton reportTitle="Export all Doctor's Log" />
         </div>
       </div>
 
       <div className="border-t border-gray-200 pt-4">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table ref={tableRef} className="w-full text-sm text-left">
             <thead className="text-xs text-gray-500 uppercase">
               <tr>
                 <th className="px-4 py-2 font-medium">SN</th>
