@@ -1,12 +1,44 @@
 import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import ExportButton from "@/constant/ExportButton";
+import "react-datepicker/dist/react-datepicker.css";
+import { DateRange } from "react-date-range";
+import { RangeKeyDict } from "react-date-range";
+
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const FamilyReport = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const tableRef = useRef<HTMLTableElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
+  const [selectedRange, setSelectedRange] = useState([
+    { startDate: new Date(), endDate: new Date(), key: "selection" },
+  ]);
+  const [tempRange, setTempRange] = useState([...selectedRange]);
+
+  const setQuickDateRange = (daysAgoStart: number, daysAgoEnd: number) => {
+    const today = new Date();
+    const startDate = new Date();
+    const endDate = new Date();
+
+    startDate.setDate(today.getDate() - daysAgoStart);
+    endDate.setDate(today.getDate() - daysAgoEnd);
+
+    setTempRange([{ startDate, endDate, key: "selection" }]);
+  };
+
+  const handleApply = () => {
+    setSelectedRange([...tempRange]);
+    setIsOpen(false);
+  };
+
+  const handleCancel = () => {
+    setTempRange([...selectedRange]);
+    setIsOpen(false);
+  };
   const handleSearchChange = (e: any) => {
     setSearch(e.target.value);
     console.log("Search value:", e.target.value);
@@ -279,23 +311,99 @@ const FamilyReport = () => {
         {/*  Date Picker and Export Button */}
         <div className="flex items-center gap-3">
           {/* Date Picker */}
-          <button className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium">
-            <svg
-              className="w-4 h-4 mr-2 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className="relative w-fit">
+            {/* Calendar Toggle Button */}
+
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M8 7V3m8 4V3m-9 4h10M5 10h14M5 14h14M5 18h14"
-              ></path>
-            </svg>
-            25/03/2025 - 28/03/2025
-          </button>
+              <svg
+                className="w-4 h-4 mr-2 text-purple-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 4h10M5 10h14M5 14h14M5 18h14"
+                ></path>
+              </svg>
+              {selectedRange[0].startDate.toLocaleDateString()} -{" "}
+              {selectedRange[0].endDate.toLocaleDateString()}
+            </button>
+
+            {/* Side-by-Side Calendar */}
+
+            {isOpen && (
+              <div className="absolute top-12 left-[-600px] bg-white shadow-lg rounded-lg p-6 flex space-x-6 z-50">
+                {/* Left Side: Date Options */}
+                <div className="flex flex-col space-y-3 w-36">
+                  {[
+                    { label: "Today", start: 0, end: 0 },
+                    { label: "Yesterday", start: 1, end: 1 },
+                    { label: "Last Week", start: 7, end: 0 },
+                    { label: "Last Month", start: 30, end: 0 },
+                    { label: "Last Year", start: 365, end: 0 },
+                    { label: "All Time", start: 9999, end: 0 },
+                  ].map((item, index) => (
+                    <button
+                      key={index}
+                      className={`text-sm px-3 py-2 rounded-md ${
+                        item.label === "Today"
+                          ? "bg-purple-100 text-purple-600 font-semibold"
+                          : "text-gray-600"
+                      }`}
+                      onClick={() => setQuickDateRange(item.start, item.end)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Right Side: Date Range Picker */}
+                <div>
+                  <DateRange
+                    editableDateInputs={false}
+                    onChange={(ranges: RangeKeyDict) => {
+                      const selection = ranges.selection as {
+                        startDate: Date;
+                        endDate: Date;
+                        key: string;
+                      };
+                      setTempRange([selection]);
+                    }}
+                    moveRangeOnFirstSelection={false}
+                    ranges={tempRange}
+                    maxDate={new Date()}
+                    months={2}
+                    direction="horizontal"
+                    showDateDisplay={false}
+                    className="rounded-lg"
+                  />
+
+                  {/* Apply & Cancel Buttons */}
+                  <div className="flex justify-end space-x-4 mt-4">
+                    <button
+                      className="border border-purple-400 text-purple-600 px-4 py-2 rounded-md"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-purple-600 text-white px-4 py-2 rounded-md"
+                      onClick={handleApply}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Export Button */}
           {/* <button className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium">
