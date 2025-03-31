@@ -98,7 +98,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  overflow: hidden; /* Prevents unwanted scrollbar */
+  overflow: hidden;
 }
 .react-datepicker__time-container
   .react-datepicker__time
@@ -177,7 +177,7 @@
 }
 
 .react-time-picker__inputGroup__input {
-  width: 50px;
+  /* width: 50px; */
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 6px;

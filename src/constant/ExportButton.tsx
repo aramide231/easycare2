@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import DownloadReport from "./downloadReport";
+import DownloadReport from "./DownloadReport";
 
 interface ExportButtonProps {
   reportTitle: string;

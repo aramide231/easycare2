@@ -24,7 +24,6 @@ const SetReminder = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -116,16 +115,16 @@ const SetReminder = () => {
                         inline
                       />
 
-                      <div className="flex items-center space-x-3 border px-3 py-2 rounded-md w-fit bg-white">
+                      <div className="flex items-center space-x-3 border px-3 py-2 rounded-md w-full bg-white">
                         <FaClock className="text-gray-800" size={20} />
-                        <span className="text-gray-800 font-medium">Time</span>
+                        {/* <span className="text-gray-800 font-medium">Time</span> */}
                         {/* Time Input */}
                         <TimePicker
                           onChange={handleTimeChange}
                           value={time}
                           disableClock={true}
                           format="hh:mm a"
-                          className="border p-2 rounded-md w-24 text-center"
+                          className="border p-2 rounded-md w-full text-center"
                         />
                       </div>
 
