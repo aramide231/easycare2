@@ -1,10 +1,6 @@
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
-import PatientCard from "@/constant/patientCard";
 import VisitationLog from "./components/visitationLog";
-
-
-
 
 const Visitation = () => {
   return (
@@ -15,14 +11,9 @@ const Visitation = () => {
       <main className="flex-1 p-6 ml-72">
         <Topbar />
 
-        <div className="flex gap-6 mt-6">
-          <div className="flex-[3]">
-           
+        <div className=" gap-6 mt-6">
+          <div className="">
             <VisitationLog />
-          </div>
-
-          <div className="flex-[1]">
-            <PatientCard />
           </div>
         </div>
       </main>
@@ -31,4 +22,3 @@ const Visitation = () => {
 };
 
 export default Visitation;
-
