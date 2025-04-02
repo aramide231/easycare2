@@ -18,21 +18,36 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 
+type SectionsState = {
+  mainMenu: boolean;
+  performActions: boolean;
+  reports: boolean;
+};
+
+type SectionKey = keyof SectionsState;
+
 const Sidebar = () => {
   const location = useLocation();
-  const [openSections, setOpenSections] = useState({
+  const [openSections, setOpenSections] = useState<SectionsState>({
     mainMenu: true,
     performActions: false,
     reports: false,
   });
 
-  const toggleSection = (section) => {
-    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  const toggleSection = (section: SectionKey) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
   };
 
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
-    { name: "Visitation Log", icon: <FaCalendarCheck />, path: "/visitation-log" },
+    {
+      name: "Visitation Log",
+      icon: <FaCalendarCheck />,
+      path: "/visitation-log",
+    },
   ];
 
   const performActions = [
@@ -42,7 +57,11 @@ const Sidebar = () => {
   ];
 
   const reports = [
-    { name: "Doctor Assignments", icon: <FaUserMd />, path: "/doctor-assignments" },
+    {
+      name: "Doctor Assignments",
+      icon: <FaUserMd />,
+      path: "/doctor-assignments",
+    },
     { name: "Immunization", icon: <FaSyringe />, path: "/immunization" },
     { name: "Ante Natal", icon: <FaBaby />, path: "/ante-natal" },
     { name: "Child Birth", icon: <FaChild />, path: "/child-birth" },
@@ -72,7 +91,8 @@ const Sidebar = () => {
             className="text-gray-700 font-semibold text-xs mb-2 cursor-pointer flex justify-between items-center"
             onClick={() => toggleSection("mainMenu")}
           >
-            MAIN MENU {openSections.mainMenu ? <FaChevronDown /> : <FaChevronRight />}
+            MAIN MENU{" "}
+            {openSections.mainMenu ? <FaChevronDown /> : <FaChevronRight />}
           </h3>
           {openSections.mainMenu &&
             menuItems.map((item) => (
@@ -80,8 +100,10 @@ const Sidebar = () => {
                 key={item.name}
                 to={item.path}
                 className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
-    location.pathname === item.path ? "bg-purple-100 text-purple-700" : "text-gray-700 hover:bg-gray-100"
-  }`}
+                  location.pathname === item.path
+                    ? "bg-purple-100 text-purple-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
               >
                 {item.icon} {item.name}
               </Link>
@@ -93,7 +115,12 @@ const Sidebar = () => {
             className="text-gray-700 font-semibold text-xs mb-2 cursor-pointer flex justify-between items-center"
             onClick={() => toggleSection("performActions")}
           >
-            PERFORM ACTION {openSections.performActions ? <FaChevronDown /> : <FaChevronRight />}
+            PERFORM ACTION{" "}
+            {openSections.performActions ? (
+              <FaChevronDown />
+            ) : (
+              <FaChevronRight />
+            )}
           </h3>
           {openSections.performActions &&
             performActions.map((item) => (
@@ -101,8 +128,10 @@ const Sidebar = () => {
                 key={item.name}
                 to={item.path}
                 className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
-    location.pathname === item.path ? "bg-purple-100 text-purple-700" : "text-gray-700 hover:bg-gray-100"
-  }`}
+                  location.pathname === item.path
+                    ? "bg-purple-100 text-purple-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
               >
                 {item.icon} {item.name}
               </Link>
@@ -114,7 +143,8 @@ const Sidebar = () => {
             className="text-gray-700 font-semibold text-xs mb-2 cursor-pointer flex justify-between items-center"
             onClick={() => toggleSection("reports")}
           >
-            REPORTS {openSections.reports ? <FaChevronDown /> : <FaChevronRight />}
+            REPORTS{" "}
+            {openSections.reports ? <FaChevronDown /> : <FaChevronRight />}
           </h3>
           {openSections.reports &&
             reports.map((item) => (
@@ -122,8 +152,10 @@ const Sidebar = () => {
                 key={item.name}
                 to={item.path}
                 className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
-    location.pathname === item.path ? "bg-purple-100 text-purple-700" : "text-gray-700 hover:bg-gray-100"
-  }`}
+                  location.pathname === item.path
+                    ? "bg-purple-100 text-purple-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
               >
                 {item.icon} {item.name}
               </Link>

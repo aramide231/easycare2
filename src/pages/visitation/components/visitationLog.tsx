@@ -1,10 +1,10 @@
-import  { useState } from 'react';
-import { FaEllipsisV } from 'react-icons/fa'
+import { useState } from "react";
+import { FaEllipsisV } from "react-icons/fa";
 
 const VisitationLog = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Sample patient data
   const patients = [
     {
@@ -31,7 +31,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "PRIVATE",
       visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed"
+      staffName: "Bayo Hammed",
     },
     {
       id: 3,
@@ -44,7 +44,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 4,
@@ -57,7 +57,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "HMO",
       visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 5,
@@ -70,7 +70,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 6,
@@ -83,7 +83,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 7,
@@ -96,7 +96,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "GEN. CONSULT",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 8,
@@ -109,7 +109,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "PRIVATE",
       visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed"
+      staffName: "Bayo Hammed",
     },
     {
       id: 9,
@@ -122,7 +122,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 10,
@@ -135,7 +135,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "HMO",
       visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 11,
@@ -148,7 +148,7 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka"
+      staffName: "Titilayo Olayinka",
     },
     {
       id: 12,
@@ -161,13 +161,13 @@ const VisitationLog = () => {
       age: 31,
       patientType: "COMPANY",
       visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka"
-    }
+      staffName: "Titilayo Olayinka",
+    },
   ];
 
   // Function to get patient type badge color
-  const getPatientTypeClass = (type) => {
-    switch(type) {
+  const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
+    switch (type) {
       case "COMPANY":
         return "bg-blue-100 text-blue-700";
       case "PRIVATE":
@@ -179,21 +179,32 @@ const VisitationLog = () => {
     }
   };
 
+  const isValidPatientType = (
+    type: string
+  ): type is "COMPANY" | "PRIVATE" | "HMO" =>
+    ["COMPANY", "PRIVATE", "HMO"].includes(type);
+
   // Function to get visit type badge color
-  const getVisitTypeClass = (type) => {
-    switch(type) {
+  const getVisitTypeClass = (
+    type: "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH"
+  ): string => {
+    switch (type) {
       case "GEN. CONSULT":
+      case "CHILDBIRTH":
         return "bg-indigo-100 text-indigo-700";
       case "ANTE. NATAL":
         return "bg-green-100 text-green-700";
       case "POST NATAL":
         return "bg-gray-100 text-gray-700";
-      case "CHILDBIRTH":
-        return "bg-indigo-100 text-indigo-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
   };
+
+  const isValidVisitType = (
+    type: string
+  ): type is "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH" =>
+    ["GEN. CONSULT", "ANTE. NATAL", "POST NATAL", "CHILDBIRTH"].includes(type);
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
@@ -201,8 +212,19 @@ const VisitationLog = () => {
         <h1 className="text-xl font-bold text-gray-800 mr-4">Patients Log</h1>
         <div className="relative flex-1 max-w-md">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            <svg
+              className="w-4 h-4 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
             </svg>
           </div>
           <input
@@ -233,11 +255,16 @@ const VisitationLog = () => {
             </thead>
             <tbody>
               {patients.map((patient, index) => (
-                <tr key={patient.id} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                <tr
+                  key={patient.id}
+                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                >
                   <td className="px-4 py-3 font-medium">{patient.id}</td>
                   <td className="px-4 py-3">
                     <div className="font-medium">{patient.name}</div>
-                    <div className="text-xs text-gray-500">{patient.patientId} | {patient.phoneNumber}</div>
+                    <div className="text-xs text-gray-500">
+                      {patient.patientId} | {patient.phoneNumber}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <div>{patient.lastSeen}</div>
@@ -246,12 +273,24 @@ const VisitationLog = () => {
                   <td className="px-4 py-3">{patient.gender}</td>
                   <td className="px-4 py-3">{patient.age}</td>
                   <td className="px-4 py-3">
-                    <span className={`${getPatientTypeClass(patient.patientType)} px-3 py-1 rounded-full text-xs font-medium`}>
+                    <span
+                      className={`${
+                        isValidPatientType(patient.patientType)
+                          ? getPatientTypeClass(patient.patientType)
+                          : "bg-gray-100 text-gray-700"
+                      } px-3 py-1 rounded-full text-xs font-medium`}
+                    >
                       {patient.patientType}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`${getVisitTypeClass(patient.visitType)} px-3 py-1 rounded-full text-xs font-medium`}>
+                    <span
+                      className={`${
+                        isValidVisitType(patient.visitType)
+                          ? getVisitTypeClass(patient.visitType)
+                          : "bg-gray-100 text-gray-700"
+                      } px-3 py-1 rounded-full text-xs font-medium`}
+                    >
                       {patient.visitType}
                     </span>
                   </td>
@@ -269,11 +308,20 @@ const VisitationLog = () => {
       </div>
 
       <div className="flex items-center justify-between mt-6">
-        <button 
-          className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
-        >
-          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+        <button className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+          <svg
+            className="w-5 h-5 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            ></path>
           </svg>
           Back
         </button>
@@ -282,7 +330,11 @@ const VisitationLog = () => {
           {[1, 2, 3, 4].map((page) => (
             <button
               key={page}
-              className={`px-3 py-1 text-sm border ${currentPage === page ? 'bg-blue-50 border-blue-500 text-blue-600' : 'border-gray-300 bg-white text-gray-700'} rounded-md hover:bg-gray-50`}
+              className={`px-3 py-1 text-sm border ${
+                currentPage === page
+                  ? "bg-blue-50 border-blue-500 text-blue-600"
+                  : "border-gray-300 bg-white text-gray-700"
+              } rounded-md hover:bg-gray-50`}
               onClick={() => setCurrentPage(page)}
             >
               {page}
@@ -296,12 +348,21 @@ const VisitationLog = () => {
           </button>
         </div>
 
-        <button 
-          className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
-        >
+        <button className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
           Next
-          <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+          <svg
+            className="w-5 h-5 ml-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            ></path>
           </svg>
         </button>
       </div>
