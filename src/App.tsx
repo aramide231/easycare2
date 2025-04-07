@@ -16,7 +16,7 @@ import ChildBirth from "./pages/child-birth/ChildBirth";
 import PostNatal from "./pages/post-natal/PostNatal";
 import Immunization from "./pages/immunization/Immunization";
 import FamilyPlanning from "./pages/family-planning/FamilyPlanning";
-import EditPatient from "./pages/editPatient/editPatient";
+import EditPatient from "./pages/editPatient/EditPatient";
 
 function App() {
   return (

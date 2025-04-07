@@ -231,6 +231,40 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
     );
   });
 
+  // send profile model
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [selectedSendOptions, setSelectedSendOptions] = useState<string[]>([]);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const sendOptions = [
+    "Antenatal Care",
+    "Antenatal Care (Follow Up)",
+    "Child Birth",
+    "Family Planning",
+    "General Consultaion",
+    "Immunization / Vaccination",
+    "Post Natal care",
+    "Procedure",
+    "Specialist Consultaion",
+    "Wound Dressing",
+    "Neonatal Care",
+  ];
+
+  const handleCheckboxChange = (option: string) => {
+    setSelectedSendOptions((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option]
+    );
+  };
+
+  const handleSendProfile = () => {
+    // Handle logic to send the profile to selected options
+    console.log("Send to:", selectedSendOptions);
+    setShowSendModal(false); // Close modal after send
+    setShowSuccessMessage(true); // Show success screen
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
       <Toast message={toastMessage} />
@@ -282,7 +316,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   key={patient.id}
                   className={`${
                     selectedPatientId === patient.id
-                      ? "bg-gray-200"
+                      ? "bg-gray-100"
                       : "bg-white"
                   } cursor-pointer`}
                   onClick={() => {
@@ -363,7 +397,10 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                               ? "Unflag Profile"
                               : "Flag Profile"}
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                          <button
+                            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                            onClick={() => setShowSendModal(true)}
+                          >
                             Send Profile
                           </button>
                         </div>
@@ -385,7 +422,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
           </tbody>
         </table>
 
-        {/* modal class*/}
+        {/* modal class  editpatients*/}
         {isModalOpen && editPatient && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg max-h-[90vh] overflow-y-auto">
@@ -585,7 +622,67 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
             </div>
           </div>
         )}
-        {/* Edit Form Appears with Pre-filled Data */}
+
+        {/* modal class for sendProfile*/}
+        {showSendModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
+                Select type of Visitation
+              </h2>
+
+              <div className="mb-6 space-y-2">
+                {sendOptions.map((option) => (
+                  <div key={option} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={option}
+                      value={option}
+                      checked={selectedSendOptions.includes(option)}
+                      onChange={() => handleCheckboxChange(option)}
+                      className="w-5 h-5 text-purple-600 border-purple-600 rounded focus:ring-purple-500"
+                    />
+                    <label
+                      htmlFor={option}
+                      className="ml-3 text-sm text-gray-700"
+                    >
+                      {option}
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleSendProfile}
+                  className=" w-[100%] px-10 py-2 text-sm font-medium text-white bg-purple-600 rounded hover:bg-purple-700"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessMessage && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-12 text-center">
+              <h2 className="text-xl font-bold  mb-4">
+                Patient Successfully Sent
+              </h2>
+
+              <button
+                onClick={() => {
+                  setShowSuccessMessage(false);
+                  // Add your route logic here
+                  navigate("/dashboard");
+                }}
+                className=" w-full px-5 py-2 text-sm font-medium text-white bg-purple-600 rounded hover:bg-purple-700"
+              >
+                Go to Dashboard
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <ToastContainer />
     </div>
