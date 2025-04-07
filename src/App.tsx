@@ -19,6 +19,7 @@ import FamilyPlanning from "./pages/family-planning/FamilyPlanning";
 import EditPatient from "./pages/editPatient/EditPatient";
 import ViewReminder from "./pages/set-reminder/components/ViewReminder";
 import ReminderPage from "./pages/set-reminder/ReminderPage";
+import Registration from "./pages/registration";
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit/:id" element={<EditPatient />} />
         <Route path="/visitation-log" element={<Visitation />} />
-        <Route path="/registration" element={<PatientForm />} />
+        <Route path="/registration" element={<Registration />} />
         <Route path="/manage-access" element={<ManageAccess />} />
         <Route path="/manage-card" element={<ManageCard />} />
         <Route path="/reminder" element={<ReminderPage />} />
