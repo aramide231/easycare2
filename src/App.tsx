@@ -9,7 +9,7 @@ import Visitation from "./pages/visitation";
 import PatientForm from "./pages/registration";
 import ManageAccess from "./pages/manage-access/ManageAccess";
 import ManageCard from "./pages/manage-card/ManageCard";
-import SetReminder from "./pages/set-reminder/SetReminder";
+import SetReminder from "./pages/set-reminder/components/SetReminder";
 import DoctorAssignment from "./pages/doctors-assignment/DoctorAssignment";
 import AnteNatal from "./pages/ante-natal/AnteNatal";
 import ChildBirth from "./pages/child-birth/ChildBirth";
@@ -17,6 +17,8 @@ import PostNatal from "./pages/post-natal/PostNatal";
 import Immunization from "./pages/immunization/Immunization";
 import FamilyPlanning from "./pages/family-planning/FamilyPlanning";
 import EditPatient from "./pages/editPatient/EditPatient";
+import ViewReminder from "./pages/set-reminder/components/ViewReminder";
+import ReminderPage from "./pages/set-reminder/ReminderPage";
 
 function App() {
   return (
@@ -35,7 +37,9 @@ function App() {
         <Route path="/registration" element={<PatientForm />} />
         <Route path="/manage-access" element={<ManageAccess />} />
         <Route path="/manage-card" element={<ManageCard />} />
-        <Route path="/set-reminder" element={<SetReminder />} />
+        <Route path="/reminder" element={<ReminderPage />} />
+        <Route path="/reminder/set-reminder" element={<SetReminder />} />
+        <Route path="/reminder/view-schedule" element={<ViewReminder />} />
         <Route path="/doctor-assignments" element={<DoctorAssignment />} />
         <Route path="/ante-natal" element={<AnteNatal />} />
         <Route path="/child-birth" element={<ChildBirth />} />
