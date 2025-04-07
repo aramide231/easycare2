@@ -53,7 +53,7 @@ const Sidebar = () => {
   const performActions = [
     { name: "Manage Access", icon: <FaUserLock />, path: "/manage-access" },
     { name: "Manage Card", icon: <FaIdCard />, path: "/manage-card" },
-    { name: "Set Reminder", icon: <FaBell />, path: "/set-reminder" },
+    { name: "Set Reminder", icon: <FaBell />, path: "/reminder" },
   ];
 
   const reports = [
