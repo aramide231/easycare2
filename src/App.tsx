@@ -16,6 +16,7 @@ import ChildBirth from "./pages/child-birth/ChildBirth";
 import PostNatal from "./pages/post-natal/PostNatal";
 import Immunization from "./pages/immunization/Immunization";
 import FamilyPlanning from "./pages/family-planning/FamilyPlanning";
+import EditPatient from "./pages/editPatient/editPatient";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           element={<VerifyEmailPassword />}
         />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/edit/:id" element={<EditPatient />} />
         <Route path="/visitation-log" element={<Visitation />} />
         <Route path="/registration" element={<PatientForm />} />
         <Route path="/manage-access" element={<ManageAccess />} />

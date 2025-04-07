@@ -1,7 +1,15 @@
 import { FaExpandArrowsAlt, FaArrowLeft } from "react-icons/fa";
-import clientimage from '../assets/image/haywhy.jpg'
+import clientimage from "../assets/image/haywhy.jpg";
 
-const PatientCard = () => {
+interface PatientCardProps {
+  patient: {
+    firstName: string;
+    lastName: string;
+    patientId: string;
+    bloodPressure: string;
+  };
+}
+const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   return (
     <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-4">
       {/* Patient Image & Name */}
@@ -12,7 +20,9 @@ const PatientCard = () => {
           className="w-14 h-14 rounded-full object-cover"
         />
         <div>
-          <h2 className="text-lg font-semibold">Abiola Adebayo</h2>
+          <h2 className="text-lg font-semibold">
+            {patient.firstName} {patient.lastName}
+          </h2>
           <p className="text-gray-500 text-sm">ID: P-2025001</p>
         </div>
       </div>
@@ -34,26 +44,42 @@ const PatientCard = () => {
       <div className="text-sm">
         <h3 className="text-purple-600 font-semibold">Prev. Vital Signs :</h3>
         <p>
-          <strong>Blood Pressure :</strong> 120/80 <span className="italic">mmHg</span>
+          <strong>Blood Pressure :</strong> 120/80{" "}
+          <span className="italic">mmHg</span>
         </p>
         <p>
           <strong>Heart Rate :</strong> 75 <span className="italic">bpm</span>
         </p>
         <p>
-          <strong>Weight :</strong> 85 <span className="font-semibold">kg</span> │ <strong>Height :</strong> 5’99”
+          <strong>Weight :</strong> 85 <span className="font-semibold">kg</span>{" "}
+          │ <strong>Height :</strong> 5’99”
         </p>
       </div>
 
       {/* Contact Info */}
       <div className="text-sm mt-3">
         <h3 className="text-blue-600 font-semibold">Contact :</h3>
-        <p><strong>Gender :</strong> Male</p>
-        <p><strong>Address :</strong> Lagos, Nigeria</p>
-        <p><strong>Relationship :</strong> Married</p>
-        <p><strong>Patient Type :</strong> COMPANY</p>
-        <p><strong>Treatment Guide :</strong> Fee for Ser.</p>
-        <p><strong>Last Visits Date :</strong> 21/02/2022</p>
-        <p><strong>Next Appointment :</strong> 01/03/2025</p>
+        <p>
+          <strong>Gender :</strong> Male
+        </p>
+        <p>
+          <strong>Address :</strong> Lagos, Nigeria
+        </p>
+        <p>
+          <strong>Relationship :</strong> Married
+        </p>
+        <p>
+          <strong>Patient Type :</strong> COMPANY
+        </p>
+        <p>
+          <strong>Treatment Guide :</strong> Fee for Ser.
+        </p>
+        <p>
+          <strong>Last Visits Date :</strong> 21/02/2022
+        </p>
+        <p>
+          <strong>Next Appointment :</strong> 01/03/2025
+        </p>
       </div>
     </div>
   );
