@@ -1,9 +1,8 @@
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
+import NotificationTable from "../../components/ui/notificationTable";
 
-import PatientForm from "./components/PatientForm";
-
-const Visitation = () => {
+const Notifications = () => {
   return (
     <div className="flex h-screen w-full">
       <Sidebar />
@@ -12,14 +11,10 @@ const Visitation = () => {
       <main className="flex-1 p-6 ml-72">
         <Topbar />
 
-        <div className=" gap-6 mt-6">
-          <div className="">
-            <PatientForm patientData={""} />
-          </div>
-        </div>
+        <NotificationTable />
       </main>
     </div>
   );
 };
 
-export default Visitation;
+export default Notifications;

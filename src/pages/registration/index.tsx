@@ -1,6 +1,7 @@
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
-import Register from "./components/register";
+
+import PatientForm from "../visitation/components/PatientForm";
 
 const Registration = () => {
   return (
@@ -11,7 +12,7 @@ const Registration = () => {
       <main className="flex-1 p-6 ml-72">
         <Topbar />
 
-        <Register />
+        <PatientForm />
       </main>
     </div>
   );
