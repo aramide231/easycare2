@@ -417,7 +417,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
             You can now access your dashboard and manage your patient care.
           </p>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/frontdesk/dashboard")}
             className="bg-purple-600 text-white px-10 py-3 rounded-lg"
           >
             Go to Dashboard

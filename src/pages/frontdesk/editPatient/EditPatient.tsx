@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PatientForm from "../visitation/components/PatientForm";
-import Sidebar from "../../constant/sidebar";
+import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
 
 const EditPatient = () => {

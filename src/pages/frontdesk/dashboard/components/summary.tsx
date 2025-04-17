@@ -11,7 +11,7 @@ const DashboardSummary = () => {
       icon: <FaUserPlus size={24} className="text-white" />,
       bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
       textColor: "text-white",
-      path: "/registration",
+      path: "/frontdesk/registration",
     },
     {
       title: "Patients for visitation",
@@ -19,7 +19,7 @@ const DashboardSummary = () => {
       icon: <FaProcedures size={24} className="text-white" />,
       bgColor: "bg-gradient-to-r from-blue-500 to-indigo-600",
       textColor: "text-white",
-      path: "/visitation-log",
+      path: "/frontdesk/visitation-log",
     },
     {
       title: "Notifications",
@@ -27,7 +27,7 @@ const DashboardSummary = () => {
       icon: <FaBell size={24} className="text-orange-500" />,
       bgColor: "bg-white border border-orange-500",
       textColor: "text-gray-700",
-      path: "/notifications",
+      path: "/frontdesk/notifications",
     },
   ];
 
