@@ -22,7 +22,7 @@ const Signin = () => {
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log("Sign In Data", data);
-    navigate("/dashboard");
+    navigate("dashboard");
   };
 
   return (

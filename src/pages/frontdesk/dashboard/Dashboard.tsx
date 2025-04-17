@@ -1,10 +1,11 @@
 import { useState } from "react";
-import Sidebar from "../../constant/sidebar";
-import Topbar from "../../constant/topbar";
 import PatientsLog from "./components/patientLog";
 import DashboardSummary from "./components/summary";
+
+import Sidebar from "@/constant/sidebar";
+import Topbar from "@/constant/topbar";
 import CustomCalendar from "./components/calendar";
-import PatientCard from "../../constant/patientCard";
+import PatientCard from "@/constant/patientCard";
 
 const Dashboard = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);

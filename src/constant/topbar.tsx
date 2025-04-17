@@ -25,13 +25,19 @@ const Topbar = () => {
 
   // Pages where you want to show breadcrumbs
   const breadcrumbPages = [
-    "/edit/:id",
-    "/visitation-log",
-    "/registration",
-    "notifications",
-    "/manage-access",
-    "/manage-card",
-    "/reminder",
+    "/frontdesk/edit/:id",
+    "/frontdesk/visitation-log",
+    "/frontdesk/registration",
+    "/frontdesk/notifications",
+    "/frontdesk/manage-access",
+    "/frontdesk/manage-card",
+    "/frontdesk/reminder",
+    "/frontdesk/doctor-assignment",
+    "/frontdesk/immunization",
+    "/frontdesk/ante-natal",
+    "/frontdesk/child-birth",
+    "/frontdesk/post-natal",
+    "/frontdesk/family-planning",
   ];
 
   const renderBreadcrumbs = () => {
@@ -63,7 +69,7 @@ const Topbar = () => {
               ) : (
                 <span className="capitalize">{crumb.name}</span>
               )}
-              {!isLast && <span className="mx-1">/</span>}
+              {!isLast && <span className="mx-1">&gt;</span>}
             </span>
           );
         })}

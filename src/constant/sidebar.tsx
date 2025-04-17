@@ -42,32 +42,52 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
+    {
+      name: "Dashboard",
+      icon: <FaTachometerAlt />,
+      path: "/frontdesk/dashboard",
+    },
     {
       name: "Visitation Log",
       icon: <FaCalendarCheck />,
-      path: "/visitation-log",
+      path: "/frontdesk/visitation-log",
     },
   ];
 
   const performActions = [
-    { name: "Manage Access", icon: <FaUserLock />, path: "/manage-access" },
-    { name: "Manage Card", icon: <FaIdCard />, path: "/manage-card" },
-    { name: "Set Reminder", icon: <FaBell />, path: "/reminder" },
+    {
+      name: "Manage Access",
+      icon: <FaUserLock />,
+      path: "/frontdesk/manage-access",
+    },
+    { name: "Manage Card", icon: <FaIdCard />, path: "/frontdesk/manage-card" },
+    { name: "Set Reminder", icon: <FaBell />, path: "/frontdesk/reminder" },
   ];
 
   const reports = [
     {
       name: "Doctor Assignments",
       icon: <FaUserMd />,
-      path: "/doctor-assignments",
+      path: "/frontdesk/doctor-assignments",
     },
-    { name: "Immunization", icon: <FaSyringe />, path: "/immunization" },
-    { name: "Ante Natal", icon: <FaBaby />, path: "/ante-natal" },
-    { name: "Child Birth", icon: <FaChild />, path: "/child-birth" },
-    { name: "Post Natal", icon: <FaSmile />, path: "/post-natal" },
-    { name: "Registration", icon: <FaUserPlus />, path: "/registration" },
-    { name: "Family Planning", icon: <FaUsers />, path: "/family-planning" },
+    {
+      name: "Immunization",
+      icon: <FaSyringe />,
+      path: "/frontdesk/immunization",
+    },
+    { name: "Ante Natal", icon: <FaBaby />, path: "/frontdesk/ante-natal" },
+    { name: "Child Birth", icon: <FaChild />, path: "/frontdesk/child-birth" },
+    { name: "Post Natal", icon: <FaSmile />, path: "/frontdesk/post-natal" },
+    {
+      name: "Registration",
+      icon: <FaUserPlus />,
+      path: "/frontdesk/registration",
+    },
+    {
+      name: "Family Planning",
+      icon: <FaUsers />,
+      path: "/frontdesk/family-planning",
+    },
   ];
 
   return (

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // type and datat check
 
@@ -37,6 +37,7 @@ const Toast = ({ message }: { message: string }) => {
 
 const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showOptions, setShowOptions] = useState<number | null>(null);
 
@@ -46,6 +47,11 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
     null
   );
+
+  // to dynamically reader the headingText
+
+  const isVisitationPage = location.pathname.includes("visitation");
+  const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
   // const [currentPage, setCurrentPage] = useState(1);
@@ -164,7 +170,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   };
 
   const handleEditPatient = (patient: Patient) => {
-    navigate(`/edit/${patient.id}`, { state: { patient } });
+    navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
   };
 
   const handleFlagPatient = (patient: any) => {
@@ -271,7 +277,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
       <div className="flex flex-col md:flex-row md:items-center  mb-6 md:space-x-0">
         <h1 className="text-xl font-bold text-gray-800 md:mr-2">
-          Patients Log
+          {headingText}
         </h1>
         <input
           type="search"
@@ -674,7 +680,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                 onClick={() => {
                   setShowSuccessMessage(false);
                   // Add your route logic here
-                  navigate("/dashboard");
+                  navigate("/frontdesk/dashboard");
                 }}
                 className=" w-full px-5 py-2 text-sm font-medium text-white bg-purple-600 rounded hover:bg-purple-700"
               >
