@@ -21,7 +21,6 @@ import ReminderPage from "./pages/set-reminder/ReminderPage";
 import NotFound from "./pages/notFound/NotFound";
 import Notifications from "./pages/notifications/Notifications";
 import Registration from "./pages/registration";
-// import Registration from "./pages/registration";
 
 function App() {
   return (
@@ -51,8 +50,6 @@ function App() {
         <Route path="/immunization" element={<Immunization />} />
         <Route path="/family-planning" element={<FamilyPlanning />} />
         <Route path="*" element={<NotFound />} />
-        {/* <Route path="signin" element={<Signin/>}/>
-        <Route path="signup" element={<Signup/>}/> */}
       </Routes>
     </BrowserRouter>
   );
