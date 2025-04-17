@@ -8,7 +8,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 type Patient = {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   patientId: string;
   phoneNumber: string;
   lastSeen: string;
@@ -19,6 +20,8 @@ type Patient = {
   visitType: string;
   staffName: string;
   flagged: boolean;
+  bloodPressure: string;
+  name: string;
 };
 
 interface PatientsLogProps {
@@ -40,10 +43,11 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showOptions, setShowOptions] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const dropdownRef = useRef(null);
+  // const dropdownRef = useRef(null);
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
     null
   );
@@ -54,12 +58,13 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
-  // const [currentPage, setCurrentPage] = useState(1);
 
   const [patients, setPatients] = useState<Patient[]>([
     {
       id: 1,
       name: "Abiola Adebayo",
+      firstName: "Abiola",
+      lastName: "Adebayo",
       patientId: "P-2025001",
       phoneNumber: "09012345678",
       lastSeen: "15-Feb-2020",
@@ -70,10 +75,13 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       visitType: "GEN. CONSULT",
       staffName: "Titilayo Olayinka",
       flagged: false,
+      bloodPressure: "120/80",
     },
     {
       id: 2,
       name: "Chinonso Eze",
+      firstName: "Chinonso",
+      lastName: "Eze",
       patientId: "P-2025002",
       phoneNumber: "09012345678",
       lastSeen: "15-Feb-2020",
@@ -84,10 +92,13 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       visitType: "GEN. CONSULT",
       staffName: "Bayo Hammed",
       flagged: false,
+      bloodPressure: "130/85",
     },
     {
       id: 3,
       name: "Damilola Ogunleye",
+      firstName: "Damilola",
+      lastName: "Ogunleye",
       patientId: "P-2025003",
       phoneNumber: "09012345678",
       lastSeen: "15-Feb-2020",
@@ -98,10 +109,13 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       visitType: "ANTE. NATAL",
       staffName: "Titilayo Olayinka",
       flagged: false,
+      bloodPressure: "118/78",
     },
     {
       id: 4,
       name: "Emeka Nwankwo",
+      firstName: "Emeka",
+      lastName: "Nwankwo",
       patientId: "P-2025004",
       phoneNumber: "09012345678",
       lastSeen: "15-Feb-2020",
@@ -112,24 +126,30 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       visitType: "POST NATAL",
       staffName: "Titilayo Olayinka",
       flagged: false,
+      bloodPressure: "135/90",
     },
     {
       id: 5,
       name: "Ifeoma Okeke",
+      firstName: "Ifeoma",
+      lastName: "Okeke",
       patientId: "P-2025005",
       phoneNumber: "09012345678",
       lastSeen: "15-Feb-2020",
       time: "10:25 AM",
-      gender: "M",
+      gender: "F",
       age: 31,
       patientType: "COMPANY",
       visitType: "CHILDBIRTH",
       staffName: "Titilayo Olayinka",
       flagged: false,
+      bloodPressure: "122/79",
     },
     {
       id: 6,
       name: "Toluwa Afolabi",
+      firstName: "Toluwa",
+      lastName: "Afolabi",
       patientId: "P-2025006",
       phoneNumber: "09012345678",
       lastSeen: "15-Feb-2020",
@@ -140,6 +160,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       visitType: "ANTE. NATAL",
       staffName: "Titilayo Olayinka",
       flagged: false,
+      bloodPressure: "125/82",
     },
   ]);
 
@@ -185,7 +206,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const handleSaveChanges = async () => {
     const isConfirmed = await confirmSave();
 
-    if (isConfirmed) {
+    if (isConfirmed && editPatient) {
       const updatedPatients = patients.map((patient) =>
         patient.id === editPatient.id ? editPatient : patient
       );

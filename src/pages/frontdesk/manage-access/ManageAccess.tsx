@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 const patients = [
   {
@@ -164,6 +165,7 @@ const ManageAccess = () => {
   const [reasonForUnblock, setReasonForUnblock] = useState("");
   const [reason, setReason] = useState("");
   const [permittedBy, setPermittedBy] = useState("");
+  const navigate = useNavigate();
 
   const filteredPatients = patients.filter((patient) =>
     Object.values(patient).some((value) =>
@@ -201,6 +203,9 @@ const ManageAccess = () => {
     console.log("Permitted by:", permittedBy);
     setUnblockSuccessModalOpen(true); // Open the success
     setUnblockModalOpen(false); // Close the dialog after unblocking
+    setTimeout(() => {
+      navigate("/frontdesk/dashboard");
+    }, 2000);
   };
 
   return (

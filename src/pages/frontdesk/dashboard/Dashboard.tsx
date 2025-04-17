@@ -7,8 +7,26 @@ import Topbar from "@/constant/topbar";
 import CustomCalendar from "./components/calendar";
 import PatientCard from "@/constant/patientCard";
 
+type Patient = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  patientId: string;
+  phoneNumber: string;
+  lastSeen: string;
+  time: string;
+  gender: string;
+  age: number;
+  patientType: string;
+  visitType: string;
+  staffName: string;
+  flagged: boolean;
+  bloodPressure: string;
+  name: string;
+};
+
 const Dashboard = () => {
-  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   return (
     <div className="flex h-screen w-full">

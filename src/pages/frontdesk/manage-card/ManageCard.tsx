@@ -13,6 +13,8 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
 import success from "@/assets/image/Succes 2 (1).png";
+import { useNavigate } from "react-router-dom";
+
 const ManageCard = () => {
   const [selectedOption, setSelectedOption] = useState("convert-card");
   const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false);
@@ -25,6 +27,8 @@ const ManageCard = () => {
     currentType: "",
     currentId: "",
   });
+
+  const navigate = useNavigate();
 
   const isFormValid = Object.values(formData).every(
     (field) => field.trim() !== ""
@@ -43,11 +47,17 @@ const ManageCard = () => {
   const handleConfirmConvert = () => {
     setIsConvertDialogOpen(false);
     setIsConvertSuccess(true);
+    setTimeout(() => {
+      navigate("/frontdesk/dashboard");
+    }, 2000); // Simulate a delay for the success dialog
   };
 
   const handleConfirmMerge = () => {
     setIsMergeDialogOpen(false);
     setIsMergeSuccess(true);
+    setTimeout(() => {
+      navigate("/frontdesk/dashboard");
+    }, 2000);
   };
 
   return (
