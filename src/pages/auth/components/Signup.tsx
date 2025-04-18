@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import axiosInstance from "@/api/AxiosInstance";
 
 interface FormData {
   firstName: string;
@@ -32,6 +33,8 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -41,10 +44,39 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  // Submit handler with typed form data
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log("Form Data", data);
-    navigate("/auth/Verification");
+  // Submit handler with typed form data and axios implementation
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      
+      // Prepare data for API request - remove confirmPassword as it's not needed
+      const { confirmPassword, agreeTerms, ...registrationData } = data;
+      
+      // Make the API call
+      const response = await axiosInstance.post('/auth/register', registrationData);
+      
+      console.log("Registration successful:", response.data);
+      
+      // Redirect to verification page
+      navigate("/auth/Verification");
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      // Handle specific error cases
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setSubmitError(error.response.data.message || "Registration failed. Please try again.");
+      } else if (error.request) {
+        // The request was made but no response was received
+        setSubmitError("No response from server. Please check your connection.");
+      } else {
+        // Something happened in setting up the request
+        setSubmitError("An error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const password = watch("password");
@@ -92,12 +124,11 @@ const SignupForm = () => {
   ].sort();
 
   // Gender
-
   const userGender = ["Male", "Female"];
 
   return (
     <div>
-      <div className=" my-5">
+      <div className="my-5">
         <h2 className="text-lg font-bold">
           Enter your details to create an account.
         </h2>
@@ -105,6 +136,14 @@ const SignupForm = () => {
           Join now to streamline patient care effortlessly.
         </p>
       </div>
+      
+      {/* Display submission error if any */}
+      {submitError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{submitError}</p>
+        </div>
+      )}
+      
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         {/* First Name and Last Name */}
         <div className="flex gap-4">
@@ -133,7 +172,6 @@ const SignupForm = () => {
                   required: "First Name is required",
                 })}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                // placeholder="Enter your first name"
               />
             </div>
             {errors.firstName && (
@@ -172,7 +210,6 @@ const SignupForm = () => {
         </div>
         <div className="flex gap-4">
           {/* Email */}
-
           <div className="w-1/2">
             <label
               htmlFor="email"
@@ -254,7 +291,7 @@ const SignupForm = () => {
                 {...register("userGender", { required: "Gender is required" })}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               >
-                {" "}
+                <option value="">Select your gender</option>
                 {userGender.map((gender) => (
                   <option key={gender} value={gender}>
                     {gender}
@@ -291,6 +328,7 @@ const SignupForm = () => {
                 })}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               >
+                <option value="">Select your designation</option>
                 {userDesignations.map((designation) => (
                   <option key={designation} value={designation}>
                     {designation}
@@ -461,17 +499,22 @@ const SignupForm = () => {
         <div>
           <button
             type="submit"
-            className="w-full h-[50px] flex justify-center items-center content-center  border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#573fd1] hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isSubmitting}
+            className={`w-full h-[50px] flex justify-center items-center content-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#573fd1] hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+              isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+            }`}
           >
             <div className="flex gap-2">
-              Register
-              <span>
-                <Icon
-                  icon="material-symbols-light:arrow-forward-rounded"
-                  width="24"
-                  height="24"
-                />
-              </span>
+              {isSubmitting ? "Registering..." : "Register"}
+              {!isSubmitting && (
+                <span>
+                  <Icon
+                    icon="material-symbols-light:arrow-forward-rounded"
+                    width="24"
+                    height="24"
+                  />
+                </span>
+              )}
             </div>
           </button>
         </div>
