@@ -23,7 +23,7 @@ type Patient = {
   name: string;
 };
 
-const FrontdeskDashboard = () => {
+const NurseDashboard = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   return (
@@ -41,4 +41,4 @@ const FrontdeskDashboard = () => {
   );
 };
 
-export default FrontdeskDashboard;
+export default NurseDashboard;

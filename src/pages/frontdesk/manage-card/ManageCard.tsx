@@ -56,15 +56,13 @@ const ManageCard = () => {
     setIsMergeDialogOpen(false);
     setIsMergeSuccess(true);
     setTimeout(() => {
-      navigate("/frontdesk/dashboard");
+      navigate("/frontdesk");
     }, 2000);
   };
 
   return (
-    <div className="flex h-screen w-full">
-      <Sidebar />
-      <main className="flex-1 p-6 ml-72">
-        <Topbar />
+    <div className="w-full">
+      <main className="flex-1 p-6 ">
         <Card className="my-10 border-2 rounded p-5 w-[80%] mx-auto">
           <CardContent>
             <div className="flex justify-between items-center mb-3">

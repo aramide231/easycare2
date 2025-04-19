@@ -189,7 +189,7 @@ const NotificationTable: React.FC = () => {
   });
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full mx-auto">
       <div className="flex flex-col md:flex-row md:items-center mb-6">
         <h1 className="text-xl font-bold text-gray-800 mb-2 md:mb-0 md:mr-4">
           Notifications

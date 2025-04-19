@@ -4,13 +4,14 @@ import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useAuth } from "@/context/AuthContext";
 
 interface FormData {
   firstName: string;
   lastName: string;
   email: string;
   username: string;
-  userRole: string;
+  userRole: "frontdesk" | "nurse" | "doctor" | "admin";
   phoneNumber: string;
   password: string;
   confirmPassword: string;
@@ -42,9 +43,20 @@ const SignupForm = () => {
   } = useForm<FormData>();
 
   // Submit handler with typed form data
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log("Form Data", data);
-    navigate("/auth/Verification");
+
+  const { signup } = useAuth();
+
+  const [signupError, setSignupError] = useState<string | null>(null);
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setSignupError(null);
+    try {
+      await signup(data);
+      navigate("/auth/Verification");
+    } catch (error: any) {
+      console.error("Signup failed", error);
+      setSignupError(error.message || "Signup failed. Please try again.");
+    }
   };
 
   const password = watch("password");
@@ -58,21 +70,23 @@ const SignupForm = () => {
   };
 
   // User roles for the dropdown
-  const userRoles = [
-    "Accounts Officer",
-    "Cashier",
-    "Clinician",
-    "Consultant",
-    "Diagnostics Officer",
-    "Director",
-    "Front Desk Officer",
-    "Health Maintenance Officer (HMO)",
-    "Human Resource Manager (HRM)",
-    "IT",
-    "Nursing Officer",
-    "Pharm Officer",
-    "Protocol Officer",
-  ];
+  const userRoles = ["frontdesk", "nurse", "doctor", "admin"];
+
+  // const userRoles = [
+  //   "Accounts Officer",
+  //   "Cashier",
+  //   "Clinician",
+  //   "Consultant",
+  //   "Diagnostics Officer",
+  //   "Director",
+  //   "frontdesk",
+  //   "Health Maintenance Officer (HMO)",
+  //   "Human Resource Manager (HRM)",
+  //   "IT",
+  //   "Nurse",
+  //   "Pharm Officer",
+  //   "Protocol Officer",
+  // ];
   const userDesignations = [
     "Accountant",
     "Admin",
@@ -476,6 +490,9 @@ const SignupForm = () => {
           </button>
         </div>
       </form>
+      {signupError && (
+        <p className="text-sm text-red-500 text-center">{signupError}</p>
+      )}
     </div>
   );
 };

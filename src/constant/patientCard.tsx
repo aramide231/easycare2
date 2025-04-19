@@ -1,15 +1,33 @@
 import { FaExpandArrowsAlt, FaArrowLeft } from "react-icons/fa";
 import clientimage from "../assets/image/haywhy.jpg";
+import { useNavigate } from "react-router-dom";
 
 interface PatientCardProps {
   patient: {
+    id: number;
     firstName: string;
     lastName: string;
     patientId: string;
+    phoneNumber: string;
+    lastSeen: string;
+    time: string;
+    gender: string;
+    age: number;
     bloodPressure: string;
   };
 }
+
 const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
+  const navigate = useNavigate();
+
+  console.log("Rendering patient card for", patient.firstName); // Add this
+
+  const handleViewProfile = () => {
+    navigate(`/nurse/patient-profile/${patient.patientId}`, {
+      state: { patient },
+    });
+  };
+
   return (
     <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-4">
       {/* Patient Image & Name */}
@@ -23,13 +41,16 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
           <h2 className="text-lg font-semibold">
             {patient.firstName} {patient.lastName}
           </h2>
-          <p className="text-gray-500 text-sm">ID: P-2025001</p>
+          <p className="text-gray-500 text-sm">ID: {patient.patientId}</p>
         </div>
       </div>
 
       {/* Buttons */}
       <div className="mt-3">
-        <button className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white py-2 px-3 rounded-lg font-medium shadow-md hover:bg-purple-700 transition">
+        <button
+          className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white py-2 px-3 rounded-lg font-medium shadow-md hover:bg-purple-700 transition"
+          onClick={handleViewProfile}
+        >
           <FaExpandArrowsAlt /> View Patient’s Info
         </button>
         <button className="w-full flex items-center justify-center gap-2 border border-purple-600 text-purple-600 py-2 px-3 rounded-lg font-medium shadow-sm hover:bg-purple-100 transition mt-2">
@@ -44,7 +65,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
       <div className="text-sm">
         <h3 className="text-purple-600 font-semibold">Prev. Vital Signs :</h3>
         <p>
-          <strong>Blood Pressure :</strong> 120/80{" "}
+          <strong>Blood Pressure :</strong> {patient.bloodPressure}{" "}
           <span className="italic">mmHg</span>
         </p>
         <p>

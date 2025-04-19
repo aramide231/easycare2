@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 // Define the form data structure
 interface FormData {
@@ -12,6 +13,7 @@ interface FormData {
 
 const Signin = () => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -20,9 +22,14 @@ const Signin = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log("Sign In Data", data);
-    navigate("dashboard");
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    const success = await signIn(data.username, data.password); // 👈 Call signIn
+
+    if (success) {
+      navigate("/nurse/dashboard"); // 👈 Only navigate if login is successful
+    } else {
+      alert("Invalid username or password"); // Or display an inline error
+    }
   };
 
   return (

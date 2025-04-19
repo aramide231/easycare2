@@ -210,9 +210,7 @@ const ManageAccess = () => {
 
   return (
     <div className="flex h-screen w-full ">
-      <Sidebar />
-      <main className="flex-1 p-6 ml-72">
-        <Topbar />
+      <main className="flex-1 p-6 ">
         <div className="flex justify-between items-center mb-4 mt-10">
           <Input
             type="text"
