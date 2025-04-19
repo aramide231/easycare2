@@ -1,5 +1,19 @@
 import { useState } from "react";
+import {
+  FaBaby,
+  FaBookReader,
+  FaLocationArrow,
+  FaMapPin,
+  FaMoneyBill,
+  FaPeopleCarry,
+  FaPiggyBank,
+  FaRecordVinyl,
+  FaRecycle,
+  FaSnowman,
+  FaUserFriends,
+} from "react-icons/fa";
 import { useParams, useLocation } from "react-router-dom";
+import SelectCategoryCard from "./components/SelectCategoryCard";
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -7,17 +21,83 @@ const PatientProfile = () => {
   const patient = location.state?.patient;
 
   const [step, setStep] = useState<number>(1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   if (!patient) {
     return <p className="text-red-500">Patient data not found.</p>;
   }
+
+  const categories = [
+    {
+      icon: FaBaby,
+      label: "Ante Natal Care",
+    },
+    {
+      icon: FaBaby,
+      label: "Child Birth",
+    },
+    {
+      icon: FaUserFriends,
+      label: "Family Planning",
+    },
+    {
+      icon: FaPeopleCarry,
+      label: "Immunization",
+    },
+    {
+      icon: FaRecycle,
+      label: "Gen Consult",
+    },
+    {
+      icon: FaBaby,
+      label: "Post Natal Care",
+    },
+    {
+      icon: FaSnowman,
+      label: "Specialist Consult",
+    },
+  ];
+
+  const FinaceCategories = [
+    {
+      icon: FaPiggyBank,
+      label: "Account Review",
+    },
+    {
+      icon: FaMoneyBill,
+      label: "Admission Bill",
+    },
+    {
+      icon: FaUserFriends,
+      label: "Claims Processor",
+    },
+    {
+      icon: FaBookReader,
+      label: "Invoice",
+    },
+    {
+      icon: FaRecordVinyl,
+      label: "Reciept",
+    },
+    {
+      icon: FaLocationArrow,
+      label: "Payment History",
+    },
+  ];
+
+  const DocumentCategories = [
+    {
+      icon: FaMapPin,
+      label: "Uploaded Files",
+    },
+  ];
 
   return (
     <div className="flex w-full gap-6 p-6 border rounded-xl shadow-md bg-white">
       {/* Left Side */}
       <div className="flex-1  pr-6 border-r">
         {/* Patient Image & Name */}
-        <div className="flex items-center gap-3 mb-6 border p-3 rounded-lg">
+        <div className="flex bg-purple-100 items-center gap-3 mb-6 border p-3 rounded-lg">
           <img
             src=""
             alt="Patient"
@@ -106,19 +186,106 @@ const PatientProfile = () => {
         {/* Step Content */}
         <div className="mt-6">
           {step === 1 && (
-            <h2 className="text-sm text-gray-400 mb-2">
-              Step 1 - Health Information
-            </h2>
+            <>
+              <h2 className="text-sm text-gray-400 mb-2">
+                Step 1 - Select category
+              </h2>
+              <div className=" flex flex-wrap gap-4">
+                {categories.map((item, index) => (
+                  <SelectCategoryCard
+                    key={index}
+                    icon={item.icon}
+                    label={item.label}
+                    selected={selectedCategory === item.label}
+                    onClick={() => setSelectedCategory(item.label)}
+                  />
+                ))}
+              </div>
+              <h2 className="text-sm text-gray-400 mb-2">
+                Step 2 - Fill Category Form
+              </h2>
+              <div className="relative flex flex-col h-[300px]">
+                {!selectedCategory && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-gray-400 text-sm px-4 text-center">
+                    <strong className="text-black">Text Field Goes Here</strong>
+                    <br />
+                    /Becomes Active when a category is clicked
+                  </div>
+                )}
+                <textarea
+                  className="w-full h-full resize-none border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-transparent"
+                  placeholder="Enter category-specific information here..."
+                />
+              </div>
+            </>
           )}
           {step === 2 && (
-            <h2 className="text-sm text-gray-400 mb-2">
-              Step 2 - Financial Information
-            </h2>
+            <>
+              <h2 className="text-sm text-gray-400 mb-2">
+                Step 1 - Financial Information
+              </h2>
+              <div className=" flex flex-wrap gap-4">
+                {FinaceCategories.map((item, index) => (
+                  <SelectCategoryCard
+                    key={index}
+                    icon={item.icon}
+                    label={item.label}
+                    selected={selectedCategory === item.label}
+                    onClick={() => setSelectedCategory(item.label)}
+                  />
+                ))}
+              </div>
+              <h2 className="text-sm text-gray-400 mb-2">
+                Step 2 - Fill Category Form
+              </h2>
+              <div className="relative flex flex-col h-[300px]">
+                {!selectedCategory && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-gray-400 text-sm px-4 text-center">
+                    <strong className="text-black">Text Field Goes Here</strong>
+                    <br />
+                    /Becomes Active when a category is clicked
+                  </div>
+                )}
+                <textarea
+                  className="w-full h-full resize-none border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-transparent"
+                  placeholder="Enter category-specific information here..."
+                />
+              </div>
+            </>
           )}
           {step === 3 && (
-            <h2 className="text-sm text-gray-400 mb-2">
-              Step 3 - Attach Documents
-            </h2>
+            <>
+              <h2 className="text-sm text-gray-400 mb-2">
+                Step 1 - Attached Documents
+              </h2>
+              <div className=" flex flex-wrap gap-4">
+                {DocumentCategories.map((item, index) => (
+                  <SelectCategoryCard
+                    key={index}
+                    icon={item.icon}
+                    label={item.label}
+                    selected={selectedCategory === item.label}
+                    onClick={() => setSelectedCategory(item.label)}
+                  />
+                ))}
+              </div>
+              <h2 className="text-sm text-gray-400 mb-2">
+                Step 2 - View Uploaded Files
+              </h2>
+              <div className="relative flex flex-col h-[300px]">
+                {!selectedCategory && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-gray-400 text-sm px-4 text-center">
+                    <strong className="text-black">Text Field Goes Here</strong>
+                    <br />
+                    /Becomes Active when a category is clicked
+                  </div>
+                )}
+                <textarea
+                  className="w-full h-full resize-none border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-transparent"
+                  placeholder="Enter category-specific information here..."
+                />
+              </div>
+            </>
           )}
         </div>
 
