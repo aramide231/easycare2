@@ -41,6 +41,8 @@ const Topbar = () => {
     "/frontdesk/child-birth",
     "/frontdesk/post-natal",
     "/frontdesk/family-planning",
+    "/nurse/notifications",
+    "/nurse/patient-profile/:id",
   ];
 
   const renderBreadcrumbs = () => {

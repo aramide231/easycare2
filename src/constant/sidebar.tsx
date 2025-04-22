@@ -117,11 +117,6 @@ const Sidebar = () => {
           icon: <FaTachometerAlt />,
           path: "/nurse/dashboard",
         },
-        {
-          name: "Patient Logs",
-          icon: <FaCalendarCheck />,
-          path: "/nurse/patients",
-        },
       ],
       patientManagement: [
         {
@@ -141,7 +136,7 @@ const Sidebar = () => {
           icon: <FaUserLock />,
           path: "/nurse/make-request",
         },
-        { name: "Set Reminder", icon: <FaBell />, path: "/frontdesk/reminder" },
+        { name: "Set Reminder", icon: <FaBell />, path: "/nurse/reminder" },
       ],
       reports: [
         { name: "Ante Natal", icon: <FaBaby />, path: "/nurse/ante-natal" },
