@@ -194,7 +194,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
     navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
   };
 
-  const handleFlagPatient = (patient: any) => {
+  const handleFlagPatient = (patient: Patient) => {
     const updatedPatients = patients.map((p) =>
       p.id === patient.id ? { ...p, flagged: !p.flagged } : p
     );

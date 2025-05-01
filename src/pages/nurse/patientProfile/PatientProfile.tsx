@@ -12,30 +12,23 @@ import {
   FaSnowman,
   FaUserFriends,
 } from "react-icons/fa";
-import { useParams, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import SelectCategoryCard from "./components/SelectCategoryCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import ExpandedCategoryTable from "./components/ExpandedCategoryTable";
 
 const PatientProfile = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
   const location = useLocation();
   const patient = location.state?.patient;
 
   const [step, setStep] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [expandedCategory, setExpandedCategory] =
+    useState<CategoryLabel | null>(null);
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [savedData, setSavedData] = useState<Record<string, string>[]>([]);
-
-  const toggleCategory = (label) => {
-    setExpandedCategory((prev) => (prev === label ? null : label));
-  };
-
-  if (!patient) {
-    return <p className="text-red-500">Patient data not found.</p>;
-  }
 
   const categories = [
     {
@@ -67,6 +60,16 @@ const PatientProfile = () => {
       label: "Specialist Consult",
     },
   ];
+
+  type CategoryLabel = (typeof categories)[number]["label"];
+
+  const toggleCategory = (label: CategoryLabel) => {
+    setExpandedCategory((prev) => (prev === label ? null : label));
+  };
+
+  if (!patient) {
+    return <p className="text-red-500">Patient data not found.</p>;
+  }
 
   const FinaceCategories = [
     {
@@ -327,7 +330,7 @@ const PatientProfile = () => {
                             }`}
                           >
                             {/* Tab-like label sitting on the border */}
-                            <span className="absolute -bottom-[2px] left-4 bg-purple-400 text-white w-[300px] rounded-t-md px-4 py-2 z-10 text-sm shadow-md">
+                            <span className="absolute -bottom-[2px] left-1 bg-purple-400 text-white w-[300px] rounded-t-md px-4 py-2 z-10 text-sm shadow-md">
                               {cat.label}
                             </span>
 

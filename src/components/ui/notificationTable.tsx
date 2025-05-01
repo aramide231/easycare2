@@ -18,9 +18,8 @@ type Patient = {
 
 const NotificationTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
-    null
-  );
+  const [selectedPatientId] = useState<number | null>(null); // omit setter
+
   const [patients, setPatients] = useState<Patient[]>([
     {
       id: 1,

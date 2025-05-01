@@ -1,7 +1,4 @@
 // components/PresentingComplaintsTable.tsx
-
-import React from "react";
-
 type expandedCategoryTableProps = {
   title: string;
   columns: string[];
