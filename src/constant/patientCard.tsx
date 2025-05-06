@@ -1,6 +1,7 @@
 import { FaExpandArrowsAlt, FaArrowLeft } from "react-icons/fa";
 import clientimage from "../assets/image/haywhy.jpg";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 interface PatientCardProps {
   patient: {
@@ -18,12 +19,14 @@ interface PatientCardProps {
 }
 
 const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   console.log("Rendering patient card for", patient.firstName); // Add this
 
   const handleViewProfile = () => {
-    navigate(`/nurse/patient-profile/${patient.patientId}`, {
+    const role = user?.userRole?.toLowerCase() || "nurse"; // fallback if role is undefined
+    navigate(`/${role}/patient-profile/${patient.patientId}`, {
       state: { patient },
     });
   };

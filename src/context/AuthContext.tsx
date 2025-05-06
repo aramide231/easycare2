@@ -8,7 +8,7 @@ import {
 
 interface User {
   fullName: string;
-  userRole: "frontdesk" | "nurse" | "doctor" | "admin";
+  userRole: string;
 }
 
 interface SignupData {
@@ -16,7 +16,7 @@ interface SignupData {
   lastName: string;
   email: string;
   username: string;
-  userRole: "frontdesk" | "nurse" | "doctor" | "admin";
+  userRole: string;
   phoneNumber: string;
   password: string;
   confirmPassword: string;

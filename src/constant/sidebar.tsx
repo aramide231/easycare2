@@ -173,10 +173,78 @@ const Sidebar = () => {
         },
       ],
     },
+
+    doctor: {
+      mainMenu: [
+        {
+          name: "Dashboard",
+          icon: <FaTachometerAlt />,
+          path: "/nurse/dashboard",
+        },
+      ],
+      patientManagement: [
+        {
+          name: "Admission",
+          icon: <FaHospital />,
+          path: "/nurse/admission",
+        },
+        {
+          name: "Discharge",
+          icon: <FaHome />,
+          path: "/nurse/discharge",
+        },
+      ],
+      performActions: [
+        {
+          name: "Make Request",
+          icon: <FaUserLock />,
+          path: "/nurse/make-request",
+        },
+        { name: "Set Reminder", icon: <FaBell />, path: "/nurse/reminder" },
+      ],
+      reports: [
+        { name: "Ante Natal", icon: <FaBaby />, path: "/nurse/ante-natal" },
+        { name: "Child Birth", icon: <FaChild />, path: "/nurse/child-birth" },
+        {
+          name: "Dispensed Drugs",
+          icon: <FaTablets />,
+          path: "/nurse/dispensed-drugs",
+        },
+        {
+          name: "Immunization",
+          icon: <FaSyringe />,
+          path: "/nurse/immunization",
+        },
+        {
+          name: "Report Writing",
+          icon: <FaBook />,
+          path: "/nurse/report-writing",
+        },
+        {
+          name: "Requisition",
+          icon: <FaUserPlus />,
+          path: "/nurse/requisition",
+        },
+        {
+          name: "Family Planning",
+          icon: <FaUsers />,
+          path: "/nurse/family-planning",
+        },
+        {
+          name: "Post Natal",
+          icon: <FaUsers />,
+          path: "/nurse/post-natal",
+        },
+      ],
+    },
+
     // Add more roles as needed
   };
 
-  const routesForUser = roleBasedRoutes[user?.userRole] || {};
+  const routesForUser =
+    user?.userRole && roleBasedRoutes[user.userRole]
+      ? roleBasedRoutes[user.userRole]
+      : {};
 
   return (
     <div className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-300 p-5 flex flex-col shadow-md">

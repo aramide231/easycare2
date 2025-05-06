@@ -27,12 +27,14 @@ import FamilyPlanning from "@/pages/frontdesk/family-planning/FamilyPlanning";
 
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboardNurse/Dashboard";
+import PatientProfile from "@/pages/nurse/patientProfile/PatientProfile";
 
 // import doctors component
 import DoctorDashboard from "@/pages/doctor/dashboard/DoctorDashboard";
+import DoctorNotification from "@/pages/doctor/notifications/DoctorNotifications";
+
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
-import PatientProfile from "@/pages/nurse/patientProfile/PatientProfile";
 
 const RoleBasedRoutes = () => {
   const { user } = useAuth();
@@ -77,7 +79,8 @@ const RoleBasedRoutes = () => {
       {user && user.userRole === "doctor" && (
         <Route path="/doctor" element={<DoctorLayout />}>
           <Route index element={<DoctorDashboard />} />
-          <Route path="consultations" element={<div>Consultation Page</div>} />
+          <Route path="notifications-doctor" element={<DoctorNotification />} />
+          <Route path="patient-profile/:id" element={<PatientProfile />} />
         </Route>
       )}
 

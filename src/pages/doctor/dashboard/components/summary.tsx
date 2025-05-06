@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const DashboardSummaryForAll = () => {
+const DashboardSummary = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,41 +67,12 @@ const DashboardSummaryForAll = () => {
     },
   ];
 
-  const summaryItemsDoctor = [
-    {
-      title: "Out Patients",
-      count: "50 new patients",
-      icon: <FaUserCheck size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
-      textColor: "text-white",
-      path: "/doctor/registration",
-    },
-    {
-      title: "In Patient",
-      count: "10 patients",
-      icon: <FaHospitalUser size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-blue-500 to-indigo-600",
-      textColor: "text-white",
-      path: "/doctor/visitation-log",
-    },
-    {
-      title: "Notifications",
-      count: "5 new notification",
-      icon: <FaBell size={24} className="text-orange-500" />,
-      bgColor: "bg-orange-100 border border-orange-500",
-      textColor: "text-gray-700",
-      path: "/doctor/notifications-doctor",
-    },
-  ];
+  const isNurseOrDoctorRoute =
+    location.pathname.startsWith("/nurse") ||
+    location.pathname.startsWith("/doctor");
 
-  const isNurseRoute = location.pathname.startsWith("/nurse");
-
-  const isDoctorRoute = location.pathname.startsWith("/doctor");
-
-  const activeSummaryItems = isNurseRoute
+  const activeSummaryItems = isNurseOrDoctorRoute
     ? summaryItemsNurse
-    : isDoctorRoute
-    ? summaryItemsDoctor
     : summaryItems;
 
   const handleItemClick = (path: string) => {
@@ -139,4 +110,4 @@ const DashboardSummaryForAll = () => {
   );
 };
 
-export default DashboardSummaryForAll;
+export default DashboardSummary;
