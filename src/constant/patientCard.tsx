@@ -32,7 +32,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+    <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-4 max-h-sm flex flex-col flex-1">
       {/* Patient Image & Name */}
       <div className="flex items-center gap-3">
         <img
@@ -65,7 +65,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
       <hr className="my-3" />
 
       {/* Vital Signs */}
-      <div className="text-sm">
+      <div className="text-sm flex flex-col space-y-3">
         <h3 className="text-purple-600 font-semibold">Prev. Vital Signs :</h3>
         <p>
           <strong>Blood Pressure :</strong> {patient.bloodPressure}{" "}
@@ -81,7 +81,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
       </div>
 
       {/* Contact Info */}
-      <div className="text-sm mt-3">
+      <div className="text-sm mt-3 flex flex-col space-y-3">
         <h3 className="text-blue-600 font-semibold">Contact :</h3>
         <p>
           <strong>Gender :</strong> Male

@@ -393,47 +393,49 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     {patient.staffName}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div
-                      className="relative"
-                      ref={showOptions === patient.id ? dropdownRef : null}
-                    >
-                      <button
-                        className="text-gray-500"
-                        onClick={() =>
-                          setShowOptions(
-                            patient.id === showOptions ? null : patient.id
-                          )
-                        }
+                  {isVisitationPage && (
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div
+                        className="relative"
+                        ref={showOptions === patient.id ? dropdownRef : null}
                       >
-                        <HiOutlineDotsVertical size={20} />
-                      </button>
-                      {showOptions === patient.id && (
-                        <div className="absolute right-0 flex flex-col mt-2 bg-white border shadow-lg rounded-lg w-48 z-10">
-                          <button
-                            className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                            onClick={() => handleEditPatient(patient)}
-                          >
-                            Edit Profile
-                          </button>
-                          <button
-                            className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                            onClick={() => handleFlagPatient(patient)}
-                          >
-                            {patient.flagged
-                              ? "Unflag Profile"
-                              : "Flag Profile"}
-                          </button>
-                          <button
-                            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                            onClick={() => setShowSendModal(true)}
-                          >
-                            Send Profile
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+                        <button
+                          className="text-gray-500"
+                          onClick={() =>
+                            setShowOptions(
+                              patient.id === showOptions ? null : patient.id
+                            )
+                          }
+                        >
+                          <HiOutlineDotsVertical size={20} />
+                        </button>
+                        {showOptions === patient.id && (
+                          <div className="absolute right-0 flex flex-col mt-2 bg-white border shadow-lg rounded-lg w-48 z-10">
+                            <button
+                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleEditPatient(patient)}
+                            >
+                              Edit Profile
+                            </button>
+                            <button
+                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleFlagPatient(patient)}
+                            >
+                              {patient.flagged
+                                ? "Unflag Profile"
+                                : "Flag Profile"}
+                            </button>
+                            <button
+                              className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => setShowSendModal(true)}
+                            >
+                              Send Profile
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (

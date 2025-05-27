@@ -12,7 +12,7 @@ const NurseLayout = () => {
       <main className="flex-1 p-6 ml-72">
         <Topbar />
 
-        <div className="flex gap-6 mt-6">
+        <div className="flex gap-6 ">
           <Outlet />
         </div>
       </main>

@@ -34,7 +34,7 @@ const DoctorDashboard = () => {
       </div>
 
       <div className="flex-[1]">
-        <CustomCalendar />
+        <CustomCalendar width="100%" height="250px" />
         {selectedPatient && <PatientCard patient={selectedPatient} />}
       </div>
     </div>

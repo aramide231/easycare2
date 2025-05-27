@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
 
 type PatientData = {
   firstName?: string;
@@ -32,6 +33,7 @@ type PatientFormProps = {
 };
 
 const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
+  const { creationOfPatient } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isEditMode = location.pathname.includes("/edit");
@@ -88,8 +90,18 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
     e: FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-    console.log("Form data submitted:", formData);
-    setIsSubmitted(true);
+
+    // Get current patients from localStorage
+    const storedPatients = JSON.parse(localStorage.getItem("patients") || "[]");
+
+    // Append new patient
+    const updatedPatients = [...storedPatients, formData];
+
+    // Save back to localStorage
+    localStorage.setItem("patients", JSON.stringify(updatedPatients));
+
+    // Navigate
+    navigate("/frontdesk");
   };
 
   return (

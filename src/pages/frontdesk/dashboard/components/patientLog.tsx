@@ -190,6 +190,20 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
     }
   };
 
+  useEffect(() => {
+    console.log("Location state:", location.state);
+    const newPatient = location.state?.newPatient;
+
+    if (newPatient) {
+      const exists = patients.some((p) => p.patientId === newPatient.patientId);
+      if (!exists) {
+        setPatients((prevPatients) => [...prevPatients, newPatient]);
+      }
+
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
+
   const handleEditPatient = (patient: Patient) => {
     navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
   };
@@ -293,7 +307,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full mx-auto">
       <Toast message={toastMessage} />
 
       <div className="flex flex-col md:flex-row md:items-center  mb-6 md:space-x-0">

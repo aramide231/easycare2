@@ -27,14 +27,14 @@ const NurseDashboard = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   return (
-    <div className="flex gap-6 mt-6">
+    <div className="flex gap-6 ">
       <div className="flex-[3]">
         <DashboardSummary />
         <PatientsLog onSelectPatient={setSelectedPatient} />
       </div>
 
       <div className="flex-[1]">
-        <CustomCalendar />
+        <CustomCalendar width="100%" height="250px" />
         {selectedPatient && <PatientCard patient={selectedPatient} />}
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { PatientData } from "@/types/patient";
 import {
   createContext,
   useContext,
@@ -26,27 +27,53 @@ interface SignupData {
   userGender: string;
 }
 
+interface PatientProps {
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  email?: string;
+  phone?: string;
+  maritalStatus?: string;
+  dob?: string;
+  age?: string;
+  religion?: string;
+  picture?: File | null;
+  patientType?: string;
+  insuranceProvider?: string;
+  insuranceGroupNumber?: string;
+  patientId?: string;
+  insurancePolicyNumber?: string;
+  employerName?: string;
+  treatmentGuide?: string;
+  planType?: string;
+  eligibility?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelationship?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signup: (data: SignupData) => Promise<void>;
   signIn: (username: string, password: string) => Promise<boolean>;
   signOut: () => void;
+  creationOfPatient: (patient: PatientProps) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true, // Initially set loading to true
+  loading: true,
   signup: async () => {},
   signIn: async () => false,
   signOut: () => {},
+  creationOfPatient: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // Loading state to track auth state check
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Load user from localStorage on mount
   useEffect(() => {
     const checkAuth = async () => {
       const storedUser = localStorage.getItem("mockUser");
@@ -55,13 +82,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const parsed = JSON.parse(storedUser);
         if (parsed.name && parsed.userRole) {
           setUser({
-            fullName: parsed.fullName,
+            fullName: parsed.name,
             userRole: parsed.userRole || "frontdesk",
           });
         }
       }
 
-      setLoading(false); // Done loading the auth data
+      setLoading(false);
     };
 
     checkAuth();
@@ -69,22 +96,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (data: SignupData) => {
     const fullName = `${data.firstName} ${data.lastName}`;
-
-    console.log("Mock signup data:", data);
-
     localStorage.setItem(
       "mockUser",
       JSON.stringify({
         ...data,
-        name: fullName, // Add full name for later use
+        name: fullName,
       })
     );
 
     setUser({
-      fullName: fullName,
+      fullName,
       userRole: data.userRole,
     });
-    await new Promise<void>((resolve) => setTimeout(resolve, 1000)); // Simulate async delay
+
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
   };
 
   const signIn = async (
@@ -108,8 +133,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  const creationOfPatient = (data: PatientData) => {
+    const stored = JSON.parse(localStorage.getItem("patients") || "[]");
+    const updated = [...stored, data];
+    localStorage.setItem("patients", JSON.stringify(updated));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signup, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user, loading, signup, signIn, signOut, creationOfPatient }}
+    >
       {children}
     </AuthContext.Provider>
   );

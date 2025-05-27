@@ -261,7 +261,10 @@ const Sidebar = () => {
       </div>
 
       {/* Scrollable Sidebar Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div
+        className="flex-1 overflow-y-auto hide-scrollbar"
+        style={{ scrollBehavior: "smooth" }}
+      >
         {(
           [
             "mainMenu",
