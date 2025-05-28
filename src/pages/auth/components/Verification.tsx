@@ -36,7 +36,7 @@ const Verification = () => {
   };
 
   const onSubmit = () => {
-    navigate("/dashboard");
+    navigate("/frontdesk");
   };
 
   return (

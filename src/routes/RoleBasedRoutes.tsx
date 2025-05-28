@@ -35,6 +35,8 @@ import DoctorNotification from "@/pages/doctor/notifications/DoctorNotifications
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
+import Verification from "@/pages/auth/components/Verification";
+import ForgotPassword from "@/pages/auth/components/ForgotPassword";
 
 const RoleBasedRoutes = () => {
   const { user } = useAuth();
@@ -43,6 +45,8 @@ const RoleBasedRoutes = () => {
     <Routes>
       {/* sign up and sign in page */}
       <Route path="/" element={<AuthenticationPage />} />
+      <Route path="/auth/verification" element={<Verification />} />
+      <Route path="/forgotpassword" element={<ForgotPassword />} />
 
       {/* Frontdesk */}
       {user && user.userRole === "frontdesk" && (
