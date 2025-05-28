@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Icon } from "@iconify/react";
@@ -280,9 +278,7 @@ const SignupForm = () => {
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 defaultValue=""
               >
-                <option value="">
-                  Select Gender
-                </option>
+                <option value="">Select Gender</option>
                 {userGender.map((gender) => (
                   <option key={gender} value={gender}>
                     {gender}
@@ -290,7 +286,9 @@ const SignupForm = () => {
                 ))}
               </select>
               {errors.userGender && (
-                <span className="text-red-500">{errors.userGender.message}</span>
+                <span className="text-red-500">
+                  {errors.userGender.message}
+                </span>
               )}
             </div>
           </div>
@@ -319,9 +317,7 @@ const SignupForm = () => {
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 defaultValue=""
               >
-                <option value="">
-                  Select Designation
-                </option>
+                <option value="">Select Designation</option>
                 {userDesignations.map((designation) => (
                   <option key={designation} value={designation}>
                     {designation}
@@ -336,173 +332,176 @@ const SignupForm = () => {
             </div>
           </div>
         </div>
-    
-  
-<div className="flex gap-4">
-  {/* User Role */}
-  <div className="w-1/2">
-    <label
-      htmlFor="userRole"
-      className="block text-sm font-medium text-gray-700"
-    >
-    User Role
-    </label>
-    <div className="relative mt-1">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Icon
-          icon="iconamoon:profile-thin"
-          width="24"
-          height="24"
-          className="text-gray-400"
-        />
-      </div>
-      <select
-        id="userRole"
-        {...register("userRole", { required: "User Role is required" })}
-        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        defaultValue=""
-      >
-        <option value="">Select your role</option>
-        {userRoles.map((role) => (
-          <option key={role} value={role}>
-            {role.charAt(0).toUpperCase() + role.slice(1)}
-          </option>
-        ))}
-      </select>
-      {errors.userRole && (
-        <span className="text-red-500">{errors.userRole.message}</span>
-      )}
-    </div>
-  </div>
 
-  {/* Phone Number */}
-  <div className="w-1/2">
-    <label
-      htmlFor="phoneNumber"
-      className="block text-sm font-medium text-gray-700"
-    >
-      Phone Number
-    </label>
-    <PhoneInput
-      country={"ng"}
-      value={watch("phoneNumber")}
-      onChange={handlePhoneChange}
-      inputProps={{
-        name: "phoneNumber",
-        required: true,
-        className:
-          "block w-full pl-14 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
-      }}
-    />
-    {errors.phoneNumber && (
-      <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>
-    )}
-  </div>
-</div>
+        <div className="flex gap-4">
+          {/* User Role */}
+          <div className="w-1/2">
+            <label
+              htmlFor="userRole"
+              className="block text-sm font-medium text-gray-700"
+            >
+              User Role
+            </label>
+            <div className="relative mt-1">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Icon
+                  icon="iconamoon:profile-thin"
+                  width="24"
+                  height="24"
+                  className="text-gray-400"
+                />
+              </div>
+              <select
+                id="userRole"
+                {...register("userRole", { required: "User Role is required" })}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                defaultValue=""
+              >
+                <option value="">Select your role</option>
+                {userRoles.map((role) => (
+                  <option key={role} value={role}>
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </option>
+                ))}
+              </select>
+              {errors.userRole && (
+                <span className="text-red-500">{errors.userRole.message}</span>
+              )}
+            </div>
+          </div>
 
-
-    {/* Password and Confirm Password */}
-    <div className="flex gap-4">
-      {/* Password */}
-      <div className="w-1/2">
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Password
-        </label>
-        <div className="relative mt-1">
-          <input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            {...register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
-            className="block w-full pr-10 py-2 pl-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <div
-            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            <Icon
-              icon={showPassword ? "mdi:eye-off" : "mdi:eye"}
-              width="24"
-              height="24"
-              className="text-gray-400"
+          {/* Phone Number */}
+          <div className="w-1/2">
+            <label
+              htmlFor="phoneNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Phone Number
+            </label>
+            <PhoneInput
+              country={"ng"}
+              value={watch("phoneNumber")}
+              onChange={handlePhoneChange}
+              inputProps={{
+                name: "phoneNumber",
+                required: true,
+                className:
+                  "block w-full pl-14 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+              }}
             />
+            {errors.phoneNumber && (
+              <p className="text-sm text-red-500">
+                {errors.phoneNumber.message}
+              </p>
+            )}
           </div>
         </div>
-        {errors.password && (
-          <p className="text-sm text-red-500">{errors.password.message}</p>
-        )}
-      </div>
 
-      {/* Confirm Password */}
-      <div className="w-1/2">
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Confirm Password
-        </label>
-        <div className="relative mt-1">
-          <input
-            id="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
-            {...register("confirmPassword", {
-              required: "Please confirm your password",
-              validate: (value) =>
-                value === password || "Passwords do not match",
-            })}
-            className="block w-full pr-10 py-2 pl-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <div
-            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          >
-            <Icon
-              icon={showConfirmPassword ? "mdi:eye-off" : "mdi:eye"}
-              width="24"
-              height="24"
-              className="text-gray-400"
-            />
+        {/* Password and Confirm Password */}
+        <div className="flex gap-4">
+          {/* Password */}
+          <div className="w-1/2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <div className="relative mt-1">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                })}
+                className="block w-full pr-10 py-2 pl-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <Icon
+                  icon={showPassword ? "mdi:eye-off" : "mdi:eye"}
+                  width="24"
+                  height="24"
+                  className="text-gray-400"
+                />
+              </div>
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="w-1/2">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Confirm Password
+            </label>
+            <div className="relative mt-1">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                {...register("confirmPassword", {
+                  required: "Please confirm your password",
+                  validate: (value) =>
+                    value === password || "Passwords do not match",
+                })}
+                className="block w-full pr-10 py-2 pl-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Icon
+                  icon={showConfirmPassword ? "mdi:eye-off" : "mdi:eye"}
+                  width="24"
+                  height="24"
+                  className="text-gray-400"
+                />
+              </div>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-500">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
         </div>
-        {errors.confirmPassword && (
-          <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+
+        {/* Terms and Conditions */}
+        <div className="flex items-center">
+          <input
+            id="agreeTerms"
+            type="checkbox"
+            {...register("agreeTerms", {
+              required:
+                "You must agree to the terms and conditions of EasyCare & St. James Hospital.",
+            })}
+            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="agreeTerms"
+            className="ml-2 block text-sm text-gray-900"
+          >
+            I agree to the Terms & Conditions of EasyCare & St. James Hospital.
+          </label>
+        </div>
+        {errors.agreeTerms && (
+          <p className="text-sm text-red-500">{errors.agreeTerms.message}</p>
         )}
-      </div>
-    </div>
 
-    {/* Terms and Conditions */}
-    <div className="flex items-center">
-      <input
-        id="agreeTerms"
-        type="checkbox"
-        {...register("agreeTerms", {
-          required: "You must agree to the terms and conditions of EasyCare & St. James Hospital.",
-        })}
-        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-      />
-      <label
-        htmlFor="agreeTerms"
-        className="ml-2 block text-sm text-gray-900"
-      >
-      I agree to the Terms & Conditions of EasyCare & St. James Hospital.
-      </label>
-    </div>
-    {errors.agreeTerms && (
-      <p className="text-sm text-red-500">{errors.agreeTerms.message}</p>
-    )}
+        {/* Error message */}
+        {signupError && <p className="text-sm text-red-500">{signupError}</p>}
 
-    {/* Error message */}
-    {signupError && <p className="text-sm text-red-500">{signupError}</p>}
-
-    {/* <button
+        {/* <button
       type="submit"
       className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
     >
@@ -515,22 +514,21 @@ const SignupForm = () => {
                  />
                </span>
     </button> */}
-    <button
-  type="submit"
-  className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
->
-  <div className="flex justify-center items-center gap-2">
-    Register
-    <Icon
-      icon="material-symbols-light:arrow-forward-rounded"
-      width="24"
-      height="24"
-    />
-  </div>
-</button>
-
-  </form>
-</div>
-);
-}; 
-export  default SignupForm;
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+        >
+          <div className="flex justify-center items-center gap-2">
+            Register
+            <Icon
+              icon="material-symbols-light:arrow-forward-rounded"
+              width="24"
+              height="24"
+            />
+          </div>
+        </button>
+      </form>
+    </div>
+  );
+};
+export default SignupForm;
