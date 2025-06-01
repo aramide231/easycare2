@@ -38,6 +38,7 @@ import AuthenticationPage from "@/pages/auth/AuthenticationPage";
 import Verification from "@/pages/auth/components/Verification";
 import ForgotPassword from "@/pages/auth/components/ForgotPassword";
 
+
 const RoleBasedRoutes = () => {
   const { user } = useAuth();
 
@@ -47,6 +48,8 @@ const RoleBasedRoutes = () => {
       <Route path="/" element={<AuthenticationPage />} />
       <Route path="/auth/verification" element={<Verification />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+
+     
 
       {/* Frontdesk */}
       {user && user.userRole === "frontdesk" && (
