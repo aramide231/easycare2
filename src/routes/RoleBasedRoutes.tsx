@@ -47,7 +47,7 @@ const RoleBasedRoutes = () => {
       {/* sign up and sign in page */}
       <Route path="/" element={<AuthenticationPage />} />
       <Route path="/auth/verification" element={<Verification />} />
-      <Route path="/forgotpassword" element={<ForgotPassword />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
      
 
