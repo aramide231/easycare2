@@ -94,14 +94,15 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
     // Get current patients from localStorage
     const storedPatients = JSON.parse(localStorage.getItem("patients") || "[]");
 
-    // Append new patient
+    // // Append new patient
     const updatedPatients = [...storedPatients, formData];
 
-    // Save back to localStorage
+    // // Save back to localStorage
     localStorage.setItem("patients", JSON.stringify(updatedPatients));
 
-    // Navigate
-    navigate("/frontdesk");
+
+ setIsSubmitted(true)
+
   };
 
   return (
@@ -145,7 +146,6 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
           }
         )}
       </div>
-
       {!isSubmitted ? (
         <>
           {step === 1 && (

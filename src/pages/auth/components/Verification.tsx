@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+ import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,27 +12,32 @@ const Verification = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [isVerified, setIsVerified] = useState(false);
   const navigate = useNavigate();
+  
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
     const value = e.target.value;
-    if (!/^\d*$/.test(value)) return; // Only allow numbers
+    if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Focus next input
-    if (value && e.target.nextElementSibling) {
-      (e.target.nextElementSibling as HTMLInputElement).focus();
+    // Move focus to next input if value entered and not last input
+    if (value && index < 5 && inputRefs.current[index + 1]) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleVerify = () => {
-    if (otp.join("").length === 6) {
-      setIsVerified(true); // Show success message
+    const enteredOtp = otp.join("");
+    if (enteredOtp.length === 6) {
+      setIsVerified(true);
+    } else {
+      alert("Please enter the full 6-digit code.");
     }
   };
 
@@ -39,22 +45,28 @@ const Verification = () => {
     navigate("/frontdesk");
   };
 
+  // Auto-redirect after successful verification (3 seconds delay)
+  useEffect(() => {
+    if (isVerified) {
+      const timer = setTimeout(() => {
+        navigate("/frontdesk");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isVerified, navigate]);
+
   return (
     <div className="flex w-10/12 m-auto min-h-screen p-12">
       <div className="flex w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Left Section */}
         <div className="w-1/2 p-12 bg-purple-100 flex flex-col">
-          <img src={Logo} className="text-purple-800 w-[120px]" />
+          <img src={Logo} alt="Logo" className="text-purple-800 w-[120px]" />
           <p className="text-gray-700 text-lg mt-2">
             Powering hospitals with seamless patient management from check-in to{" "}
             <br />
             prescriptions all in one place.
           </p>
-          {/* <img
-            src={ImageScreen}
-            alt="Healthcare"
-            className="mt-12 rounded-lg"
-          /> */}
           <ImageCarousel />
         </div>
 
@@ -63,9 +75,9 @@ const Verification = () => {
           <Card className="w-full shadow-none border-none">
             <div className="flex gap-3">
               <div className="icon-imag">
-                <img src={hospitalIcon} alt="" />
+                <img src={hospitalIcon} alt="Hospital Icon" />
               </div>
-              <div className="">
+              <div>
                 <h4 className="text-lg font-bold">St James Hospital</h4>
                 <p className="text-sm">
                   Optimize Patient Care with St. James—Sign Up in Minutes
@@ -75,13 +87,14 @@ const Verification = () => {
 
             <div className="mt-10">
               {isVerified ? (
-                // Success Message
                 <div className="text-center">
                   <h3 className="text-2xl font-bold text-gray-800">
                     Account Created Successfully
                   </h3>
                   <p className="text-gray-500 mb-10">
                     You can now access your dashboard and manage patient care.
+                    <br />
+                    Redirecting...
                   </p>
                   <div className="flex justify-center">
                     <Button
@@ -93,7 +106,6 @@ const Verification = () => {
                   </div>
                 </div>
               ) : (
-                // OTP Input Form
                 <>
                   <h3 className="text-lg font-semibold text-gray-800">
                     Two-Factor Authentication
@@ -113,6 +125,7 @@ const Verification = () => {
                         value={digit}
                         onChange={(e) => handleChange(e, index)}
                         onFocus={(e) => e.target.select()}
+                        ref={(el) => (inputRefs.current[index] = el)}
                       />
                     ))}
                   </div>
@@ -126,9 +139,12 @@ const Verification = () => {
                     </Button>
                   </div>
 
-                  <p className="text-sm text-center text-gray-500">
+                  <p className="text-sm text-center text-gray-500 mt-4">
                     Didn't receive the code?{" "}
-                    <button className="text-[#573fd1] hover:underline">
+                    <button
+                      className="text-[#573fd1] hover:underline"
+                      onClick={() => alert("Resend code triggered")}
+                    >
                       Resend
                     </button>
                   </p>

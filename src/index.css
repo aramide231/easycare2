@@ -56,6 +56,7 @@
     --chart-5: 27 87% 67%;
 
     --radius: 0.5rem;
+ 
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -139,6 +140,9 @@
 /* added this css style because of the calendar */
 body {
   font-family: "Inter", sans-serif;
+
+
+
 }
 .react-calendar {
   width: 100% !important;

@@ -132,7 +132,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 interface FormData {
-  identifier: string; // username or email
+  email: string; // username or email
   password: string;
 }
 
@@ -148,7 +148,7 @@ const Signin = () => {
   } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const success = await signIn(data.identifier, data.password);
+    const success = await signIn(data.email, data.password);
 
     if (success) {
       navigate("/nurse/dashboard");
@@ -163,7 +163,7 @@ const Signin = () => {
         <h4 className="text-[20px] font-bold">
           Log in to your hospital’s dashboard
         </h4>
-        <p className="text-sm">Enter your username or email and password to continue</p>
+        <p className="text-sm text-gray-500">Enter your username or email and password to continue</p>
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -184,7 +184,7 @@ const Signin = () => {
             <input
               id="identifier"
               type="text"
-              {...register("identifier", {
+              {...register("email", {
                 required: "Username or email is required",
                 minLength: {
                   value: 3,
@@ -193,9 +193,9 @@ const Signin = () => {
               })}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
-            {errors.identifier && (
+            {errors.email && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.identifier.message}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -248,7 +248,7 @@ const Signin = () => {
         </div>
 
         {/* Forgot Password */}
-        <Link to="/forgot-password" className="text-sm text-[#573fd1] font-bold">
+        <Link to="/forgotpassword" className="text-sm text-[#573fd1] font-bold">
           Forgot password?
         </Link>
 

@@ -34,8 +34,7 @@ const ForgotPassword = () => {
               <div className="">
                 <h4 className="text-lg font-bold">St James Hospital</h4>
                 <p className="text-sm">
-                  Let's reset your password. Enter your email address and we'll
-                  send you a link to reset your password.
+                  Let's reset your password.
                 </p>
               </div>
             </div>
@@ -54,3 +53,5 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
+
+

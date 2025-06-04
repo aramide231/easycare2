@@ -78,16 +78,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const checkAuth = async () => {
       const storedUser = localStorage.getItem("mockUser");
 
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        if (parsed.name && parsed.userRole) {
-          setUser({
-            fullName: parsed.name,
-            userRole: parsed.userRole || "frontdesk",
-          });
-        }
-      }
-
+      // if (storedUser) {
+      //   const parsed = JSON.parse(storedUser);
+      //   if (parsed.name && parsed.userRole) {
+      //     setUser({
+      //       fullName: parsed.name,
+      //       userRole: parsed.userRole || "frontdesk",
+      //     });
+      //   }
+      // }
+     console.log(storedUser)
       setLoading(false);
     };
 
@@ -113,14 +113,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signIn = async (
-    username: string,
+    email: string,
     password: string
   ): Promise<boolean> => {
     const stored = localStorage.getItem("mockUser");
     if (!stored) return false;
 
     const parsed = JSON.parse(stored);
-    if (parsed.email === username && parsed.password === password) {
+    if (parsed.email === email && parsed.password === password) {
       setUser({ fullName: parsed.name, userRole: parsed.userRole });
       return true;
     }

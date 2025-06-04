@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 import Logo from "@/assets/icon/Frame 121.svg";
@@ -10,10 +10,22 @@ import ImageCarousel from "@/components/ui/carousel";
 
 const AuthenticationPage = () => {
   const [activeTab, setActiveTab] = useState<"Signup" | "Signin">("Signup");
-  const { user, loading } = useAuth(); // Make sure your AuthContext provides `loading`
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Redirect once user is authenticated
+  // Switch to sign in tab if URL has ?tab=signin
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab === "signin") {
+      setActiveTab("Signin");
+    } else {
+      setActiveTab("Signup");
+    }
+  }, [location.search]);
+
+  // Redirect user after login based on role
   useEffect(() => {
     if (!loading && user) {
       switch (user.userRole) {
@@ -35,7 +47,6 @@ const AuthenticationPage = () => {
     }
   }, [user, loading, navigate]);
 
-  // Show loading while checking user
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
