@@ -68,12 +68,12 @@ const ManageCard = () => {
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-semibold text-lg">Manage Card</h3>
               <Select onValueChange={setSelectedOption} value={selectedOption}>
-                <SelectTrigger className="w-44 flex items-center justify-between">
+                <SelectTrigger className="w-44 flex items-center justify-between text-white bg-[#573FD1]">
                   <SelectValue placeholder="Convert Card" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="convert-card">Convert Card</SelectItem>
-                  <SelectItem value="merge-profile">Merge Profile</SelectItem>
+                  <SelectItem  value="merge-profile">Merge Profile</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -139,7 +139,7 @@ const ManageCard = () => {
             <div className="mt-6 text-center">
               <Button
                 className={`px-8 py-3 rounded ${
-                  isFormValid ? "bg-purple-600 text-white" : "bg-gray-600"
+                  isFormValid ? "bg-[#573FD1] text-white" : "bg-gray-600"
                 }`}
                 onClick={handleSubmit}
                 disabled={!isFormValid}
@@ -161,12 +161,12 @@ const ManageCard = () => {
             <Button
               variant="outline"
               onClick={() => setIsConvertDialogOpen(false)}
-              className="border-purple-600 text-purple-600 p-4"
+              className="border-[#573FD1] text-[#573FD1] p-4"
             >
               No
             </Button>
             <Button
-              className="bg-purple-600 text-white p-4"
+              className="bg-[#573FD1] text-white p-4"
               onClick={handleConfirmConvert}
             >
               Yes
@@ -185,12 +185,12 @@ const ManageCard = () => {
             <Button
               variant="outline"
               onClick={() => setIsMergeDialogOpen(false)}
-              className="border-purple-600 text-purple-600 p-4"
+              className="border-[#573FD1] text-[#573FD1] p-4"
             >
               No
             </Button>
             <Button
-              className="bg-purple-600 text-white p-4"
+              className="bg-[#573FD1] text-white p-4"
               onClick={handleConfirmMerge}
             >
               Yes
@@ -207,7 +207,7 @@ const ManageCard = () => {
             You have successfully converted this card!
           </p>
           <Button
-            className="bg-purple-600 text-white p-4"
+            className="bg-[#573FD1] text-white p-4"
             onClick={() => setIsConvertSuccess(false)}
           >
             Back to Dashboard

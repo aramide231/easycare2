@@ -54,7 +54,7 @@ const SetReminder = () => {
             <span className="font-semibold">{patientName}</span>
           </p>
           <button
-            className="bg-[#6c5ce7] text-white w-full py-4 rounded-lg"
+            className="bg-[#573FD1] text-white w-full py-4 rounded-lg"
             onClick={() => navigate("/dashboard")}
           >
             Back to Dashboard
@@ -137,13 +137,13 @@ const SetReminder = () => {
                 {/* Buttons Inside DatePicker */}
                 <div className="flex justify-between mt-3">
                   <button
-                    className="border border-purple-500 text-purple-500 px-4 py-2 rounded-lg w-1/2 mr-2"
+                    className="border border-[#573FD1] text-[#573FD1] px-4 py-2 rounded-lg w-1/2 mr-2"
                     onClick={() => setOpen(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="bg-purple-600 text-white px-4 py-2 rounded-lg w-1/2"
+                    className="bg-[#573FD1] text-white px-4 py-2 rounded-lg w-1/2"
                     onClick={() => {
                       if (date && time) {
                         const [hours, minutes] = time.split(":");
@@ -204,7 +204,7 @@ const SetReminder = () => {
         </div>
         <div className="mt-6 text-center">
           <Button
-            className="px-8 py-3 rounded bg-[#6c5ce7] text-white"
+            className="px-8 py-3 rounded bg-[#573FD1] text-white"
             type="submit"
           >
             Save Reminder

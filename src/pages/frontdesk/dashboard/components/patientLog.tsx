@@ -167,11 +167,11 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const getPatientTypeClass = (type: string) => {
     switch (type) {
       case "COMPANY":
-        return "bg-blue-100 text-blue-700";
+        return  "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-green-100 text-green-700";
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
       case "HMO":
-        return "bg-orange-100 text-orange-700";
+        return"bg-orange-100 text-[#FA7401] border border-[#FA7401]";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -180,13 +180,13 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const getVisitTypeClass = (type: string) => {
     switch (type) {
       case "GEN. CONSULT":
-        return "bg-indigo-100 text-indigo-700";
+        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "ANTE. NATAL":
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 text-green-700 border border-[#00C851]";
       case "POST NATAL":
-        return "bg-gray-100 text-gray-700";
+        return  "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
     }
   };
 

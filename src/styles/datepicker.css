@@ -6,7 +6,7 @@
 }
 
 .react-datepicker__day--selected {
-  background-color: #6b46c1 !important; /* Purple highlight */
+  background-color: #573FD1 !important; /* Purple highlight */
   color: white !important;
   border-radius: 50%;
 }
@@ -31,17 +31,18 @@
 }
 
 .custom-datepicker .react-datepicker__footer button:last-child {
-  background: #6b46c1; /* Schedule */
+  background:#573FD1; /* Schedule */
   color: white;
 }
 
 .react-time-picker:focus-within {
-  border-color: #6c5ce7;
+  border-color:#573FD1;
   box-shadow: 0 0 4px rgba(108, 92, 231, 0.5);
 }
 
 .react-time-picker__inputGroup__input:focus {
-  border-color: #6c5ce7;
+  border-color: #573FD1;
+;
   outline: none;
 }
 

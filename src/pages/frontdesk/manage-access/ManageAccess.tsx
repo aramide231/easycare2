@@ -423,11 +423,11 @@ const ManageAccess = () => {
                       variant="outline"
                       className={`px-2 py-1 border-2 ${
                         patient.patientType === "COMPANY"
-                          ? "border-purple-500 text-purple-500 bg-purple-100"
+                          ? "bg-blue-100 text-[#573FD1] border border-[#573FD1]"
                           : patient.patientType === "PRIVATE"
-                          ? "border-blue-700 text-blue-700 bg-blue-100"
+                          ? "bg-[#dbd9d9] text-[#103488]  border border-[#103488]"
                           : patient.patientType === "HMO"
-                          ? "border-orange-500 text-orange-500 bg-orange-100"
+                          ? "bg-orange-100 text-[#FA7401] border border-[#FA7401]"
                           : ""
                       }`}
                     >

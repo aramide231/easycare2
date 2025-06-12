@@ -151,18 +151,18 @@ const NotificationTable: React.FC = () => {
 
   const getPatientTypeClass = (type: string) => {
     const typeClasses: Record<string, string> = {
-      COMPANY: "bg-blue-100 text-blue-700",
-      PRIVATE: "bg-green-100 text-green-700",
-      HMO: "bg-orange-100 text-orange-700",
+      COMPANY: "bg-blue-100 text-[#573FD1] border border-[#573FD1]",
+      PRIVATE: "bg-[#dbd9d9] text-[#103488]  border border-[#103488]",
+      HMO: "bg-orange-100 text-[#FA7401] border border-[#FA7401]",
     };
     return typeClasses[type] || "bg-gray-100 text-gray-700";
   };
 
   const getVisitTypeClass = (type: string) => {
     const visitClasses: Record<string, string> = {
-      "GEN. CONSULT": "bg-indigo-100 text-indigo-700",
-      "ANTE. NATAL": "bg-green-100 text-green-700",
-      "POST NATAL": "bg-gray-100 text-gray-700",
+      "GEN. CONSULT": "bg-blue-100 text-[#573FD1] border border-[#573FD1]",
+      "ANTE. NATAL": "bg-green-100 text-green-700 border border-[#00C851]",
+      "POST NATAL": "bg-[#FDFDFD] text-[#626262] border border-[#626262]",
     };
     return visitClasses[type] || "bg-gray-100 text-gray-700";
   };

@@ -22,7 +22,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   return (
     <div className="flex flex-col items-center p-4">
       <div
-        className="border-2 border-blue-500 rounded-lg shadow-lg p-2 hide-scrollbar"
+        className="border-2 border-[#573FD1] rounded-lg shadow-lg p-2 hide-scrollbar"
         style={{
           width,
           height,

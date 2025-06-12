@@ -230,12 +230,11 @@ const PostRecord = () => {
   const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
     switch (type) {
       case "COMPANY":
+        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-blue-100 text-blue-700";
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
       case "HMO":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
     }
   };
 
@@ -243,11 +242,10 @@ const PostRecord = () => {
   const getCounsellingTypeClass = (type: "DONE" | "NOT DONE"): string => {
     switch (type) {
       case "DONE":
-        return "bg-[#e6faee] text-[#33d374] border-[#33d374]";
+        return "bg-[#e6faee] text-[#33d374]  border border-[#00C851]";
       case "NOT DONE":
-        return "bg-[#fff1e6] text-[#fa7401] border-[#fa7401]";
-      default:
-        return "bg-gray-200 text-gray-700 border-gray-500";
+        return "bg-[#FFF1E6] text-[#fa7401] border border-[#FA7401]";
+      
     }
   };
 
@@ -284,10 +282,10 @@ const PostRecord = () => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium"
+              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-full text-sm font-medium"
             >
               <svg
-                className="w-4 h-4 mr-2 text-purple-600"
+                className="w-4 h-4 mr-2 text-[#573FD1]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -302,6 +300,7 @@ const PostRecord = () => {
               </svg>
               {selectedRange[0].startDate.toLocaleDateString()} -{" "}
               {selectedRange[0].endDate.toLocaleDateString()}
+              
             </button>
 
             {/* Side-by-Side Calendar */}
@@ -322,7 +321,7 @@ const PostRecord = () => {
                       key={index}
                       className={`text-sm px-3 py-2 rounded-md ${
                         item.label === "Today"
-                          ? "bg-purple-100 text-purple-600 font-semibold"
+                          ? "bg-[#573FD1] text-[#573FD1] font-semibold"
                           : "text-gray-600"
                       }`}
                       onClick={() => setQuickDateRange(item.start, item.end)}
@@ -356,13 +355,13 @@ const PostRecord = () => {
                   {/* Apply & Cancel Buttons */}
                   <div className="flex justify-end space-x-4 mt-4">
                     <button
-                      className="border border-purple-400 text-purple-600 px-4 py-2 rounded-md"
+                      className="border border-[#573FD1] text-[#573FD1] px-4 py-2 rounded-md"
                       onClick={handleCancel}
                     >
                       Cancel
                     </button>
                     <button
-                      className="bg-purple-600 text-white px-4 py-2 rounded-md"
+                      className="bg-[#573FD1] text-white px-4 py-2 rounded-md"
                       onClick={handleApply}
                     >
                       Apply
@@ -501,7 +500,7 @@ const PostRecord = () => {
               key={page}
               className={`px-3 py-1 text-sm border ${
                 currentPage === page
-                  ? "bg-blue-50 border-blue-500 text-blue-600"
+                  ? "bg-purple-50 border-[#573FD1] text-[#573FD1]"
                   : "border-gray-300 bg-white text-gray-700"
               } rounded-md hover:bg-gray-50`}
               onClick={() => setCurrentPage(page)}

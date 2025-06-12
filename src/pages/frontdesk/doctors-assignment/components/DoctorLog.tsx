@@ -217,12 +217,12 @@ const DoctorLog = () => {
   const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
     switch (type) {
       case "COMPANY":
+        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-blue-100 text-blue-700";
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
       case "HMO":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
+    
     }
   };
 
@@ -232,14 +232,14 @@ const DoctorLog = () => {
   ): string => {
     switch (type) {
       case "GEN. CONSULT":
+        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "CHILDBIRTH":
-        return "bg-indigo-100 text-indigo-700";
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
       case "ANTE. NATAL":
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 text-green-700 border border-[#00C851]";
       case "POST NATAL":
-        return "bg-gray-100 text-gray-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
+     
     }
   };
 
@@ -317,7 +317,7 @@ const DoctorLog = () => {
                       key={index}
                       className={`text-sm px-3 py-2 rounded-md ${
                         item.label === "Today"
-                          ? "bg-purple-100 text-purple-600 font-semibold"
+                          ? "bg-[#573FD1] text-[#573FD1] font-semibold"
                           : "text-gray-600"
                       }`}
                       onClick={() => setQuickDateRange(item.start, item.end)}
@@ -351,13 +351,13 @@ const DoctorLog = () => {
                   {/* Apply & Cancel Buttons */}
                   <div className="flex justify-end space-x-4 mt-4">
                     <button
-                      className="border border-purple-400 text-purple-600 px-4 py-2 rounded-md"
+                      className="border border-[#573FD1] text-[#573FD1] px-4 py-2 rounded-md"
                       onClick={handleCancel}
                     >
                       Cancel
                     </button>
                     <button
-                      className="bg-purple-600 text-white px-4 py-2 rounded-md"
+                      className="bg-[#573FD1] text-white px-4 py-2 rounded-md"
                       onClick={handleApply}
                     >
                       Apply
@@ -494,7 +494,7 @@ const DoctorLog = () => {
               key={page}
               className={`px-3 py-1 text-sm border ${
                 currentPage === page
-                  ? "bg-blue-50 border-blue-500 text-blue-600"
+                  ? "bg-blue-50 border-[#573FD1] text-[#573FD1]"
                   : "border-gray-300 bg-white text-gray-700"
               } rounded-md hover:bg-gray-50`}
               onClick={() => setCurrentPage(page)}
