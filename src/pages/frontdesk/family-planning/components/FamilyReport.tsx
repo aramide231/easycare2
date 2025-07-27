@@ -241,13 +241,12 @@ const FamilyReport = () => {
 
   const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
     switch (type) {
-      case "COMPANY":
+       case "COMPANY":
+        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-blue-100 text-blue-700";
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
       case "HMO":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
     }
   };
 
@@ -257,19 +256,19 @@ const FamilyReport = () => {
   ): string => {
     switch (type) {
       case "NATURAL":
-        return "bg-[#e6faee] text-[#33d374] border-[#33d374]";
+        return "bg-[#e6faee] text-[#33d374] border border-[#33d374]";
       case "BARRIER":
-        return "bg-[#fff1e6] text-[#fa7401] border-[#fa7401]";
+        return "bg-[#fff1e6] text-[#fa7401] border border-[#fa7401]";
       case "HORMONAL":
-        return "bg-[#ccd4e6] text-[#234492] border-[#234492]";
+        return "bg-[#ccd4e6] text-[#103488] border border-[#234492]";
       case "LARCs":
-        return "bg-[#b0b0b0] text-[#39445d] border-[#39445d]";
+        return "bg-[#b0b0b0] text-[#071639] border border-[#39445d]";
       case "PERMANENT":
-        return "bg-[#333333] text-[#cccccc] border-[#cccccc]";
+        return "bg-[#333333] text-[#FFFFFF] border border-[#cccccc]";
       case "ECs":
-        return "bg-[#d0c9f2] text-[#806edc] border-[#fa7401]";
+        return "bg-[#d0c9f2] text-[#573FD1] border border-[#573FD1]";
       default:
-        return "bg-[#fff1e6] text-[#fa7401] border-[#fa7401]";
+        return "bg-[#fff1e6] text-[#fa7401] border border-[#fa7401]";
     }
   };
 
@@ -316,10 +315,10 @@ const FamilyReport = () => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium"
+              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-full text-sm font-medium"
             >
               <svg
-                className="w-4 h-4 mr-2 text-purple-600"
+                className="w-4 h-4 mr-2 text-[#573FD1]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -354,7 +353,7 @@ const FamilyReport = () => {
                       key={index}
                       className={`text-sm px-3 py-2 rounded-md ${
                         item.label === "Today"
-                          ? "bg-purple-100 text-purple-600 font-semibold"
+                          ? "bg-[#573FD1] text-[#573FD1] font-semibold"
                           : "text-gray-600"
                       }`}
                       onClick={() => setQuickDateRange(item.start, item.end)}
@@ -388,13 +387,13 @@ const FamilyReport = () => {
                   {/* Apply & Cancel Buttons */}
                   <div className="flex justify-end space-x-4 mt-4">
                     <button
-                      className="border border-purple-400 text-purple-600 px-4 py-2 rounded-md"
+                      className="border border-[#573FD1] text-[#573FD1] px-4 py-2 rounded-md"
                       onClick={handleCancel}
                     >
                       Cancel
                     </button>
                     <button
-                      className="bg-purple-600 text-white px-4 py-2 rounded-md"
+                      className="bg-[#573FD1] text-white px-4 py-2 rounded-md"
                       onClick={handleApply}
                     >
                       Apply
@@ -427,7 +426,7 @@ const FamilyReport = () => {
         </div>
       </div>
 
-      <div className="border-t border-gray-200 pt-4">
+      <div className="border-t border-gray-200 pt-4 ">
         <div className="overflow-x-auto">
           <table ref={tableRef} className="w-full text-sm text-left">
             <thead className="text-xs text-gray-500 uppercase">
@@ -532,7 +531,7 @@ const FamilyReport = () => {
               key={page}
               className={`px-3 py-1 text-sm border ${
                 currentPage === page
-                  ? "bg-blue-50 border-blue-500 text-blue-600"
+                  ? "bg-purple-50 border-[#573FD1] text-[#573FD1]"
                   : "border-gray-300 bg-white text-gray-700"
               } rounded-md hover:bg-gray-50`}
               onClick={() => setCurrentPage(page)}

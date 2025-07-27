@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+
 import Logo from "@/assets/icon/Frame 121.svg";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
@@ -7,6 +10,50 @@ import ImageCarousel from "@/components/ui/carousel";
 
 const AuthenticationPage = () => {
   const [activeTab, setActiveTab] = useState<"Signup" | "Signin">("Signup");
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Switch to sign in tab if URL has ?tab=signin
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab === "signin") {
+      setActiveTab("Signin");
+    } else {
+      setActiveTab("Signup");
+    }
+  }, [location.search]);
+
+  // Redirect user after login based on role
+  useEffect(() => {
+    if (!loading && user) {
+      switch (user.userRole) {
+        case "frontdesk":
+          navigate("/frontdesk");
+          break;
+        case "nurse":
+          navigate("/nurse");
+          break;
+        case "doctor":
+          navigate("/doctor");
+          break;
+        case "admin":
+          navigate("/admin");
+          break;
+        default:
+          navigate("/");
+      }
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg font-semibold text-purple-600">Redirecting...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-10/12 m-auto min-h-screen p-12">
@@ -16,14 +63,8 @@ const AuthenticationPage = () => {
           <img src={Logo} className="text-purple-800 w-[120px]" />
           <p className="text-gray-700 text-lg mt-2">
             Powering hospitals with seamless patient management from check-in to{" "}
-            <br />
             prescriptions all in one place.
           </p>
-          {/* <img
-            src={ImageScreen}
-            alt="Healthcare"
-            className="mt-12 rounded-lg"
-          /> */}
           <ImageCarousel />
         </div>
 
@@ -34,13 +75,14 @@ const AuthenticationPage = () => {
               <div className="icon-imag">
                 <img src={hospitalIcon} alt="" />
               </div>
-              <div className="">
+              <div>
                 <h4 className="text-lg font-bold">St James Hospital</h4>
                 <p className="text-sm">
                   Optimize Patient Care with St. James—Sign Up in Minute
                 </p>
               </div>
             </div>
+
             {/* Tab Navigation */}
             <div className="mb-10 mt-6">
               <ul className="flex justify-center gap-4 font-lg">

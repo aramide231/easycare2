@@ -1,5 +1,3 @@
-import Sidebar from "@/constant/sidebar";
-import Topbar from "@/constant/topbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,9 +16,7 @@ const ReminderPage = () => {
 
   return (
     <div className="flex h-screen w-full">
-      <Sidebar />
-      <main className="flex-1 p-6 ml-72">
-        <Topbar />
+      <main className="flex-1 p-6 ">
         <Card className="my-10 border-2 rounded p-5 w-[80%] mx-auto">
           <CardContent>
             <div className="flex justify-between items-center mb-3">

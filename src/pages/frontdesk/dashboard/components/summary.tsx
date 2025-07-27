@@ -1,15 +1,17 @@
+import { useAuth } from "@/context/AuthContext";
 import { FaUserPlus, FaProcedures, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const DashboardSummary = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const summaryItems = [
     {
       title: "New Registration",
       count: "50 new patients",
       icon: <FaUserPlus size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
+      bgColor: "bg-[#573FD1]",
       textColor: "text-white",
       path: "/frontdesk/registration",
     },
@@ -17,7 +19,7 @@ const DashboardSummary = () => {
       title: "Patients for visitation",
       count: "1,119 patients",
       icon: <FaProcedures size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-blue-500 to-indigo-600",
+      bgColor: "bg-[#573FD1]",
       textColor: "text-white",
       path: "/frontdesk/visitation-log",
     },
@@ -38,7 +40,9 @@ const DashboardSummary = () => {
   return (
     <div>
       <div className="p-4">
-        <h2 className="text-2xl font-semibold">Good Afternoon</h2>
+        <h2 className="text-3xl font-semibold">
+          Good Afternoon, {user?.fullName}
+        </h2>
         <p>Have a wonderful day at work</p>
       </div>
       <div className="flex gap-4 w-full p-4">

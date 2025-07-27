@@ -2,8 +2,6 @@ import { useState } from "react";
 import PatientsLog from "./components/patientLog";
 import DashboardSummary from "./components/summary";
 
-import Sidebar from "@/constant/sidebar";
-import Topbar from "@/constant/topbar";
 import CustomCalendar from "./components/calendar";
 import PatientCard from "@/constant/patientCard";
 
@@ -25,30 +23,22 @@ type Patient = {
   name: string;
 };
 
-const Dashboard = () => {
+const FrontdeskDashboard = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   return (
-    <div className="flex h-screen w-full">
-      <Sidebar />
+    <div className="flex gap-6 ">
+      <div className="flex-[3]">
+        <DashboardSummary />
+        <PatientsLog onSelectPatient={setSelectedPatient} />
+      </div>
 
-      <main className="flex-1 p-6 ml-72">
-        <Topbar />
-
-        <div className="flex gap-6 mt-6">
-          <div className="flex-[3]">
-            <DashboardSummary />
-            <PatientsLog onSelectPatient={setSelectedPatient} />
-          </div>
-
-          <div className="flex-[1]">
-            <CustomCalendar />
-            {selectedPatient && <PatientCard patient={selectedPatient} />}
-          </div>
-        </div>
-      </main>
+      <div className="flex-[1] h-full">
+        <CustomCalendar width="100%" height="250px" />
+        {selectedPatient && <PatientCard patient={selectedPatient} />}
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default FrontdeskDashboard;

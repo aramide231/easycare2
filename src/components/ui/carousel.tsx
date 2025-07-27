@@ -36,7 +36,7 @@ export default function ImageCarousel() {
 
       {/* Navigation Buttons */}
       <div className="flex justify-center items-center gap-4 mt-4">
-        <Button onClick={scrollPrev} className="rounded-full bg-[#6C47FF] p-2">
+        <Button onClick={scrollPrev} className="rounded-full bg-[#573FD1] p-2">
           <ArrowLeft className="h-6 w-6 text-white" />
         </Button>
 

@@ -1,21 +1,21 @@
+// layouts/NurseLayout.tsx
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
+import { Outlet } from "react-router-dom";
 
-import PatientForm from "../visitation/components/PatientForm";
-
-const Registration = () => {
+const FrontdeskLayout = () => {
   return (
     <div className="flex h-screen w-full">
       <Sidebar />
-
-      {/* Added `ml-72` to shift the main content to the right */}
       <main className="flex-1 p-6 ml-72">
         <Topbar />
 
-        <PatientForm />
+        <div className="flex gap-6 border-gray-200 border-t-2">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
 };
 
-export default Registration;
+export default FrontdeskLayout;

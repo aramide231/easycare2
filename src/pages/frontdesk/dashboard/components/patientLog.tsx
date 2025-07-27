@@ -167,11 +167,11 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const getPatientTypeClass = (type: string) => {
     switch (type) {
       case "COMPANY":
-        return "bg-blue-100 text-blue-700";
+        return  "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-green-100 text-green-700";
+        return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
       case "HMO":
-        return "bg-orange-100 text-orange-700";
+        return"bg-orange-100 text-[#FA7401] border border-[#FA7401]";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -180,21 +180,37 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const getVisitTypeClass = (type: string) => {
     switch (type) {
       case "GEN. CONSULT":
-        return "bg-indigo-100 text-indigo-700";
+        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "ANTE. NATAL":
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 text-green-700 border border-[#00C851]";
       case "POST NATAL":
-        return "bg-gray-100 text-gray-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+        return  "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
+        case "CHILDBIRTH":
+          return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
+          default:
+        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
     }
   };
+
+  useEffect(() => {
+    console.log("Location state:", location.state);
+    const newPatient = location.state?.newPatient;
+
+    if (newPatient) {
+      const exists = patients.some((p) => p.patientId === newPatient.patientId);
+      if (!exists) {
+        setPatients((prevPatients) => [...prevPatients, newPatient]);
+      }
+
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   const handleEditPatient = (patient: Patient) => {
     navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
   };
 
-  const handleFlagPatient = (patient: any) => {
+  const handleFlagPatient = (patient: Patient) => {
     const updatedPatients = patients.map((p) =>
       p.id === patient.id ? { ...p, flagged: !p.flagged } : p
     );
@@ -293,7 +309,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full mx-auto">
       <Toast message={toastMessage} />
 
       <div className="flex flex-col md:flex-row md:items-center  mb-6 md:space-x-0">
@@ -393,47 +409,49 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     {patient.staffName}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div
-                      className="relative"
-                      ref={showOptions === patient.id ? dropdownRef : null}
-                    >
-                      <button
-                        className="text-gray-500"
-                        onClick={() =>
-                          setShowOptions(
-                            patient.id === showOptions ? null : patient.id
-                          )
-                        }
+                  {isVisitationPage && (
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div
+                        className="relative"
+                        ref={showOptions === patient.id ? dropdownRef : null}
                       >
-                        <HiOutlineDotsVertical size={20} />
-                      </button>
-                      {showOptions === patient.id && (
-                        <div className="absolute right-0 flex flex-col mt-2 bg-white border shadow-lg rounded-lg w-48 z-10">
-                          <button
-                            className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                            onClick={() => handleEditPatient(patient)}
-                          >
-                            Edit Profile
-                          </button>
-                          <button
-                            className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                            onClick={() => handleFlagPatient(patient)}
-                          >
-                            {patient.flagged
-                              ? "Unflag Profile"
-                              : "Flag Profile"}
-                          </button>
-                          <button
-                            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                            onClick={() => setShowSendModal(true)}
-                          >
-                            Send Profile
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+                        <button
+                          className="text-gray-500"
+                          onClick={() =>
+                            setShowOptions(
+                              patient.id === showOptions ? null : patient.id
+                            )
+                          }
+                        >
+                          <HiOutlineDotsVertical size={20} />
+                        </button>
+                        {showOptions === patient.id && (
+                          <div className="absolute right-0 flex flex-col mt-2 bg-white border shadow-lg rounded-lg w-48 z-10">
+                            <button
+                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleEditPatient(patient)}
+                            >
+                              Edit Profile
+                            </button>
+                            <button
+                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleFlagPatient(patient)}
+                            >
+                              {patient.flagged
+                                ? "Unflag Profile"
+                                : "Flag Profile"}
+                            </button>
+                            <button
+                              className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => setShowSendModal(true)}
+                            >
+                              Send Profile
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (

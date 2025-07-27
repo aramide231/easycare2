@@ -18,9 +18,8 @@ type Patient = {
 
 const NotificationTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
-    null
-  );
+  const [selectedPatientId] = useState<number | null>(null); // omit setter
+
   const [patients, setPatients] = useState<Patient[]>([
     {
       id: 1,
@@ -152,18 +151,18 @@ const NotificationTable: React.FC = () => {
 
   const getPatientTypeClass = (type: string) => {
     const typeClasses: Record<string, string> = {
-      COMPANY: "bg-blue-100 text-blue-700",
-      PRIVATE: "bg-green-100 text-green-700",
-      HMO: "bg-orange-100 text-orange-700",
+      COMPANY: "bg-blue-100 text-[#573FD1] border border-[#573FD1]",
+      PRIVATE: "bg-[#dbd9d9] text-[#103488]  border border-[#103488]",
+      HMO: "bg-orange-100 text-[#FA7401] border border-[#FA7401]",
     };
     return typeClasses[type] || "bg-gray-100 text-gray-700";
   };
 
   const getVisitTypeClass = (type: string) => {
     const visitClasses: Record<string, string> = {
-      "GEN. CONSULT": "bg-indigo-100 text-indigo-700",
-      "ANTE. NATAL": "bg-green-100 text-green-700",
-      "POST NATAL": "bg-gray-100 text-gray-700",
+      "GEN. CONSULT": "bg-blue-100 text-[#573FD1] border border-[#573FD1]",
+      "ANTE. NATAL": "bg-green-100 text-green-700 border border-[#00C851]",
+      "POST NATAL": "bg-[#FDFDFD] text-[#626262] border border-[#626262]",
     };
     return visitClasses[type] || "bg-gray-100 text-gray-700";
   };
@@ -189,7 +188,7 @@ const NotificationTable: React.FC = () => {
   });
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full mx-auto">
       <div className="flex flex-col md:flex-row md:items-center mb-6">
         <h1 className="text-xl font-bold text-gray-800 mb-2 md:mb-0 md:mr-4">
           Notifications
