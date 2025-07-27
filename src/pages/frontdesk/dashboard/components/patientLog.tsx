@@ -169,7 +169,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       case "COMPANY":
         return  "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
+        return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
       case "HMO":
         return"bg-orange-100 text-[#FA7401] border border-[#FA7401]";
       default:
@@ -185,7 +185,9 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
         return "bg-green-100 text-green-700 border border-[#00C851]";
       case "POST NATAL":
         return  "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
-      default:
+        case "CHILDBIRTH":
+          return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
+          default:
         return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
     }
   };
