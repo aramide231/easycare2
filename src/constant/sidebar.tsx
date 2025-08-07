@@ -78,7 +78,7 @@ const Sidebar = () => {
       ],
       reports: [
         {
-          name: "Doctor Assignments",
+          name: "Doctor Logs",
           icon: <FaUserMd />,
           path: "/frontdesk/doctor-assignments",
         },
@@ -99,9 +99,9 @@ const Sidebar = () => {
           path: "/frontdesk/post-natal",
         },
         {
-          name: "Registration",
+          name: "RegistrationLog",
           icon: <FaUserPlus />,
-          path: "/frontdesk/registration",
+          path: "/frontdesk/registration-log",
         },
         {
           name: "Family Planning",

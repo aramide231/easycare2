@@ -11,7 +11,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import FrontdeskDashboard from "../pages/frontdesk/dashboard/Dashboard";
 import EditPatient from "@/pages/frontdesk/editPatient/EditPatient";
 import Visitation from "@/pages/frontdesk/visitation";
-import Registration from "@/pages/frontdesk/registration";
+import Registration from "@/pages/frontdesk/RegistrationLog";
 import Notifications from "@/pages/frontdesk/notifications/Notifications";
 import ManageAccess from "@/pages/frontdesk/manage-access/ManageAccess";
 import ManageCard from "@/pages/frontdesk/manage-card/ManageCard";
@@ -37,6 +37,8 @@ import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
 import Verification from "@/pages/auth/components/Verification";
 import ForgotPassword from "@/pages/auth/components/ForgotPassword";
+import RegistrationLog from "@/pages/frontdesk/RegistrationLog";
+import RegistrationForm from "@/pages/frontdesk/Registration/RegistrationForm";
 
 
 const RoleBasedRoutes = () => {
@@ -57,7 +59,7 @@ const RoleBasedRoutes = () => {
           <Route index element={<FrontdeskDashboard />} />
           <Route path="edit/:id" element={<EditPatient />} />
           <Route path="visitation-log" element={<Visitation />} />
-          <Route path="registration" element={<Registration />} />
+          <Route path="registration" element={<RegistrationForm />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="manage-access" element={<ManageAccess />} />
           <Route path="manage-card" element={<ManageCard />} />
@@ -70,6 +72,8 @@ const RoleBasedRoutes = () => {
           <Route path="post-natal" element={<PostNatal />} />
           <Route path="immunization" element={<Immunization />} />
           <Route path="family-planning" element={<FamilyPlanning />} />
+          <Route path="registration-log" element={<RegistrationLog />} />
+          
         </Route>
       )}
 

@@ -39,6 +39,8 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -102,7 +104,7 @@ const SignupForm = () => {
 
   return (
     <div>
-      <div className=" my-5">
+      <div className="my-5">
         <h2 className="text-lg font-bold">
           Enter your details to create an account.
         </h2>
@@ -110,6 +112,14 @@ const SignupForm = () => {
           Join now to streamline patient care effortlessly.
         </p>
       </div>
+      
+      {/* Display submission error if any */}
+      {submitError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{submitError}</p>
+        </div>
+      )}
+      
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         {/* First Name and Last Name */}
         <div className="flex gap-4">
@@ -290,6 +300,7 @@ const SignupForm = () => {
                 defaultValue=""
               >
                 <option value="">Select Gender</option>
+
                 {userGender.map((gender) => (
                   <option key={gender} value={gender}>
                     {gender}
@@ -329,6 +340,7 @@ const SignupForm = () => {
                 defaultValue=""
               >
                 <option value="">Select Designation</option>
+
                 {userDesignations.map((designation) => (
                   <option key={designation} value={designation}>
                     {designation}
@@ -542,4 +554,6 @@ const SignupForm = () => {
     </div>
   );
 };
+
 export default SignupForm;
+

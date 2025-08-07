@@ -425,7 +425,7 @@ const ManageAccess = () => {
                         patient.patientType === "COMPANY"
                           ? "bg-blue-100 text-[#573FD1] border border-[#573FD1]"
                           : patient.patientType === "PRIVATE"
-                          ? "bg-[#dbd9d9] text-[#103488]  border border-[#103488]"
+                          ? "bg-[#E7EBF3] text-[#103488]  border border-[#103488]"
                           : patient.patientType === "HMO"
                           ? "bg-orange-100 text-[#FA7401] border border-[#FA7401]"
                           : ""
