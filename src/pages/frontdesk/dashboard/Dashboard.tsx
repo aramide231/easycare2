@@ -28,7 +28,7 @@ const FrontdeskDashboard = () => {
 
   return (
     <div className="flex gap-6 ">
-      <div className="flex-[3]">
+      <div className="flex-[3] w-[]">
         <DashboardSummary />
         <PatientsLog onSelectPatient={setSelectedPatient} />
       </div>

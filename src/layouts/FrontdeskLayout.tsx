@@ -1,16 +1,17 @@
-// layouts/NurseLayout.tsx
 import Sidebar from "@/constant/sidebar";
 import Topbar from "@/constant/topbar";
 import { Outlet } from "react-router-dom";
 
 const FrontdeskLayout = () => {
   return (
-    <div className="flex h-screen w-full">
-      <Sidebar />
-      <main className="flex-1 p-6 ml-72">
-        <Topbar />
+    <div className="flex h-screen w-full overflow-x-hidden">
+      <aside className="hidden md:block md:w-64 lg:w-72 shrink-0">
+        <Sidebar />
+      </aside>
 
-        <div className="flex gap-6 border-gray-200 border-t-2">
+      <main className="flex flex-col flex-1 overflow-y-auto px-4 md:px-6 py-4">
+        <Topbar />
+        <div className="mt-4 border-t-2 border-gray-200">
           <Outlet />
         </div>
       </main>

@@ -14,18 +14,11 @@ const AuthenticationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Switch to sign in tab if URL has ?tab=signin
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const tab = params.get("tab");
-    if (tab === "signin") {
-      setActiveTab("Signin");
-    } else {
-      setActiveTab("Signup");
-    }
+    setActiveTab(params.get("tab") === "signin" ? "Signin" : "Signup");
   }, [location.search]);
 
-  // Redirect user after login based on role
   useEffect(() => {
     if (!loading && user) {
       switch (user.userRole) {
@@ -56,60 +49,60 @@ const AuthenticationPage = () => {
   }
 
   return (
-    <div className="flex w-10/12 m-auto min-h-screen p-12">
-      <div className="flex w-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="flex items-center justify-center h-screen w-screen overflow-hidden bg-gray-50 px-2">
+      <div className="flex w-full max-w-5xl h-[85vh] bg-white rounded-md shadow-md overflow-hidden">
         {/* Left Section */}
-        <div className="w-1/2 p-12 bg-purple-100 flex flex-col">
-          <img src={Logo} className="text-purple-800 w-[120px]" />
-          <p className="text-gray-700 text-lg mt-2">
-            Powering hospitals with seamless patient management from check-in to{" "}
-            prescriptions all in one place.
-          </p>
-          <ImageCarousel />
+        <div className="w-1/2 bg-purple-100 p-6 flex flex-col justify-between">
+          <div>
+            <img src={Logo} className="w-[90px]" />
+            <p className="text-gray-700 text-sm mt-4 leading-snug">
+              Powering hospitals with seamless patient management—from check-in
+              to prescriptions—all in one place.
+            </p>
+          </div>
+          <div className="mt-auto">
+            <ImageCarousel />
+          </div>
         </div>
 
         {/* Right Section */}
-        <div className="w-1/2 p-14">
-          <div className="w-full shadow-none border-none">
-            <div className="flex gap-3">
-              <div className="icon-imag">
-                <img src={hospitalIcon} alt="" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold">St James Hospital</h4>
-                <p className="text-sm">
-                  Optimize Patient Care with St. James—Sign Up in Minute
-                </p>
-              </div>
+        <div className="w-1/2 p-6 flex flex-col">
+          <div className="flex gap-3 mb-4">
+            <img src={hospitalIcon} alt="icon" className="w-10 h-10" />
+            <div>
+              <h4 className="text-base font-bold">St James Hospital</h4>
+              <p className="text-xs text-gray-600">
+                Optimize Patient Care—Sign Up in a Minute
+              </p>
             </div>
+          </div>
 
-            {/* Tab Navigation */}
-            <div className="mb-10 mt-6">
-              <ul className="flex justify-center gap-4 font-lg">
-                <li
-                  className={`font-semibold cursor-pointer font-lg ${
-                    activeTab === "Signup"
-                      ? "text-[#573fd1] underline"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Signup")}
-                >
-                  Sign Up
-                </li>
-                <li
-                  className={`font-semibold cursor-pointer font-lg ${
-                    activeTab === "Signin"
-                      ? "text-[#573fd1] underline"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Signin")}
-                >
-                  Sign In
-                </li>
-              </ul>
-            </div>
+          {/* Tabs */}
+          <ul className="flex justify-center gap-6 mb-4 text-sm font-medium">
+            <li
+              className={`cursor-pointer ${
+                activeTab === "Signup"
+                  ? "text-[#573fd1] underline"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab("Signup")}
+            >
+              Sign Up
+            </li>
+            <li
+              className={`cursor-pointer ${
+                activeTab === "Signin"
+                  ? "text-[#573fd1] underline"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab("Signin")}
+            >
+              Sign In
+            </li>
+          </ul>
 
-            {/* Conditional Rendering */}
+          {/* Form with smooth scroll & no scrollbar */}
+          <div className="flex-1 overflow-y-auto scroll-smooth scrollbar-hide">
             {activeTab === "Signup" ? <Signup /> : <Signin />}
           </div>
         </div>

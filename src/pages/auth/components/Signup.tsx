@@ -28,6 +28,12 @@ const countryPhoneLength: { [key: string]: number } = {
   ng: 10,
   au: 9,
 };
+interface CountryData {
+  name: string;
+  dialCode: string;
+  countryCode: string;
+  format?: string;
+}
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -51,15 +57,20 @@ const SignupForm = () => {
     try {
       await signup(data);
       navigate("/auth/Verification");
-    } catch (error: any) {
-      console.error("Signup failed", error);
-      setSignupError(error.message || "Signup failed. Please try again.");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Signup failed", error);
+        setSignupError(error.message);
+      } else {
+        console.error("Signup failed", error);
+        setSignupError("Signup failed. Please try again.");
+      }
     }
   };
 
   const password = watch("password");
 
-  const handlePhoneChange = (value: string, country: any) => {
+  const handlePhoneChange = (value: string, country: CountryData) => {
     const maxLength = countryPhoneLength[country?.countryCode] || 10;
     const numericValue = value.replace(/\D/g, "");
     const trimmedValue = numericValue.slice(0, maxLength);
