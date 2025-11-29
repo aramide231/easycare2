@@ -208,14 +208,19 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
     navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
   };
 
-  const handleFlagPatient = (patient: Patient) => {
-    const updatedPatients = patients.map((p) =>
-      p.id === patient.id ? { ...p, flagged: !p.flagged } : p
-    );
-    setPatients(updatedPatients);
-    setToastMessage(patient.flagged ? "Patient unflagged" : "Patient flagged");
-    toast.success(patient.flagged ? "Patient unflagged" : "Patient flagged");
+  const handleFlagProfile = (patient: Patient) => {
+    navigate(`/frontdesk/flag-profile/${patient.id}`, { state: { patient } });
   };
+
+  // Previous function for flagging patient profile
+  // const handleFlagPatient = (patient: Patient) => {
+  //   const updatedPatients = patients.map((p) =>
+  //     p.id === patient.id ? { ...p, flagged: !p.flagged } : p
+  //   );
+  //   setPatients(updatedPatients);
+  //   setToastMessage(patient.flagged ? "Patient unflagged" : "Patient flagged");
+  //   toast.success(patient.flagged ? "Patient unflagged" : "Patient flagged");
+  // };
 
   const handleSaveChanges = async () => {
     const isConfirmed = await confirmSave();
@@ -433,11 +438,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                             </button>
                             <button
                               className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => handleFlagPatient(patient)}
+                              onClick={() => handleFlagProfile(patient)}
                             >
-                              {patient.flagged
+                              Flag Profile
+                              {/* {patient.flagged
                                 ? "Unflag Profile"
-                                : "Flag Profile"}
+                                : "Flag Profile"} */}
                             </button>
                             <button
                               className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
@@ -465,8 +471,9 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
           </tbody>
         </table>
 
+        {/* Modal function never used.......... */}
         {/* modal class  editpatients*/}
-        {isModalOpen && editPatient && (
+        {/* {isModalOpen && editPatient && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">Edit Patient</h2>
@@ -664,7 +671,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* modal class for sendProfile*/}
         {showSendModal && (

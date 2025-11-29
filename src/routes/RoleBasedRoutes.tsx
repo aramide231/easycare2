@@ -23,6 +23,7 @@ import ChildBirth from "@/pages/frontdesk/child-birth/ChildBirth";
 import PostNatal from "@/pages/frontdesk/post-natal/PostNatal";
 import Immunization from "@/pages/frontdesk/immunization/Immunization";
 import FamilyPlanning from "@/pages/frontdesk/family-planning/FamilyPlanning";
+import FlagProfile from "@/pages/frontdesk/flag-profile/FlagProfile";
 
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboardNurse/Dashboard";
@@ -72,7 +73,7 @@ const RoleBasedRoutes = () => {
           <Route path="immunization" element={<Immunization />} />
           <Route path="family-planning" element={<FamilyPlanning />} />
           <Route path="registration-log" element={<RegistrationLog />} />
-          
+          <Route path="flag-profile/:id" element={<FlagProfile />} />
         </Route>
       )}
 

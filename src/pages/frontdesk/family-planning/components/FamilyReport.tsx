@@ -297,14 +297,17 @@ const FamilyReport = () => {
           <h1 className="text-xl font-bold text-gray-800 whitespace-nowrap">
             Family Planning Report
           </h1>
-          <Input
-            type="text"
-            placeholder="Search with Surname, Patient ID or Phone number"
-            value={search}
-            onChange={handleSearchChange}
-            //onChange={(e) => setSearch(e.target.value)}
-            className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          />
+          <div className="w-[59%]">
+            <img src="" alt="" />
+            <Input
+              type="text"
+              placeholder="Search with Surname, Patient ID or Phone number"
+              value={search}
+              onChange={handleSearchChange}
+              //onChange={(e) => setSearch(e.target.value)}
+              className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+          </div>
         </div>
 
         {/*  Date Picker and Export Button */}
@@ -353,7 +356,7 @@ const FamilyReport = () => {
                       key={index}
                       className={`text-sm px-3 py-2 rounded-md ${
                         item.label === "Today"
-                          ? "bg-[#573FD1] text-[#573FD1] font-semibold"
+                          ? "bg-[#573FD1] text-[#FFFFFF] font-semibold"
                           : "text-gray-600"
                       }`}
                       onClick={() => setQuickDateRange(item.start, item.end)}

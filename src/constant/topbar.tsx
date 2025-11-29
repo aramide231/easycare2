@@ -7,13 +7,12 @@ import { useAuth } from "@/context/AuthContext";
 const Topbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = useState(new Date());
   const location = useLocation();
 
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -26,35 +25,44 @@ const Topbar = () => {
     second: "2-digit",
   });
 
-  // Pages where you want to show breadcrumbs
+  // NEW BREADCRUMB ROUTE PATTERNS (Dynamic + Static)
   const breadcrumbPages = [
-    "/frontdesk/edit/:id",
-    "/frontdesk/visitation-log",
-    "/frontdesk/registration",
-    "/frontdesk/notifications",
-    "/frontdesk/manage-access",
-    "/frontdesk/manage-card",
-    "/frontdesk/reminder",
-    "/frontdesk/doctor-assignment",
-    "/frontdesk/immunization",
-    "/frontdesk/ante-natal",
-    "/frontdesk/child-birth",
-    "/frontdesk/post-natal",
-    "/frontdesk/family-planning",
-    "/nurse/notifications",
-    "/nurse/patient-profile/:id",
+    { pattern: /^\/frontdesk\/edit\/\d+$/ },
+    { pattern: /^\/frontdesk\/flag-profile\/\d+$/ },
+    { pattern: /^\/frontdesk\/visitation-log$/ },
+    { pattern: /^\/frontdesk\/registration$/ },
+    { pattern: /^\/frontdesk\/notifications$/ },
+    { pattern: /^\/frontdesk\/manage-access$/ },
+    { pattern: /^\/frontdesk\/manage-card$/ },
+    { pattern: /^\/frontdesk\/reminder$/ },
+    { pattern: /^\/frontdesk\/doctor-assignment$/ },
+    { pattern: /^\/frontdesk\/immunization$/ },
+    { pattern: /^\/frontdesk\/ante-natal$/ },
+    { pattern: /^\/frontdesk\/child-birth$/ },
+    { pattern: /^\/frontdesk\/post-natal$/ },
+    { pattern: /^\/frontdesk\/family-planning$/ },
+    { pattern: /^\/nurse\/notifications$/ },
+    { pattern: /^\/nurse\/patient-profile\/\d+$/ },
   ];
 
+  // Check if current route should show breadcrumbs
+  const isBreadcrumbPage = breadcrumbPages.some((route) =>
+    route.pattern.test(location.pathname)
+  );
+
+  // Breadcrumb rendering
   const renderBreadcrumbs = () => {
     const pathParts = location.pathname.split("/").filter(Boolean);
+
+    // Made changes to generate breadcrumb items
     const breadcrumbItems = [
       { name: "Dashboard", path: "/" },
       ...pathParts.map((part, index) => {
         const fullPath = `/${pathParts.slice(0, index + 1).join("/")}`;
-        return {
-          name: part.replace(/-/g, " "),
-          path: fullPath,
-        };
+        const formatted = isNaN(Number(part))
+          ? part.replace(/-/g, " ")
+          : `ID: ${part}`;
+        return { name: formatted, path: fullPath };
       }),
     ];
 
@@ -90,7 +98,7 @@ const Topbar = () => {
   return (
     <div className="flex justify-between items-center p-4 bg-white">
       <div className="w-1/2">
-        {breadcrumbPages.some((page) => location.pathname.startsWith(page)) ? (
+        {isBreadcrumbPage ? (
           renderBreadcrumbs()
         ) : (
           <div className="flex items-center gap-2 border px-3 py-2 rounded-lg w-full">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import emptyNotification from "@/assets/image/empty-notification.png";
 
 type Patient = {
   id: number;
@@ -19,6 +20,8 @@ type Patient = {
 const NotificationTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatientId] = useState<number | null>(null); // omit setter
+  // const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null); // commented out unused setter
+
 
   const [patients, setPatients] = useState<Patient[]>([
     {
@@ -202,30 +205,28 @@ const NotificationTable: React.FC = () => {
         />
       </div>
       <div className="border-t border-gray-200 pt-4 overflow-x-auto">
-        <table className="min-w-full text-sm text-left">
-          <thead className="text-xs text-gray-500 uppercase">
-            <tr>
-              <th className="px-4 py-2 font-medium">SN</th>
-              <th className="px-4 py-2 font-medium">INCOMING</th>
-              <th className="px-4 py-2 font-medium">PATIENT NAME</th>
-              <th className="px-4 py-2 font-medium">TIME OF REQUEST</th>
-              <th className="px-4 py-2 font-medium">PATIENT TYPE</th>
-              <th className="px-4 py-2 font-medium">SENDER'S NAME</th>
-              <th className="px-4 py-2 font-medium"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {(searchTerm ? filteredPatients : patients).length > 0 ? (
-              (searchTerm ? filteredPatients : patients).map((patient) => (
+        {(searchTerm ? filteredPatients : patients).length > 0 ? (
+          <table className="min-w-full text-sm text-left">
+            <thead className="text-xs text-gray-500 uppercase">
+              <tr>
+                <th className="px-4 py-2 font-medium">SN</th>
+                <th className="px-4 py-2 font-medium">INCOMING</th>
+                <th className="px-4 py-2 font-medium">PATIENT NAME</th>
+                <th className="px-4 py-2 font-medium">TIME OF REQUEST</th>
+                <th className="px-4 py-2 font-medium">PATIENT TYPE</th>
+                <th className="px-4 py-2 font-medium">SENDER'S NAME</th>
+                <th className="px-4 py-2 font-medium"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {(searchTerm ? filteredPatients : patients).map((patient) => (
                 <tr
                   key={patient.id}
-                  className={`${
-                    selectedPatientId === patient.id
-                      ? "bg-gray-100"
-                      : "bg-white"
-                  } hover:bg-gray-50  border-b border-gray-200 pt-4 overflow-x-auto`}
+                  className="hover:bg-gray-50 border-b border-gray-200"
                 >
                   <td className="px-4 py-3">{patient.id}</td>
+
                   <td className="px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
@@ -235,6 +236,7 @@ const NotificationTable: React.FC = () => {
                       {patient.visitType}
                     </span>
                   </td>
+
                   <td className="px-4 py-3">
                     <div className="flex flex-col">
                       <span className="font-medium">{patient.name}</span>
@@ -243,6 +245,7 @@ const NotificationTable: React.FC = () => {
                       </span>
                     </div>
                   </td>
+
                   <td className="px-4 py-3">
                     <div className="flex flex-col">
                       <span>{patient.lastSeen}</span>
@@ -251,6 +254,7 @@ const NotificationTable: React.FC = () => {
                       </span>
                     </div>
                   </td>
+
                   <td className="px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
@@ -260,9 +264,11 @@ const NotificationTable: React.FC = () => {
                       {patient.patientType}
                     </span>
                   </td>
+
                   <td className="px-4 py-3 whitespace-nowrap">
                     {patient.staffName}
                   </td>
+
                   <td className="px-4 py-3 text-red-500 cursor-pointer">
                     <Trash2
                       size={18}
@@ -271,19 +277,27 @@ const NotificationTable: React.FC = () => {
                     />
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={7}
-                  className="text-center text-gray-500 py-6 text-sm bg-gray-50"
-                >
-                  No results found for "{searchTerm}"
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          /* EMPTY STATE */
+          <div className="text-center text-black bg-gray-50">
+            <div className="h-[35rem] w-full flex items-center justify-center">
+              <div className="w-[392px] h-[225px] flex items-center flex-col gap-4">
+                <img
+                  className="w-24 h-24"
+                  src={emptyNotification}
+                  alt="empty-notification"
+                />
+                <p className="text-[32px] font-semibold">No Notification Yet</p>
+                <p className="text-2xl font-normal">
+                  You don't have any notifications yet. Check back later.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
