@@ -27,11 +27,12 @@ import FlagProfile from "@/pages/frontdesk/flag-profile/FlagProfile";
 
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboardNurse/Dashboard";
-import PatientProfile from "@/pages/nurse/patientProfile/PatientProfile";
+import NursePatientProfile from "@/pages/nurse/patientProfile/PatientProfile";
 
 // import doctors component
 import DoctorDashboard from "@/pages/doctor/dashboard/DoctorDashboard";
 import DoctorNotification from "@/pages/doctor/notifications/DoctorNotifications";
+import DoctorPatientProfile from "@/pages/doctor/patientProfile/PatientProfile";
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
@@ -82,7 +83,7 @@ const RoleBasedRoutes = () => {
         <Route path="/nurse" element={<NurseLayout />}>
           <Route index element={<NurseDashboard />} />
           <Route path="notifications" element={<Notifications />} />
-          <Route path="patient-profile/:id" element={<PatientProfile />} />
+          <Route path="patient-profile/:id" element={<NursePatientProfile />} />
         </Route>
       )}
 
@@ -91,7 +92,7 @@ const RoleBasedRoutes = () => {
         <Route path="/doctor" element={<DoctorLayout />}>
           <Route index element={<DoctorDashboard />} />
           <Route path="notifications-doctor" element={<DoctorNotification />} />
-          <Route path="patient-profile/:id" element={<PatientProfile />} />
+          <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
         </Route>
       )}
 

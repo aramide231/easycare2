@@ -17,7 +17,7 @@ import SelectCategoryCard from "./components/SelectCategoryCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import ExpandedCategoryTable from "./components/ExpandedCategoryTable";
 
-const PatientProfile = () => {
+const NursePatientProfile = () => {
   // const { id } = useParams();
   const location = useLocation();
   const patient = location.state?.patient;
@@ -1267,4 +1267,4 @@ const PatientProfile = () => {
   );
 };
 
-export default PatientProfile;
+export default NursePatientProfile;
