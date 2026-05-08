@@ -1,65 +1,7 @@
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useEffect } from "react";
+import { AuthContextType, AuthProviderProps, User, SignupData } from "./types";
 import { PatientData } from "@/types/patient";
-import {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  useEffect,
-} from "react";
-
-interface User {
-  fullName: string;
-  userRole: string;
-}
-
-interface SignupData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  username: string;
-  userRole: string;
-  phoneNumber: string;
-  password: string;
-  confirmPassword: string;
-  agreeTerms: boolean;
-  countryCode: number;
-  userDesignations: string;
-  userGender: string;
-}
-
-interface PatientProps {
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
-  email?: string;
-  phone?: string;
-  maritalStatus?: string;
-  dob?: string;
-  age?: string;
-  religion?: string;
-  picture?: File | null;
-  patientType?: string;
-  insuranceProvider?: string;
-  insuranceGroupNumber?: string;
-  patientId?: string;
-  insurancePolicyNumber?: string;
-  employerName?: string;
-  treatmentGuide?: string;
-  planType?: string;
-  eligibility?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  emergencyContactRelationship?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  signup: (data: SignupData) => Promise<void>;
-  signIn: (username: string, password: string) => Promise<boolean>;
-  signOut: () => void;
-  creationOfPatient: (patient: PatientProps) => void;
-}
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -70,7 +12,7 @@ const AuthContext = createContext<AuthContextType>({
   creationOfPatient: () => {},
 });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 

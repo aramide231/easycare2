@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import ExportButton from "@/constant/ExportButton";
 import { DateRange } from "react-date-range";
@@ -38,7 +38,7 @@ const DoctorLog = () => {
     setIsOpen(false);
   };
 
-  const handleSearchChange = (e: any) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     console.log("Search value:", e.target.value);
   };

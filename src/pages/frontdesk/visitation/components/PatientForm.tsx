@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { useAuth } from "@/context/AuthContext";
+// useAuth not required in this component
 
 type PatientData = {
   firstName?: string;
@@ -33,7 +33,7 @@ type PatientFormProps = {
 };
 
 const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
-  const { creationOfPatient } = useAuth();
+  // creationOfPatient is not used in this component
   const navigate = useNavigate();
   const location = useLocation();
   const isEditMode = location.pathname.includes("/edit");
@@ -101,7 +101,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
     localStorage.setItem("patients", JSON.stringify(updatedPatients));
 
 
- setIsSubmitted(true)
+    setIsSubmitted(true)
 
   };
 
@@ -126,19 +126,17 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
             return (
               <div key={stepNumber} className="flex items-center gap-2">
                 <div
-                  className={`px-4 py-2 rounded-lg font-semibold ${
-                    step >= stepNumber
+                  className={`px-4 py-2 rounded-lg font-semibold ${step >= stepNumber
                       ? "bg-purple-600 text-white"
                       : "text-gray-400 border border-gray-300"
-                  }`}
+                    }`}
                 >
                   {stepNumber}. {label}
                 </div>
                 {stepNumber < 3 && (
                   <div
-                    className={`h-[2px] w-12 ${
-                      step > stepNumber ? "bg-purple-600" : "bg-gray-300"
-                    }`}
+                    className={`h-[2px] w-12 ${step > stepNumber ? "bg-purple-600" : "bg-gray-300"
+                      }`}
                   />
                 )}
               </div>
@@ -211,7 +209,13 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
                     {field.type === "select" ? (
                       <select
                         name={field.name}
-                        value={formData[field.name as keyof PatientData] || ""}
+                        value={
+  typeof formData[field.name as keyof PatientData] === "string" ||
+  typeof formData[field.name as keyof PatientData] === "number"
+    ? (formData[field.name as keyof PatientData] as string | number)
+    : ""
+}
+
                         onChange={handleChange}
                         className="w-full border p-2 rounded-lg mt-1"
                       >
@@ -226,7 +230,13 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
                       <input
                         type={field.type || "text"}
                         name={field.name}
-                        value={formData[field.name as keyof PatientData] || ""}
+                        value={
+  typeof formData[field.name as keyof PatientData] === "string" ||
+  typeof formData[field.name as keyof PatientData] === "number"
+    ? (formData[field.name as keyof PatientData] as string | number)
+    : ""
+}
+
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         className="w-full border p-2 rounded-lg mt-1"
@@ -326,7 +336,13 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
                     {field.type === "select" ? (
                       <select
                         name={field.name}
-                        value={formData[field.name as keyof PatientData] || ""}
+                        value={
+                          typeof formData[field.name as keyof PatientData] === "string" ||
+                            typeof formData[field.name as keyof PatientData] === "number"
+                            ? (formData[field.name as keyof PatientData] as string | number)
+                            : ""
+                        }
+
                         onChange={handleChange}
                         className="w-full border p-2 rounded-lg mt-1"
                       >
@@ -341,7 +357,13 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
                       <input
                         type="text"
                         name={field.name}
-                        value={formData[field.name as keyof PatientData] || ""}
+                        value={
+  typeof formData[field.name as keyof PatientData] === "string" ||
+  typeof formData[field.name as keyof PatientData] === "number"
+    ? (formData[field.name as keyof PatientData] as string | number)
+    : ""
+}
+
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         className="w-full border p-2 rounded-lg mt-1"
@@ -386,7 +408,13 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
                     <input
                       type="text"
                       name={field.name}
-                      value={formData[field.name as keyof PatientData] || ""}
+                      value={
+  typeof formData[field.name as keyof PatientData] === "string" ||
+  typeof formData[field.name as keyof PatientData] === "number"
+    ? (formData[field.name as keyof PatientData] as string | number)
+    : ""
+}
+
                       onChange={handleChange}
                       placeholder={field.placeholder}
                       className="w-full border p-2 rounded-lg mt-1"

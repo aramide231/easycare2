@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
@@ -35,7 +35,7 @@ const SetReminder = () => {
   });
   const [success, setSuccess] = useState(false);
   const [patientName, setPatientName] = useState<string | null>(null);
-  const datepickerRef = useRef<any>(null);
+  // datepickerRef not required; removed to avoid ref typing mismatch with react-datepicker
   const navigate = useNavigate();
 
   const onSubmit = (data: FormData) => {
@@ -112,7 +112,6 @@ const SetReminder = () => {
             {open && (
               <div className="absolute z-50 bg-white shadow-lg p-6 rounded-md border mt-2">
                 <DatePicker
-                  ref={datepickerRef}
                   selected={date}
                   onChange={(d) => {
                     setDate(d);

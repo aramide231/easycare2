@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import ExportButton from "@/constant/ExportButton";
 import "react-datepicker/dist/react-datepicker.css";
@@ -39,7 +39,7 @@ const PostRecord = () => {
     setIsOpen(false);
   };
 
-  const handleSearchChange = (e: any) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     console.log("Search value:", e.target.value);
   };

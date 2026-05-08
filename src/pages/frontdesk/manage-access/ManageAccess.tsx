@@ -11,8 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import Sidebar from "@/constant/sidebar";
-import Topbar from "@/constant/topbar";
+// Sidebar and Topbar are not used in this file; imports removed to fix unused variable errors
 import LockIcon from "@/assets/image/erasebg-transformed 2.png";
 import LockIconGreen from "@/assets/image/erasebg-transformed 2 (2).png";
 import {

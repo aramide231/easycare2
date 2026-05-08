@@ -39,8 +39,6 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -114,13 +112,13 @@ const SignupForm = () => {
       </div>
       
       {/* Display submission error if any */}
-      {submitError && (
+      {signupError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-          <p>{submitError}</p>
+          <p>{signupError}</p>
         </div>
       )}
       
-      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+  <form className="space-y-6 pb-24" onSubmit={handleSubmit(onSubmit)}>
         {/* First Name and Last Name */}
         <div className="flex gap-4">
           <div className="w-1/2">
@@ -537,19 +535,35 @@ const SignupForm = () => {
                  />
                </span>
     </button> */}
+        {/* Desktop / tablet submit button */}
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+          className="hidden md:flex w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 justify-center items-center gap-2"
         >
-          <div className="flex justify-center items-center gap-2">
-            Register
-            <Icon
-              icon="material-symbols-light:arrow-forward-rounded"
-              width="24"
-              height="24"
-            />
-          </div>
+          Register
+          <Icon
+            icon="material-symbols-light:arrow-forward-rounded"
+            width="24"
+            height="24"
+          />
         </button>
+
+        {/* Mobile sticky submit bar (inside form so it submits) */}
+        <div className="md:hidden sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm py-3 border-t">
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700"
+          >
+            <div className="flex justify-center items-center gap-2">
+              Register
+              <Icon
+                icon="material-symbols-light:arrow-forward-rounded"
+                width="24"
+                height="24"
+              />
+            </div>
+          </button>
+        </div>
       </form>
     </div>
   );

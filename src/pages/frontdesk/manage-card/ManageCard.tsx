@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import Sidebar from "@/constant/sidebar";
-import Topbar from "@/constant/topbar";
+// Sidebar and Topbar are not used in this file; imports removed to fix unused variable errors
 import success from "@/assets/image/Succes 2 (1).png";
 import { useNavigate } from "react-router-dom";
 

@@ -31,6 +31,12 @@ type SectionsState = {
 
 type SectionKey = keyof SectionsState;
 
+type RouteItem = {
+  name: string;
+  icon: JSX.Element;
+  path: string;
+};
+
 const Sidebar = () => {
   const { user } = useAuth();
   const location = useLocation();
@@ -49,7 +55,7 @@ const Sidebar = () => {
   };
 
   // All routes grouped by roles
-  const roleBasedRoutes: Record<string, { [key in SectionKey]?: any[] }> = {
+  const roleBasedRoutes: Record<string, { [key in SectionKey]?: RouteItem[] }> = {
     frontdesk: {
       mainMenu: [
         {
