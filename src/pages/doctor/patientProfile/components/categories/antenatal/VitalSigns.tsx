@@ -4,18 +4,18 @@ import { useMedicalTable } from "../../../hooks/useMedicalTable";
 export default function VitalSigns() {
   // const [vitalHistory, setVitalHistory] = useState<any[]>([]);
   const vitalFields = [
-    { name: "temperature", label: "Temperature (°C)" },
-    { name: "bloodPressure", label: "Blood Pressure (mmHg)" },
-    { name: "weight", label: "Weight (kg)" },
-    { name: "height", label: "Height (cm)" },
-    { name: "bloodSugar", label: "Blood Sugar" },
-    { name: "pulseRate", label: "Pulse Rate" },
-    { name: "respiration", label: "Respiration (Bpm)" },
-    { name: "bmi", label: "Body Mass Index (BMI)" },
-    { name: "urinalysis", label: "Urinalysis" },
-    { name: "spo2", label: "SpO₂" },
-    { name: "fhr", label: "Fetal Heart Rate (FHR)" },
-    { name: "comment", label: "Comments", type: "textarea" },
+    { name: "temperature", label: "Temperature (°C)", type: "text" as const },
+    { name: "bloodPressure", label: "Blood Pressure (mmHg)", type: "text" as const },
+    { name: "weight", label: "Weight (kg)", type: "text" as const },
+    { name: "height", label: "Height (cm)", type: "text" as const },
+    { name: "bloodSugar", label: "Blood Sugar", type: "text" as const },
+    { name: "pulseRate", label: "Pulse Rate", type: "text" as const },
+    { name: "respiration", label: "Respiration (Bpm)", type: "text" as const },
+    { name: "bmi", label: "Body Mass Index (BMI)", type: "text" as const },
+    { name: "urinalysis", label: "Urinalysis", type: "text" as const },
+    { name: "spo2", label: "SpO₂", type: "text" as const },
+    { name: "fhr", label: "Fetal Heart Rate (FHR)", type: "text" as const },
+    { name: "comment", label: "Comments", type: "textarea" as const },
   ];
 
    const {
