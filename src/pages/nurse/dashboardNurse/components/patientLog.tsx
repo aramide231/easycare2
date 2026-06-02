@@ -1,28 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Search } from "lucide-react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import TablePagination from "@/pages/nurse/components/TablePagination";
+import { getTotalPages } from "@/pages/nurse/lib/pagination";
+import {
+  buildMockPatients,
+  type Patient,
+} from "../data/mockPatients";
 
-// type and datat check
-
-type Patient = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  patientId: string;
-  phoneNumber: string;
-  lastSeen: string;
-  time: string;
-  gender: string;
-  age: number;
-  patientType: string;
-  visitType: string;
-  staffName: string;
-  flagged: boolean;
-  bloodPressure: string;
-  name: string;
-};
+const PAGE_SIZE = 8;
 
 interface PatientsLogProps {
   onSelectPatient: (patient: Patient) => void;
@@ -58,124 +47,9 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [patients, setPatients] = useState<Patient[]>([
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      firstName: "Abiola",
-      lastName: "Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "120/80",
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      firstName: "Chinonso",
-      lastName: "Eze",
-      patientId: "P-2025002",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed",
-      flagged: false,
-      bloodPressure: "130/85",
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      firstName: "Damilola",
-      lastName: "Ogunleye",
-      patientId: "P-2025003",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "118/78",
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      firstName: "Emeka",
-      lastName: "Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "135/90",
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      firstName: "Ifeoma",
-      lastName: "Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "122/79",
-    },
-    {
-      id: 6,
-      name: "Toluwa Afolabi",
-      firstName: "Toluwa",
-      lastName: "Afolabi",
-      patientId: "P-2025006",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "125/82",
-    },
-  ]);
-
-  const getPatientTypeClass = (type: string) => {
-    switch (type) {
-      case "COMPANY":
-        return "bg-blue-100 text-blue-700";
-      case "PRIVATE":
-        return "bg-green-100 text-green-700";
-      case "HMO":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+  const [patients, setPatients] = useState<Patient[]>(() => buildMockPatients());
 
   const getVisitTypeClass = (type: string) => {
     switch (type) {
@@ -184,6 +58,29 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
       case "ANTE. NATAL":
         return "bg-green-100 text-green-700";
       case "POST NATAL":
+        return "bg-purple-100 text-purple-700";
+      case "CHILDBIRTH":
+        return "bg-blue-100 text-blue-700";
+      case "FAMILY PLAN":
+        return "bg-orange-100 text-orange-700";
+      case "SPECIALIST CONSULT":
+        return "bg-orange-100 text-orange-700";
+      case "WOUND DRESSING":
+        return "bg-purple-100 text-purple-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const getPatientTypeClass = (type: string) => {
+    switch (type) {
+      case "COMPANY":
+        return "bg-purple-100 text-purple-700";
+      case "PRIVATE":
+        return "bg-blue-100 text-blue-700";
+      case "HMO":
+        return "bg-orange-100 text-orange-700";
+      case "STAFF":
         return "bg-gray-100 text-gray-700";
       default:
         return "bg-gray-100 text-gray-700";
@@ -258,6 +155,24 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
     );
   });
 
+  const listToShow = searchTerm ? filteredPatients : patients;
+  const totalPages = getTotalPages(listToShow.length, PAGE_SIZE);
+
+  const paginatedPatients = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return listToShow.slice(start, start + PAGE_SIZE);
+  }, [listToShow, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
   // send profile model
   const [showSendModal, setShowSendModal] = useState(false);
   const [selectedSendOptions, setSelectedSendOptions] = useState<string[]>([]);
@@ -296,62 +211,82 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
       <Toast message={toastMessage} />
 
-      <div className="flex flex-col md:flex-row md:items-center  mb-6 md:space-x-0">
-        <h1 className="text-xl font-bold text-gray-800 md:mr-2">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <h1 className="shrink-0 text-xl font-bold text-gray-800">
           {headingText}
         </h1>
-        <input
-          type="search"
-          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full md:w-1/2 p-2.5 md:ml-0"
-          placeholder="Search for patients"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="flex w-full min-w-0 flex-1 items-center rounded-xl border border-[#D4D4D4] bg-white sm:max-w-md">
+          <Search
+            className="ml-3 h-4 w-4 shrink-0 text-gray-400"
+            strokeWidth={2}
+            aria-hidden
+          />
+          <span
+            className="mx-3 h-5 w-px shrink-0 bg-[#D4D4D4]"
+            aria-hidden
+          />
+          <input
+            type="search"
+            className="min-w-0 flex-1 border-0 bg-transparent py-2.5 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-0"
+            placeholder="Search for patients"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="border-t border-gray-200 pt-4 overflow-x-auto">
         <table className="min-w-full text-sm text-left">
-          <thead className="text-xs text-gray-500 uppercase">
+          <thead className="border-b border-[#D4D4D4] text-xs text-gray-500 uppercase">
             <tr>
-              <th className="px-4 py-2 font-medium whitespace-nowrap">SN</th>
+              <th className="px-4 py-2 font-medium whitespace-nowrap">S/N</th>
+              <th className="px-4 py-2 font-medium whitespace-nowrap">
+                VISITATION TYPE
+              </th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
                 PATIENT NAME
               </th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
-                LAST SEEN
+                REG DATE
               </th>
-              <th className="px-4 py-2 font-medium whitespace-nowrap">
-                GENDER
-              </th>
-              <th className="px-4 py-2 font-medium whitespace-nowrap">AGE</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
                 PATIENT TYPE
               </th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
-                VISIT TYPE
-              </th>
-              <th className="px-4 py-2 font-medium whitespace-nowrap">
                 STAFF NAME
               </th>
-              <th className="px-4 py-2 font-medium whitespace-nowrap"></th>
+              {isVisitationPage && (
+                <th className="px-4 py-2 font-medium whitespace-nowrap"></th>
+              )}
             </tr>
           </thead>
           <tbody>
-            {(searchTerm ? filteredPatients : patients).length > 0 ? (
-              (searchTerm ? filteredPatients : patients).map((patient) => (
+            {paginatedPatients.length > 0 ? (
+              paginatedPatients.map((patient, rowIndex) => (
                 <tr
                   key={patient.id}
-                  className={`${
+                  className={`cursor-pointer border-b border-[#D4D4D4] ${
                     selectedPatientId === patient.id
                       ? "bg-gray-100"
-                      : "bg-white"
-                  } cursor-pointer`}
+                      : "bg-white hover:bg-gray-50"
+                  }`}
                   onClick={() => {
                     setSelectedPatientId(patient.id);
                     onSelectPatient(patient);
                   }}
                 >
-                  <td className="px-4 py-3 whitespace-nowrap">{patient.id}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {(currentPage - 1) * PAGE_SIZE + rowIndex + 1}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
+                        patient.visitType
+                      )}`}
+                    >
+                      {patient.visitType}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-col">
                       <span className="font-medium">{patient.name}</span>
@@ -369,25 +304,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    {patient.gender}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">{patient.age}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
                         patient.patientType
                       )}`}
                     >
                       {patient.patientType}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
-                        patient.visitType
-                      )}`}
-                    >
-                      {patient.visitType}
                     </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
@@ -441,7 +363,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
             ) : (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={isVisitationPage ? 7 : 6}
                   className="text-center text-gray-500 py-6 text-sm bg-gray-50"
                 >
                   No results found for "{searchTerm}"
@@ -450,6 +372,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
             )}
           </tbody>
         </table>
+
+        <TablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {/* modal class  editpatients*/}
         {isModalOpen && editPatient && (

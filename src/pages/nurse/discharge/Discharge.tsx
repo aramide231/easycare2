@@ -1,5 +1,7 @@
+import DischargedPatientLog from "./components/DischargedPatientLog";
+
 const Discharge = () => {
-  return <div>discharge</div>;
+  return <DischargedPatientLog />;
 };
 
 export default Discharge;

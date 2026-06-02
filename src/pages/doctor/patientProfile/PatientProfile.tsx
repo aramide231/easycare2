@@ -5,12 +5,12 @@ import {
   FaBaby,
   FaBookReader,
   FaLocationArrow,
-  FaMapPin,
   FaMoneyBill,
   FaPeopleCarry,
   FaPiggyBank,
   FaRecordVinyl,
   FaRecycle,
+  FaSeedling,
   FaSnowman,
   FaUserFriends,
 } from "react-icons/fa";
@@ -18,6 +18,11 @@ import { useLocation } from "react-router-dom";
 import SelectCategoryCard from "./components/SelectCategoryCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { CategoryRenderer } from "./components/CategoryRenderer";
+import { subCategoryMap } from "./config/subCategoryMap";
+import ComingSoonPage from "@/components/ui/ComingSoonPage";
+import UploadedDocumentsSection from "@/components/patient/UploadedDocumentsSection";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DoctorPatientProfile = () => {
   // const { id } = useParams();
@@ -40,6 +45,10 @@ const DoctorPatientProfile = () => {
     {
       icon: FaUserFriends,
       label: "Family Planning",
+    },
+    {
+      icon: FaSeedling,
+      label: "Fertility Clinics",
     },
     {
       icon: FaPeopleCarry,
@@ -103,96 +112,6 @@ const DoctorPatientProfile = () => {
       label: "Payment History",
     },
   ];
-
-  const DocumentCategories = [
-    {
-      icon: FaMapPin,
-      label: "Uploaded Files",
-    },
-  ];
-
-  const subCategoryMap: Record<string, { label: string }[]> = {
-    "Ante Natal Care": [
-      { label: "VITAL SIGNS" },
-      { label: "PREVIOUS MEDICAL HISTORY" },
-      { label: "FAMILY MEDICAL HISTORY" },
-      { label: "NEW ANTENATAL BOOKING" },
-      { label: "PREVIOUS PREGNANCY HISTORY" },
-      { label: "PRESENTING COMPLAINTS" },
-      { label: "PHYSICAL EXAMINATION" },
-      { label: "DIAGNOSIS" },
-      { label: "INVESTIGATION" },
-      { label: "PROCEDURE" },
-      { label: "MEDICATION" },
-      { label: "FOLLOW-UP VISIT" },
-    ],
-
-    "Child Birth": [
-      { label: "STAGE 1: LABOUR" },
-      { label: "STAGE 2: PUSHING & BIRTHING" },
-      { label: "STAGE 3: DELIVERY OF PLACENTA" },
-      { label: "STAGE 4: DELIVERY NOTE" },
-    ],
-
-    "Family Planning": [
-      // { label: "CONTRACEPTIVE HISTORY" },
-      // { label: "METHOD SELECTED" },
-      // { label: "FOLLOW-UP" },
-    ],
-
-    "Immunization": [
-      { label: "VITAL SIGNS" },
-      { label: "VACCINE ADMINISTRATION" },
-      { label: "MEDICATION" },
-      { label: "FOLLOW-UP" },
-      { label: "CLINICAL NOTES" },
-   ],
-
-    "Gen Consult": [
-      { label: "VITAL SIGNS" },
-      { label: "PRESENTING COMPLAINTS" },
-      { label: "PHYSICAL EXAMINATION" },
-      { label: "DIAGNOSIS" },
-      { label: "INVESTIGATION" },
-      { label: "MEDICATION" },
-      { label: "PROCEDURE" },
-      { label: "REPORT WRITING" },
-      { label: "IN-TAKE CHART" },
-      { label: "OUTPUT CHART" },
-      { label: "NURSING DISPENSES" },
-      { label: "PHARMACY DISPENSE" },
-    ],
-
-    "Neo Natal Care": [
-      { label: "VITAL SIGNS" },
-      { label: "DIAGNOSIS" },
-      { label: "INVESTIGATION" },
-      { label: "PROCEDURE" },
-      { label: "MEDICATION" },
-    ],
-
-    "Post Natal Care": [
-      { label: "VITAL SIGNS" },
-      { label: "PRESENTING COMPLAINTS" },
-      { label: "PHYSICAL EXAMINATION" },
-      { label: "INVESTIGATION" },
-      { label: "MEDICATION" },
-    ],
-
-    "Specialist Consult": [
-      { label: "PRESENTING COMPLAINTS" },
-      { label: "PREVIOUS DENTAL HISTORY" },
-      { label: "PREVIOUS DENTAL MEDICATION" },
-    ],
-
-    "Surgical": [
-      { label: "PRE-OPERATION NOTE" },
-      { label: "P0ST-OPERATION NOTE" },
-      { label: "P0ST-OPERATION ORDERS" },
-    ],
-
-  };
-
 
   ////////////////  TO BE LATER USED FOR OTHER CATEGORIES  ////////////////
 
@@ -351,17 +270,19 @@ const DoctorPatientProfile = () => {
                 Fill Category Form
               </h3>
 
-              <div className="relative flex flex-col h-[300px] border border-gray-300 rounded-lg overflow-hidden">
+              <div className="relative flex flex-col rounded-lg border border-gray-300 p-4">
                 {!selectedCategory ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-gray-400 text-sm px-4 text-center">
+                  <div className="flex flex-col items-center justify-center px-4 py-16 text-gray-400 text-sm text-center">
                     <p className="text-black">Text Field Goes Here</p>
                     <p className="text-gray-400">
-                      /Becomes Active when a category is clicked
+                      Becomes Active when a category is clicked
                     </p>
                   </div>
+                ) : selectedCategory === "Family Planning" ||
+                  selectedCategory === "Fertility Clinics" ? (
+                  <ComingSoonPage title={selectedCategory} />
                 ) : (
-                  <div className="flex flex-col w-full h-full overflow-y-auto divide-y divide-gray-200">
-           
+                  <div className="flex flex-col w-full divide-y divide-gray-200">
                     {subCategoryMap[selectedCategory || ""]?.map((cat, idx) => (
                       <div key={idx} className="py-5">
                         <div
@@ -484,128 +405,12 @@ const DoctorPatientProfile = () => {
           {step === 3 && (
             <>
               <h2 className="text-sm text-gray-400 mb-2">Step 1</h2>
-              <h3 className="text-gray-700 font-semibold mb-2">
-                Attached Documents
-              </h3>
-              <div className=" flex flex-wrap gap-4">
-                {DocumentCategories.map((item, index) => (
-                  <SelectCategoryCard
-                    key={index}
-                    icon={item.icon}
-                    label={item.label}
-                    selected={selectedCategory === item.label}
-                    onClick={() => setSelectedCategory(item.label)}
-                  />
-                ))}
-              </div>
-              <h2 className="text-sm text-gray-400 mb-2">Step 2</h2>
-              <h3 className="text-gray-700 font-semibold mb-2">
-                View Uploaded Files
-              </h3>
-
-              <div className="relative flex flex-col h-[300px] overflow-auto">
-                {!selectedCategory && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-gray-400 text-sm px-4 text-center">
-                    <strong className="text-black">Table Goes Here</strong>
-                    <br />
-                    /Becomes Active when a category is clicked
-                  </div>
-                )}
-
-                {selectedCategory && (
-                  <table className="w-full text-sm text-left text-gray-700 border border-gray-300 rounded-lg overflow-hidden">
-                    <thead className="bg-gray-100 sticky top-0">
-                      <tr>
-                        <th className="p-3 border-b">
-                          <input type="checkbox" />
-                        </th>
-                        <th className="p-3 border-b text-sm text-gray-300">
-                          DOCUMENT
-                        </th>
-                        <th className="p-3 border-b text-sm text-gray-300">
-                          DATE UPLOADED{" "}
-                        </th>
-                        <th className="p-3 border-b text-sm text-gray-300">
-                          UPLOADED BY
-                        </th>
-                        <th className="p-3 border-b text-sm text-gray-300">
-                          ACTION
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="hover:bg-gray-50">
-                        <td className="p-3 border-b">
-                          <input type="checkbox" />
-                        </td>
-                        <td className="p-3 border-b">
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {patient.name} Malaria Result
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {patient.patientId} | {patient.phoneNumber}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-3 border-b">
-                          <div className="flex flex-col">
-                            <span>{patient.lastSeen}</span>
-                            <span className="text-xs text-gray-500">
-                              {patient.time}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-3 border-b">
-                          <p>Titilayo Olayinka</p>
-                        </td>
-                        <td className="p-3 border-b space-x-2">
-                          <button className="px-2 py-1 text-xs bg-green-200 text-green-700 rounded hover:bg-green-600">
-                            View
-                          </button>
-                          <button className="px-2 py-1 text-xs bg-red-200 text-red-700 rounded hover:bg-red-600">
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-gray-50">
-                        <td className="p-3 border-b">
-                          <input type="checkbox" />
-                        </td>
-                        <td className="p-3 border-b">
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {patient.name} Pelvic Scan
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {patient.patientId} | {patient.phoneNumber}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-3 border-b">
-                          <div className="flex flex-col">
-                            <span>{patient.lastSeen}</span>
-                            <span className="text-xs text-gray-500">
-                              {patient.time}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-3 border-b">
-                          <p>Titilayo Olayinka</p>
-                        </td>
-                        <td className="p-3 border-b space-x-2">
-                          <button className="px-2 py-1 text-xs bg-green-200 text-green-700 rounded hover:bg-green-600">
-                            View
-                          </button>
-                          <button className="px-2 py-1 text-xs bg-red-200 text-red-700 rounded hover:bg-red-600">
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                )}
-              </div>
+              <h3 className="mb-4 font-semibold text-gray-700">Upload File</h3>
+              <UploadedDocumentsSection
+                patientName={`${patient.firstName} ${patient.lastName}`}
+                patientId={patient.patientId}
+                phoneNumber={patient.phoneNumber}
+              />
             </>
           )}
         </div>
@@ -629,6 +434,7 @@ const DoctorPatientProfile = () => {
           </button>
         </div>
       </div>
+      <ToastContainer position="bottom-center" autoClose={2500} />
     </div>
   );
 };

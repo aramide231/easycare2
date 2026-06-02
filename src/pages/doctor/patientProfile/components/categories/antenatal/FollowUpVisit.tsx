@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import {
+  formFieldInputClass,
+  formFieldTextareaClass,
+} from "../../../lib/formFieldStyles";
 
 export default function FollowUpVisit() {
   const [followUpForm, setFollowUpForm] = useState<Record<string, string>>({});
@@ -45,7 +49,7 @@ export default function FollowUpVisit() {
                     [field.name]: e.target.value,
                   })
                 }
-                className="w-full border rounded p-2 text-sm"
+                className={formFieldTextareaClass}
               />
             ) : (
               <input
@@ -57,7 +61,7 @@ export default function FollowUpVisit() {
                     [field.name]: e.target.value,
                   })
                 }
-                className="w-full border rounded p-2 text-sm"
+                className={formFieldInputClass}
               />
             )}
           </div>

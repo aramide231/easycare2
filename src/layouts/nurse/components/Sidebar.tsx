@@ -1,0 +1,236 @@
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import easyCareLogoFull from "@/assets/icon/Frame 121.svg";
+import hospitalLogo from "@/assets/icon/Frame 5.svg";
+import EasyCareMark from "./EasyCareMark";
+import ChevronToggle from "./ChevronToggle";
+import { useSidebar } from "../hooks/useSidebar";
+import {
+  MAIN_MENU,
+  PATIENT_MANAGEMENT,
+  PERFORM_ACTION,
+  REPORTS,
+  type NavItem,
+} from "../config/nurseNavItems";
+
+type SidebarProp = NavItem & {
+  active?: boolean;
+  isCollapsed: boolean;
+};
+
+type MenuSection = "main" | "patientManagement" | "action" | "reports";
+
+export default function Sidebar() {
+  const location = useLocation();
+  const { user } = useAuth();
+  const { width, isDragging, isCollapsed, startResizing, toggleCollapse } =
+    useSidebar();
+
+  const [openMenus, setOpenMenus] = useState({
+    main: true,
+    patientManagement: true,
+    action: false,
+    reports: false,
+  });
+
+  const roleLabel =
+    user?.userRole && user.userRole.length > 0
+      ? user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1)
+      : "Nurse";
+
+  const toggleMenu = (menuName: MenuSection) => {
+    if (isCollapsed) return;
+    setOpenMenus((prev) => ({ ...prev, [menuName]: !prev[menuName] }));
+  };
+
+  const isNavActive = (path: string) => {
+    if (path === "/nurse") {
+      return (
+        location.pathname === "/nurse" ||
+        location.pathname === "/nurse/dashboard"
+      );
+    }
+    return (
+      location.pathname === path ||
+      location.pathname.startsWith(`${path}/`)
+    );
+  };
+
+  useEffect(() => {
+    const patientMgmtPaths = [
+      "/nurse/admission",
+      "/nurse/available-ward",
+      "/nurse/discharge",
+    ];
+    if (patientMgmtPaths.some((p) => location.pathname.startsWith(p))) {
+      setOpenMenus((prev) => ({ ...prev, patientManagement: true }));
+    }
+  }, [location.pathname]);
+
+  const NavItem = ({
+    icon: Icon,
+    label,
+    link,
+    active,
+    isCollapsed: collapsed,
+  }: SidebarProp) => {
+    const content = (
+      <div
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 group ${
+          active
+            ? "bg-indigo-50 text-[#573FD1] border border-[#573FD1]/20"
+            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+        } ${collapsed ? "justify-center" : "justify-start"}`}
+        title={collapsed ? label : undefined}
+      >
+        <Icon
+          className={`w-5 h-5 shrink-0 transition-colors ${
+            active
+              ? "text-[#573FD1]"
+              : "text-gray-500 group-hover:text-gray-700"
+          }`}
+          strokeWidth={active ? 2.5 : 2}
+        />
+        {!collapsed && (
+          <span
+            className={`text-sm font-medium truncate ${
+              active ? "text-[#573FD1]" : ""
+            }`}
+          >
+            {label}
+          </span>
+        )}
+      </div>
+    );
+
+    return <Link to={link}>{content}</Link>;
+  };
+
+  const renderSection = (
+    title: string,
+    menuKey: MenuSection,
+    items: NavItem[],
+  ) => (
+    <div>
+      {!isCollapsed && (
+        <div className="flex justify-between items-center px-2 mb-2">
+          <h1 className="font-semibold text-gray-400 text-xs tracking-wider uppercase">
+            {title}
+          </h1>
+          <button
+            type="button"
+            onClick={() => toggleMenu(menuKey)}
+            className="p-1 hover:bg-gray-50 rounded"
+          >
+            <ChevronToggle isOpen={openMenus[menuKey]} />
+          </button>
+        </div>
+      )}
+      {(openMenus[menuKey] || isCollapsed) && (
+        <div className="space-y-1">
+          {items.map((m) => (
+            <NavItem
+              key={m.label}
+              {...m}
+              isCollapsed={isCollapsed}
+              active={isNavActive(m.link)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <aside
+      style={{ width: `${width}px` }}
+      className={`relative bg-white border-r border-gray-200 min-h-screen flex flex-col shrink-0 ${
+        !isDragging && "transition-[width] duration-300 ease-in-out"
+      }`}
+    >
+      <div
+        role="presentation"
+        onMouseDown={startResizing}
+        className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-[#573FD1]/40 active:bg-[#573FD1] transition-colors z-50"
+      />
+
+      <div
+        className={`px-4 pt-6 pb-4 flex items-center justify-between ${
+          isCollapsed && "flex-col gap-4"
+        }`}
+      >
+        <div className="flex items-center gap-2 overflow-hidden min-w-0">
+          {isCollapsed ? (
+            <EasyCareMark className="w-8 h-8 shrink-0" />
+          ) : (
+            <img
+              className="h-8 w-auto max-w-[140px] shrink-0 object-contain object-left"
+              src={easyCareLogoFull}
+              alt="EasyCare"
+            />
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={toggleCollapse}
+          className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 shrink-0"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? (
+            <PanelLeftOpen size={20} />
+          ) : (
+            <PanelLeftClose size={20} />
+          )}
+        </button>
+      </div>
+
+      <div className="px-4 mb-4">
+        <div className="w-full border-b border-gray-200" />
+      </div>
+
+      <div className="px-4 mb-4">
+        <div
+          className={`bg-[#FAFAFA] border border-gray-200 rounded-xl p-2.5 flex items-center gap-3 ${
+            isCollapsed && "justify-center"
+          }`}
+        >
+          <div className="w-10 h-10 shrink-0 rounded-lg bg-white border border-gray-100 flex items-center justify-center shadow-sm p-1">
+            <img
+              src={hospitalLogo}
+              alt="St James Hospital"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          {!isCollapsed && (
+            <div className="overflow-hidden min-w-0">
+              <div className="text-sm font-semibold text-gray-900 truncate">
+                St James Hospital
+              </div>
+              <div className="text-[11px] text-gray-500 font-medium truncate">
+                {roleLabel}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="px-4 mb-4">
+        <div className="w-full border-b border-gray-200" />
+      </div>
+
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar px-3 pb-6 space-y-6">
+        {renderSection("Main Menu", "main", MAIN_MENU)}
+        {renderSection(
+          "Patient Management",
+          "patientManagement",
+          PATIENT_MANAGEMENT,
+        )}
+        {renderSection("Perform Action", "action", PERFORM_ACTION)}
+        {renderSection("Reports", "reports", REPORTS)}
+      </nav>
+    </aside>
+  );
+}

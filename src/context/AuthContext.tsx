@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import { AuthContextType, AuthProviderProps, User, SignupData } from "./types";
 import { PatientData } from "@/types/patient";
 
@@ -12,29 +12,15 @@ const AuthContext = createContext<AuthContextType>({
   creationOfPatient: () => {},
 });
 
+const DEV_NURSE_USER: User = {
+  fullName: "David Sam",
+  userRole: "nurse",
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const storedUser = localStorage.getItem("mockUser");
-
-      // if (storedUser) {
-      //   const parsed = JSON.parse(storedUser);
-      //   if (parsed.name && parsed.userRole) {
-      //     setUser({
-      //       fullName: parsed.name,
-      //       userRole: parsed.userRole || "frontdesk",
-      //     });
-      //   }
-      // }
-     console.log(storedUser)
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, []);
+  // Dev: skip login and go straight to nursing
+  const [user, setUser] = useState<User | null>(DEV_NURSE_USER);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const signup = async (data: SignupData) => {
     const fullName = `${data.firstName} ${data.lastName}`;
@@ -72,7 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = () => {
     localStorage.removeItem("mockUser");
-    setUser(null);
+    setUser(DEV_NURSE_USER);
   };
 
   const creationOfPatient = (data: PatientData) => {

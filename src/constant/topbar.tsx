@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import clientimage from "../assets/image/haywhy.jpg";
 import { useAuth } from "@/context/AuthContext";
 
 const Topbar = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const location = useLocation();
 
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -41,7 +40,12 @@ const Topbar = () => {
     { pattern: /^\/frontdesk\/child-birth$/ },
     { pattern: /^\/frontdesk\/post-natal$/ },
     { pattern: /^\/frontdesk\/family-planning$/ },
+    { pattern: /^\/nurse\/?$/ },
+    { pattern: /^\/nurse\/dashboard$/ },
     { pattern: /^\/nurse\/notifications$/ },
+    { pattern: /^\/nurse\/admission$/ },
+    { pattern: /^\/nurse\/discharge$/ },
+    { pattern: /^\/nurse\/available-ward$/ },
     { pattern: /^\/nurse\/patient-profile\/\d+$/ },
   ];
 
@@ -90,11 +94,6 @@ const Topbar = () => {
     );
   };
 
-  const handleLogout = () => {
-    signOut(); // Sign out the user
-    navigate("/"); // Redirect to the login page
-  };
-
   return (
     <div className="flex justify-between items-center p-4 bg-white">
       <div className="w-1/2">
@@ -125,13 +124,6 @@ const Topbar = () => {
           <h3 className="text-sm font-semibold">{user?.fullName}</h3>
           <p className="text-xs text-gray-500">{user?.userRole}</p>
         </div>
-        {/* Log out button */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white text-sm px-5 py-2 rounded-full hover:bg-red-600"
-        >
-          Logout
-        </button>
       </div>
     </div>
   );

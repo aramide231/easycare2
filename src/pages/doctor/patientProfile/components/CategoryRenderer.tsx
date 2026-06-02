@@ -3,6 +3,7 @@ import PreviousMedicalHistory from "./categories/antenatal/PreviousMedicalHistor
 import FamilyMedicalHistory from "./categories/antenatal/FamilyMedicalHistory";
 import NewAntenatalBooking from "./categories/antenatal/NewAntenatalBooking";
 import PreviousPregnancyHistory from "./categories/antenatal/PreviousPregnancyHistory";
+import PresentPregnancyHistory from "./categories/antenatal/PresentPregnancyHistory";
 import FollowUpVisit from "./categories/antenatal/FollowUpVisit";
 import Stage1Labour from "./categories/childbirth/Stage1Labour";
 import Stage2Pushing from "./categories/childbirth/Stage2Pushing";
@@ -28,6 +29,7 @@ export const CategoryRenderer: Record<string, React.ReactNode> = {
   "FAMILY MEDICAL HISTORY": <FamilyMedicalHistory />,
   "NEW ANTENATAL BOOKING": <NewAntenatalBooking />,
   "PREVIOUS PREGNANCY HISTORY": <PreviousPregnancyHistory />,
+  "PRESENT PREGNANCY HISTORY": <PresentPregnancyHistory />,
   "PRESENTING COMPLAINTS": <PresentingComplaints />,
   "PHYSICAL EXAMINATION": <PhysicalExamination />,
   "INVESTIGATION": <Investigation />,

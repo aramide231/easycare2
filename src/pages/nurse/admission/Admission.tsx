@@ -1,7 +1,7 @@
-
+import AdmissionLog from "./components/AdmissionLog";
 
 const Admission = () => {
-  return <div></div>;
+  return <AdmissionLog />;
 };
 
 export default Admission;

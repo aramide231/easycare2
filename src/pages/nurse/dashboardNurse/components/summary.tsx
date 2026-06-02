@@ -1,111 +1,130 @@
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import {
-  FaUserPlus,
-  FaProcedures,
-  FaBell,
-  FaUserCheck,
-  FaHospitalUser,
-} from "react-icons/fa";
+import { FaBell, FaUserCheck, FaSyncAlt } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { buildMockNotifications } from "@/data/mockNotifications";
+import { MOCK_PATIENTS_TOTAL } from "@/pages/nurse/dashboardNurse/data/mockPatients";
+import { usePatientManagement } from "@/pages/nurse/context/PatientManagementContext";
+import DashboardSummaryCard from "./DashboardSummaryCard";
 
-const DashboardSummaryForAll = () => {
+type SummaryItem = {
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  variant: "dark" | "notification";
+  action: "navigate" | "refresh";
+  path?: string;
+};
+
+type Props = {
+  onRefreshPatients?: () => void;
+};
+
+const DashboardSummaryForAll = ({ onRefreshPatients }: Props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { admissions } = usePatientManagement();
 
-  const summaryItems = [
+  const notificationCount = buildMockNotifications().length;
+
+  const summaryItems: SummaryItem[] = [
     {
       title: "New Registration",
-      count: "50 new patients",
-      icon: <FaUserPlus size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
-      textColor: "text-white",
+      subtitle: "50 new patients",
+      icon: <FaUserCheck size={22} className="text-white" />,
+      variant: "dark",
+      action: "navigate",
       path: "/frontdesk/registration",
     },
     {
       title: "Patients for visitation",
-      count: "1,119 patients",
-      icon: <FaProcedures size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-blue-500 to-indigo-600",
-      textColor: "text-white",
+      subtitle: "1,119 patients",
+      icon: <FaUserCheck size={22} className="text-white" />,
+      variant: "dark",
+      action: "navigate",
       path: "/frontdesk/visitation-log",
     },
     {
       title: "Notifications",
-      count: "No new notification",
-      icon: <FaBell size={24} className="text-orange-500" />,
-      bgColor: "bg-white border border-orange-500",
-      textColor: "text-gray-700",
+      subtitle: `${notificationCount} messages`,
+      icon: <FaBell size={22} className="text-[#FA7401]" />,
+      variant: "notification",
+      action: "navigate",
       path: "/frontdesk/notifications",
     },
   ];
 
-  const summaryItemsNurse = [
+  const summaryItemsNurse: SummaryItem[] = [
     {
-      title: "Out Patients",
-      count: "50 new patients",
-      icon: <FaUserCheck size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
-      textColor: "text-white",
-      path: "/nurse/registration",
+      title: "Out Patient",
+      subtitle: `${MOCK_PATIENTS_TOTAL} patients`,
+      icon: <FaSyncAlt size={22} className="text-white" />,
+      variant: "dark",
+      action: "refresh",
     },
     {
       title: "In Patient",
-      count: "10 patients",
-      icon: <FaHospitalUser size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-blue-500 to-indigo-600",
-      textColor: "text-white",
-      path: "/nurse/visitation-log",
+      subtitle: `${admissions.length} patients`,
+      icon: <FaUserCheck size={22} className="text-white" />,
+      variant: "dark",
+      action: "navigate",
+      path: "/nurse/admission",
     },
     {
       title: "Notifications",
-      count: "5 new notification",
-      icon: <FaBell size={24} className="text-orange-500" />,
-      bgColor: "bg-orange-100 border border-orange-500",
-      textColor: "text-gray-700",
+      subtitle: `${notificationCount} messages`,
+      icon: <FaBell size={22} className="text-[#FA7401]" />,
+      variant: "notification",
+      action: "navigate",
       path: "/nurse/notifications",
     },
   ];
 
-  const summaryItemsDoctor = [
+  const summaryItemsDoctor: SummaryItem[] = [
     {
-      title: "Out Patients",
-      count: "50 new patients",
-      icon: <FaUserCheck size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
-      textColor: "text-white",
-      path: "/doctor/registration",
+      title: "Out Patient",
+      subtitle: `${MOCK_PATIENTS_TOTAL} patients`,
+      icon: <FaUserCheck size={22} className="text-white" />,
+      variant: "dark",
+      action: "navigate",
+      path: "/doctor",
     },
     {
       title: "In Patient",
-      count: "10 patients",
-      icon: <FaHospitalUser size={24} className="text-white" />,
-      bgColor: "bg-gradient-to-r from-blue-500 to-indigo-600",
-      textColor: "text-white",
-      path: "/doctor/visitation-log",
+      subtitle: `${admissions.length} patients`,
+      icon: <FaUserCheck size={22} className="text-white" />,
+      variant: "dark",
+      action: "navigate",
+      path: "/doctor",
     },
     {
       title: "Notifications",
-      count: "5 new notification",
-      icon: <FaBell size={24} className="text-orange-500" />,
-      bgColor: "bg-orange-100 border border-orange-500",
-      textColor: "text-gray-700",
+      subtitle: `${notificationCount} messages`,
+      icon: <FaBell size={22} className="text-[#FA7401]" />,
+      variant: "notification",
+      action: "navigate",
       path: "/doctor/notifications-doctor",
     },
   ];
 
   const isNurseRoute = location.pathname.startsWith("/nurse");
-
   const isDoctorRoute = location.pathname.startsWith("/doctor");
 
   const activeSummaryItems = isNurseRoute
     ? summaryItemsNurse
     : isDoctorRoute
-    ? summaryItemsDoctor
-    : summaryItems;
+      ? summaryItemsDoctor
+      : summaryItems;
 
-  const handleItemClick = (path: string) => {
-    navigate(path);
+  const handleCardClick = (item: SummaryItem) => {
+    if (item.action === "refresh") {
+      onRefreshPatients?.();
+      toast.success("Patient log refreshed");
+      return;
+    }
+    if (item.path) navigate(item.path);
   };
 
   return (
@@ -116,23 +135,16 @@ const DashboardSummaryForAll = () => {
         </h2>
         <p>Have a wonderful day at work</p>
       </div>
-      <div className="flex gap-4 w-full p-4">
-        {activeSummaryItems.map((item, index) => (
-          <div
-            key={index}
-            className={`flex items-center justify-between p-5 rounded-lg w-1/3 shadow-md cursor-pointer ${item.bgColor}`}
-            onClick={() => handleItemClick(item.path)}
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-opacity-20">{item.icon}</div>
-              <div>
-                <h3 className={`font-semibold text-lg ${item.textColor}`}>
-                  {item.title}
-                </h3>
-                <p className={`text-sm ${item.textColor}`}>{item.count}</p>
-              </div>
-            </div>
-          </div>
+      <div className="flex w-full gap-4 p-4">
+        {activeSummaryItems.map((item) => (
+          <DashboardSummaryCard
+            key={item.title}
+            title={item.title}
+            subtitle={item.subtitle}
+            icon={item.icon}
+            variant={item.variant}
+            onClick={() => handleCardClick(item)}
+          />
         ))}
       </div>
     </div>

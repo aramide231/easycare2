@@ -28,6 +28,11 @@ import FlagProfile from "@/pages/frontdesk/flag-profile/FlagProfile";
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboardNurse/Dashboard";
 import NursePatientProfile from "@/pages/nurse/patientProfile/PatientProfile";
+import NurseAdmission from "@/pages/nurse/admission/Admission";
+import NurseAvailableWard from "@/pages/nurse/availableWard/AvailableWard";
+import NurseDischarge from "@/pages/nurse/discharge/Discharge";
+import NurseAdmissionReport from "@/pages/nurse/reports/AdmissionReport";
+import NurseDischargeReport from "@/pages/nurse/reports/DischargeReport";
 
 // import doctors component
 import DoctorDashboard from "@/pages/doctor/dashboard/DoctorDashboard";
@@ -47,8 +52,9 @@ const RoleBasedRoutes = () => {
 
   return (
     <Routes>
-      {/* sign up and sign in page */}
-      <Route path="/" element={<AuthenticationPage />} />
+      {/* Default: nursing dashboard (login skipped in dev) */}
+      <Route path="/" element={<Navigate to="/nurse" replace />} />
+      <Route path="/auth" element={<AuthenticationPage />} />
       <Route path="/auth/verification" element={<Verification />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
@@ -82,7 +88,13 @@ const RoleBasedRoutes = () => {
       {user && user.userRole === "nurse" && (
         <Route path="/nurse" element={<NurseLayout />}>
           <Route index element={<NurseDashboard />} />
+          <Route path="dashboard" element={<NurseDashboard />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="admission" element={<NurseAdmission />} />
+          <Route path="available-ward" element={<NurseAvailableWard />} />
+          <Route path="discharge" element={<NurseDischarge />} />
+          <Route path="reports/admission" element={<NurseAdmissionReport />} />
+          <Route path="reports/discharge" element={<NurseDischargeReport />} />
           <Route path="patient-profile/:id" element={<NursePatientProfile />} />
         </Route>
       )}

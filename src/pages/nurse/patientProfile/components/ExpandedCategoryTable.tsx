@@ -1,46 +1,30 @@
-// components/PresentingComplaintsTable.tsx
-type expandedCategoryTableProps = {
+import CategoryMedicalTable from "@/pages/doctor/patientProfile/components/category/CategoryMedicalTable";
+import type { CategoryTableColumn } from "@/pages/doctor/patientProfile/config/categoryFieldTypes";
+
+type Props = {
   title: string;
-  columns: string[];
-  rows: string[][];
+  columns: string[] | CategoryTableColumn[];
+  rows: string[][] | Record<string, unknown>[];
 };
 
-const ExpandedCategoryTable: React.FC<expandedCategoryTableProps> = ({
-  title,
-  columns,
-  rows,
-}) => {
+const ExpandedCategoryTable = ({ title, columns, rows }: Props) => {
+  const tableColumns: CategoryTableColumn[] = columns.map((col, index) =>
+    typeof col === "string" ? { key: String(index), label: col } : col
+  );
+
+  const tableRows: Record<string, unknown>[] =
+    rows.length > 0 && Array.isArray(rows[0])
+      ? (rows as string[][]).map((row) =>
+          Object.fromEntries(row.map((cell, i) => [String(i), cell]))
+        )
+      : (rows as Record<string, unknown>[]);
+
   return (
-    <div className="mt-6 relative">
-      <div className="overflow-x-auto hide-scrollbar transition-all duration-300 ease-in-out">
-        <h2 className="font-semibold text-lg mb-2">{title}</h2>
-        <table className="min-w-max w-full text-sm text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              {columns.map((col, index) => (
-                <th
-                  key={index}
-                  className="px-4 py-2 whitespace-nowrap font-semibold text-gray-700"
-                >
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr key={rowIndex} className="even:bg-gray-50">
-                {row.map((cell, cellIndex) => (
-                  <td key={cellIndex} className="px-4 py-2 whitespace-nowrap">
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <CategoryMedicalTable
+      title={title}
+      columns={tableColumns}
+      rows={tableRows}
+    />
   );
 };
 
