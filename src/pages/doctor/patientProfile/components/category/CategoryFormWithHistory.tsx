@@ -17,6 +17,10 @@ type Props = {
   detailsTitle?: string;
   emptyMessage?: string;
   includeMetaColumns?: boolean;
+  /** Gen Consult Figma: full-width inputs in 2-column grid. */
+  fullWidth?: boolean;
+  /** Override table columns (e.g. Figma column set). */
+  tableColumns?: import("../../config/categoryFieldTypes").CategoryTableColumn[];
 };
 
 /**
@@ -30,17 +34,21 @@ const CategoryFormWithHistory = ({
   detailsTitle,
   emptyMessage,
   includeMetaColumns,
+  fullWidth = false,
+  tableColumns,
 }: Props) => {
   const key = tableKey ?? sectionName;
   const { history, save } = useMedicalTable(key);
-  const columns = buildTableColumnsFromFields(fields, {
-    includeMeta: includeMetaColumns,
-  });
+  const columns =
+    tableColumns ??
+    buildTableColumnsFromFields(fields, {
+      includeMeta: includeMetaColumns,
+    });
   const title = detailsTitle ?? categoryDetailsTitle(sectionName);
 
   return (
     <div className="space-y-6">
-      <CategoryForm fields={fields} onSave={save} />
+      <CategoryForm fields={fields} onSave={save} fullWidth={fullWidth} />
       <CategoryMedicalTable
         title={title}
         columns={columns}

@@ -23,6 +23,8 @@ import CategoryFormAccordion from "./components/CategoryFormAccordion";
 import ComingSoonPage from "@/components/ui/ComingSoonPage";
 import UploadedDocumentsSection from "@/components/patient/UploadedDocumentsSection";
 import { getSubCategories } from "@/pages/doctor/patientProfile/config/subCategoryMap";
+import ConsultationTypeSelector from "@/pages/doctor/patientProfile/components/categories/specialistConsult/ConsultationTypeSelector";
+import ClaimsProcessor from "@/pages/doctor/patientProfile/components/financial/ClaimsProcessor";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -36,6 +38,7 @@ const NursePatientProfile = () => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(
     null
   );
+  const [consultationType, setConsultationType] = useState("Dental Consultation");
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
 
   const activeFormSections = getSubCategories(selectedCategory);
@@ -337,10 +340,19 @@ const NursePatientProfile = () => {
                 ))}
               </div>
 
-              <h2 className="shrink-0 text-xs text-gray-400">Step 2</h2>
-              <h3 className="mb-1.5 shrink-0 text-sm font-semibold text-gray-800">
-                Fill Category Form
-              </h3>
+              {selectedCategory === "Specialist Consult" ? (
+                <ConsultationTypeSelector
+                  value={consultationType}
+                  onChange={setConsultationType}
+                />
+              ) : (
+                <>
+                  <h2 className="shrink-0 text-xs text-gray-400">Step 2</h2>
+                  <h3 className="mb-1.5 shrink-0 text-sm font-semibold text-gray-800">
+                    Fill Category Form
+                  </h3>
+                </>
+              )}
 
               <div className="relative flex flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4">
                 {!selectedCategory ? (
@@ -363,6 +375,7 @@ const NursePatientProfile = () => {
                     sections={activeFormSections}
                     expandedCategory={expandedCategory}
                     onToggle={toggleCategory}
+                    selectedCategory={selectedCategory}
                   />
                 )}
               </div>
@@ -392,7 +405,7 @@ const NursePatientProfile = () => {
               <h3 className="mb-1.5 shrink-0 text-sm font-semibold text-gray-800">
                 Fill Category Form
               </h3>
-              <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-gray-200 bg-gray-50/30">
+              <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
                 {!selectedCategory && (
                   <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-sm">
                     <p className="font-medium text-gray-900">
@@ -403,11 +416,17 @@ const NursePatientProfile = () => {
                     </p>
                   </div>
                 )}
-                <textarea
-                  className="h-full w-full resize-none rounded-lg border-0 bg-transparent p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#573FD1]"
-                  placeholder="Enter category-specific information here..."
-                  disabled={!selectedCategory}
-                />
+                {selectedCategory === "Claims Processor" && (
+                  <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                    <ClaimsProcessor />
+                  </div>
+                )}
+                {selectedCategory &&
+                  selectedCategory !== "Claims Processor" && (
+                    <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                      <ComingSoonPage title={selectedCategory} />
+                    </div>
+                  )}
               </div>
             </div>
           )}

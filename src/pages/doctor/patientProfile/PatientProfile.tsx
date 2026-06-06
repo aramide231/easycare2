@@ -17,9 +17,11 @@ import {
 import { useLocation } from "react-router-dom";
 import SelectCategoryCard from "./components/SelectCategoryCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { CategoryRenderer } from "./components/CategoryRenderer";
+import { resolveCategoryForm } from "./lib/resolveCategoryForm";
 import { subCategoryMap } from "./config/subCategoryMap";
 import ComingSoonPage from "@/components/ui/ComingSoonPage";
+import ConsultationTypeSelector from "./components/categories/specialistConsult/ConsultationTypeSelector";
+import ClaimsProcessor from "./components/financial/ClaimsProcessor";
 import UploadedDocumentsSection from "@/components/patient/UploadedDocumentsSection";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,6 +34,7 @@ const DoctorPatientProfile = () => {
   const [step, setStep] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<CategoryLabel | null>(null);
+  const [consultationType, setConsultationType] = useState("Dental Consultation");
 
   const categories = [
     {
@@ -265,10 +268,19 @@ const DoctorPatientProfile = () => {
                 ))}
               </div>
 
-              <h2 className="text-sm text-gray-400 mt-4">Step 2</h2>
-              <h3 className="font-semibold text-gray-700 mb-2">
-                Fill Category Form
-              </h3>
+              {selectedCategory === "Specialist Consult" ? (
+                <ConsultationTypeSelector
+                  value={consultationType}
+                  onChange={setConsultationType}
+                />
+              ) : (
+                <>
+                  <h2 className="text-sm text-gray-400 mt-4">Step 2</h2>
+                  <h3 className="font-semibold text-gray-700 mb-2">
+                    Fill Category Form
+                  </h3>
+                </>
+              )}
 
               <div className="relative flex flex-col rounded-lg border border-gray-300 p-4">
                 {!selectedCategory ? (
@@ -315,7 +327,8 @@ const DoctorPatientProfile = () => {
                           </button>
                         </div>
 
-                        {expandedCategory === cat.label && CategoryRenderer[cat.label]}
+                        {expandedCategory === cat.label &&
+                          resolveCategoryForm(selectedCategory, cat.label)}
                       </div>
                     ))}
 
@@ -345,7 +358,7 @@ const DoctorPatientProfile = () => {
               <h3 className="text-gray-700 font-semibold mb-2">
                 Fill Category Form
               </h3>
-              <div className="relative flex flex-col h-[300px]">
+              <div className="relative flex flex-col min-h-[300px] max-h-[70vh]">
                 {!selectedCategory ? (
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-gray-400 text-sm px-4 text-center">
                     <p className="text-black">Text Field Goes Here</p>
@@ -353,52 +366,15 @@ const DoctorPatientProfile = () => {
                       /Becomes Active when a category is clicked
                     </p>
                   </div>
+                ) : selectedCategory === "Claims Processor" ? (
+                  <div className="flex flex-col w-full h-full overflow-y-auto rounded-lg border border-gray-300 p-4">
+                    <ClaimsProcessor />
+                  </div>
                 ) : (
-                  <div className="flex flex-col w-full h-full overflow-y-auto divide-y divide-gray-200">
-           
-                    {subCategoryMap[selectedCategory || ""]?.map((cat, idx) => (
-                      <div key={idx} className="py-5">
-                        <div
-                          className={` ${
-                            expandedCategory === cat.label &&
-                            "bg-white border-b-gray-400 pb-4"
-                          }`}
-                        >
-                          <button
-                            onClick={() => toggleCategory(cat.label)}
-                            className={`relative w-full px-4 py-3 text-left text-sm font-medium border-b-2 border-purple-400 ${
-                              expandedCategory === cat.label
-                                ? "text-white"
-                                : "text-gray-900 hover:bg-gray-50"
-                            }`}
-                          >
-                            {/* Tab-like label sitting on the border */}
-                            <span className="absolute -bottom-[2px] left-1 bg-purple-400 text-white w-[300px] rounded-t-md px-4 py-2 z-10 text-sm shadow-md">
-                              {cat.label}
-                            </span>
-
-                            {/* Chevron icon aligned right */}
-                            <div className="flex justify-end items-center">
-                              {expandedCategory === cat.label ? (
-                                <ChevronUp className="w-4 h-4 ml-auto pr-1" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4 ml-auto pr-1" />
-                              )}
-                            </div>
-                          </button>
-                        </div>
-
-                        {expandedCategory === cat.label && CategoryRenderer[cat.label]}
-                      </div>
-                    ))}
-
+                  <div className="flex flex-col w-full h-full overflow-y-auto rounded-lg border border-gray-300 p-4">
+                    <ComingSoonPage title={selectedCategory} />
                   </div>
                 )}
-
-                {/* <textarea
-                  className="w-full h-full resize-none border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-transparent"
-                  placeholder="Enter category-specific information here..."
-                /> */}
               </div>
             </>
           )}

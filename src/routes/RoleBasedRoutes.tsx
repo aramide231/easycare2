@@ -1,6 +1,7 @@
 // routes/RoleBasedRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { AUTH_SIGNIN_PATH, getRoleHomePath } from "@/lib/authRoutes";
 
 import FrontdeskLayout from "../layouts/FrontdeskLayout";
 import NurseLayout from "../layouts/NurseLayout";
@@ -46,22 +47,45 @@ import ForgotPassword from "@/pages/auth/components/ForgotPassword";
 import RegistrationLog from "@/pages/frontdesk/RegistrationLog";
 import RegistrationForm from "@/pages/frontdesk/Registration/RegistrationForm";
 
+function AuthLoadingScreen() {
+  return (
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <p className="animate-pulse text-lg font-semibold text-[#573FD1]">
+        Loading...
+      </p>
+    </div>
+  );
+}
 
 const RoleBasedRoutes = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <AuthLoadingScreen />;
+  }
+
+  const homePath = user ? getRoleHomePath(user.userRole) : AUTH_SIGNIN_PATH;
 
   return (
     <Routes>
-      {/* Default: nursing dashboard (login skipped in dev) */}
-      <Route path="/" element={<Navigate to="/nurse" replace />} />
-      <Route path="/auth" element={<AuthenticationPage />} />
-      <Route path="/auth/verification" element={<Verification />} />
+      <Route path="/" element={<Navigate to={homePath} replace />} />
+
+      <Route
+        path="/auth"
+        element={
+          user ? <Navigate to={homePath} replace /> : <AuthenticationPage />
+        }
+      />
+      <Route
+        path="/auth/verification"
+        element={
+          user ? <Navigate to={homePath} replace /> : <Verification />
+        }
+      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-     
-
       {/* Frontdesk */}
-      {user && user.userRole === "frontdesk" && (
+      {user?.userRole === "frontdesk" && (
         <Route path="/frontdesk" element={<FrontdeskLayout />}>
           <Route index element={<FrontdeskDashboard />} />
           <Route path="edit/:id" element={<EditPatient />} />
@@ -85,7 +109,7 @@ const RoleBasedRoutes = () => {
       )}
 
       {/* Nurse */}
-      {user && user.userRole === "nurse" && (
+      {user?.userRole === "nurse" && (
         <Route path="/nurse" element={<NurseLayout />}>
           <Route index element={<NurseDashboard />} />
           <Route path="dashboard" element={<NurseDashboard />} />
@@ -100,7 +124,7 @@ const RoleBasedRoutes = () => {
       )}
 
       {/* Doctor */}
-      {user && user.userRole === "doctor" && (
+      {user?.userRole === "doctor" && (
         <Route path="/doctor" element={<DoctorLayout />}>
           <Route index element={<DoctorDashboard />} />
           <Route path="notifications-doctor" element={<DoctorNotification />} />
@@ -109,15 +133,14 @@ const RoleBasedRoutes = () => {
       )}
 
       {/* Admin */}
-      {user && user.userRole === "admin" && (
+      {user?.userRole === "admin" && (
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<div>User Management</div>} />
         </Route>
       )}
 
-      {/* Default fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={homePath} replace />} />
     </Routes>
   );
 };

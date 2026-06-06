@@ -1,4 +1,5 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
+import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
 import { CategoryFormWithHistory } from "../../category";
 
 const vitalFields: CategoryFieldConfig[] = [
@@ -6,42 +7,105 @@ const vitalFields: CategoryFieldConfig[] = [
     name: "temperature",
     label: "Temperature (°C)",
     tableLabel: "TEMP",
+    placeholder: "-Input temperature-",
     required: true,
   },
   {
     name: "bloodPressure",
     label: "Blood Pressure (mmHg)",
     tableLabel: "B.P",
+    placeholder: "-Input blood pressure-",
     required: true,
   },
   {
     name: "weight",
     label: "Weight (kg)",
     tableLabel: "WEIGHT",
+    placeholder: "-Input weight-",
     required: true,
   },
   {
     name: "height",
     label: "Height (cm)",
     tableLabel: "HEIGHT",
+    placeholder: "-Input height-",
     required: true,
   },
-  { name: "bloodSugar", label: "Blood Sugar", tableLabel: "B.S" },
-  { name: "pulseRate", label: "Pulse Rate", tableLabel: "PULSE" },
-  { name: "respiration", label: "Respiration (Bpm)", tableLabel: "RESP" },
-  { name: "bmi", label: "Body Mass Index (BMI)", tableLabel: "BMI" },
-  { name: "urinalysis", label: "Urinalysis", tableLabel: "UR" },
+  {
+    name: "bloodSugar",
+    label: "Blood Sugar",
+    tableLabel: "B.S",
+    placeholder: "-Input blood sugar-",
+  },
+  {
+    name: "pulseRate",
+    label: "Pulse Rate",
+    tableLabel: "PULSE",
+    placeholder: "-Input pulse rate-",
+  },
+  {
+    name: "respiration",
+    label: "Respiration (Bpm)",
+    tableLabel: "RESP",
+    placeholder: "-Input Bpm-",
+    showInTable: false,
+  },
+  {
+    name: "bmi",
+    label: "Body Mass Index (BMI)",
+    tableLabel: "BMI",
+    placeholder: "-Input BMI-",
+    showInTable: false,
+  },
+  {
+    name: "urinalysis",
+    label: "Urinalysis",
+    tableLabel: "UR",
+    placeholder: "-Input urinalysis-",
+    showInTable: false,
+  },
   {
     name: "spo2",
     label: "Peripheral Oxygen Saturation (SpO2)",
     tableLabel: "SPO₂",
+    placeholder: "-Input SpO2-",
+    showInTable: false,
   },
-  { name: "fhr", label: "Fetal Heart Rate (FHR)", tableLabel: "FHR" },
-  { name: "comment", label: "Comments", showInTable: false },
+  {
+    name: "fhr",
+    label: "Fetal Heart Rate (FHR)",
+    tableLabel: "FHR",
+    placeholder: "-Input FHR-",
+    showInTable: false,
+  },
+  {
+    name: "comment",
+    label: "Comments",
+    type: "textarea",
+    placeholder: "-Input comments-",
+    fullWidth: true,
+    showInTable: false,
+  },
+];
+
+const vitalTableColumns = [
+  ...DEFAULT_META_TABLE_COLUMNS.filter((c) => c.key !== "enteredBy"),
+  { key: "temperature", label: "TEMP" },
+  { key: "bloodPressure", label: "B.P" },
+  { key: "bloodSugar", label: "B.S" },
+  { key: "weight", label: "WEIGHT" },
+  { key: "height", label: "HEIGHT" },
+  { key: "pulseRate", label: "PULSE" },
 ];
 
 export default function VitalSigns() {
   return (
-    <CategoryFormWithHistory sectionName="VITAL SIGNS" fields={vitalFields} />
+    <CategoryFormWithHistory
+      sectionName="VITAL SIGNS"
+      tableKey="ANTE NATAL — VITAL SIGNS"
+      fields={vitalFields}
+      fullWidth
+      tableColumns={vitalTableColumns}
+    />
   );
 }

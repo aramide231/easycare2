@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import { AUTH_SIGNIN_PATH } from "@/lib/authRoutes";
 
 export const AppGridIcon = () => (
   <svg
@@ -44,7 +45,7 @@ const AppGridMenu = () => {
   const handleLogout = () => {
     signOut();
     setOpen(false);
-    navigate("/auth");
+    navigate(AUTH_SIGNIN_PATH);
   };
 
   const handleHelpdeskSubmit = () => {

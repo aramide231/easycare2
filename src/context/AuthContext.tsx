@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContextType, AuthProviderProps, User, SignupData } from "./types";
 import { PatientData } from "@/types/patient";
 
@@ -7,58 +7,86 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   signup: async () => {},
-  signIn: async () => false,
+  signIn: async () => null,
   signOut: () => {},
   creationOfPatient: () => {},
 });
 
-const DEV_NURSE_USER: User = {
-  fullName: "David Sam",
-  userRole: "nurse",
-};
+const SESSION_KEY = "easyCareSession";
+
+function persistSession(user: User) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+}
+
+function readSession(): User | null {
+  const stored = localStorage.getItem(SESSION_KEY);
+  if (!stored) return null;
+
+  try {
+    const parsed = JSON.parse(stored) as User;
+    if (parsed.fullName && parsed.userRole) return parsed;
+  } catch {
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  return null;
+}
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // Dev: skip login and go straight to nursing
-  const [user, setUser] = useState<User | null>(DEV_NURSE_USER);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setUser(readSession());
+    setLoading(false);
+  }, []);
 
   const signup = async (data: SignupData) => {
     const fullName = `${data.firstName} ${data.lastName}`;
+    const nextUser: User = {
+      fullName,
+      userRole: data.userRole,
+    };
+
     localStorage.setItem(
       "mockUser",
       JSON.stringify({
         ...data,
         name: fullName,
-      })
+      }),
     );
 
-    setUser({
-      fullName,
-      userRole: data.userRole,
-    });
+    persistSession(nextUser);
+    setUser(nextUser);
 
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
   };
 
   const signIn = async (
-    email: string,
-    password: string
-  ): Promise<boolean> => {
+    username: string,
+    password: string,
+  ): Promise<User | null> => {
     const stored = localStorage.getItem("mockUser");
-    if (!stored) return false;
+    if (!stored) return null;
 
     const parsed = JSON.parse(stored);
-    if (parsed.email === email && parsed.password === password) {
-      setUser({ fullName: parsed.name, userRole: parsed.userRole });
-      return true;
-    }
+    const matchesIdentity =
+      parsed.email === username || parsed.username === username;
+    if (!matchesIdentity || parsed.password !== password) return null;
 
-    return false;
+    const nextUser: User = {
+      fullName: parsed.name,
+      userRole: parsed.userRole,
+    };
+
+    persistSession(nextUser);
+    setUser(nextUser);
+    return nextUser;
   };
 
   const signOut = () => {
-    localStorage.removeItem("mockUser");
-    setUser(DEV_NURSE_USER);
+    localStorage.removeItem(SESSION_KEY);
+    setUser(null);
   };
 
   const creationOfPatient = (data: PatientData) => {

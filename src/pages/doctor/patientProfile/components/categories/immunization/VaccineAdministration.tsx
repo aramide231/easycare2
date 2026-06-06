@@ -1,329 +1,331 @@
 import { useState } from "react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import CategoryMedicalTable from "../../category/CategoryMedicalTable";
+import {
+  genConsultDeleteBtn,
+  genConsultInputClass,
+  genConsultLabelClass,
+  genConsultSaveBtn,
+  genConsultSelectClass,
+  genConsultSmallSaveBtn,
+} from "../genConsult/genConsultStyles";
+import {
+  AGE_GRADE_OPTIONS,
+  COMMENT_OPTIONS,
+  DOSAGE_OPTIONS,
+  PERIOD_OPTIONS,
+  ROUTE_OPTIONS,
+  SITE_OPTIONS,
+  VACCINE_TYPE_OPTIONS,
+} from "./immunizationFieldOptions";
 
-const VaccineAdministration = () => {
+type VaccineLine = {
+  vaccineType: string;
+  dosage: string;
+  route: string;
+  site: string;
+  amount: string;
+  period: string;
+  price: number;
+};
 
-  /* ================= FORM STATE ================= */
-  const [vaccineForm, setVaccineForm] = useState<Record<string, any>>({});
-  const [vaccineRow, setVaccineRow] = useState<Record<string, string>>({});
-  const [vaccines, setVaccines] = useState<any[]>([]);
+const HISTORY_COLUMNS = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PX TYPE" },
+  { key: "ageGrade", label: "AGE GRADE" },
+  { key: "vaccineType", label: "TYPE OF VACCINE" },
+  { key: "dosage", label: "DOSAGE" },
+];
 
-  /* ================= FIELD CONFIG ================= */
-  const vaccineFields = [
-    { name: "ageGrade", label: "Age Grade", type: "select" },
-    { name: "period", label: "Period", type: "select" },
-  ];
+const emptyLine = (): Omit<VaccineLine, "price"> => ({
+  vaccineType: "",
+  dosage: "",
+  route: "",
+  site: "",
+  amount: "",
+  period: "",
+});
 
-  /* ================= CHANGE HANDLER ================= */
-  const handleChange = (name: string, value: any) => {
-    setVaccineForm(prev => ({
+export default function VaccineAdministration() {
+  const [ageGrade, setAgeGrade] = useState("");
+  const [sessionPeriod, setSessionPeriod] = useState("");
+  const [weight, setWeight] = useState("");
+  const [comment, setComment] = useState("");
+  const [line, setLine] = useState(emptyLine());
+  const [items, setItems] = useState<VaccineLine[]>([]);
+
+  const { history, saveBatch, remove } = useMedicalTable(
+    "IMMUNIZATION — VACCINE ADMINISTRATION",
+  );
+
+  const inputClass = genConsultInputClass.replace("max-w-[354px]", "max-w-none");
+  const selectClass = genConsultSelectClass.replace(
+    "max-w-[354px]",
+    "max-w-none",
+  );
+
+  const pickVaccine = (type: string) => {
+    const preset = VACCINE_TYPE_OPTIONS[type];
+    setLine((prev) => ({
       ...prev,
-      [name]: value,
+      vaccineType: type,
+      dosage: preset?.dosage ?? prev.dosage,
+      route: preset?.route ?? prev.route,
+      site: preset?.site ?? prev.site,
+      price: preset?.price ?? 0,
     }));
   };
 
-  /* ================= MEDICAL TABLE HOOK ================= */
-  const {
-    history: vaccineHistory,
-    save: saveMedicalRecord,
-    remove: deleteMedicalRecord,
-  } = useMedicalTable("VACCINE ADMINISTRATION");
-
-  /* ================= ADD VACCINE ================= */
   const addVaccine = () => {
-    if (!vaccineRow.vaccine) return;
-
-    setVaccines(prev => [
+    if (!line.vaccineType) return;
+    const preset = VACCINE_TYPE_OPTIONS[line.vaccineType];
+    setItems((prev) => [
       ...prev,
-      { ...vaccineRow }
+      {
+        ...line,
+        price: preset?.price ?? (Number(line.amount) || 0),
+      },
     ]);
-
-    setVaccineRow({});
+    setLine(emptyLine());
   };
 
-  const removeVaccine = (index: number) => {
-    setVaccines(prev => prev.filter((_, i) => i !== index));
-  };
+  const total = items.reduce((sum, item) => sum + item.price, 0);
 
-  /* ================= SAVE ================= */
   const handleSave = () => {
-
-    if (vaccines.length === 0) return;
-
-    saveMedicalRecord({
-      ...vaccineForm,
-      vaccines,
-    });
-
-    setVaccines([]);
-    setVaccineForm({});
+    if (!items.length) return;
+    saveBatch(
+      items.map((item) => ({
+        patientType: "OPD",
+        ageGrade,
+        sessionPeriod,
+        weight,
+        comment,
+        vaccineType: item.vaccineType.toUpperCase(),
+        dosage: item.dosage.toUpperCase(),
+        route: item.route,
+        site: item.site,
+        amount: item.amount,
+        price: String(item.price),
+      })),
+    );
+    setItems([]);
+    setAgeGrade("");
+    setSessionPeriod("");
+    setWeight("");
+    setComment("");
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-b text-sm">
-
-      {/* ========= TOP FORM ========= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        {vaccineFields.map(field => (
-          <div key={field.name}>
-            <label className="block mb-1 font-medium">
-              {field.label}
-            </label>
-
+    <div className="space-y-6">
+      <div className="rounded-lg bg-[#F3F0FF] p-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label className={genConsultLabelClass}>Age-Grade</label>
             <select
-              value={vaccineForm[field.name] || ""}
-              onChange={(e) =>
-                handleChange(field.name, e.target.value)
-              }
-              className="w-full border rounded p-2"
+              value={ageGrade}
+              onChange={(e) => setAgeGrade(e.target.value)}
+              className={selectClass}
             >
               <option value="">-Select an Option-</option>
-
-              {field.name === "ageGrade" && (
-                <>
-                  <option>At Birth</option>
-                  <option>6 Weeks</option>
-                  <option>10 Weeks</option>
-                  <option>14 Weeks</option>
-                  <option>9 Months</option>
-                </>
-              )}
-
-              {field.name === "period" && (
-                <>
-                  <option>Morning</option>
-                  <option>Afternoon</option>
-                  <option>Evening</option>
-                </>
-              )}
-
+              {AGE_GRADE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.label}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
-        ))}
-
+          <div>
+            <label className={genConsultLabelClass}>Period</label>
+            <select
+              value={sessionPeriod}
+              onChange={(e) => setSessionPeriod(e.target.value)}
+              className={selectClass}
+            >
+              <option value="">-Select an Option-</option>
+              {PERIOD_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.label}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
-
-      {/* ========= VACCINE ENTRY ========= */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
-
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div>
-          <label className="block mb-1 font-medium">
-            Type of Vaccine
-          </label>
-
+          <label className={genConsultLabelClass}>Type of Vaccine</label>
           <select
-            className="w-full border rounded p-2"
-            value={vaccineRow.vaccine || ""}
-            onChange={(e) =>
-              setVaccineRow({
-                ...vaccineRow,
-                vaccine: e.target.value
-              })
-            }
+            value={line.vaccineType}
+            onChange={(e) => pickVaccine(e.target.value)}
+            className={selectClass}
           >
             <option value="">-Select vaccine-</option>
-            <option>BCG</option>
-            <option>OPV</option>
-            <option>Penta</option>
-            <option>Measles</option>
-            <option>Yellow Fever</option>
+            {Object.keys(VACCINE_TYPE_OPTIONS).map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
           </select>
         </div>
-
-
         <div>
-          <label className="block mb-1 font-medium">Dosage</label>
-          <input
-            className="w-full border rounded p-2"
-            value={vaccineRow.dosage || ""}
+          <label className={genConsultLabelClass}>Dosage</label>
+          <select
+            value={line.dosage}
             onChange={(e) =>
-              setVaccineRow({
-                ...vaccineRow,
-                dosage: e.target.value
-              })
+              setLine((prev) => ({ ...prev, dosage: e.target.value }))
             }
+            className={selectClass}
+          >
+            <option value="">-Select dosage-</option>
+            {DOSAGE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Administration Route</label>
+          <select
+            value={line.route}
+            onChange={(e) =>
+              setLine((prev) => ({ ...prev, route: e.target.value }))
+            }
+            className={selectClass}
+          >
+            <option value="">-Select route-</option>
+            {ROUTE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Site (Body Part)</label>
+          <select
+            value={line.site}
+            onChange={(e) =>
+              setLine((prev) => ({ ...prev, site: e.target.value }))
+            }
+            className={selectClass}
+          >
+            <option value="">-Select body part-</option>
+            {SITE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Amount</label>
+          <input
+            value={line.amount}
+            onChange={(e) =>
+              setLine((prev) => ({ ...prev, amount: e.target.value }))
+            }
+            placeholder="Amount"
+            className={inputClass}
           />
         </div>
-
-
-        <div>
-          <label className="block mb-1 font-medium">
-            Administration Route
-          </label>
-          <input
-            className="w-full border rounded p-2"
-            value={vaccineRow.route || ""}
-            onChange={(e) =>
-              setVaccineRow({
-                ...vaccineRow,
-                route: e.target.value
-              })
-            }
-          />
+        <div className="flex items-end gap-2">
+          <div className="flex-1">
+            <label className={genConsultLabelClass}>Period</label>
+            <input
+              type="date"
+              value={line.period}
+              onChange={(e) =>
+                setLine((prev) => ({ ...prev, period: e.target.value }))
+              }
+              className={inputClass}
+            />
+          </div>
+          <button type="button" onClick={addVaccine} className={genConsultSmallSaveBtn}>
+            Save
+          </button>
         </div>
-
-
-        <div>
-          <label className="block mb-1 font-medium">
-            Site (Body Part)
-          </label>
-          <input
-            className="w-full border rounded p-2"
-            value={vaccineRow.site || ""}
-            onChange={(e) =>
-              setVaccineRow({
-                ...vaccineRow,
-                site: e.target.value
-              })
-            }
-          />
-        </div>
-
-
-        <button
-          onClick={addVaccine}
-          className="h-[38px] bg-purple-600 text-white rounded px-4"
-        >
-          Add
-        </button>
-
       </div>
 
-
-      {/* ========= TEMP VACCINE LIST ========= */}
-      {vaccines.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-
-          <table className="min-w-max text-sm text-left border">
-
-            <thead className="bg-gray-100">
-              <tr>
-                <th>S/N</th>
-                <th>Vaccine</th>
-                <th>Dosage</th>
-                <th>Route</th>
-                <th>Site</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {vaccines.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{index + 1}</td>
-                  <td>{row.vaccine}</td>
-                  <td>{row.dosage}</td>
-                  <td>{row.route}</td>
-                  <td>{row.site}</td>
-
-                  <td>
-                    <button
-                      onClick={() => removeVaccine(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-
-            </tbody>
-          </table>
-
+      {items.length > 0 && (
+        <div className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 text-sm"
+            >
+              <span className="font-medium">
+                {index + 1}. {item.vaccineType} | {item.dosage} | {item.route} |{" "}
+                {item.site}
+              </span>
+              <div className="flex items-center gap-4">
+                <span className="font-medium">
+                  N {item.price.toLocaleString()}.00
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setItems((prev) => prev.filter((_, i) => i !== index))
+                  }
+                  className={genConsultDeleteBtn}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-end px-4 py-3 text-sm font-bold">
+            TOTAL N {total.toLocaleString()}.00
+          </div>
         </div>
       )}
 
-
-      {/* ========= EXTRA DETAILS ========= */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        <input
-          className="border rounded p-2"
-          placeholder="Weight"
-          value={vaccineForm.weight || ""}
-          onChange={(e) =>
-            handleChange("weight", e.target.value)
-          }
-        />
-
-        <input
-          className="border rounded p-2"
-          placeholder="Comment"
-          value={vaccineForm.comment || ""}
-          onChange={(e) =>
-            handleChange("comment", e.target.value)
-          }
-        />
-
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <label className={genConsultLabelClass}>Weight</label>
+          <input
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            placeholder="-Input weight-"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Comment</label>
+          <select
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className={selectClass}
+          >
+            <option value="">-Select an Option-</option>
+            {COMMENT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-
-      {/* ========= SAVE ========= */}
-      <div className="mt-6 text-center">
+      <div className="text-center">
         <button
+          type="button"
           onClick={handleSave}
-          className="px-6 py-2 bg-purple-600 text-white rounded"
+          disabled={!items.length}
+          className={`${genConsultSaveBtn} disabled:cursor-not-allowed disabled:opacity-50`}
         >
           Save
         </button>
       </div>
 
-
-      {/* ========= MEDICAL TABLE ========= */}
-      {vaccineHistory.length > 0 && (
-
-        <div className="mt-6 overflow-x-auto">
-
-          <h4 className="font-semibold mb-2">
-            VACCINE ADMINISTRATION DETAILS
-          </h4>
-
-          <table className="min-w-max text-sm text-left border">
-
-            <thead className="bg-gray-100">
-              <tr>
-                <th>S/N</th>
-                <th>Date | Time</th>
-                <th>Age Grade</th>
-                <th>Total Vaccines</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {vaccineHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.ageGrade}</td>
-                  <td>{row.vaccines?.length}</td>
-
-                  <td>
-                    <button
-                      onClick={() => deleteMedicalRecord(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-
-                </tr>
-              ))}
-
-            </tbody>
-
-          </table>
-
-        </div>
-      )}
-
+      <CategoryMedicalTable
+        title="VACCINE ADMINISTRATION DETAILS"
+        columns={HISTORY_COLUMNS}
+        rows={history}
+        emptyMessage="No vaccine administration recorded yet."
+      />
     </div>
   );
-};
-
-export default VaccineAdministration;
+}

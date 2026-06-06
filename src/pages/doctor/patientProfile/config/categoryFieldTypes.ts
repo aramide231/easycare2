@@ -12,6 +12,8 @@ export type CategoryFieldConfig = {
   showInTable?: boolean;
   /** For type "select". Defaults to YES / NO. */
   options?: { value: string; label: string }[];
+  /** Input / textarea placeholder (Figma spec). */
+  placeholder?: string;
 };
 
 export type CategoryTableColumn = {

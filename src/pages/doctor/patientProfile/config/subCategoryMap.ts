@@ -74,8 +74,8 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
 
   Surgical: [
     { label: "PRE-OPERATION NOTE" },
-    { label: "P0ST-OPERATION NOTE" },
-    { label: "P0ST-OPERATION ORDERS" },
+    { label: "POST-OPERATION NOTE" },
+    { label: "POST-OPERATION ORDERS" },
   ],
 };
 

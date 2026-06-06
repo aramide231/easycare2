@@ -21,6 +21,11 @@ import PostOperationOrders from "./categories/surgical/PostOperationOrders";
 import PostOperationNote from "./categories/surgical/PostOperationNotes";
 import Diagnosis from "./categories/shared/Diagnosis";
 import Procedure from "./categories/shared/Procedure";
+import ReportWriting from "./categories/genConsult/ReportWriting";
+import IntakeCharts from "./categories/genConsult/IntakeCharts";
+import OutputChart from "./categories/genConsult/OutputChart";
+import NursingDispenses from "./categories/genConsult/NursingDispenses";
+import PharmacyDispenses from "./categories/genConsult/PharmacyDispenses";
 
 
 export const CategoryRenderer: Record<string, React.ReactNode> = {
@@ -47,6 +52,11 @@ export const CategoryRenderer: Record<string, React.ReactNode> = {
   "PRE-OPERATION NOTE": <PreOperationNote />,
   "POST-OPERATION NOTE": <PostOperationNote />,
   "POST-OPERATION ORDERS": <PostOperationOrders />,
+  "REPORT WRITING": <ReportWriting />,
+  "IN-TAKE CHART": <IntakeCharts />,
+  "OUTPUT CHART": <OutputChart />,
+  "NURSING DISPENSES": <NursingDispenses />,
+  "PHARMACY DISPENSE": <PharmacyDispenses />,
 
 
 };

@@ -1,23 +1,26 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { CategoryRenderer } from "@/pages/doctor/patientProfile/components/CategoryRenderer";
+import { resolveCategoryForm } from "@/pages/doctor/patientProfile/lib/resolveCategoryForm";
 import type { SubCategory } from "@/pages/doctor/patientProfile/config/subCategoryMap";
 
 type Props = {
   sections: SubCategory[];
   expandedCategory: string | null;
   onToggle: (label: string) => void;
+  /** When set, uses category-specific forms (e.g. Gen Consult Figma). */
+  selectedCategory?: string | null;
 };
 
 const CategoryFormAccordion = ({
   sections,
   expandedCategory,
   onToggle,
+  selectedCategory = null,
 }: Props) => {
   return (
     <div className="flex w-full flex-col divide-y divide-gray-200">
       {sections.map((section) => {
         const isOpen = expandedCategory === section.label;
-        const form = CategoryRenderer[section.label];
+        const form = resolveCategoryForm(selectedCategory, section.label);
 
         return (
           <div key={section.label} className="py-3 first:pt-0 last:pb-0">

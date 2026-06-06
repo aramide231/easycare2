@@ -25,7 +25,7 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   signup: (data: SignupData) => Promise<void>;
-  signIn: (username: string, password: string) => Promise<boolean>;
+  signIn: (username: string, password: string) => Promise<User | null>;
   signOut: () => void;
   creationOfPatient: (patient: PatientData) => void;
 }

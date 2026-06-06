@@ -1,5 +1,49 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import {
+  ANTE_NATAL_BOOKING_SEED,
+  ANTE_NATAL_FMH_SEED,
+  ANTE_NATAL_FOLLOW_UP_SEED,
+  ANTE_NATAL_PMH_SEED,
+  ANTE_NATAL_PREGNANCY_SEED,
+} from "../data/antenatalSeed";
+import {
+  CHILD_BIRTH_STAGE1_SEED,
+  CHILD_BIRTH_STAGE2_SEED,
+  CHILD_BIRTH_STAGE3_SEED,
+  CHILD_BIRTH_STAGE4_SEED,
+} from "../data/childbirthSeed";
+import {
+  IMMUNIZATION_CLINICAL_NOTES_SEED,
+  IMMUNIZATION_FOLLOW_UP_SEED,
+  IMMUNIZATION_MEDICATION_SEED,
+  IMMUNIZATION_VACCINE_SEED,
+  IMMUNIZATION_VITAL_SIGNS_SEED,
+} from "../data/immunizationSeed";
+import {
+  NEO_NATAL_DIAGNOSIS_SEED,
+  NEO_NATAL_INVESTIGATION_SEED,
+  NEO_NATAL_MEDICATION_SEED,
+  NEO_NATAL_PROCEDURE_SEED,
+  NEO_NATAL_VITAL_SIGNS_SEED,
+} from "../data/neonatalSeed";
+import {
+  POST_NATAL_COMPLAINTS_SEED,
+  POST_NATAL_INVESTIGATION_SEED,
+  POST_NATAL_MEDICATION_SEED,
+  POST_NATAL_PHYSICAL_EXAM_SEED,
+  POST_NATAL_VITAL_SIGNS_SEED,
+} from "../data/postNatalSeed";
+import {
+  SPECIALIST_COMPLAINTS_SEED,
+  SPECIALIST_DENTAL_HISTORY_SEED,
+  SPECIALIST_DENTAL_MEDICATION_SEED,
+} from "../data/specialistConsultSeed";
+import {
+  SURGICAL_POST_OP_NOTE_SEED,
+  SURGICAL_POST_OP_ORDERS_SEED,
+  SURGICAL_PRE_OP_SEED,
+} from "../data/surgicalSeed";
 import { VITAL_SIGNS_SEED } from "../data/vitalSignsSeed";
 
 function formatMedicalDateTime(date: Date): string {
@@ -16,6 +60,42 @@ function formatMedicalDateTime(date: Date): string {
 
 const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
   "VITAL SIGNS": [...VITAL_SIGNS_SEED],
+  "GEN CONSULT — VITAL SIGNS": [...VITAL_SIGNS_SEED],
+  "ANTE NATAL — VITAL SIGNS": [...VITAL_SIGNS_SEED],
+  "ANTE NATAL — PREVIOUS MEDICAL HISTORY": [...ANTE_NATAL_PMH_SEED],
+  "ANTE NATAL — FAMILY MEDICAL HISTORY": [...ANTE_NATAL_FMH_SEED],
+  "ANTE NATAL — NEW ANTENATAL BOOKING": [...ANTE_NATAL_BOOKING_SEED],
+  "ANTE NATAL — PREVIOUS PREGNANCY HISTORY": [...ANTE_NATAL_PREGNANCY_SEED],
+  "ANTE NATAL — FOLLOW-UP VISIT": [...ANTE_NATAL_FOLLOW_UP_SEED],
+  "NEO NATAL — VITAL SIGNS": [...NEO_NATAL_VITAL_SIGNS_SEED],
+  "NEO NATAL — DIAGNOSIS": [...NEO_NATAL_DIAGNOSIS_SEED],
+  "NEO NATAL — INVESTIGATION": [...NEO_NATAL_INVESTIGATION_SEED],
+  "NEO NATAL — PROCEDURE": [...NEO_NATAL_PROCEDURE_SEED],
+  "NEO NATAL — MEDICATION": [...NEO_NATAL_MEDICATION_SEED],
+  "IMMUNIZATION — VITAL SIGNS": [...IMMUNIZATION_VITAL_SIGNS_SEED],
+  "IMMUNIZATION — VACCINE ADMINISTRATION": [...IMMUNIZATION_VACCINE_SEED],
+  "IMMUNIZATION — MEDICATION": [...IMMUNIZATION_MEDICATION_SEED],
+  "IMMUNIZATION — FOLLOW-UP": [...IMMUNIZATION_FOLLOW_UP_SEED],
+  "IMMUNIZATION — CLINICAL NOTES": [...IMMUNIZATION_CLINICAL_NOTES_SEED],
+  "CHILD BIRTH — STAGE 1: LABOUR": [...CHILD_BIRTH_STAGE1_SEED],
+  "CHILD BIRTH — STAGE 2: PUSHING & BIRTHING": [...CHILD_BIRTH_STAGE2_SEED],
+  "CHILD BIRTH — STAGE 3: DELIVERY OF PLACENTA": [...CHILD_BIRTH_STAGE3_SEED],
+  "CHILD BIRTH — STAGE 4: DELIVERY NOTE": [...CHILD_BIRTH_STAGE4_SEED],
+  "POST NATAL — VITAL SIGNS": [...POST_NATAL_VITAL_SIGNS_SEED],
+  "POST NATAL — PRESENTING COMPLAINTS": [...POST_NATAL_COMPLAINTS_SEED],
+  "POST NATAL — PHYSICAL EXAMINATION": [...POST_NATAL_PHYSICAL_EXAM_SEED],
+  "POST NATAL — INVESTIGATION": [...POST_NATAL_INVESTIGATION_SEED],
+  "POST NATAL — MEDICATION": [...POST_NATAL_MEDICATION_SEED],
+  "SURGICAL — PRE-OPERATION NOTE": [...SURGICAL_PRE_OP_SEED],
+  "SURGICAL — POST-OPERATION NOTE": [...SURGICAL_POST_OP_NOTE_SEED],
+  "SURGICAL — POST-OPERATION ORDERS": [...SURGICAL_POST_OP_ORDERS_SEED],
+  "SPECIALIST CONSULT — PRESENTING COMPLAINTS": [...SPECIALIST_COMPLAINTS_SEED],
+  "SPECIALIST CONSULT — PREVIOUS DENTAL HISTORY": [
+    ...SPECIALIST_DENTAL_HISTORY_SEED,
+  ],
+  "SPECIALIST CONSULT — PREVIOUS DENTAL MEDICATION": [
+    ...SPECIALIST_DENTAL_MEDICATION_SEED,
+  ],
 };
 
 export const useMedicalTable = (tableKey: string) => {
@@ -48,6 +128,25 @@ export const useMedicalTable = (tableKey: string) => {
     });
   };
 
+  const saveBatch = (rows: Record<string, string>[]) => {
+    if (!rows.length) return;
+    const enteredBy = user?.fullName ?? "Unknown User";
+    setTables((prev) => {
+      const currentTable = prev[tableKey] || [];
+      const newRows = rows.map((data, index) => ({
+        sn: currentTable.length + index + 1,
+        dateTime: formatMedicalDateTime(new Date()),
+        patientType: "IN-PATIENT",
+        enteredBy,
+        ...data,
+      }));
+      return {
+        ...prev,
+        [tableKey]: [...currentTable, ...newRows],
+      };
+    });
+  };
+
   const remove = (index: number) => {
     setTables((prev) => {
       const updated = (prev[tableKey] || [])
@@ -67,6 +166,7 @@ export const useMedicalTable = (tableKey: string) => {
   return {
     history,
     save,
+    saveBatch,
     remove,
   };
 };

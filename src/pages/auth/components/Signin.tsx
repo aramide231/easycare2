@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { getRoleHomePath } from "@/lib/authRoutes";
 
 // Define the form data structure
 interface FormData {
@@ -23,12 +24,12 @@ const Signin = () => {
   } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const success = await signIn(data.username, data.password); // 👈 Call signIn
+    const loggedInUser = await signIn(data.username, data.password);
 
-    if (success) {
-      navigate("/nurse/dashboard"); // 👈 Only navigate if login is successful
+    if (loggedInUser) {
+      navigate(getRoleHomePath(loggedInUser.userRole));
     } else {
-      alert("Invalid username or password"); // Or display an inline error
+      alert("Invalid username or password");
     }
   };
 

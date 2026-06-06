@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { getRoleHomePath } from "@/lib/authRoutes";
 
 import Logo from "@/assets/icon/Frame 121.svg";
 import Signin from "./components/Signin.tsx";
@@ -22,20 +23,7 @@ const AuthenticationPage = () => {
 
   useEffect(() => {
     if (!loading && user) {
-      
-      type UserRole = "frontdesk" | "nurse" | "doctor" | "admin";
-
-const roles: Record<UserRole, string> = {
-  frontdesk: "/frontdesk",
-  nurse: "/nurse",
-  doctor: "/doctor",
-  admin: "/admin",
-};
-
-// If user.userRole might be something else, add a fallback
-navigate(roles[user.userRole as UserRole] || "/");
-
-      
+      navigate(getRoleHomePath(user.userRole));
     }
   }, [user, loading, navigate]);
 

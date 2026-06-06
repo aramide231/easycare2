@@ -10,9 +10,11 @@ import {
 type Props = {
   fields: CategoryFieldConfig[];
   onSave: (data: Record<string, string>) => void;
+  /** Full-width fields for Gen Consult / Figma grid layouts. */
+  fullWidth?: boolean;
 };
 
-const CategoryForm = ({ fields, onSave }: Props) => {
+const CategoryForm = ({ fields, onSave, fullWidth = false }: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -51,6 +53,16 @@ const CategoryForm = ({ fields, onSave }: Props) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const inputClass = fullWidth
+    ? formFieldInputClass.replace("max-w-[354px]", "max-w-none")
+    : formFieldInputClass;
+  const textareaClass = fullWidth
+    ? formFieldTextareaClass.replace("max-w-[354px]", "max-w-none")
+    : formFieldTextareaClass;
+  const selectClass = fullWidth
+    ? formFieldSelectClass.replace("max-w-[354px]", "max-w-none")
+    : formFieldSelectClass;
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -61,24 +73,27 @@ const CategoryForm = ({ fields, onSave }: Props) => {
           key={field.name}
           className={field.fullWidth ? "md:col-span-2" : undefined}
         >
-          <label className="mb-1 block text-sm font-medium text-gray-700">
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-800">
             {field.label}
           </label>
 
           {field.type === "textarea" ? (
             <textarea
               rows={3}
+              placeholder={field.placeholder}
               value={formData[field.name] || ""}
               onChange={(e) => updateField(field.name, e.target.value)}
-              className={formFieldTextareaClass}
+              className={textareaClass}
             />
           ) : field.type === "select" ? (
             <select
               value={formData[field.name] || ""}
               onChange={(e) => updateField(field.name, e.target.value)}
-              className={formFieldSelectClass}
+              className={selectClass}
             >
-              <option value="">-Select an Option-</option>
+              <option value="">
+                {field.placeholder ?? "-Select an Option-"}
+              </option>
               {(field.options ?? YES_NO_OPTIONS).map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
@@ -89,9 +104,10 @@ const CategoryForm = ({ fields, onSave }: Props) => {
             <input
               type={field.type === "date" ? "date" : "text"}
               readOnly={field.name === "bmi"}
+              placeholder={field.placeholder}
               value={formData[field.name] || ""}
               onChange={(e) => updateField(field.name, e.target.value)}
-              className={formFieldInputClass}
+              className={inputClass}
             />
           )}
 
