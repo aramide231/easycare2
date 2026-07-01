@@ -1,5 +1,6 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
 import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
+import { VITAL_SIGNS_COMMENT_FIELD } from "../../../config/vitalSignsFieldOptions";
 import { CategoryFormWithHistory } from "../../category";
 
 const vitalFields: CategoryFieldConfig[] = [
@@ -37,12 +38,8 @@ const vitalFields: CategoryFieldConfig[] = [
     placeholder: "-Input SPO2-",
   },
   {
-    name: "comment",
-    label: "Comments",
-    type: "textarea",
-    placeholder: "-Input comments-",
+    ...VITAL_SIGNS_COMMENT_FIELD,
     fullWidth: true,
-    showInTable: false,
   },
 ];
 
@@ -62,6 +59,7 @@ export default function NeonatalVitalSigns() {
       tableKey="NEO NATAL — VITAL SIGNS"
       fields={vitalFields}
       fullWidth
+      variant="genConsult"
       tableColumns={vitalTableColumns}
     />
   );

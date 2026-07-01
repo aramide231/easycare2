@@ -137,6 +137,50 @@
   display: none; /* Chrome, Safari, Opera */
 }
 
+.date-range-filter .rdrCalendarWrapper {
+  color: #374151;
+  font-size: 13px;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+}
+
+.date-range-filter .rdrDateRangeWrapper {
+  border: none;
+}
+
+.date-range-filter__column .rdrMonth {
+  width: 100%;
+  padding: 4px 12px 12px;
+}
+
+.date-range-filter__column .rdrMonthAndYearWrapper {
+  display: none;
+}
+
+.date-range-filter__column .rdrMonthName {
+  display: none;
+}
+
+.date-range-filter__column .rdrWeekDays {
+  color: #9ca3af;
+}
+
+.date-range-filter .rdrDaySelected .rdrDayNumber span,
+.date-range-filter .rdrStartEdge,
+.date-range-filter .rdrEndEdge,
+.date-range-filter .rdrInRange {
+  background: #573fd1;
+}
+
+.date-range-filter .rdrDayHovered .rdrDayNumber:after {
+  border-color: #573fd1;
+}
+
+.date-range-filter .rdrDayToday .rdrDayNumber span:after {
+  background: #573fd1;
+}
+
 /* added this css style because of the calendar */
 body {
   font-family: "Inter", sans-serif;
@@ -149,3 +193,56 @@ body {
   border: none !important;
 }
 /* the style ends here */
+
+.nurse-dashboard-calendar .rdrCalendarWrapper {
+  width: 100%;
+  font-size: 13px;
+  border: none;
+  box-shadow: none;
+}
+
+.nurse-dashboard-calendar .rdrMonth {
+  width: 100%;
+  padding: 0 4px 8px;
+}
+
+.nurse-dashboard-calendar .rdrMonthAndYearWrapper,
+.nurse-dashboard-calendar .rdrMonthName {
+  display: none;
+}
+
+.nurse-dashboard-calendar .rdrWeekDays {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.nurse-dashboard-calendar .rdrDay {
+  height: 36px;
+}
+
+.nurse-dashboard-calendar .rdrInRange {
+  background: #ede9fe !important;
+}
+
+.nurse-dashboard-calendar .rdrInRange .rdrDayNumber span {
+  color: #573fd1;
+}
+
+.nurse-dashboard-calendar .rdrStartEdge,
+.nurse-dashboard-calendar .rdrEndEdge {
+  background: #573fd1 !important;
+  border-radius: 9999px;
+}
+
+.nurse-dashboard-calendar .rdrStartEdge .rdrDayNumber span,
+.nurse-dashboard-calendar .rdrEndEdge .rdrDayNumber span {
+  color: #fff !important;
+}
+
+.nurse-dashboard-calendar .rdrDayHovered .rdrDayNumber:after {
+  border-color: #573fd1;
+}
+
+.nurse-dashboard-calendar .rdrDayToday .rdrDayNumber span:after {
+  background: #573fd1;
+}

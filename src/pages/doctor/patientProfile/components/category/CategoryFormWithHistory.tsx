@@ -3,7 +3,7 @@ import {
   buildTableColumnsFromFields,
   categoryDetailsTitle,
 } from "../../config/categoryFieldTypes";
-import { useMedicalTable } from "../../hooks/useMedicalTable";
+import { useMedicalTable, markSectionSaved } from "../../hooks/useMedicalTable";
 import CategoryForm from "./CategoryForm";
 import CategoryMedicalTable from "./CategoryMedicalTable";
 
@@ -19,6 +19,7 @@ type Props = {
   includeMetaColumns?: boolean;
   /** Gen Consult Figma: full-width inputs in 2-column grid. */
   fullWidth?: boolean;
+  variant?: "default" | "genConsult";
   /** Override table columns (e.g. Figma column set). */
   tableColumns?: import("../../config/categoryFieldTypes").CategoryTableColumn[];
 };
@@ -35,6 +36,7 @@ const CategoryFormWithHistory = ({
   emptyMessage,
   includeMetaColumns,
   fullWidth = false,
+  variant = "default",
   tableColumns,
 }: Props) => {
   const key = tableKey ?? sectionName;
@@ -46,9 +48,19 @@ const CategoryFormWithHistory = ({
     });
   const title = detailsTitle ?? categoryDetailsTitle(sectionName);
 
+  const handleSave = (data: Record<string, string>) => {
+    save(data);
+    markSectionSaved(sectionName);
+  };
+
   return (
     <div className="space-y-6">
-      <CategoryForm fields={fields} onSave={save} fullWidth={fullWidth} />
+      <CategoryForm
+        fields={fields}
+        onSave={handleSave}
+        fullWidth={fullWidth}
+        variant={variant}
+      />
       <CategoryMedicalTable
         title={title}
         columns={columns}

@@ -3,26 +3,16 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  getPatientTypeClass,
+  getVisitTypeClass,
+} from "@/lib/badgeStyles";
 
-// type and datat check
-
-export type Patient = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  patientId: string;
-  phoneNumber: string;
-  lastSeen: string;
-  time: string;
-  gender: string;
-  age: number;
-  patientType: string;
-  visitType: string;
-  staffName: string;
-  flagged: boolean;
-  bloodPressure: string;
-  name: string;
-};
+import {
+  buildMockPatients,
+  type Patient,
+} from "@/pages/nurse/dashboard/data/mockPatients";
+import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 
 interface PatientsLogProps {
   onSelectPatient: (patient: Patient) => void;
@@ -58,137 +48,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const [flagPanelOpen, setFlagPanelOpen] = useState(false);
+  const [flagPatient, setFlagPatient] = useState<Patient | null>(null);
 
-  const [patients, setPatients] = useState<Patient[]>([
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      firstName: "Abiola",
-      lastName: "Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "120/80",
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      firstName: "Chinonso",
-      lastName: "Eze",
-      patientId: "P-2025002",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed",
-      flagged: false,
-      bloodPressure: "130/85",
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      firstName: "Damilola",
-      lastName: "Ogunleye",
-      patientId: "P-2025003",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "118/78",
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      firstName: "Emeka",
-      lastName: "Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "135/90",
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      firstName: "Ifeoma",
-      lastName: "Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "122/79",
-    },
-    {
-      id: 6,
-      name: "Toluwa Afolabi",
-      firstName: "Toluwa",
-      lastName: "Afolabi",
-      patientId: "P-2025006",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "125/82",
-    },
-  ]);
-
-  const getPatientTypeClass = (type: string) => {
-    switch (type) {
-      case "COMPANY":
-        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
-      case "PRIVATE":
-        return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
-      case "HMO":
-        return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
-  const getVisitTypeClass = (type: string) => {
-    switch (type) {
-      case "GEN. CONSULT":
-        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
-      case "ANTE. NATAL":
-        return "bg-green-100 text-green-700 border border-[#00C851]";
-      case "POST NATAL":
-        return "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
-      default:
-        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
-    }
-  };
+  const [patients, setPatients] = useState<Patient[]>(() =>
+    buildMockPatients().slice(0, 6),
+  );
 
   useEffect(() => {
     console.log("Location state:", location.state);
@@ -209,7 +74,9 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   };
 
   const handleFlagProfile = (patient: Patient) => {
-    navigate(`/frontdesk/flag-profile/${patient.id}`, { state: { patient } });
+    setFlagPatient(patient);
+    setFlagPanelOpen(true);
+    setShowOptions(null);
   };
 
   // Previous function for flagging patient profile
@@ -734,6 +601,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
           </div>
         )}
       </div>
+      <FlagPatientPanel
+        open={flagPanelOpen}
+        onClose={() => setFlagPanelOpen(false)}
+        patientName={flagPatient?.name}
+        patientId={flagPatient?.patientId}
+      />
       <ToastContainer />
     </div>
   );

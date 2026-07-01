@@ -67,6 +67,20 @@ export default function Sidebar() {
     if (patientMgmtPaths.some((p) => location.pathname.startsWith(p))) {
       setOpenMenus((prev) => ({ ...prev, patientManagement: true }));
     }
+    const reportPaths = [
+      "/nurse/reports/",
+      "/nurse/child-birth",
+      "/nurse/immunization",
+      "/nurse/ante-natal",
+      "/nurse/post-natal",
+      "/nurse/family-planning",
+      "/nurse/dispensed-drugs",
+      "/nurse/report-writing",
+      "/nurse/requisition",
+    ];
+    if (reportPaths.some((p) => location.pathname.startsWith(p))) {
+      setOpenMenus((prev) => ({ ...prev, reports: true }));
+    }
   }, [location.pathname]);
 
   const NavItem = ({
@@ -146,7 +160,7 @@ export default function Sidebar() {
   return (
     <aside
       style={{ width: `${width}px` }}
-      className={`relative bg-white border-r border-gray-200 min-h-screen flex flex-col shrink-0 ${
+      className={`relative flex h-full min-h-0 flex-col shrink-0 border-r border-gray-200 bg-white ${
         !isDragging && "transition-[width] duration-300 ease-in-out"
       }`}
     >
@@ -161,9 +175,15 @@ export default function Sidebar() {
           isCollapsed && "flex-col gap-4"
         }`}
       >
-        <div className="flex items-center gap-2 overflow-hidden min-w-0">
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="flex min-w-0 items-center gap-2 overflow-hidden rounded-md transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/30"
+          aria-label="Reload page"
+          title="Reload page"
+        >
           {isCollapsed ? (
-            <EasyCareMark className="w-8 h-8 shrink-0" />
+            <EasyCareMark className="h-8 w-8 shrink-0" />
           ) : (
             <img
               className="h-8 w-auto max-w-[140px] shrink-0 object-contain object-left"
@@ -171,7 +191,7 @@ export default function Sidebar() {
               alt="EasyCare"
             />
           )}
-        </div>
+        </button>
 
         <button
           type="button"
@@ -221,7 +241,7 @@ export default function Sidebar() {
         <div className="w-full border-b border-gray-200" />
       </div>
 
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar px-3 pb-6 space-y-6">
+      <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto hide-scrollbar px-3 pb-6 space-y-6">
         {renderSection("Main Menu", "main", MAIN_MENU)}
         {renderSection(
           "Patient Management",

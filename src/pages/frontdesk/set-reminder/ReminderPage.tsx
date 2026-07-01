@@ -23,7 +23,14 @@ const ReminderPage = () => {
               <h3 className="font-semibold text-lg">Set Reminder</h3>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="bg-[#eeecfa] border-2 border-[#9080e0] text-[#9080e0] rounded-lg font-medium flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    className={`flex items-center gap-2 rounded-lg border-2 font-medium ${
+                      activeView === "create-schedule"
+                        ? "border-[#573FD1] bg-[#573FD1] text-white hover:bg-[#4a35b8] hover:text-white"
+                        : "border-[#9080e0] bg-[#eeecfa] text-[#9080e0] hover:bg-[#e0dafa] hover:text-[#9080e0]"
+                    }`}
+                  >
                     <Filter size={16} />
                     {activeView === "create-schedule"
                       ? "Create Schedule"
@@ -33,9 +40,9 @@ const ReminderPage = () => {
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuItem
                     className={`cursor-pointer ${
-                      activeView === "create"
-                        ? "text-white bg-[#9080e0]"
-                        : "text-[#9080e0] bg-[#eeecfa] hover:bg-[#e0dafa]"
+                      activeView === "create-schedule"
+                        ? "bg-[#9080e0] text-white"
+                        : "bg-[#eeecfa] text-[#9080e0] hover:bg-[#e0dafa]"
                     }`}
                     onClick={() => setActiveView("create-schedule")}
                   >

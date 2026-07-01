@@ -1,38 +1,18 @@
 import { useEffect, useState } from "react";
-
-function getOrdinalSuffix(day: number): string {
-  if (day > 3 && day < 21) return "th";
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-}
+import { formatClockDateTime } from "@/lib/dateTime";
 
 export default function Clock() {
-  const [currentTime, setCurrentTime] = useState<string>("");
+  const [currentTime, setCurrentTime] = useState(() =>
+    formatClockDateTime(new Date()),
+  );
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
-      const day = now.getDate();
-      const month = now.toLocaleString("en-US", { month: "long" });
-      const year = now.getFullYear();
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-
-      setCurrentTime(
-        `${day}${getOrdinalSuffix(day)} ${month} ${year}, ${hours}:${minutes}`,
-      );
+      setCurrentTime(formatClockDateTime(new Date()));
     };
 
     updateTime();
-    const timer = setInterval(updateTime, 1000 * 60);
+    const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -46,9 +26,7 @@ export default function Clock() {
               {currentTime.split(",")[1]}
             </span>
           </>
-        ) : (
-          "Loading..."
-        )}
+        ) : null}
       </p>
     </div>
   );

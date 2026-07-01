@@ -1,6 +1,6 @@
 import Topbar from "@/constant/topbar";
 import { Outlet } from "react-router-dom";
-import { PatientManagementProvider } from "@/pages/nurse/context/PatientManagementContext";
+import { PatientManagementProvider } from "@/pages/nurse/shared/context/PatientManagementContext";
 
 const DoctorLayout = () => {
   return (

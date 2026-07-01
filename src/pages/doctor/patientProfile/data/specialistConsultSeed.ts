@@ -1,7 +1,8 @@
+import { mockDateTimeDaysAgo, formatSlashDate, dateAtDaysAgo } from "@/lib/dateTime";
 export const SPECIALIST_COMPLAINTS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     complaints:
       "Patient hit her chin on a concrete block and it seems there's adislocation",

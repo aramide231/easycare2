@@ -1,15 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
 import { Trash2 } from "lucide-react";
 import emptyNotification from "@/assets/image/empty-notification.png";
-import TablePagination from "@/pages/nurse/components/TablePagination";
-import { getTotalPages } from "@/pages/nurse/lib/pagination";
+import TablePagination from "@/pages/nurse/shared/components/TablePagination";
+import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
 import { useAuth } from "@/context/AuthContext";
 import {
   buildMockNotifications,
   type NotificationRow,
 } from "@/data/mockNotifications";
 
-const PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/constant/pagination";
 
 const NotificationTable: React.FC = () => {
   const { user } = useAuth();

@@ -1,6 +1,7 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
 import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
 import { CategoryFormWithHistory } from "../../category";
+import { VITAL_SIGNS_COMMENT_FIELD } from "../../../config/vitalSignsFieldOptions";
 
 const vitalFields: CategoryFieldConfig[] = [
   {
@@ -81,16 +82,7 @@ const vitalFields: CategoryFieldConfig[] = [
     showInTable: false,
   },
   {
-    name: "comment",
-    label: "Comments",
-    type: "select",
-    placeholder: "-Select option-",
-    showInTable: false,
-    options: [
-      { value: "NORMAL", label: "Normal" },
-      { value: "ABNORMAL", label: "Abnormal" },
-      { value: "REVIEW", label: "Requires review" },
-    ],
+    ...VITAL_SIGNS_COMMENT_FIELD,
   },
 ];
 
@@ -109,6 +101,7 @@ export default function GenConsultVitalSigns() {
       tableKey="GEN CONSULT — VITAL SIGNS"
       fields={vitalFields}
       fullWidth
+      variant="genConsult"
       tableColumns={vitalTableColumns}
     />
   );

@@ -1,7 +1,7 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
 import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
+import { VITAL_SIGNS_COMMENT_FIELD } from "../../../config/vitalSignsFieldOptions";
 import { CategoryFormWithHistory } from "../../category";
-
 const vitalFields: CategoryFieldConfig[] = [
   {
     name: "temperature",
@@ -79,15 +79,10 @@ const vitalFields: CategoryFieldConfig[] = [
     showInTable: false,
   },
   {
-    name: "comment",
-    label: "Comments",
-    type: "textarea",
-    placeholder: "-Input comments-",
+    ...VITAL_SIGNS_COMMENT_FIELD,
     fullWidth: true,
-    showInTable: false,
   },
 ];
-
 const vitalTableColumns = [
   ...DEFAULT_META_TABLE_COLUMNS.filter((c) => c.key !== "enteredBy"),
   { key: "temperature", label: "TEMP" },
@@ -105,6 +100,7 @@ export default function VitalSigns() {
       tableKey="ANTE NATAL — VITAL SIGNS"
       fields={vitalFields}
       fullWidth
+      variant="genConsult"
       tableColumns={vitalTableColumns}
     />
   );

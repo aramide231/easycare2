@@ -16,6 +16,7 @@ export type DischargeReportEntry = {
   patientId: string;
   action: string;
   dateOfAdmission: string;
+  timeOfAdmission: string;
   dischargeDate: string;
   dischargeTime: string;
   noOfDays: string;

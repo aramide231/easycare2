@@ -1,7 +1,8 @@
+import { mockDateTimeDaysAgo, formatSlashDate, dateAtDaysAgo } from "@/lib/dateTime";
 export const POST_NATAL_VITAL_SIGNS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     temperature: "25",
     bloodPressure: "120/80",
@@ -10,7 +11,7 @@ export const POST_NATAL_VITAL_SIGNS_SEED = [
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "OUT-PATIENT",
     temperature: "30",
     bloodPressure: "140/60",
@@ -19,7 +20,7 @@ export const POST_NATAL_VITAL_SIGNS_SEED = [
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "OUT-PATIENT",
     temperature: "36",
     bloodPressure: "130/45",
@@ -31,19 +32,19 @@ export const POST_NATAL_VITAL_SIGNS_SEED = [
 export const POST_NATAL_COMPLAINTS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     complaint: "Normal blood pressure, Big Body.",
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "OUT-PATIENT",
     complaint: "Normal blood pressure, Average heart size",
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "OUT-PATIENT",
     complaint: "Normal blood pressure, Average kidney size.",
   },
@@ -52,19 +53,19 @@ export const POST_NATAL_COMPLAINTS_SEED = [
 export const POST_NATAL_PHYSICAL_EXAM_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     general: "Normal blood pressure, Big Body.",
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "OUT-PATIENT",
     general: "Normal blood pressure, Average heart size",
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "OUT-PATIENT",
     general: "Normal blood pressure, Average kidney size.",
   },
@@ -73,7 +74,7 @@ export const POST_NATAL_PHYSICAL_EXAM_SEED = [
 export const POST_NATAL_INVESTIGATION_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     investigationNames: "HVS",
     total: 4000,
@@ -84,7 +85,7 @@ export const POST_NATAL_INVESTIGATION_SEED = [
 export const POST_NATAL_MEDICATION_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",
@@ -92,7 +93,7 @@ export const POST_NATAL_MEDICATION_SEED = [
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",
@@ -100,7 +101,7 @@ export const POST_NATAL_MEDICATION_SEED = [
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",

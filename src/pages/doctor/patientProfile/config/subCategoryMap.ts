@@ -7,6 +7,7 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
     { label: "FAMILY MEDICAL HISTORY" },
     { label: "NEW ANTENATAL BOOKING" },
     { label: "PREVIOUS PREGNANCY HISTORY" },
+    { label: "PRESENT PREGNANCY HISTORY" },
     { label: "PRESENTING COMPLAINTS" },
     { label: "PHYSICAL EXAMINATION" },
     { label: "DIAGNOSIS" },

@@ -1,7 +1,8 @@
-import { FaExpandArrowsAlt, FaArrowLeft } from "react-icons/fa";
+import { Expand, Undo2 } from "lucide-react";
 import clientimage from "../assets/image/haywhy.jpg";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { mockNextAppointmentDate } from "@/lib/dateTime";
 
 interface PatientCardProps {
   patient: {
@@ -21,52 +22,61 @@ interface PatientCardProps {
 const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  console.log("Rendering patient card for", patient.firstName); // Add this
+  const nextAppointment = mockNextAppointmentDate(7 + (patient.id % 21));
 
   const handleViewProfile = () => {
-    const role = user?.userRole?.toLowerCase() || "nurse"; // fallback if role is undefined
+    const role = user?.userRole?.toLowerCase() || "nurse";
     navigate(`/${role}/patient-profile/${patient.patientId}`, {
       state: { patient },
     });
   };
 
+  const handlePreviousRecords = () => {
+    const role = user?.userRole?.toLowerCase() || "nurse";
+    navigate(`/${role}/previous-patient-records/${patient.patientId}`, {
+      state: { patient },
+    });
+  };
+
   return (
-    <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-4 max-h-sm flex flex-col flex-1">
-      {/* Patient Image & Name */}
+    <div className="mx-auto flex w-full max-w-[17.5rem] flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <img
           src={clientimage}
           alt="Patient"
-          className="w-14 h-14 rounded-full object-cover"
+          className="h-14 w-14 rounded-full object-cover"
         />
         <div>
           <h2 className="text-lg font-semibold">
             {patient.firstName} {patient.lastName}
           </h2>
-          <p className="text-gray-500 text-sm">ID: {patient.patientId}</p>
+          <p className="text-sm text-gray-500">ID: {patient.patientId}</p>
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="mt-3">
+      <div className="mt-3 space-y-2">
         <button
-          className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white py-2 px-3 rounded-lg font-medium shadow-md hover:bg-purple-700 transition"
+          type="button"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#573FD1] px-3 py-2.5 text-sm font-medium text-white shadow-md transition hover:bg-[#4a35b8]"
           onClick={handleViewProfile}
         >
-          <FaExpandArrowsAlt /> View Patient’s Info
+          <Expand className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+          View Patient&apos;s Profile
         </button>
-        <button className="w-full flex items-center justify-center gap-2 border border-purple-600 text-purple-600 py-2 px-3 rounded-lg font-medium shadow-sm hover:bg-purple-100 transition mt-2">
-          <FaArrowLeft /> Prev. Patient Records
+        <button
+          type="button"
+          onClick={handlePreviousRecords}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] bg-purple-50 px-3 py-2.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-100"
+        >
+          <Undo2 className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+          Prev. Patient Records
         </button>
       </div>
 
-      {/* Divider */}
-      <hr className="my-3" />
+      <hr className="my-3 border-gray-200" />
 
-      {/* Vital Signs */}
-      <div className="text-sm flex flex-col space-y-3">
-        <h3 className="text-purple-600 font-semibold">Prev. Vital Signs :</h3>
+      <div className="flex flex-col space-y-3 text-sm">
+        <h3 className="font-semibold text-[#573FD1]">Prev. Vital Signs :</h3>
         <p>
           <strong>Blood Pressure :</strong> {patient.bloodPressure}{" "}
           <span className="italic">mmHg</span>
@@ -75,14 +85,13 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
           <strong>Heart Rate :</strong> 75 <span className="italic">bpm</span>
         </p>
         <p>
-          <strong>Weight :</strong> 85 <span className="font-semibold">kg</span>{" "}
-          │ <strong>Height :</strong> 5’99”
+          <strong>Weight :</strong> 85 <span className="italic">kg</span> │{" "}
+          <strong>Height :</strong> 170<span className="italic">cm</span>
         </p>
       </div>
 
-      {/* Contact Info */}
-      <div className="text-sm mt-3 flex flex-col space-y-3">
-        <h3 className="text-blue-600 font-semibold">Contact :</h3>
+      <div className="mt-3 flex flex-col space-y-3 text-sm">
+        <h3 className="font-semibold text-[#573FD1]">Contact :</h3>
         <p>
           <strong>Gender :</strong> Male
         </p>
@@ -96,13 +105,13 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
           <strong>Patient Type :</strong> COMPANY
         </p>
         <p>
-          <strong>Treatment Guide :</strong> Fee for Ser.
+          <strong>MEDICATION Guide :</strong> Fee for Ser.
         </p>
         <p>
-          <strong>Last Visits Date :</strong> 21/02/2022
+          <strong>Last Visits Date :</strong> {patient.lastSeen}
         </p>
         <p>
-          <strong>Next Appointment :</strong> 01/03/2025
+          <strong>Next Appointment :</strong> {nextAppointment}
         </p>
       </div>
     </div>

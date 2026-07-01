@@ -1,3 +1,5 @@
+import { formatPatientId, mockVisitAt } from "@/lib/dateTime";
+
 export type NotificationRow = {
   id: number;
   name: string;
@@ -13,14 +15,13 @@ export type NotificationRow = {
   flagged: boolean;
 };
 
-const SEED: NotificationRow[] = [
+type SeedRow = Omit<NotificationRow, "lastSeen" | "time" | "patientId">;
+
+const SEED: SeedRow[] = [
   {
     id: 1,
     name: "Abiola Adebayo",
-    patientId: "P-2025001",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "M",
     age: 31,
     patientType: "COMPANY",
@@ -31,10 +32,7 @@ const SEED: NotificationRow[] = [
   {
     id: 2,
     name: "Chinonso Eze",
-    patientId: "P-2025002",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "M",
     age: 31,
     patientType: "PRIVATE",
@@ -45,10 +43,7 @@ const SEED: NotificationRow[] = [
   {
     id: 3,
     name: "Damilola Ogunleye",
-    patientId: "P-2025003",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "F",
     age: 31,
     patientType: "COMPANY",
@@ -59,10 +54,7 @@ const SEED: NotificationRow[] = [
   {
     id: 4,
     name: "Emeka Nwankwo",
-    patientId: "P-2025004",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "M",
     age: 31,
     patientType: "HMO",
@@ -73,10 +65,7 @@ const SEED: NotificationRow[] = [
   {
     id: 5,
     name: "Ifeoma Okeke",
-    patientId: "P-2025005",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "F",
     age: 31,
     patientType: "COMPANY",
@@ -87,10 +76,7 @@ const SEED: NotificationRow[] = [
   {
     id: 6,
     name: "Toluwa Afolabi",
-    patientId: "P-2025006",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "M",
     age: 31,
     patientType: "HMO",
@@ -101,10 +87,7 @@ const SEED: NotificationRow[] = [
   {
     id: 7,
     name: "Fatima Zara",
-    patientId: "P-2025007",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "F",
     age: 31,
     patientType: "COMPANY",
@@ -115,10 +98,7 @@ const SEED: NotificationRow[] = [
   {
     id: 8,
     name: "Deola Kadir",
-    patientId: "P-2025008",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "M",
     age: 31,
     patientType: "HMO",
@@ -129,10 +109,7 @@ const SEED: NotificationRow[] = [
   {
     id: 9,
     name: "Chioma Okeke",
-    patientId: "P-2025009",
     phoneNumber: "09012345678",
-    lastSeen: "15-Feb-2020",
-    time: "10:25 AM",
     gender: "F",
     age: 31,
     patientType: "COMPANY",
@@ -160,18 +137,29 @@ const STAFF = ["Titilayo Olayinka", "Bayo Hammed", "Dr. Jane Doe"];
 
 export const MOCK_NOTIFICATIONS_TOTAL = 160;
 
+function withVisitTiming(row: SeedRow): NotificationRow {
+  const visit = mockVisitAt(row.id % 14, row.id);
+  return {
+    ...row,
+    patientId: formatPatientId(row.id),
+    lastSeen: visit.lastSeen,
+    time: visit.time,
+  };
+}
+
 export function buildMockNotifications(): NotificationRow[] {
-  const rows: NotificationRow[] = [...SEED];
+  const rows: NotificationRow[] = SEED.map(withVisitTiming);
 
   for (let id = SEED.length + 1; id <= MOCK_NOTIFICATIONS_TOTAL; id++) {
     const [first, last] = NAMES[id % NAMES.length];
+    const visit = mockVisitAt(id % 14, id);
     rows.push({
       id,
       name: `${first} ${last}`,
-      patientId: `P-2025${String(id).padStart(3, "0")}`,
+      patientId: formatPatientId(id),
       phoneNumber: `090${String(10000000 + id).slice(-8)}`,
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
+      lastSeen: visit.lastSeen,
+      time: visit.time,
       gender: id % 2 === 0 ? "F" : "M",
       age: 22 + (id % 40),
       patientType: PATIENT_TYPES[id % PATIENT_TYPES.length],

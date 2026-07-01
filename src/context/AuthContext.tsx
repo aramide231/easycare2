@@ -10,6 +10,7 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => null,
   signOut: () => {},
   creationOfPatient: () => {},
+  updateSessionUser: () => {},
 });
 
 const SESSION_KEY = "easyCareSession";
@@ -95,9 +96,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.setItem("patients", JSON.stringify(updated));
   };
 
+  const updateSessionUser = (nextUser: User) => {
+    persistSession(nextUser);
+    setUser(nextUser);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, signup, signIn, signOut, creationOfPatient }}
+      value={{
+        user,
+        loading,
+        signup,
+        signIn,
+        signOut,
+        creationOfPatient,
+        updateSessionUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

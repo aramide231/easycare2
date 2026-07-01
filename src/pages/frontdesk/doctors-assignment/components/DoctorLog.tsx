@@ -1,13 +1,20 @@
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import ExportButton from "@/constant/ExportButton";
+import TablePagination from "@/pages/nurse/shared/components/TablePagination";
+import { usePaginatedList } from "@/hooks/usePaginatedList";
+import { PAGE_SIZE } from "@/constant/pagination";
 import { DateRange } from "react-date-range";
 import { RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import {
+  getPatientTypeClass,
+  getVisitTypeClass,
+} from "@/lib/badgeStyles";
+import { buildMockPatients } from "@/pages/nurse/dashboard/data/mockPatients";
 
 const DoctorLog = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const tableRef = useRef<HTMLTableElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -43,215 +50,29 @@ const DoctorLog = () => {
     console.log("Search value:", e.target.value);
   };
 
-  const patients = [
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 6,
-      name: "Toluwa Afolabi",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 7,
-      name: "Abiola Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 8,
-      name: "Chinonso Eze",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 9,
-      name: "Damilola Ogunleye",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 10,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 11,
-      name: "Ifeoma Okeke",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 12,
-      name: "Toluwa Afolabi",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-  ];
+  const patients = buildMockPatients().slice(0, 12).map((patient) => ({
+    ...patient,
+    sendersName: "Bayo Hammed",
+    receiversName: "Pelumi Adebayo",
+  }));
 
-  const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
-    switch (type) {
-      case "COMPANY":
-        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
-      case "PRIVATE":
-        return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
-      case "HMO":
-        return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
-    
-    }
-  };
+  const filteredPatients = useMemo(
+    () =>
+      patients.filter(
+        (patient) =>
+          patient.name.toLowerCase().includes(search.toLowerCase()) ||
+          patient.patientId.toLowerCase().includes(search.toLowerCase()) ||
+          patient.phoneNumber.toLowerCase().includes(search.toLowerCase()),
+      ),
+    [search],
+  );
 
-  // Function to get visit type badge color
-  const getVisitTypeClass = (
-    type: "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH"
-  ): string => {
-    switch (type) {
-      case "GEN. CONSULT":
-        return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
-      case "CHILDBIRTH":
-        return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
-      case "ANTE. NATAL":
-        return "bg-green-100 text-green-700 border border-[#00C851]";
-      case "POST NATAL":
-        return "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
-     
-    }
-  };
+  const { currentPage, setCurrentPage, totalPages, paginatedItems } =
+    usePaginatedList(filteredPatients);
 
-  const isValidPatientType = (
-    type: string
-  ): type is "COMPANY" | "PRIVATE" | "HMO" =>
-    ["COMPANY", "PRIVATE", "HMO"].includes(type);
-
-  const isValidVisitType = (
-    type: string
-  ): type is "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH" =>
-    ["GEN. CONSULT", "ANTE. NATAL", "POST NATAL", "CHILDBIRTH"].includes(type);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, setCurrentPage]);
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 ">
@@ -407,23 +228,14 @@ const DoctorLog = () => {
               </tr>
             </thead>
             <tbody>
-              {patients
-                .filter(
-                  (patient) =>
-                    patient.name.toLowerCase().includes(search.toLowerCase()) ||
-                    patient.patientId
-                      .toLowerCase()
-                      .includes(search.toLowerCase()) ||
-                    patient.phoneNumber
-                      .toLowerCase()
-                      .includes(search.toLowerCase())
-                )
-                .map((patient, index) => (
+              {paginatedItems.map((patient, index) => (
                   <tr
                     key={patient.id}
                     className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                   >
-                    <td className="px-4 py-3 font-medium">{patient.id}</td>
+                    <td className="px-4 py-3 font-medium">
+                      {(currentPage - 1) * PAGE_SIZE + index + 1}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="font-medium">{patient.name}</div>
                       <div className="text-xs text-gray-500">
@@ -440,22 +252,14 @@ const DoctorLog = () => {
                     <td className="px-4 py-3">{patient.age}</td>
                     <td className="px-4 py-3">
                       <span
-                        className={`${
-                          isValidPatientType(patient.patientType)
-                            ? getPatientTypeClass(patient.patientType)
-                            : "bg-gray-100 text-gray-700"
-                        } px-3 py-1 rounded-full text-xs font-medium`}
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${getPatientTypeClass(patient.patientType)}`}
                       >
                         {patient.patientType}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`${
-                          isValidVisitType(patient.visitType)
-                            ? getVisitTypeClass(patient.visitType)
-                            : "bg-gray-100 text-gray-700"
-                        } px-3 py-1 rounded-full text-xs font-medium`}
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${getVisitTypeClass(patient.visitType)}`}
                       >
                         {patient.visitType}
                       </span>
@@ -469,65 +273,12 @@ const DoctorLog = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-6">
-        <button className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
-          <svg
-            className="w-5 h-5 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 19l-7-7 7-7"
-            ></path>
-          </svg>
-          Back
-        </button>
-
-        <div className="flex space-x-1">
-          {[1, 2, 3, 4].map((page) => (
-            <button
-              key={page}
-              className={`px-3 py-1 text-sm border ${
-                currentPage === page
-                  ? "bg-blue-50 border-[#573FD1] text-[#573FD1]"
-                  : "border-gray-300 bg-white text-gray-700"
-              } rounded-md hover:bg-gray-50`}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </button>
-          ))}
-          <button className="px-3 py-1 text-sm border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50">
-            ...
-          </button>
-          <button className="px-3 py-1 text-sm border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50">
-            20
-          </button>
-        </div>
-
-        <button className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
-          Next
-          <svg
-            className="w-5 h-5 ml-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"
-            ></path>
-          </svg>
-        </button>
-      </div>
+      <TablePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        className="mt-6"
+      />
     </div>
   );
 };

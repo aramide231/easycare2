@@ -1,7 +1,8 @@
+import { mockDateTimeDaysAgo, formatSlashDate, dateAtDaysAgo } from "@/lib/dateTime";
 export const SURGICAL_PRE_OP_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     preOpHB: "12.5",
     genotype: "AA",
@@ -13,7 +14,7 @@ export const SURGICAL_PRE_OP_SEED = [
 export const SURGICAL_POST_OP_NOTE_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     surgeon: "Dr. Chibuzo Alen",
     assistant: "Dr. Adebayo",
@@ -25,7 +26,7 @@ export const SURGICAL_POST_OP_NOTE_SEED = [
 export const SURGICAL_POST_OP_ORDERS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",
@@ -33,7 +34,7 @@ export const SURGICAL_POST_OP_ORDERS_SEED = [
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",
@@ -41,7 +42,7 @@ export const SURGICAL_POST_OP_ORDERS_SEED = [
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",

@@ -1,7 +1,7 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
 import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
+import { VITAL_SIGNS_COMMENT_FIELD } from "../../../config/vitalSignsFieldOptions";
 import { CategoryFormWithHistory } from "../../category";
-import { COMMENT_OPTIONS } from "./immunizationFieldOptions";
 
 const vitalFields: CategoryFieldConfig[] = [
   {
@@ -39,12 +39,7 @@ const vitalFields: CategoryFieldConfig[] = [
     showInTable: false,
   },
   {
-    name: "comment",
-    label: "Comments",
-    type: "select",
-    placeholder: "-Select option-",
-    options: COMMENT_OPTIONS,
-    showInTable: false,
+    ...VITAL_SIGNS_COMMENT_FIELD,
   },
 ];
 
@@ -63,6 +58,7 @@ export default function ImmunizationVitalSigns() {
       tableKey="IMMUNIZATION — VITAL SIGNS"
       fields={vitalFields}
       fullWidth
+      variant="genConsult"
       tableColumns={vitalTableColumns}
     />
   );

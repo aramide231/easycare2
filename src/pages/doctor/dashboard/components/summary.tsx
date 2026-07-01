@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { getTimeGreeting } from "@/lib/dateTime";
 import {
   FaUserPlus,
   FaProcedures,
@@ -44,7 +45,7 @@ const DashboardSummary = () => {
     {
       title: "Out Patients",
       count: "50 new patients",
-      icon: <FaUserCheck size={24} className="text-white" />,
+      icon: <FaHospitalUser size={24} className="text-white" />,
       bgColor: "bg-gradient-to-r from-purple-500 to-blue-600",
       textColor: "text-white",
       path: "/nurse/registration",
@@ -83,7 +84,7 @@ const DashboardSummary = () => {
     <div>
       <div className="p-4">
         <h2 className="text-2xl font-semibold">
-          Good Afternoon, {user?.fullName}
+          {getTimeGreeting()}, {user?.fullName}
         </h2>
         <p>Have a wonderful day at work</p>
       </div>

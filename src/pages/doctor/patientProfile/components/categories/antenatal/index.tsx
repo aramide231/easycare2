@@ -5,7 +5,7 @@ import NewAntenatalBooking from "./NewAntenatalBooking";
 import PreviousPregnancyHistory from "./PreviousPregnancyHistory";
 import PresentPregnancyHistory from "./PresentPregnancyHistory";
 import FollowUpVisit from "./FollowUpVisit";
-import PresentingComplaints from "../shared/PresentingComplaints";
+import PresentingComplaints from "./PresentingComplaints";
 import PhysicalExamination from "../shared/PhysicalExamination";
 import Diagnosis from "../shared/Diagnosis";
 import Investigation from "../shared/Investigation";

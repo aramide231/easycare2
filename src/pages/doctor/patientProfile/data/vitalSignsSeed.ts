@@ -1,7 +1,8 @@
+import { mockDateTimeDaysAgo, formatSlashDate, dateAtDaysAgo } from "@/lib/dateTime";
 export const VITAL_SIGNS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     temperature: "25",
     bloodPressure: "120/80",
@@ -18,7 +19,7 @@ export const VITAL_SIGNS_SEED = [
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "OUT-PATIENT",
     temperature: "30",
     bloodPressure: "140/60",
@@ -35,7 +36,7 @@ export const VITAL_SIGNS_SEED = [
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "OUT-PATIENT",
     temperature: "36",
     bloodPressure: "130/45",

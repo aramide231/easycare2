@@ -307,11 +307,19 @@ const Sidebar = () => {
     <div className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-300 p-5 flex flex-col shadow-md">
       {/* Logo & Hospital Info */}
       <div className="mb-5">
-        <img
-          src={easyCareLogo}
-          alt="EasyCare"
-          className="h-8 w-auto max-w-full"
-        />
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="rounded-md transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/30"
+          aria-label="Reload page"
+          title="Reload page"
+        >
+          <img
+            src={easyCareLogo}
+            alt="EasyCare"
+            className="h-8 w-auto max-w-full"
+          />
+        </button>
       </div>
       <div className="bg-gray-100 p-3 rounded-lg flex gap-3 items-center mb-5">
         <img

@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { getTimeGreeting } from "@/lib/dateTime";
 import { FaUserPlus, FaProcedures, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -41,7 +42,7 @@ const DashboardSummary = () => {
     <div>
       <div className="p-4">
         <h2 className="text-3xl font-semibold">
-          Good Afternoon, {user?.fullName}
+          {getTimeGreeting()}, {user?.fullName}
         </h2>
         <p>Have a wonderful day at work</p>
       </div>

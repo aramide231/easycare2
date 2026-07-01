@@ -28,6 +28,7 @@ export interface AuthContextType {
   signIn: (username: string, password: string) => Promise<User | null>;
   signOut: () => void;
   creationOfPatient: (patient: PatientData) => void;
+  updateSessionUser: (user: User) => void;
 }
 
 export type AuthProviderProps = { children: ReactNode };

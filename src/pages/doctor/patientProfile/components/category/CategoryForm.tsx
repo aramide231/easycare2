@@ -6,15 +6,27 @@ import {
   formFieldSelectClass,
   formFieldTextareaClass,
 } from "../../lib/formFieldStyles";
+import {
+  genConsultInputClass,
+  genConsultSelectClass,
+  genConsultTextareaClass,
+} from "../categories/genConsult/genConsultStyles";
 
 type Props = {
   fields: CategoryFieldConfig[];
   onSave: (data: Record<string, string>) => void;
   /** Full-width fields for Gen Consult / Figma grid layouts. */
   fullWidth?: boolean;
+  /** Use Gen Consult Figma field styling. */
+  variant?: "default" | "genConsult";
 };
 
-const CategoryForm = ({ fields, onSave, fullWidth = false }: Props) => {
+const CategoryForm = ({
+  fields,
+  onSave,
+  fullWidth = false,
+  variant = "default",
+}: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -53,15 +65,23 @@ const CategoryForm = ({ fields, onSave, fullWidth = false }: Props) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const inputClass = fullWidth
-    ? formFieldInputClass.replace("max-w-[354px]", "max-w-none")
-    : formFieldInputClass;
-  const textareaClass = fullWidth
-    ? formFieldTextareaClass.replace("max-w-[354px]", "max-w-none")
-    : formFieldTextareaClass;
-  const selectClass = fullWidth
-    ? formFieldSelectClass.replace("max-w-[354px]", "max-w-none")
-    : formFieldSelectClass;
+  const isGenConsult = variant === "genConsult";
+
+  const inputClass = isGenConsult
+    ? genConsultInputClass
+    : fullWidth
+      ? formFieldInputClass.replace("max-w-[354px]", "max-w-none")
+      : formFieldInputClass;
+  const textareaClass = isGenConsult
+    ? genConsultTextareaClass
+    : fullWidth
+      ? formFieldTextareaClass.replace("max-w-[354px]", "max-w-none")
+      : formFieldTextareaClass;
+  const selectClass = isGenConsult
+    ? genConsultSelectClass
+    : fullWidth
+      ? formFieldSelectClass.replace("max-w-[354px]", "max-w-none")
+      : formFieldSelectClass;
 
   return (
     <form

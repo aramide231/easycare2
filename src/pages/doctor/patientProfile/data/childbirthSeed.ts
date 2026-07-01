@@ -1,3 +1,4 @@
+import { mockDateTimeDaysAgo, formatSlashDate, dateAtDaysAgo } from "@/lib/dateTime";
 export const CHILD_BIRTH_STAGE1_SEED = [
   {
     sn: 1,
@@ -20,7 +21,7 @@ export const CHILD_BIRTH_STAGE1_SEED = [
 export const CHILD_BIRTH_STAGE2_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     cervicalDilatation: "120",
     deliveryMode: "AVD",
     apgarScore: "4",
@@ -28,7 +29,7 @@ export const CHILD_BIRTH_STAGE2_SEED = [
   },
   {
     sn: 2,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     cervicalDilatation: "130",
     deliveryMode: "Vacumm Delivery",
     apgarScore: "10",
@@ -54,14 +55,14 @@ export const CHILD_BIRTH_STAGE3_SEED = [
 export const CHILD_BIRTH_STAGE4_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     deliveryMode: "Vaginal Delivery: Home Delivery",
     noOfBaby: "1 Baby",
     babyWeights: "3.5",
   },
   {
     sn: 2,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     deliveryMode: "Cesarean Section (C/S): Emergency (Classical)",
     noOfBaby: "Triplets (3 babies)",
     babyWeights: "4.5, 3.2, 3.0",

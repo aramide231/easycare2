@@ -1,75 +1,48 @@
-import { useState } from "react";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
-import CategoryMedicalTable from "../../category/CategoryMedicalTable";
-import {
-  genConsultInputClass,
-  genConsultLabelClass,
-  genConsultSaveBtn,
-  genConsultTextareaClass,
-} from "../genConsult/genConsultStyles";
+import { useAuth } from "@/context/AuthContext";
+import PresentingComplaintsReadOnly from "../shared/PresentingComplaintsReadOnly";
+import PresentingComplaintsEditable from "../shared/PresentingComplaintsEditable";
 
 const TABLE_COLUMNS = [
   { key: "sn", label: "SN" },
   { key: "dateTime", label: "DATE | TIME" },
   { key: "patientType", label: "PATIENT TYPE" },
   { key: "complaints", label: "COMPLAINTS" },
+  { key: "complaintHistory", label: "COMPLAINT HISTORY" },
+  { key: "enteredBy", label: "ENTERED BY" },
 ];
 
 export default function PresentingComplaints() {
-  const [complaints, setComplaints] = useState("");
-  const [complaintHistory, setComplaintHistory] = useState("");
-  const { history, save } = useMedicalTable(
-    "SPECIALIST CONSULT — PRESENTING COMPLAINTS",
-  );
+  const { user } = useAuth();
+  const isDoctor = user?.userRole === "doctor";
 
-  const inputClass = genConsultInputClass.replace("max-w-[354px]", "max-w-none");
-  const textareaClass = genConsultTextareaClass.replace(
-    "max-w-[354px]",
-    "max-w-none",
-  );
-
-  const handleSave = () => {
-    if (!complaints.trim() && !complaintHistory.trim()) return;
-    save({
-      complaints: complaints.trim(),
-      complaintHistory: complaintHistory.trim(),
-    });
-    setComplaints("");
-    setComplaintHistory("");
-  };
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <label className={genConsultLabelClass}>Complaints</label>
-        <textarea
-          value={complaints}
-          onChange={(e) => setComplaints(e.target.value)}
-          placeholder="Enter complaints..."
-          className={`${textareaClass} min-h-[120px]`}
-        />
-      </div>
-      <div>
-        <label className={genConsultLabelClass}>Complaint History</label>
-        <input
-          type="text"
-          value={complaintHistory}
-          onChange={(e) => setComplaintHistory(e.target.value)}
-          placeholder="Enter complaint history..."
-          className={inputClass}
-        />
-      </div>
-      <div className="text-center">
-        <button type="button" onClick={handleSave} className={genConsultSaveBtn}>
-          Save
-        </button>
-      </div>
-      <CategoryMedicalTable
+  if (isDoctor) {
+    return (
+      <PresentingComplaintsEditable
+        tableKey="SPECIALIST CONSULT — PRESENTING COMPLAINTS"
         title="PRESENTING COMPLAINTS DETAILS"
         columns={TABLE_COLUMNS}
-        rows={history}
-        emptyMessage="No presenting complaints recorded yet."
+        fields={[
+          {
+            name: "complaints",
+            label: "Complaints",
+            placeholder: "Enter complaints...",
+          },
+          {
+            name: "complaintHistory",
+            label: "Complaint History",
+            type: "text",
+            placeholder: "Enter complaint history...",
+          },
+        ]}
       />
-    </div>
+    );
+  }
+
+  return (
+    <PresentingComplaintsReadOnly
+      tableKey="SPECIALIST CONSULT — PRESENTING COMPLAINTS"
+      title="PRESENTING COMPLAINTS DETAILS"
+      columns={TABLE_COLUMNS}
+    />
   );
 }

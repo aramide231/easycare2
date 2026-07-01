@@ -1,7 +1,8 @@
+import { mockDateTimeDaysAgo, formatSlashDate, dateAtDaysAgo } from "@/lib/dateTime";
 export const NEO_NATAL_VITAL_SIGNS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     temperature: "25",
     weight: "120",
@@ -11,7 +12,7 @@ export const NEO_NATAL_VITAL_SIGNS_SEED = [
   },
   {
     sn: 2,
-    dateTime: "16-Feb-2021 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(30),
     patientType: "OUT-PATIENT",
     temperature: "30",
     weight: "130",
@@ -21,7 +22,7 @@ export const NEO_NATAL_VITAL_SIGNS_SEED = [
   },
   {
     sn: 3,
-    dateTime: "17-Feb-2022 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(60),
     patientType: "OUT-PATIENT",
     temperature: "36",
     weight: "90",
@@ -34,7 +35,7 @@ export const NEO_NATAL_VITAL_SIGNS_SEED = [
 export const NEO_NATAL_DIAGNOSIS_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "OUT-PATIENT",
     diagnosis: "?Malaria R/O Sepsis",
     doctor: "Dr. Chibuzo Alen",
@@ -44,7 +45,7 @@ export const NEO_NATAL_DIAGNOSIS_SEED = [
 export const NEO_NATAL_INVESTIGATION_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "OUT-PATIENT",
     investigationNames: "HVS",
     total: 4000,
@@ -55,7 +56,7 @@ export const NEO_NATAL_INVESTIGATION_SEED = [
 export const NEO_NATAL_PROCEDURE_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     procedureNames: "OXYGEN THERAPY",
     total: 3000,
@@ -67,7 +68,7 @@ export const NEO_NATAL_PROCEDURE_SEED = [
 export const NEO_NATAL_MEDICATION_SEED = [
   {
     sn: 1,
-    dateTime: "15-Feb-2020 10:25 AM",
+    dateTime: mockDateTimeDaysAgo(3),
     patientType: "IN-PATIENT",
     medication: "VITAMIN A",
     drugForm: "TAB",
