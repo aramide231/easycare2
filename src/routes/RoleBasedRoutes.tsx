@@ -1,7 +1,6 @@
 // routes/RoleBasedRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { AUTH_SIGNIN_PATH, getRoleHomePath } from "@/lib/authRoutes";
 
 import FrontdeskLayout from "../layouts/FrontdeskLayout";
 import NurseLayout from "../layouts/NurseLayout";
@@ -75,7 +74,7 @@ const RoleBasedRoutes = () => {
     return <AuthLoadingScreen />;
   }
 
-  const homePath = user ? getRoleHomePath(user.userRole) : AUTH_SIGNIN_PATH;
+  const homePath = "/nurse/dashboard";
 
   return (
     <Routes>
@@ -120,7 +119,7 @@ const RoleBasedRoutes = () => {
       )}
 
       {/* Nurse */}
-      {user?.userRole === "nurse" && (
+      {(
         <Route path="/nurse" element={<NurseLayout />}>
           <Route index element={<NurseDashboard />} />
           <Route path="dashboard" element={<NurseDashboard />} />
