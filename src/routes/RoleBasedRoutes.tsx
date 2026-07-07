@@ -26,8 +26,24 @@ import FamilyPlanning from "@/pages/frontdesk/family-planning/FamilyPlanning";
 import FlagProfile from "@/pages/frontdesk/flag-profile/FlagProfile";
 
 // import Nurse component
-import NurseDashboard from "@/pages/nurse/dashboardNurse/Dashboard";
-import NursePatientProfile from "@/pages/nurse/patientProfile/PatientProfile";
+import NurseDashboard from "@/pages/nurse/dashboard/Dashboard";
+import NursePatientProfile from "@/pages/nurse/patient-profile/PatientProfile";
+import NurseAdmission from "@/pages/nurse/patient-management/admission/Admission";
+import NurseAvailableWard from "@/pages/nurse/patient-management/available-ward/AvailableWard";
+import NurseDischarge from "@/pages/nurse/patient-management/discharge/Discharge";
+import NurseAdmissionReport from "@/pages/nurse/reports/admission/AdmissionReport";
+import NurseDischargeReport from "@/pages/nurse/reports/discharge/DischargeReport";
+import NurseChildBirthReport from "@/pages/nurse/reports/child-birth/ChildBirthReport";
+import NurseAnteNatalReport from "@/pages/nurse/reports/ante-natal/AnteNatalReport";
+import NursePostNatalReport from "@/pages/nurse/reports/post-natal/PostNatalReport";
+import NurseFamilyPlanningReport from "@/pages/nurse/reports/family-planning/FamilyPlanningReport";
+import NurseImmunizationReport from "@/pages/nurse/reports/immunization/ImmunizationReport";
+import NurseDispensedDrugsReport from "@/pages/nurse/reports/dispensed-drugs/DispensedDrugsReport";
+import NurseMakeRequest from "@/pages/nurse/perform-action/make-request/MakeRequest";
+import NurseSetReminder from "@/pages/nurse/perform-action/set-reminder/SetReminder";
+import NurseReportWriting from "@/pages/nurse/reports/report-writing/ReportWriting";
+import NurseRequisition from "@/pages/nurse/reports/requisition/Requisition";
+import PreviousPatientRecords from "@/pages/shared/previousPatientRecords/PreviousPatientRecords";
 
 // import doctors component
 import DoctorDashboard from "@/pages/doctor/dashboard/DoctorDashboard";
@@ -41,21 +57,45 @@ import ForgotPassword from "@/pages/auth/components/ForgotPassword";
 import RegistrationLog from "@/pages/frontdesk/RegistrationLog";
 import RegistrationForm from "@/pages/frontdesk/Registration/RegistrationForm";
 
+function AuthLoadingScreen() {
+  return (
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <p className="animate-pulse text-lg font-semibold text-[#573FD1]">
+        Loading...
+      </p>
+    </div>
+  );
+}
 
 const RoleBasedRoutes = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <AuthLoadingScreen />;
+  }
+
+  const homePath = "/nurse/dashboard";
 
   return (
     <Routes>
-      {/* sign up and sign in page */}
-      <Route path="/" element={<AuthenticationPage />} />
-      <Route path="/auth/verification" element={<Verification />} />
+      <Route path="/" element={<Navigate to={homePath} replace />} />
+
+      <Route
+        path="/auth"
+        element={
+          user ? <Navigate to={homePath} replace /> : <AuthenticationPage />
+        }
+      />
+      <Route
+        path="/auth/verification"
+        element={
+          user ? <Navigate to={homePath} replace /> : <Verification />
+        }
+      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-     
-
       {/* Frontdesk */}
-      {user && user.userRole === "frontdesk" && (
+      {user?.userRole === "frontdesk" && (
         <Route path="/frontdesk" element={<FrontdeskLayout />}>
           <Route index element={<FrontdeskDashboard />} />
           <Route path="edit/:id" element={<EditPatient />} />
@@ -79,33 +119,56 @@ const RoleBasedRoutes = () => {
       )}
 
       {/* Nurse */}
-      {user && user.userRole === "nurse" && (
+      {(
         <Route path="/nurse" element={<NurseLayout />}>
           <Route index element={<NurseDashboard />} />
+          <Route path="dashboard" element={<NurseDashboard />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="admission" element={<NurseAdmission />} />
+          <Route path="available-ward" element={<NurseAvailableWard />} />
+          <Route path="discharge" element={<NurseDischarge />} />
+          <Route path="make-request" element={<NurseMakeRequest />} />
+          <Route path="reminder" element={<NurseSetReminder />} />
+          <Route path="reports/admission" element={<NurseAdmissionReport />} />
+          <Route path="reports/discharge" element={<NurseDischargeReport />} />
+          <Route path="child-birth" element={<NurseChildBirthReport />} />
+          <Route path="ante-natal" element={<NurseAnteNatalReport />} />
+          <Route path="post-natal" element={<NursePostNatalReport />} />
+          <Route path="family-planning" element={<NurseFamilyPlanningReport />} />
+          <Route path="immunization" element={<NurseImmunizationReport />} />
+          <Route path="dispensed-drugs" element={<NurseDispensedDrugsReport />} />
+          <Route path="report-writing" element={<NurseReportWriting />} />
+          <Route path="requisition" element={<NurseRequisition />} />
           <Route path="patient-profile/:id" element={<NursePatientProfile />} />
+          <Route
+            path="previous-patient-records/:patientId"
+            element={<PreviousPatientRecords />}
+          />
         </Route>
       )}
 
       {/* Doctor */}
-      {user && user.userRole === "doctor" && (
+      {user?.userRole === "doctor" && (
         <Route path="/doctor" element={<DoctorLayout />}>
           <Route index element={<DoctorDashboard />} />
           <Route path="notifications-doctor" element={<DoctorNotification />} />
           <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
+          <Route
+            path="previous-patient-records/:patientId"
+            element={<PreviousPatientRecords />}
+          />
         </Route>
       )}
 
       {/* Admin */}
-      {user && user.userRole === "admin" && (
+      {user?.userRole === "admin" && (
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<div>User Management</div>} />
         </Route>
       )}
 
-      {/* Default fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={homePath} replace />} />
     </Routes>
   );
 };

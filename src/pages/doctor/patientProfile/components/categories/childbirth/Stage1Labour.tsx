@@ -1,155 +1,90 @@
-// import React from "react";
-import { useState } from "react";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
+import { CategoryFormWithHistory } from "../../category";
+import {
+  BOOKED_PATIENT_OPTIONS,
+  CONTRACTION_INTENSITY_OPTIONS,
+  PRESENTATION_OPTIONS,
+} from "./childbirthFieldOptions";
+
+const labourFields: CategoryFieldConfig[] = [
+  {
+    name: "patientType",
+    label: "Patient Type",
+    type: "select",
+    placeholder: "-Select option-",
+    options: BOOKED_PATIENT_OPTIONS,
+    tableLabel: "PATIENT TYPE",
+  },
+  {
+    name: "intensity",
+    label: "Intensity of Contractions",
+    type: "select",
+    placeholder: "-Select option-",
+    options: CONTRACTION_INTENSITY_OPTIONS,
+    tableLabel: "INT. OF CONT.",
+  },
+  {
+    name: "cervicalDilatation",
+    label: "Cervical Dilatation (4hrly)",
+    placeholder: "-Input dilation-",
+    tableLabel: "C.V",
+  },
+  {
+    name: "presentation",
+    label: "Presentation",
+    type: "select",
+    placeholder: "-Select option-",
+    options: PRESENTATION_OPTIONS,
+    tableLabel: "PRESENTATION",
+  },
+  {
+    name: "fhr",
+    label: "Fetal Heart Rate (FHR)",
+    placeholder: "-Input FHR-",
+    showInTable: false,
+  },
+  {
+    name: "bloodPressure",
+    label: "Blood Pressure (B.P)",
+    placeholder: "-Input B.P-",
+    showInTable: false,
+  },
+  {
+    name: "tpr",
+    label: "Temperature Pulse Respiration (T.P.R)",
+    placeholder: "-Input TPR-",
+    fullWidth: true,
+    showInTable: false,
+  },
+  {
+    name: "additional",
+    label: "Additional(s)",
+    type: "textarea",
+    placeholder: "Enter notes here",
+    fullWidth: true,
+    showInTable: false,
+  },
+];
+
+const labourTableColumns = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "intensity", label: "INT. OF CONT." },
+  { key: "cervicalDilatation", label: "C.V" },
+  { key: "presentation", label: "PRESENTATION" },
+];
 
 export default function Stage1Labour() {
-  const [stageOneLabourForm, setStageOneLabourForm] = useState<
-    Record<string, string>
-  >({});
-
-  const stageOneLabourFields = [
-    { name: "patientType", label: "Patient Type", type: "select" },
-    { name: "intensity", label: "Intensity of Contractions", type: "select" },
-    { name: "cervicalDilatation", label: "Cervical Dilatation (4hrly)" },
-    { name: "presentation", label: "Presentation", type: "select" },
-    { name: "fhr", label: "Fetal Heart Rate (FHR)" },
-    { name: "bloodPressure", label: "Blood Pressure (B.P)" },
-    { name: "tpr", label: "Temperature Pulse Respiration (T.P.R)" },
-    { name: "additional", label: "Additional(s)", type: "textarea" },
-  ];
-
-    const {
-      history: stageOneLabourHistory,
-      save: saveStage1Labour,
-      remove: deleteStage1Labour,
-    } = useMedicalTable("STAGE 1: LABOUR");
-
-    return (
-    <div className="p-4 bg-gray-50 rounded-b text-sm">
-      {/* FORM */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {stageOneLabourFields.map((field) => (
-          <div
-            key={field.name}
-            className={field.type === "textarea" ? "md:col-span-2" : ""}
-          >
-            <label className="block mb-1 font-medium">{field.label}</label>
-
-            {field.type === "textarea" ? (
-              <textarea
-                value={stageOneLabourForm[field.name] || ""}
-                onChange={(e) =>
-                  setStageOneLabourForm({
-                    ...stageOneLabourForm,
-                    [field.name]: e.target.value,
-                  })
-                }
-                className="w-full border rounded p-2 text-sm"
-              />
-            ) : field.type === "select" ? (
-              <select
-                value={stageOneLabourForm[field.name] || ""}
-                onChange={(e) =>
-                  setStageOneLabourForm({
-                    ...stageOneLabourForm,
-                    [field.name]: e.target.value,
-                  })
-                }
-                className="w-full border rounded p-2 text-sm"
-              >
-                <option value="">-Select option-</option>
-
-                {field.name === "patientType" && (
-                  <>
-                    <option value="Booked">Booked</option>
-                    <option value="UnBooked">UnBooked</option>
-                  </>
-                )}
-
-                {field.name === "intensity" && (
-                  <>
-                    <option value="Mild">Mild</option>
-                    <option value="Moderate">Moderate</option>
-                    <option value="Severe">Severe</option>
-                  </>
-                )}
-
-                {field.name === "presentation" && (
-                  <>
-                    <option value="Breech">Breech</option>
-                    <option value="Cephalic">Cephalic</option>
-                    <option value="Transverse">Transverse</option>
-                  </>
-                )}
-              </select>
-            ) : (
-              <input
-                type="text"
-                value={stageOneLabourForm[field.name] || ""}
-                onChange={(e) =>
-                  setStageOneLabourForm({
-                    ...stageOneLabourForm,
-                    [field.name]: e.target.value,
-                  })
-                }
-                className="w-full border rounded p-2 text-sm"
-              />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* SAVE BUTTON */}
-      <div className="mt-4 text-center">
-        <button
-          onClick={saveStage1Labour}
-          className="px-6 py-2 bg-purple-600 text-white rounded"
-        >
-          Save
-        </button>
-      </div>
-
-      {/* TABLE */}
-      {stageOneLabourHistory.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-          <h4 className="font-semibold mb-2">LABOUR DETAILS</h4>
-
-          <table className="min-w-max text-sm text-left border">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>S/N</th>
-                <th>Date</th>
-                <th>Patient Type</th>
-                <th>Intensity</th>
-                <th>C.V</th>
-                <th>Presentation</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {stageOneLabourHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType}</td>
-                  <td>{row.intensity}</td>
-                  <td>{row.cervicalDilatation}</td>
-                  <td>{row.presentation}</td>
-                  <td>
-                    <button
-                      onClick={() => deleteStage1Labour(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+  return (
+    <CategoryFormWithHistory
+      sectionName="STAGE 1: LABOUR"
+      tableKey="CHILD BIRTH — STAGE 1: LABOUR"
+      fields={labourFields}
+      detailsTitle="LABOUR DETAILS"
+      fullWidth
+      includeMetaColumns={false}
+      tableColumns={labourTableColumns}
+    />
   );
 }

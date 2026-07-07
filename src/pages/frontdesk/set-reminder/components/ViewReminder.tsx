@@ -1,137 +1,25 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
+import TablePagination from "@/pages/nurse/shared/components/TablePagination";
+import { usePaginatedList } from "@/hooks/usePaginatedList";
+import { PAGE_SIZE } from "@/constant/pagination";
+import { getPatientTypeClass } from "@/lib/badgeStyles";
+
+import { buildMockPatients } from "@/pages/nurse/dashboard/data/mockPatients";
 
 const ViewReminder = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const tableRef = useRef<HTMLTableElement>(null);
 
-  const patients = [
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      status: "PENDING",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      status: "TRIGGERED",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      status: "TRIGGERED",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      status: "PENDING",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      status: "PENDING",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 6,
-      name: "Toluwa Afolabi",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      status: "TRIGGERED",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 7,
-      name: "Abiola Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      status: "PENDING",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-    {
-      id: 8,
-      name: "Chinonso Eze",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      status: "TRIGGERED",
-      sendersName: "Bayo Hammed",
-      receiversName: "Pelumi Adebayo",
-    },
-  ];
-  const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
-    switch (type) {
-      case "COMPANY":
-      case "PRIVATE":
-        return "bg-blue-100 text-blue-700";
-      case "HMO":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+  const patients = buildMockPatients().slice(0, 8).map((patient, index) => ({
+    ...patient,
+    status: index % 2 === 0 ? "PENDING" : "TRIGGERED",
+    sendersName: "Bayo Hammed",
+    receiversName: "Pelumi Adebayo",
+  }));
 
-  // Function to get visit type badge color
-  const getPatientStatus = (type: "PENDING" | "TRIGGERED"): string => {
+  const { currentPage, setCurrentPage, totalPages, paginatedItems } =
+    usePaginatedList(patients);
+
+  const getPatientStatus = (type: string): string => {
     switch (type) {
       case "PENDING":
         return "bg-[#fff1e6] text-[#fa7401] border-[#fa7401]";
@@ -141,15 +29,6 @@ const ViewReminder = () => {
         return "bg-[#fff1e6] text-[#fa7401] border-[#fa7401]";
     }
   };
-
-  const isValidPatientType = (
-    type: string
-  ): type is "COMPANY" | "PRIVATE" | "HMO" =>
-    ["COMPANY", "PRIVATE", "HMO"].includes(type);
-
-  const isValidPatientStatus = (
-    type: string
-  ): type is "PENDING" | "TRIGGERED" => ["PENDING", "TRIGGERED"].includes(type);
 
   return (
     <>
@@ -166,12 +45,14 @@ const ViewReminder = () => {
               </tr>
             </thead>
             <tbody>
-              {patients.map((patient, index) => (
+              {paginatedItems.map((patient, index) => (
                 <tr
                   key={patient.id}
                   className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                 >
-                  <td className="px-4 py-3 font-medium">{patient.id}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {(currentPage - 1) * PAGE_SIZE + index + 1}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="font-medium">{patient.name}</div>
                     <div className="text-xs text-gray-500">
@@ -185,22 +66,14 @@ const ViewReminder = () => {
 
                   <td className="px-4 py-3">
                     <span
-                      className={`${
-                        isValidPatientType(patient.patientType)
-                          ? getPatientTypeClass(patient.patientType)
-                          : "bg-gray-100 text-gray-700"
-                      } px-4 py-2 rounded-md text-xs font-bold`}
+                      className={`rounded-md px-4 py-2 text-xs font-bold ${getPatientTypeClass(patient.patientType)}`}
                     >
                       {patient.patientType}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`${
-                        isValidPatientStatus(patient.status)
-                          ? getPatientStatus(patient.status)
-                          : "bg-[#fff1e6] text-[#fa7401] border-[#fa7401]"
-                      } px-4 py-2 rounded-md text-xs font-bold`}
+                      className={`rounded-md px-4 py-2 text-xs font-bold border ${getPatientStatus(patient.status)}`}
                     >
                       {patient.status}
                     </span>
@@ -211,65 +84,12 @@ const ViewReminder = () => {
           </table>
         </div>
       </div>
-      <div className="flex items-center justify-between mt-6">
-        <button className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
-          <svg
-            className="w-5 h-5 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 19l-7-7 7-7"
-            ></path>
-          </svg>
-          Back
-        </button>
-
-        <div className="flex space-x-1">
-          {[1, 2, 3, 4].map((page) => (
-            <button
-              key={page}
-              className={`px-3 py-1 text-sm border ${
-                currentPage === page
-                  ? "bg-blue-50 border-blue-500 text-blue-600"
-                  : "border-gray-300 bg-white text-gray-700"
-              } rounded-md hover:bg-gray-50`}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </button>
-          ))}
-          <button className="px-3 py-1 text-sm border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50">
-            ...
-          </button>
-          <button className="px-3 py-1 text-sm border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50">
-            20
-          </button>
-        </div>
-
-        <button className="flex items-center px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
-          Next
-          <svg
-            className="w-5 h-5 ml-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"
-            ></path>
-          </svg>
-        </button>
-      </div>
+      <TablePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        className="mt-6"
+      />
     </>
   );
 };

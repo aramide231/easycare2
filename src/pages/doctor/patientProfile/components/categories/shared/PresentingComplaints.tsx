@@ -1,88 +1,39 @@
-import { useState } from "react";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { useAuth } from "@/context/AuthContext";
+import PresentingComplaintsReadOnly from "./PresentingComplaintsReadOnly";
+import PresentingComplaintsEditable from "./PresentingComplaintsEditable";
+
+const TABLE_COLUMNS = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "complaint", label: "COMPLAINTS / HISTORY OF PRESENTING COMPLAINTS" },
+  { key: "enteredBy", label: "ENTERED BY" },
+];
 
 export default function PresentingComplaints() {
+  const { user } = useAuth();
+  const isDoctor = user?.userRole === "doctor";
 
-  const [complaint, setComplaint] = useState("");
-
-  const {
-    history: complaintsHistory,
-    save,
-    remove,
-  } = useMedicalTable("PRESENTING COMPLAINTS");
-
-  const handleSave = () => {
-    if (!complaint.trim()) return;
-
-    save({
-      complaint,
-    });
-
-    setComplaint("");
-  };
+  if (isDoctor) {
+    return (
+      <PresentingComplaintsEditable
+        tableKey="PRESENTING COMPLAINTS"
+        columns={TABLE_COLUMNS}
+        fields={[
+          {
+            name: "complaint",
+            label: "Complaints / History of Presenting Complaints",
+            placeholder: "Enter complaints and history...",
+          },
+        ]}
+      />
+    );
+  }
 
   return (
-    <div className="p-4 bg-gray-50 rounded-b text-sm">
-
-      {/* ========= FORM ========= */}
-      <label className="block mb-2 font-medium">
-        COMPLAINTS / HISTORY OF PRESENTING COMPLAINTS
-      </label>
-
-      <textarea
-        value={complaint}
-        onChange={(e) => setComplaint(e.target.value)}
-        className="w-full border rounded p-3 min-h-[120px]"
-      />
-
-      <div className="mt-4 text-center">
-        <button
-          onClick={handleSave}
-          className="px-6 py-2 bg-purple-600 text-white rounded"
-        >
-          Save
-        </button>
-      </div>
-
-      {/* ========= HISTORY TABLE =========  */}
-      {complaintsHistory.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-          <h4 className="font-semibold mb-2">
-            PRESENTING COMPLAINTS
-          </h4>
-
-          <table className="min-w-full text-sm text-left border">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>SN</th>
-                <th>Date | Time</th>
-                <th>Patient Type</th>
-                <th>Complaints / History</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {complaintsHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType}</td>
-                  <td>{row.complaint}</td>
-                  <td>
-                    <button
-                      onClick={() => remove(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+    <PresentingComplaintsReadOnly
+      tableKey="PRESENTING COMPLAINTS"
+      columns={TABLE_COLUMNS}
+    />
   );
 }

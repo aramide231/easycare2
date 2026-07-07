@@ -1,241 +1,398 @@
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import {
+  genConsultDeleteBtn,
+  genConsultInputClass,
+  genConsultLabelClass,
+  genConsultSaveBtn,
+  genConsultSelectClass,
+  genConsultTextareaClass,
+} from "../genConsult/genConsultStyles";
+import {
+  babyCountFromSelection,
+  BOOKED_PATIENT_OPTIONS,
+  DELIVERY_MODE_STAGE4_OPTIONS,
+  GENDER_OPTIONS,
+  IMMUNIZATION_AT_BIRTH_OPTIONS,
+  NO_OF_BABY_OPTIONS,
+} from "./childbirthFieldOptions";
 
-const Stage4DeliveryNote = () => {
+type BabyRecord = {
+  weight: string;
+  length: string;
+  headCircumference: string;
+  condition: string;
+  gender: string;
+  immunization: string;
+  deliveryDateTime: string;
+};
 
-  const [stageFourForm, setStageFourForm] = useState<Record<string, any>>({
-    noOfBaby: "Single",
-    babies: [{}],
-  });
+const emptyBaby = (): BabyRecord => ({
+  weight: "",
+  length: "",
+  headCircumference: "",
+  condition: "",
+  gender: "",
+  immunization: "",
+  deliveryDateTime: "",
+});
 
-  const stageFourFields = [
-    { name: "ega", label: "Estimated Gestational Age (E.G.A)" },
-    { name: "deliveryMode", label: "Mother's Mode of Delivery", type: "select" },
-    { name: "noOfBaby", label: "No of Baby", type: "select" },
-    { name: "motherCondition", label: "Mother's Condition" },
-    { name: "patientType", label: "Patient Type", type: "select" },
-    { name: "clinician", label: "Clinician Name" },
-    { name: "deliveryDate", label: "Date + Time of Delivery", type: "datetime-local" },
-    { name: "physicalExam", label: "Physical Examination", type: "textarea" },
-    { name: "additional", label: "Additional(s)", type: "textarea" },
-  ];
+const HISTORY_COLUMNS = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "deliveryMode", label: "MOTHER'S MODE OF DELIVERY" },
+  { key: "noOfBaby", label: "NO OF BABY" },
+  { key: "babyWeights", label: "BABY WEIGHT" },
+];
 
-  const handleChange = (name: string, value: any) => {
+export default function Stage4DeliveryNote() {
+  const { user } = useAuth();
+  const [ega, setEga] = useState("");
+  const [deliveryMode, setDeliveryMode] = useState("");
+  const [noOfBaby, setNoOfBaby] = useState("1 Baby");
+  const [motherCondition, setMotherCondition] = useState("");
+  const [patientType, setPatientType] = useState("");
+  const [complication, setComplication] = useState("");
+  const [clinician, setClinician] = useState("");
+  const [physicalExam, setPhysicalExam] = useState("");
+  const [additional, setAdditional] = useState("");
+  const [babies, setBabies] = useState<BabyRecord[]>([emptyBaby()]);
 
-    // Dynamic baby count logic
-    if (name === "noOfBaby") {
-      const count =
-        value === "Twins" ? 2 :
-        value === "Triplets" ? 3 : 1;
+  const { history, save, remove } = useMedicalTable(
+    "CHILD BIRTH — STAGE 4: DELIVERY NOTE",
+  );
 
-      setStageFourForm(prev => ({
-        ...prev,
-        noOfBaby: value,
-        babies: Array.from({ length: count }, (_, i) =>
-          prev.babies?.[i] || {}
-        ),
-      }));
+  const inputClass = genConsultInputClass.replace("max-w-[354px]", "max-w-none");
+  const selectClass = genConsultSelectClass.replace(
+    "max-w-[354px]",
+    "max-w-none",
+  );
+  const textareaClass = genConsultTextareaClass.replace(
+    "max-w-[354px]",
+    "max-w-none",
+  );
+  const smallInputClass = `${inputClass} max-w-[120px]`;
 
-      return;
-    }
-
-    setStageFourForm(prev => ({ ...prev, [name]: value }));
+  const handleNoOfBabyChange = (value: string) => {
+    const count = babyCountFromSelection(value);
+    setNoOfBaby(value);
+    setBabies((prev) =>
+      Array.from({ length: count }, (_, i) => prev[i] ?? emptyBaby()),
+    );
   };
 
-  const handleBabyChange = (
+  const updateBaby = (
     index: number,
-    field: string,
-    value: string
+    field: keyof BabyRecord,
+    value: string,
   ) => {
-    const updatedBabies = [...stageFourForm.babies];
-    updatedBabies[index] = {
-      ...updatedBabies[index],
-      [field]: value,
-    };
-
-    setStageFourForm(prev => ({
-      ...prev,
-      babies: updatedBabies,
-    }));
+    setBabies((prev) =>
+      prev.map((baby, i) => (i === index ? { ...baby, [field]: value } : baby)),
+    );
   };
 
-    const {
-      history: stageFourHistory,
-      save: saveStage4DeliveryNote,
-      remove: deleteStage4DeliveryNote,
-    } = useMedicalTable("STAGE 4: DELIVERY NOTE");
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    save({
+      ega,
+      deliveryMode,
+      noOfBaby,
+      motherCondition,
+      patientType,
+      complication,
+      clinician: clinician || user?.fullName || "",
+      physicalExam,
+      additional,
+      babyWeights: babies.map((b) => b.weight).filter(Boolean).join(", "),
+      babyDetails: JSON.stringify(babies),
+    });
+    setEga("");
+    setDeliveryMode("");
+    setNoOfBaby("1 Baby");
+    setMotherCondition("");
+    setPatientType("");
+    setComplication("");
+    setClinician("");
+    setPhysicalExam("");
+    setAdditional("");
+    setBabies([emptyBaby()]);
+  };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-b text-sm">
-
-      {/* ========= FORM ========= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        {stageFourFields.map(field => (
-          <div
-            key={field.name}
-            className={field.type === "textarea" ? "md:col-span-2" : ""}
+    <div className="space-y-6">
+      <form
+        onSubmit={handleSave}
+        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+      >
+        <div>
+          <label className={genConsultLabelClass}>
+            Estimated Gestational Age (E.G.A)
+          </label>
+          <input
+            value={ega}
+            onChange={(e) => setEga(e.target.value)}
+            placeholder="-Input EGA-"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Mother's Mode of Delivery</label>
+          <select
+            value={deliveryMode}
+            onChange={(e) => setDeliveryMode(e.target.value)}
+            className={selectClass}
           >
-            <label className="block mb-1 font-medium">
-              {field.label}
-            </label>
-
-            {field.type === "textarea" ? (
-              <textarea
-                value={stageFourForm[field.name] || ""}
-                onChange={(e) =>
-                  handleChange(field.name, e.target.value)
-                }
-                className="w-full border rounded p-2"
-              />
-            ) : field.type === "select" ? (
-              <select
-                value={stageFourForm[field.name] || ""}
-                onChange={(e) =>
-                  handleChange(field.name, e.target.value)
-                }
-                className="w-full border rounded p-2"
-              >
-                <option value="">-Select option-</option>
-
-                {field.name === "deliveryMode" && (
-                  <>
-                    <option>Vaginal Delivery</option>
-                    <option>Cesarean Section (C/S)</option>
-                    <option>Emergency Cesarean</option>
-                  </>
-                )}
-
-                {field.name === "noOfBaby" && (
-                  <>
-                    <option>Single</option>
-                    <option>Twins</option>
-                    <option>Triplets</option>
-                  </>
-                )}
-
-                {field.name === "patientType" && (
-                  <>
-                    <option>In-Patient</option>
-                    <option>Out-Patient</option>
-                  </>
-                )}
-              </select>
-            ) : (
-              <input
-                type={field.type || "text"}
-                value={stageFourForm[field.name] || ""}
-                onChange={(e) =>
-                  handleChange(field.name, e.target.value)
-                }
-                className="w-full border rounded p-2"
-              />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* ========= BABIES SECTION ========= */}
-
-      <div className="mt-6">
-        <h4 className="font-semibold mb-3 text-purple-600">
-          Baby Details
-        </h4>
-
-        {stageFourForm.babies.map((baby: any, index: number) => (
-          <div
-            key={index}
-            className="border rounded-lg p-3 mb-3 bg-white"
+            <option value="">-Select option-</option>
+            {DELIVERY_MODE_STAGE4_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>No of Baby</label>
+          <select
+            value={noOfBaby}
+            onChange={(e) => handleNoOfBabyChange(e.target.value)}
+            className={selectClass}
           >
-            <p className="font-semibold mb-2">
-              Baby {String.fromCharCode(65 + index)}
-            </p>
+            {NO_OF_BABY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Mother's Condition</label>
+          <input
+            value={motherCondition}
+            onChange={(e) => setMotherCondition(e.target.value)}
+            placeholder="-Enter condition-"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Patient Type</label>
+          <select
+            value={patientType}
+            onChange={(e) => setPatientType(e.target.value)}
+            className={selectClass}
+          >
+            <option value="">-Select option-</option>
+            {BOOKED_PATIENT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={genConsultLabelClass}>Any Complication</label>
+          <input
+            value={complication}
+            onChange={(e) => setComplication(e.target.value)}
+            placeholder="-Enter complication-"
+            className={inputClass}
+          />
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input
-                placeholder="Weight (Kg)"
-                value={baby.weight || ""}
-                onChange={(e) =>
-                  handleBabyChange(index, "weight", e.target.value)
-                }
-                className="border rounded p-2"
-              />
-
-              <input
-                placeholder="Length (CM)"
-                value={baby.length || ""}
-                onChange={(e) =>
-                  handleBabyChange(index, "length", e.target.value)
-                }
-                className="border rounded p-2"
-              />
-
-              <input
-                placeholder="Head Circumference (CM)"
-                value={baby.headCircumference || ""}
-                onChange={(e) =>
-                  handleBabyChange(index, "headCircumference", e.target.value)
-                }
-                className="border rounded p-2"
-              />
+        <div className="md:col-span-2 space-y-4 rounded-lg border border-gray-200 bg-[#FAFAFA] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">
+            Baby Details ({babies.length})
+          </p>
+          {babies.map((baby, index) => (
+            <div key={index} className="space-y-3 border-b border-gray-200 pb-4 last:border-0">
+              {babies.length > 1 && (
+                <p className="text-sm font-medium text-[#573FD1]">
+                  Baby {String.fromCharCode(65 + index)}
+                </p>
+              )}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                <div>
+                  <label className={genConsultLabelClass}>Baby's Weight</label>
+                  <input
+                    value={baby.weight}
+                    onChange={(e) => updateBaby(index, "weight", e.target.value)}
+                    placeholder="-Kg-"
+                    className={smallInputClass}
+                  />
+                </div>
+                <div>
+                  <label className={genConsultLabelClass}>Baby's Length</label>
+                  <input
+                    value={baby.length}
+                    onChange={(e) => updateBaby(index, "length", e.target.value)}
+                    placeholder="-CM-"
+                    className={smallInputClass}
+                  />
+                </div>
+                <div>
+                  <label className={genConsultLabelClass}>Head Circumference</label>
+                  <input
+                    value={baby.headCircumference}
+                    onChange={(e) =>
+                      updateBaby(index, "headCircumference", e.target.value)
+                    }
+                    placeholder="-CM-"
+                    className={smallInputClass}
+                  />
+                </div>
+                <div>
+                  <label className={genConsultLabelClass}>Baby's Condition</label>
+                  <input
+                    value={baby.condition}
+                    onChange={(e) => updateBaby(index, "condition", e.target.value)}
+                    placeholder="-Enter-"
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className={genConsultLabelClass}>Baby's Gender</label>
+                  <select
+                    value={baby.gender}
+                    onChange={(e) => updateBaby(index, "gender", e.target.value)}
+                    className={selectClass}
+                  >
+                    <option value="">-Select-</option>
+                    {GENDER_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className={genConsultLabelClass}>
+                    Baby's Immunization at Birth
+                  </label>
+                  <select
+                    value={baby.immunization}
+                    onChange={(e) =>
+                      updateBaby(index, "immunization", e.target.value)
+                    }
+                    className={selectClass}
+                  >
+                    <option value="">-Select-</option>
+                    {IMMUNIZATION_AT_BIRTH_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="md:col-span-3">
+                  <label className={genConsultLabelClass}>
+                    Date + Time of Delivery
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={baby.deliveryDateTime}
+                    onChange={(e) =>
+                      updateBaby(index, "deliveryDateTime", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* SAVE */}
-      <div className="mt-4 text-center">
-        <button
-          onClick={saveStage4DeliveryNote}
-          className="px-6 py-2 bg-purple-600 text-white rounded"
-        >
-          Save
-        </button>
-      </div>
+        <div>
+          <label className={genConsultLabelClass}>Clinician Name</label>
+          <input
+            value={clinician}
+            onChange={(e) => setClinician(e.target.value)}
+            placeholder="capture name of filler"
+            className={inputClass}
+          />
+        </div>
 
-      {/* ========= TABLE ========= */}
-      {stageFourHistory.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-          <h4 className="font-semibold mb-2">
-            DELIVERY NOTE DETAILS
-          </h4>
+        <div className="md:col-span-2">
+          <label className={genConsultLabelClass}>Physical Examination</label>
+          <textarea
+            value={physicalExam}
+            onChange={(e) => setPhysicalExam(e.target.value)}
+            placeholder="Enter examination notes..."
+            className={textareaClass}
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className={genConsultLabelClass}>Additional(s)</label>
+          <textarea
+            value={additional}
+            onChange={(e) => setAdditional(e.target.value)}
+            placeholder="Enter notes here"
+            className={textareaClass}
+          />
+        </div>
 
-          <table className="min-w-max text-sm text-left border">
-            <thead className="bg-gray-100">
+        <div className="md:col-span-2 pt-2 text-center">
+          <button type="submit" className={genConsultSaveBtn}>
+            Save
+          </button>
+        </div>
+      </form>
+
+      <div className="overflow-x-auto border-t border-gray-200 pt-4">
+        <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-800">
+          DELIVERY NOTE DETAILS
+        </h3>
+        <table className="min-w-max w-full text-left text-sm">
+          <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
+            <tr>
+              {HISTORY_COLUMNS.map((col) => (
+                <th
+                  key={col.key}
+                  className="whitespace-nowrap px-4 py-2 font-medium"
+                >
+                  {col.label}
+                </th>
+              ))}
+              <th className="px-4 py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {history.length === 0 ? (
               <tr>
-                <th>S/N</th>
-                <th>Date | Time</th>
-                <th>Delivery Mode</th>
-                <th>No of Baby</th>
-                <th>Clinician</th>
-                <th>Action</th>
+                <td
+                  colSpan={HISTORY_COLUMNS.length + 1}
+                  className="py-8 text-center text-gray-500"
+                >
+                  No delivery notes recorded yet.
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {stageFourHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.deliveryMode}</td>
-                  <td>{row.noOfBaby}</td>
-                  <td>{row.clinician}</td>
-                  <td>
+            ) : (
+              history.map((row, index) => (
+                <tr
+                  key={index}
+                  className={`border-b border-[#D4D4D4] ${
+                    index % 2 === 0 ? "bg-white" : "bg-[#FAFAFA]"
+                  }`}
+                >
+                  <td className="px-4 py-3">{row.sn as number}</td>
+                  <td className="px-4 py-3">{row.dateTime as string}</td>
+                  <td className="px-4 py-3">{row.deliveryMode as string}</td>
+                  <td className="px-4 py-3">{row.noOfBaby as string}</td>
+                  <td className="px-4 py-3">{row.babyWeights as string}</td>
+                  <td className="px-4 py-3">
                     <button
-                      onClick={() => deleteStage4DeliveryNote(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
+                      type="button"
+                      onClick={() => remove(index)}
+                      className={genConsultDeleteBtn}
                     >
                       Delete
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-export default Stage4DeliveryNote;

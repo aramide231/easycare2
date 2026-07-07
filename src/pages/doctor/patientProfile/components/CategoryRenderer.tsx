@@ -3,6 +3,7 @@ import PreviousMedicalHistory from "./categories/antenatal/PreviousMedicalHistor
 import FamilyMedicalHistory from "./categories/antenatal/FamilyMedicalHistory";
 import NewAntenatalBooking from "./categories/antenatal/NewAntenatalBooking";
 import PreviousPregnancyHistory from "./categories/antenatal/PreviousPregnancyHistory";
+import PresentPregnancyHistory from "./categories/antenatal/PresentPregnancyHistory";
 import FollowUpVisit from "./categories/antenatal/FollowUpVisit";
 import Stage1Labour from "./categories/childbirth/Stage1Labour";
 import Stage2Pushing from "./categories/childbirth/Stage2Pushing";
@@ -20,6 +21,11 @@ import PostOperationOrders from "./categories/surgical/PostOperationOrders";
 import PostOperationNote from "./categories/surgical/PostOperationNotes";
 import Diagnosis from "./categories/shared/Diagnosis";
 import Procedure from "./categories/shared/Procedure";
+import ReportWriting from "./categories/genConsult/ReportWriting";
+import IntakeCharts from "./categories/genConsult/IntakeCharts";
+import OutputChart from "./categories/genConsult/OutputChart";
+import NursingDispenses from "./categories/genConsult/NursingDispenses";
+import PharmacyDispenses from "./categories/genConsult/PharmacyDispenses";
 
 
 export const CategoryRenderer: Record<string, React.ReactNode> = {
@@ -28,6 +34,7 @@ export const CategoryRenderer: Record<string, React.ReactNode> = {
   "FAMILY MEDICAL HISTORY": <FamilyMedicalHistory />,
   "NEW ANTENATAL BOOKING": <NewAntenatalBooking />,
   "PREVIOUS PREGNANCY HISTORY": <PreviousPregnancyHistory />,
+  "PRESENT PREGNANCY HISTORY": <PresentPregnancyHistory />,
   "PRESENTING COMPLAINTS": <PresentingComplaints />,
   "PHYSICAL EXAMINATION": <PhysicalExamination />,
   "INVESTIGATION": <Investigation />,
@@ -45,6 +52,11 @@ export const CategoryRenderer: Record<string, React.ReactNode> = {
   "PRE-OPERATION NOTE": <PreOperationNote />,
   "POST-OPERATION NOTE": <PostOperationNote />,
   "POST-OPERATION ORDERS": <PostOperationOrders />,
+  "REPORT WRITING": <ReportWriting />,
+  "IN-TAKE CHART": <IntakeCharts />,
+  "OUTPUT CHART": <OutputChart />,
+  "NURSING DISPENSES": <NursingDispenses />,
+  "PHARMACY DISPENSE": <PharmacyDispenses />,
 
 
 };

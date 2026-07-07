@@ -1,84 +1,107 @@
-import CategoryForm from "./CategoryForm";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
+import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
+import { VITAL_SIGNS_COMMENT_FIELD } from "../../../config/vitalSignsFieldOptions";
+import { CategoryFormWithHistory } from "../../category";
+const vitalFields: CategoryFieldConfig[] = [
+  {
+    name: "temperature",
+    label: "Temperature (°C)",
+    tableLabel: "TEMP",
+    placeholder: "-Input temperature-",
+    required: true,
+  },
+  {
+    name: "bloodPressure",
+    label: "Blood Pressure (mmHg)",
+    tableLabel: "B.P",
+    placeholder: "-Input blood pressure-",
+    required: true,
+  },
+  {
+    name: "weight",
+    label: "Weight (kg)",
+    tableLabel: "WEIGHT",
+    placeholder: "-Input weight-",
+    required: true,
+  },
+  {
+    name: "height",
+    label: "Height (cm)",
+    tableLabel: "HEIGHT",
+    placeholder: "-Input height-",
+    required: true,
+  },
+  {
+    name: "bloodSugar",
+    label: "Blood Sugar",
+    tableLabel: "B.S",
+    placeholder: "-Input blood sugar-",
+  },
+  {
+    name: "pulseRate",
+    label: "Pulse Rate",
+    tableLabel: "PULSE",
+    placeholder: "-Input pulse rate-",
+  },
+  {
+    name: "respiration",
+    label: "Respiration (Bpm)",
+    tableLabel: "RESP",
+    placeholder: "-Input Bpm-",
+    showInTable: false,
+  },
+  {
+    name: "bmi",
+    label: "Body Mass Index (BMI)",
+    tableLabel: "BMI",
+    placeholder: "-Input BMI-",
+    showInTable: false,
+  },
+  {
+    name: "urinalysis",
+    label: "Urinalysis",
+    tableLabel: "UR",
+    placeholder: "-Input urinalysis-",
+    showInTable: false,
+  },
+  {
+    name: "spo2",
+    label: "Peripheral Oxygen Saturation (SpO2)",
+    tableLabel: "SPO₂",
+    placeholder: "-Input SpO2-",
+    showInTable: false,
+  },
+  {
+    name: "fhr",
+    label: "Fetal Heart Rate (FHR)",
+    tableLabel: "FHR",
+    placeholder: "-Input FHR-",
+    showInTable: false,
+  },
+  {
+    ...VITAL_SIGNS_COMMENT_FIELD,
+    fullWidth: true,
+  },
+];
+const vitalTableColumns = [
+  ...DEFAULT_META_TABLE_COLUMNS.filter((c) => c.key !== "enteredBy"),
+  { key: "temperature", label: "TEMP" },
+  { key: "bloodPressure", label: "B.P" },
+  { key: "bloodSugar", label: "B.S" },
+  { key: "weight", label: "WEIGHT" },
+  { key: "height", label: "HEIGHT" },
+  { key: "pulseRate", label: "PULSE" },
+];
 
 export default function VitalSigns() {
-  // const [vitalHistory, setVitalHistory] = useState<any[]>([]);
-  const vitalFields = [
-    { name: "temperature", label: "Temperature (°C)", type: "text" as const },
-    { name: "bloodPressure", label: "Blood Pressure (mmHg)", type: "text" as const },
-    { name: "weight", label: "Weight (kg)", type: "text" as const },
-    { name: "height", label: "Height (cm)", type: "text" as const },
-    { name: "bloodSugar", label: "Blood Sugar", type: "text" as const },
-    { name: "pulseRate", label: "Pulse Rate", type: "text" as const },
-    { name: "respiration", label: "Respiration (Bpm)", type: "text" as const },
-    { name: "bmi", label: "Body Mass Index (BMI)", type: "text" as const },
-    { name: "urinalysis", label: "Urinalysis", type: "text" as const },
-    { name: "spo2", label: "SpO₂", type: "text" as const },
-    { name: "fhr", label: "Fetal Heart Rate (FHR)", type: "text" as const },
-    { name: "comment", label: "Comments", type: "textarea" as const },
-  ];
-
-   const {
-    history: vitalHistory,
-    save: saveVital,
-    remove: deleteVital
-  } = useMedicalTable("VITAL SIGNS");
-
   return (
-    <div>
-      <CategoryForm fields={vitalFields} onSave={saveVital} />
-      {vitalHistory.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-          <table className="min-w-max text-sm text-left border">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>S/N</th>
-                <th>Date & Time</th>
-                <th>Temp</th>
-                <th>B.P</th>
-                <th>Weight</th>
-                <th>Height</th>
-                <th>Pulse</th>
-                <th>Resp</th>
-                <th>BMI</th>
-                <th>URINALYSIS</th>
-                <th>
-                  SPO<sub>2</sub>
-                </th>
-                <th>FHR</th>
-                <th>COMMMENT</th>
-                <th>ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vitalHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.temperature}</td>
-                  <td>{row.bloodPressure}</td>
-                  <td>{row.weight}</td>
-                  <td>{row.height}</td>
-                  <td>{row.pulseRate}</td>
-                  <td>{row.respiration}</td>
-                  <td>{row.bmi}</td>
-                  <td>{row.spo2}</td>
-                  <td>{row.fhr}</td>
-                  <td>{row.comment}</td>
-                  <td>
-                    <button
-                      onClick={() => deleteVital(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+    <CategoryFormWithHistory
+      sectionName="VITAL SIGNS"
+      tableKey="ANTE NATAL — VITAL SIGNS"
+      fields={vitalFields}
+      fullWidth
+      variant="genConsult"
+      tableColumns={vitalTableColumns}
+    />
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   FaHospital,
@@ -19,8 +19,11 @@ import {
   FaHome,
   FaTablets,
   FaBook,
+  FaProcedures,
 } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
+import easyCareLogo from "@/assets/icon/Frame 121.svg";
+import hospitalLogo from "@/assets/icon/Frame 5.svg";
 
 type SectionsState = {
   mainMenu: boolean;
@@ -40,9 +43,16 @@ type RouteItem = {
 const Sidebar = () => {
   const { user } = useAuth();
   const location = useLocation();
+  const isNurse = user?.userRole === "nurse";
+
+  const roleLabel =
+    user?.userRole && user.userRole.length > 0
+      ? user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1)
+      : "";
+
   const [openSections, setOpenSections] = useState<SectionsState>({
     mainMenu: true,
-    patientManagement: false,
+    patientManagement: isNurse,
     performActions: false,
     reports: false,
   });
@@ -121,7 +131,7 @@ const Sidebar = () => {
         {
           name: "Dashboard",
           icon: <FaTachometerAlt />,
-          path: "/nurse/dashboard",
+          path: "/nurse",
         },
       ],
       patientManagement: [
@@ -129,6 +139,11 @@ const Sidebar = () => {
           name: "Admission",
           icon: <FaHospital />,
           path: "/nurse/admission",
+        },
+        {
+          name: "Available Ward",
+          icon: <FaProcedures />,
+          path: "/nurse/available-ward",
         },
         {
           name: "Discharge",
@@ -145,6 +160,16 @@ const Sidebar = () => {
         { name: "Set Reminder", icon: <FaBell />, path: "/nurse/reminder" },
       ],
       reports: [
+        {
+          name: "Admission",
+          icon: <FaHospital />,
+          path: "/nurse/reports/admission",
+        },
+        {
+          name: "Discharge",
+          icon: <FaHome />,
+          path: "/nurse/reports/discharge",
+        },
         { name: "Ante Natal", icon: <FaBaby />, path: "/nurse/ante-natal" },
         { name: "Child Birth", icon: <FaChild />, path: "/nurse/child-birth" },
         {
@@ -193,6 +218,11 @@ const Sidebar = () => {
           name: "Admission",
           icon: <FaHospital />,
           path: "/nurse/admission",
+        },
+        {
+          name: "Available Ward",
+          icon: <FaProcedures />,
+          path: "/nurse/available-ward",
         },
         {
           name: "Discharge",
@@ -252,17 +282,54 @@ const Sidebar = () => {
       ? roleBasedRoutes[user.userRole]
       : {};
 
+  const isNavActive = (path: string) => {
+    if (path === "/nurse") {
+      return location.pathname === "/nurse" || location.pathname === "/nurse/dashboard";
+    }
+    return (
+      location.pathname === path || location.pathname.startsWith(`${path}/`)
+    );
+  };
+
+  useEffect(() => {
+    if (!isNurse) return;
+    const patientMgmtPaths = [
+      "/nurse/admission",
+      "/nurse/available-ward",
+      "/nurse/discharge",
+    ];
+    if (patientMgmtPaths.some((p) => location.pathname.startsWith(p))) {
+      setOpenSections((prev) => ({ ...prev, patientManagement: true }));
+    }
+  }, [location.pathname, isNurse]);
+
   return (
     <div className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-300 p-5 flex flex-col shadow-md">
       {/* Logo & Hospital Info */}
-      <div className="flex items-center gap-3 text-purple-700 font-bold text-xl mb-5">
-        <FaHospital size={24} /> <span>EasyCare™</span>
+      <div className="mb-5">
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="rounded-md transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/30"
+          aria-label="Reload page"
+          title="Reload page"
+        >
+          <img
+            src={easyCareLogo}
+            alt="EasyCare"
+            className="h-8 w-auto max-w-full"
+          />
+        </button>
       </div>
       <div className="bg-gray-100 p-3 rounded-lg flex gap-3 items-center mb-5">
-        <FaHospital className="text-red-500" size={20} />
+        <img
+          src={hospitalLogo}
+          alt="St James Hospital"
+          className="h-10 w-10 shrink-0 object-contain"
+        />
         <div>
           <h3 className="text-sm font-semibold">St James Hospital</h3>
-          <p className="text-xs text-gray-500">{user?.userRole}</p>
+          <p className="text-xs text-gray-500">{roleLabel}</p>
         </div>
       </div>
 
@@ -301,7 +368,7 @@ const Sidebar = () => {
                     key={item.name}
                     to={item.path}
                     className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition ${
-                      location.pathname === item.path
+                      isNavActive(item.path)
                         ? "bg-purple-100 text-purple-700"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}

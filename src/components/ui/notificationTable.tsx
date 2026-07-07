@@ -1,156 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Trash2 } from "lucide-react";
 import emptyNotification from "@/assets/image/empty-notification.png";
+import TablePagination from "@/pages/nurse/shared/components/TablePagination";
+import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
+import { useAuth } from "@/context/AuthContext";
+import {
+  buildMockNotifications,
+  type NotificationRow,
+} from "@/data/mockNotifications";
 
-type Patient = {
-  id: number;
-  name: string;
-  patientId: string;
-  phoneNumber: string;
-  lastSeen: string;
-  time: string;
-  gender: string;
-  age: number;
-  patientType: string;
-  visitType: string;
-  staffName: string;
-  flagged: boolean;
-};
+import { PAGE_SIZE } from "@/constant/pagination";
 
 const NotificationTable: React.FC = () => {
+  const { user } = useAuth();
+  const canDelete = user?.userRole === "admin";
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPatientId] = useState<number | null>(null); // omit setter
-  // const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null); // commented out unused setter
-
-
-  const [patients, setPatients] = useState<Patient[]>([
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      patientId: "P-2025002",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed",
-      flagged: false,
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      patientId: "P-2025003",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 6,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 7,
-      name: "Fatima Zara",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 8,
-      name: "Deola Kadir",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "FAMILY PLAN",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 9,
-      name: "Chioma Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN.CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-  ]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [patients, setPatients] = useState<NotificationRow[]>(() =>
+    buildMockNotifications()
+  );
 
   const getPatientTypeClass = (type: string) => {
     const typeClasses: Record<string, string> = {
@@ -166,6 +34,8 @@ const NotificationTable: React.FC = () => {
       "GEN. CONSULT": "bg-blue-100 text-[#573FD1] border border-[#573FD1]",
       "ANTE. NATAL": "bg-green-100 text-green-700 border border-[#00C851]",
       "POST NATAL": "bg-[#FDFDFD] text-[#626262] border border-[#626262]",
+      CHILDBIRTH: "bg-blue-100 text-blue-700 border border-blue-400",
+      "FAMILY PLAN": "bg-orange-100 text-orange-700 border border-orange-400",
     };
     return visitClasses[type] || "bg-gray-100 text-gray-700";
   };
@@ -190,6 +60,26 @@ const NotificationTable: React.FC = () => {
     );
   });
 
+  const listToShow = searchTerm ? filteredPatients : patients;
+  const totalPages = getTotalPages(listToShow.length, PAGE_SIZE);
+
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return listToShow.slice(start, start + PAGE_SIZE);
+  }, [listToShow, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  const hasRows = listToShow.length > 0;
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full mx-auto">
       <div className="flex flex-col md:flex-row md:items-center mb-6">
@@ -205,83 +95,94 @@ const NotificationTable: React.FC = () => {
         />
       </div>
       <div className="border-t border-gray-200 pt-4 overflow-x-auto">
-        {(searchTerm ? filteredPatients : patients).length > 0 ? (
-          <table className="min-w-full text-sm text-left">
-            <thead className="text-xs text-gray-500 uppercase">
-              <tr>
-                <th className="px-4 py-2 font-medium">SN</th>
-                <th className="px-4 py-2 font-medium">INCOMING</th>
-                <th className="px-4 py-2 font-medium">PATIENT NAME</th>
-                <th className="px-4 py-2 font-medium">TIME OF REQUEST</th>
-                <th className="px-4 py-2 font-medium">PATIENT TYPE</th>
-                <th className="px-4 py-2 font-medium">SENDER'S NAME</th>
-                <th className="px-4 py-2 font-medium"></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {(searchTerm ? filteredPatients : patients).map((patient) => (
-                <tr
-                  key={patient.id}
-                  className="hover:bg-gray-50 border-b border-gray-200"
-                >
-                  <td className="px-4 py-3">{patient.id}</td>
-
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
-                        patient.visitType
-                      )}`}
-                    >
-                      {patient.visitType}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col">
-                      <span className="font-medium">{patient.name}</span>
-                      <span className="text-xs text-gray-500">
-                        {patient.patientId} | {patient.phoneNumber}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col">
-                      <span>{patient.lastSeen}</span>
-                      <span className="text-xs text-gray-500">
-                        {patient.time}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
-                        patient.patientType
-                      )}`}
-                    >
-                      {patient.patientType}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {patient.staffName}
-                  </td>
-
-                  <td className="px-4 py-3 text-red-500 cursor-pointer">
-                    <Trash2
-                      size={18}
-                      className="hover:text-red-700"
-                      onClick={() => handleDelete(patient.id)}
-                    />
-                  </td>
+        {hasRows ? (
+          <>
+            <table className="min-w-full text-sm text-left">
+              <thead className="text-xs text-gray-500 uppercase">
+                <tr>
+                  <th className="px-4 py-2 font-medium">SN</th>
+                  <th className="px-4 py-2 font-medium">INCOMING</th>
+                  <th className="px-4 py-2 font-medium">PATIENT NAME</th>
+                  <th className="px-4 py-2 font-medium">TIME OF REQUEST</th>
+                  <th className="px-4 py-2 font-medium">PATIENT TYPE</th>
+                  <th className="px-4 py-2 font-medium">SENDER&apos;S NAME</th>
+                  {canDelete && <th className="px-4 py-2 font-medium"></th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {paginatedRows.map((patient, rowIndex) => (
+                  <tr
+                    key={patient.id}
+                    className="hover:bg-gray-50 border-b border-gray-200"
+                  >
+                    <td className="px-4 py-3">
+                      {(currentPage - 1) * PAGE_SIZE + rowIndex + 1}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
+                          patient.visitType
+                        )}`}
+                      >
+                        {patient.visitType}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span className="font-medium">{patient.name}</span>
+                        <span className="text-xs text-gray-500">
+                          {patient.patientId} | {patient.phoneNumber}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span>{patient.lastSeen}</span>
+                        <span className="text-xs text-gray-500">
+                          {patient.time}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
+                          patient.patientType
+                        )}`}
+                      >
+                        {patient.patientType}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {patient.staffName}
+                    </td>
+
+                    {canDelete && (
+                      <td className="px-4 py-3 text-red-500 cursor-pointer">
+                        <Trash2
+                          size={18}
+                          className="hover:text-red-700"
+                          onClick={() => handleDelete(patient.id)}
+                        />
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <TablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </>
         ) : (
-          /* EMPTY STATE */
           <div className="text-center text-black bg-gray-50">
             <div className="h-[35rem] w-full flex items-center justify-center">
               <div className="w-[392px] h-[225px] flex items-center flex-col gap-4">
@@ -292,7 +193,9 @@ const NotificationTable: React.FC = () => {
                 />
                 <p className="text-[32px] font-semibold">No Notification Yet</p>
                 <p className="text-2xl font-normal">
-                  You don't have any notifications yet. Check back later.
+                  {searchTerm
+                    ? `No results found for "${searchTerm}"`
+                    : "You don't have any notifications yet. Check back later."}
                 </p>
               </div>
             </div>

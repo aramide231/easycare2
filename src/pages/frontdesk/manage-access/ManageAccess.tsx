@@ -29,7 +29,9 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 
-const patients = [
+import { formatLogDate, dateAtDaysAgo } from "@/lib/dateTime";
+
+const patients = ([
   {
     name: "Adeola Abimbola",
     regDate: "15-Feb-2020",
@@ -151,7 +153,11 @@ const patients = [
     status: "ACTIVE",
     id: "08076543210",
   },
-];
+]).map((patient, index) => ({
+  ...patient,
+  regDate: formatLogDate(dateAtDaysAgo(120 + index)),
+  lastSeen: formatLogDate(dateAtDaysAgo(index % 21)),
+}));
 
 const ManageAccess = () => {
   const [search, setSearch] = useState("");
