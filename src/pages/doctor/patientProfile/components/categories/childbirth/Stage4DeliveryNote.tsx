@@ -1,24 +1,15 @@
-import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useMemo, useState } from "react";
+import { Calendar } from "lucide-react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import {
-  genConsultDeleteBtn,
-  genConsultInputClass,
-  genConsultLabelClass,
-  genConsultSaveBtn,
-  genConsultSelectClass,
-  genConsultTextareaClass,
-} from "../genConsult/genConsultStyles";
-import {
-  babyCountFromSelection,
-  BOOKED_PATIENT_OPTIONS,
-  DELIVERY_MODE_STAGE4_OPTIONS,
-  GENDER_OPTIONS,
-  IMMUNIZATION_AT_BIRTH_OPTIONS,
-  NO_OF_BABY_OPTIONS,
-} from "./childbirthFieldOptions";
+  formFieldGridClass,
+  formFieldInputClass,
+  formFieldSelectClass,
+  formFieldTextareaClass,
+} from "../../../lib/formFieldStyles";
 
-type BabyRecord = {
+type BabyDetails = {
   weight: string;
   length: string;
   headCircumference: string;
@@ -28,371 +19,593 @@ type BabyRecord = {
   deliveryDateTime: string;
 };
 
-const emptyBaby = (): BabyRecord => ({
-  weight: "",
-  length: "",
-  headCircumference: "",
-  condition: "",
-  gender: "",
-  immunization: "",
-  deliveryDateTime: "",
-});
-
-const HISTORY_COLUMNS = [
+const deliveryNoteTableColumns = [
   { key: "sn", label: "SN" },
-  { key: "dateTime", label: "DATE | TIME" },
+  { key: "deliveryDateTime", label: "DATE | TIME" },
   { key: "deliveryMode", label: "MOTHER'S MODE OF DELIVERY" },
   { key: "noOfBaby", label: "NO OF BABY" },
-  { key: "babyWeights", label: "BABY WEIGHT" },
+  { key: "babyWeight", label: "BABY WEIGHT" },
 ];
 
+function emptyBaby(): BabyDetails {
+  return {
+    weight: "",
+    length: "",
+    headCircumference: "",
+    condition: "",
+    gender: "",
+    immunization: "",
+    deliveryDateTime: "",
+  };
+}
+
+function getBabyCount(noOfBaby: string): number {
+  if (!noOfBaby || noOfBaby === "1 Baby") return 1;
+  const match = noOfBaby.match(/\((\d+)\s*babies?\)/i);
+  return match ? Math.max(1, parseInt(match[1], 10)) : 1;
+}
+
+function formatSingleDateTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+
+  const day = date.getDate();
+  const month = date.toLocaleString("en-GB", { month: "short" });
+  const year = date.getFullYear();
+  const time = date.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return `${day}-${month}-${year} ${time}`;
+}
+
+function formatTimeOnly(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+
+  return date.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+function formatNoOfBabyForTable(value: unknown): string {
+  const str = String(value ?? "");
+  if (!str) return "—";
+  if (str === "1 Baby") return "1";
+  return str.replace(/\s*\(\d+\s*babies?\)\s*$/i, "").trim() || str;
+}
+
+function joinBabyValues(babies: BabyDetails[], key: keyof BabyDetails): string {
+  return babies
+    .map((baby) => baby[key]?.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function parseBabiesFromRow(row: Record<string, unknown>): BabyDetails[] {
+  if (typeof row.babies !== "string") return [];
+  try {
+    return JSON.parse(row.babies) as BabyDetails[];
+  } catch {
+    return [];
+  }
+}
+
+function formatTableDeliveryDateTime(row: Record<string, unknown>): string {
+  const babies = parseBabiesFromRow(row);
+  const datetimes = babies
+    .map((baby) => baby.deliveryDateTime?.trim())
+    .filter(Boolean);
+
+  if (datetimes.length === 0) {
+    const fallback = row.deliveryDateTime ?? row.dateTime;
+    if (!fallback) return "—";
+    return formatSingleDateTime(String(fallback));
+  }
+
+  if (datetimes.length === 1) {
+    return formatSingleDateTime(datetimes[0]);
+  }
+
+  const first = new Date(datetimes[0]);
+  const dateLine = `${first.getDate()}-${first.toLocaleString("en-GB", { month: "short" })}-${first.getFullYear()}`;
+  const times = datetimes.map(formatTimeOnly);
+  return [dateLine, ...times].join("\n");
+}
+
+function SuffixInput({
+  suffix,
+  value,
+  onChange,
+  placeholder,
+}: {
+  suffix: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div className="relative min-w-0">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={`${formFieldInputClass} pr-14`}
+      />
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500">
+        {suffix}
+      </span>
+    </div>
+  );
+}
+
+function renderSelectOptions(fieldName: string) {
+  if (fieldName === "deliveryMode") {
+    return (
+      <>
+        <optgroup label="Vaginal Delivery">
+          <option value="Vaginal Delivery: Home Delivery">Home Delivery</option>
+          <option value="Vaginal Delivery: Painless or Epidural-Assisted Delivery">
+            Painless or Epidural-Assisted Delivery
+          </option>
+          <option value="Vaginal Delivery: Water Birth Delivery">
+            Water Birth Delivery
+          </option>
+          <option value="Vaginal Delivery: VBAC (Vaginal Birth After Cesarean)">
+            VBAC (Vaginal Birth After Cesarean)
+          </option>
+        </optgroup>
+        <optgroup label="Assisted Delivery">
+          <option value="Assisted Delivery: Forceps">Forceps</option>
+          <option value="Assisted Delivery: Vacuum Birth">Vacuum Birth</option>
+        </optgroup>
+        <optgroup label="Cesarean Section (C/S) Delivery">
+          <option value="Cesarean Section (C/S) Delivery: Elective (Lower Segment)">
+            Elective (Lower Segment)
+          </option>
+          <option value="Cesarean Section (C/S) Delivery: Elective (Classical)">
+            Elective (Classical)
+          </option>
+          <option value="Cesarean Section (C/S) Delivery: Emergency Lower Segment">
+            Emergency Lower Segment
+          </option>
+          <option value="Cesarean Section (C/S) Delivery: Emergency (Classical)">
+            Emergency (Classical)
+          </option>
+        </optgroup>
+      </>
+    );
+  }
+
+  if (fieldName === "noOfBaby") {
+    return (
+      <>
+        <optgroup label="Single">
+          <option value="1 Baby">1 Baby</option>
+        </optgroup>
+        <optgroup label="Multiple">
+          <option value="Twins (2 babies)">Twins (2 babies)</option>
+          <option value="Triplets (3 babies)">Triplets (3 babies)</option>
+          <option value="Quadruplets (4 babies)">Quadruplets (4 babies)</option>
+          <option value="Quintuplets (5 babies)">Quintuplets (5 babies)</option>
+          <option value="Sextuplets (8 babies)">Sextuplets (8 babies)</option>
+          <option value="Septuplets (7 babies)">Septuplets (7 babies)</option>
+          <option value="Octuplets (8 babies)">Octuplets (8 babies)</option>
+          <option value="Nonuplets (9 babies)">Nonuplets (9 babies)</option>
+          <option value="Decaplets (10 babies)">Decaplets (10 babies)</option>
+        </optgroup>
+      </>
+    );
+  }
+
+  if (fieldName === "patientType") {
+    return (
+      <>
+        <option value="Booked">Booked</option>
+        <option value="UnBooked">UnBooked</option>
+      </>
+    );
+  }
+
+  if (fieldName === "babyGender") {
+    return (
+      <>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </>
+    );
+  }
+
+  if (fieldName === "babyImmunization") {
+    return (
+      <>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </>
+    );
+  }
+
+  return null;
+}
+
+function multiFieldGridClass(count: number): string {
+  if (count <= 1) return "grid grid-cols-1 gap-2";
+  if (count === 2) return "grid grid-cols-2 gap-2";
+  if (count === 3) return "grid grid-cols-3 gap-2";
+  return "grid grid-cols-2 gap-2 sm:grid-cols-3";
+}
+
+function MultiBabyDateTime({
+  count,
+  babies,
+  onChange,
+}: {
+  count: number;
+  babies: BabyDetails[];
+  onChange: (index: number, value: string) => void;
+}) {
+  return (
+    <div className={multiFieldGridClass(count)}>
+      {Array.from({ length: count }).map((_, index) => (
+        <div key={`datetime-${index}`} className="relative min-w-0">
+          <input
+            type="datetime-local"
+            value={babies[index]?.deliveryDateTime || ""}
+            onChange={(e) => onChange(index, e.target.value)}
+            className={`${formFieldInputClass} pr-10`}
+          />
+          <Calendar
+            className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+            aria-hidden
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Stage4DeliveryNote() {
-  const { user } = useAuth();
-  const [ega, setEga] = useState("");
-  const [deliveryMode, setDeliveryMode] = useState("");
-  const [noOfBaby, setNoOfBaby] = useState("1 Baby");
-  const [motherCondition, setMotherCondition] = useState("");
-  const [patientType, setPatientType] = useState("");
-  const [complication, setComplication] = useState("");
-  const [clinician, setClinician] = useState("");
-  const [physicalExam, setPhysicalExam] = useState("");
-  const [additional, setAdditional] = useState("");
-  const [babies, setBabies] = useState<BabyRecord[]>([emptyBaby()]);
+  const [form, setForm] = useState<Record<string, string>>({});
+  const [babies, setBabies] = useState<BabyDetails[]>([emptyBaby()]);
 
-  const { history, save, remove } = useMedicalTable(
-    "CHILD BIRTH — STAGE 4: DELIVERY NOTE",
+  const { history: stageFourHistory, save } = useMedicalTable(
+    "STAGE 4: DELIVERY NOTE"
   );
 
-  const inputClass = genConsultInputClass.replace("max-w-[354px]", "max-w-none");
-  const selectClass = genConsultSelectClass.replace(
-    "max-w-[354px]",
-    "max-w-none",
+  const babyCount = useMemo(
+    () => getBabyCount(form.noOfBaby || ""),
+    [form.noOfBaby]
   );
-  const textareaClass = genConsultTextareaClass.replace(
-    "max-w-[354px]",
-    "max-w-none",
-  );
-  const smallInputClass = `${inputClass} max-w-[120px]`;
 
-  const handleNoOfBabyChange = (value: string) => {
-    const count = babyCountFromSelection(value);
-    setNoOfBaby(value);
-    setBabies((prev) =>
-      Array.from({ length: count }, (_, i) => prev[i] ?? emptyBaby()),
-    );
+  const handleFormChange = (name: string, value: string) => {
+    if (name === "noOfBaby") {
+      const count = getBabyCount(value);
+      setBabies((prev) =>
+        Array.from({ length: count }, (_, index) => prev[index] ?? emptyBaby())
+      );
+    }
+
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const updateBaby = (
+  const handleBabyChange = (
     index: number,
-    field: keyof BabyRecord,
-    value: string,
+    field: keyof BabyDetails,
+    value: string
   ) => {
-    setBabies((prev) =>
-      prev.map((baby, i) => (i === index ? { ...baby, [field]: value } : baby)),
-    );
+    setBabies((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = () => {
+    const hasScalar = Object.values(form).some((value) => value?.trim());
+    const hasBaby = babies.some((baby) =>
+      Object.values(baby).some((value) => value?.trim())
+    );
+    if (!hasScalar && !hasBaby) return;
+
+    const primaryDateTime =
+      babies.find((baby) => baby.deliveryDateTime.trim())?.deliveryDateTime ?? "";
+
     save({
-      ega,
-      deliveryMode,
-      noOfBaby,
-      motherCondition,
-      patientType,
-      complication,
-      clinician: clinician || user?.fullName || "",
-      physicalExam,
-      additional,
-      babyWeights: babies.map((b) => b.weight).filter(Boolean).join(", "),
-      babyDetails: JSON.stringify(babies),
+      ...form,
+      babyWeight: joinBabyValues(babies, "weight"),
+      babyLength: joinBabyValues(babies, "length"),
+      headCircumference: joinBabyValues(babies, "headCircumference"),
+      babyCondition: joinBabyValues(babies, "condition"),
+      babyGender: joinBabyValues(babies, "gender"),
+      babyImmunization: joinBabyValues(babies, "immunization"),
+      deliveryDateTime: primaryDateTime,
+      babies: JSON.stringify(babies),
     });
-    setEga("");
-    setDeliveryMode("");
-    setNoOfBaby("1 Baby");
-    setMotherCondition("");
-    setPatientType("");
-    setComplication("");
-    setClinician("");
-    setPhysicalExam("");
-    setAdditional("");
+
+    setForm({});
     setBabies([emptyBaby()]);
   };
 
+  const tableRows = stageFourHistory.map((row) => ({
+    ...row,
+    noOfBaby: formatNoOfBabyForTable(row.noOfBaby),
+    deliveryDateTime: formatTableDeliveryDateTime(row),
+  }));
+
   return (
-    <div className="space-y-6">
-      <form
-        onSubmit={handleSave}
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
-      >
-        <div>
-          <label className={genConsultLabelClass}>
+    <div className="space-y-6 text-sm">
+      <div className={formFieldGridClass}>
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
             Estimated Gestational Age (E.G.A)
           </label>
           <input
-            value={ega}
-            onChange={(e) => setEga(e.target.value)}
-            placeholder="-Input EGA-"
-            className={inputClass}
-          />
-        </div>
-        <div>
-          <label className={genConsultLabelClass}>Mother's Mode of Delivery</label>
-          <select
-            value={deliveryMode}
-            onChange={(e) => setDeliveryMode(e.target.value)}
-            className={selectClass}
-          >
-            <option value="">-Select option-</option>
-            {DELIVERY_MODE_STAGE4_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={genConsultLabelClass}>No of Baby</label>
-          <select
-            value={noOfBaby}
-            onChange={(e) => handleNoOfBabyChange(e.target.value)}
-            className={selectClass}
-          >
-            {NO_OF_BABY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={genConsultLabelClass}>Mother's Condition</label>
-          <input
-            value={motherCondition}
-            onChange={(e) => setMotherCondition(e.target.value)}
-            placeholder="-Enter condition-"
-            className={inputClass}
-          />
-        </div>
-        <div>
-          <label className={genConsultLabelClass}>Patient Type</label>
-          <select
-            value={patientType}
-            onChange={(e) => setPatientType(e.target.value)}
-            className={selectClass}
-          >
-            <option value="">-Select option-</option>
-            {BOOKED_PATIENT_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={genConsultLabelClass}>Any Complication</label>
-          <input
-            value={complication}
-            onChange={(e) => setComplication(e.target.value)}
-            placeholder="-Enter complication-"
-            className={inputClass}
+            type="text"
+            value={form.ega || ""}
+            onChange={(e) => handleFormChange("ega", e.target.value)}
+            placeholder="-input E.G.A-"
+            className={formFieldInputClass}
           />
         </div>
 
-        <div className="md:col-span-2 space-y-4 rounded-lg border border-gray-200 bg-[#FAFAFA] p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">
-            Baby Details ({babies.length})
-          </p>
-          {babies.map((baby, index) => (
-            <div key={index} className="space-y-3 border-b border-gray-200 pb-4 last:border-0">
-              {babies.length > 1 && (
-                <p className="text-sm font-medium text-[#573FD1]">
-                  Baby {String.fromCharCode(65 + index)}
-                </p>
-              )}
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                <div>
-                  <label className={genConsultLabelClass}>Baby's Weight</label>
-                  <input
-                    value={baby.weight}
-                    onChange={(e) => updateBaby(index, "weight", e.target.value)}
-                    placeholder="-Kg-"
-                    className={smallInputClass}
-                  />
-                </div>
-                <div>
-                  <label className={genConsultLabelClass}>Baby's Length</label>
-                  <input
-                    value={baby.length}
-                    onChange={(e) => updateBaby(index, "length", e.target.value)}
-                    placeholder="-CM-"
-                    className={smallInputClass}
-                  />
-                </div>
-                <div>
-                  <label className={genConsultLabelClass}>Head Circumference</label>
-                  <input
-                    value={baby.headCircumference}
-                    onChange={(e) =>
-                      updateBaby(index, "headCircumference", e.target.value)
-                    }
-                    placeholder="-CM-"
-                    className={smallInputClass}
-                  />
-                </div>
-                <div>
-                  <label className={genConsultLabelClass}>Baby's Condition</label>
-                  <input
-                    value={baby.condition}
-                    onChange={(e) => updateBaby(index, "condition", e.target.value)}
-                    placeholder="-Enter-"
-                    className={inputClass}
-                  />
-                </div>
-                <div>
-                  <label className={genConsultLabelClass}>Baby's Gender</label>
-                  <select
-                    value={baby.gender}
-                    onChange={(e) => updateBaby(index, "gender", e.target.value)}
-                    className={selectClass}
-                  >
-                    <option value="">-Select-</option>
-                    {GENDER_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className={genConsultLabelClass}>
-                    Baby's Immunization at Birth
-                  </label>
-                  <select
-                    value={baby.immunization}
-                    onChange={(e) =>
-                      updateBaby(index, "immunization", e.target.value)
-                    }
-                    className={selectClass}
-                  >
-                    <option value="">-Select-</option>
-                    {IMMUNIZATION_AT_BIRTH_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="md:col-span-3">
-                  <label className={genConsultLabelClass}>
-                    Date + Time of Delivery
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={baby.deliveryDateTime}
-                    onChange={(e) =>
-                      updateBaby(index, "deliveryDateTime", e.target.value)
-                    }
-                    className={inputClass}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Mother&apos;s Mode of Delivery
+          </label>
+          <select
+            value={form.deliveryMode || ""}
+            onChange={(e) => handleFormChange("deliveryMode", e.target.value)}
+            className={formFieldSelectClass}
+          >
+            <option value="">-Select option-</option>
+            {renderSelectOptions("deliveryMode")}
+          </select>
         </div>
 
-        <div>
-          <label className={genConsultLabelClass}>Clinician Name</label>
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            No of Baby
+          </label>
+          <select
+            value={form.noOfBaby || ""}
+            onChange={(e) => handleFormChange("noOfBaby", e.target.value)}
+            className={formFieldSelectClass}
+          >
+            <option value="">-Select option-</option>
+            {renderSelectOptions("noOfBaby")}
+          </select>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Baby&apos;s Weight
+          </label>
+          <div className={multiFieldGridClass(babyCount)}>
+            {Array.from({ length: babyCount }).map((_, index) => (
+              <SuffixInput
+                key={`weight-${index}`}
+                suffix="Kg"
+                value={babies[index]?.weight || ""}
+                onChange={(value) => handleBabyChange(index, "weight", value)}
+                placeholder="-Kg-"
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Baby&apos;s Length
+          </label>
+          <div className={multiFieldGridClass(babyCount)}>
+            {Array.from({ length: babyCount }).map((_, index) => (
+              <SuffixInput
+                key={`length-${index}`}
+                suffix="CM"
+                value={babies[index]?.length || ""}
+                onChange={(value) => handleBabyChange(index, "length", value)}
+                placeholder="-CM-"
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Head Circumference
+          </label>
+          <div className={multiFieldGridClass(babyCount)}>
+            {Array.from({ length: babyCount }).map((_, index) => (
+              <SuffixInput
+                key={`head-${index}`}
+                suffix="CM"
+                value={babies[index]?.headCircumference || ""}
+                onChange={(value) =>
+                  handleBabyChange(index, "headCircumference", value)
+                }
+                placeholder="-CM-"
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Mother&apos;s Condition
+          </label>
           <input
-            value={clinician}
-            onChange={(e) => setClinician(e.target.value)}
+            type="text"
+            value={form.motherCondition || ""}
+            onChange={(e) => handleFormChange("motherCondition", e.target.value)}
+            placeholder="-input mother's condition-"
+            className={formFieldInputClass}
+          />
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Baby&apos;s Condition
+          </label>
+          <div className={multiFieldGridClass(babyCount)}>
+            {Array.from({ length: babyCount }).map((_, index) => (
+              <input
+                key={`condition-${index}`}
+                type="text"
+                value={babies[index]?.condition || ""}
+                onChange={(e) =>
+                  handleBabyChange(index, "condition", e.target.value)
+                }
+                placeholder="-Enter-"
+                className={formFieldInputClass}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Patient Type
+          </label>
+          <select
+            value={form.patientType || ""}
+            onChange={(e) => handleFormChange("patientType", e.target.value)}
+            className={formFieldSelectClass}
+          >
+            <option value="">-Select option-</option>
+            {renderSelectOptions("patientType")}
+          </select>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Any Complication
+          </label>
+          <input
+            type="text"
+            value={form.anyComplication || ""}
+            onChange={(e) => handleFormChange("anyComplication", e.target.value)}
+            placeholder="-Enter notes here-"
+            className={formFieldInputClass}
+          />
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Baby&apos;s Gender
+          </label>
+          <div className={multiFieldGridClass(babyCount)}>
+            {Array.from({ length: babyCount }).map((_, index) => (
+              <select
+                key={`gender-${index}`}
+                value={babies[index]?.gender || ""}
+                onChange={(e) =>
+                  handleBabyChange(index, "gender", e.target.value)
+                }
+                className={formFieldSelectClass}
+              >
+                <option value="">-Select option-</option>
+                {renderSelectOptions("babyGender")}
+              </select>
+            ))}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Baby&apos;s Immunization at Birth
+          </label>
+          <div className={multiFieldGridClass(babyCount)}>
+            {Array.from({ length: babyCount }).map((_, index) => (
+              <select
+                key={`immunization-${index}`}
+                value={babies[index]?.immunization || ""}
+                onChange={(e) =>
+                  handleBabyChange(index, "immunization", e.target.value)
+                }
+                className={formFieldSelectClass}
+              >
+                <option value="">-Select option-</option>
+                {renderSelectOptions("babyImmunization")}
+              </select>
+            ))}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Clinician Name
+          </label>
+          <input
+            type="text"
+            value={form.clinician || ""}
+            onChange={(e) => handleFormChange("clinician", e.target.value)}
             placeholder="capture name of filler"
-            className={inputClass}
+            className={formFieldInputClass}
           />
         </div>
 
-        <div className="md:col-span-2">
-          <label className={genConsultLabelClass}>Physical Examination</label>
-          <textarea
-            value={physicalExam}
-            onChange={(e) => setPhysicalExam(e.target.value)}
-            placeholder="Enter examination notes..."
-            className={textareaClass}
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Date + Time of Delivery
+          </label>
+          <MultiBabyDateTime
+            count={babyCount}
+            babies={babies}
+            onChange={(index, value) =>
+              handleBabyChange(index, "deliveryDateTime", value)
+            }
           />
         </div>
-        <div className="md:col-span-2">
-          <label className={genConsultLabelClass}>Additional(s)</label>
+
+        <div className="col-span-2 min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Physical Examination
+          </label>
           <textarea
-            value={additional}
-            onChange={(e) => setAdditional(e.target.value)}
+            rows={4}
+            value={form.physicalExam || ""}
+            onChange={(e) => handleFormChange("physicalExam", e.target.value)}
             placeholder="Enter notes here"
-            className={textareaClass}
+            className={formFieldTextareaClass}
           />
         </div>
 
-        <div className="md:col-span-2 pt-2 text-center">
-          <button type="submit" className={genConsultSaveBtn}>
-            Save
-          </button>
+        <div className="col-span-2 min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Additional(s)
+          </label>
+          <textarea
+            rows={4}
+            value={form.additional || ""}
+            onChange={(e) => handleFormChange("additional", e.target.value)}
+            placeholder="Enter notes here"
+            className={formFieldTextareaClass}
+          />
         </div>
-      </form>
-
-      <div className="overflow-x-auto border-t border-gray-200 pt-4">
-        <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-800">
-          DELIVERY NOTE DETAILS
-        </h3>
-        <table className="min-w-max w-full text-left text-sm">
-          <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
-            <tr>
-              {HISTORY_COLUMNS.map((col) => (
-                <th
-                  key={col.key}
-                  className="whitespace-nowrap px-4 py-2 font-medium"
-                >
-                  {col.label}
-                </th>
-              ))}
-              <th className="px-4 py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {history.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={HISTORY_COLUMNS.length + 1}
-                  className="py-8 text-center text-gray-500"
-                >
-                  No delivery notes recorded yet.
-                </td>
-              </tr>
-            ) : (
-              history.map((row, index) => (
-                <tr
-                  key={index}
-                  className={`border-b border-[#D4D4D4] ${
-                    index % 2 === 0 ? "bg-white" : "bg-[#FAFAFA]"
-                  }`}
-                >
-                  <td className="px-4 py-3">{row.sn as number}</td>
-                  <td className="px-4 py-3">{row.dateTime as string}</td>
-                  <td className="px-4 py-3">{row.deliveryMode as string}</td>
-                  <td className="px-4 py-3">{row.noOfBaby as string}</td>
-                  <td className="px-4 py-3">{row.babyWeights as string}</td>
-                  <td className="px-4 py-3">
-                    <button
-                      type="button"
-                      onClick={() => remove(index)}
-                      className={genConsultDeleteBtn}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
       </div>
+
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="w-full max-w-xs rounded-lg bg-[#573FD1] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#4a35b8]"
+        >
+          Save
+        </button>
+      </div>
+
+      <CategoryMedicalTable
+        title="DELIVERY NOTE DETAILS"
+        columns={deliveryNoteTableColumns}
+        rows={tableRows}
+        wrapColumns={["deliveryDateTime"]}
+        emptyMessage="No delivery note records yet."
+      />
     </div>
   );
 }

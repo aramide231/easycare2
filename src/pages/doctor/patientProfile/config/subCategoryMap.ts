@@ -1,4 +1,8 @@
-export type SubCategory = { label: string };
+export type SubCategory = {
+  label: string;
+  /** Investigation form: investigation field 3/4 width, amount 1/4. */
+  fieldLayout?: "wide-investigation";
+};
 
 export const subCategoryMap: Record<string, SubCategory[]> = {
   "Ante Natal Care": [
@@ -7,11 +11,10 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
     { label: "FAMILY MEDICAL HISTORY" },
     { label: "NEW ANTENATAL BOOKING" },
     { label: "PREVIOUS PREGNANCY HISTORY" },
-    { label: "PRESENT PREGNANCY HISTORY" },
     { label: "PRESENTING COMPLAINTS" },
     { label: "PHYSICAL EXAMINATION" },
     { label: "DIAGNOSIS" },
-    { label: "INVESTIGATION" },
+    { label: "INVESTIGATION", fieldLayout: "wide-investigation" },
     { label: "PROCEDURE" },
     { label: "MEDICATION" },
     { label: "FOLLOW-UP VISIT" },
@@ -41,9 +44,9 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
     { label: "PRESENTING COMPLAINTS" },
     { label: "PHYSICAL EXAMINATION" },
     { label: "DIAGNOSIS" },
-    { label: "INVESTIGATION" },
-    { label: "MEDICATION" },
+    { label: "INVESTIGATION", fieldLayout: "wide-investigation" },
     { label: "PROCEDURE" },
+    { label: "MEDICATION" },
     { label: "REPORT WRITING" },
     { label: "IN-TAKE CHART" },
     { label: "OUTPUT CHART" },
@@ -54,7 +57,7 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
   "Neo Natal Care": [
     { label: "VITAL SIGNS" },
     { label: "DIAGNOSIS" },
-    { label: "INVESTIGATION" },
+    { label: "INVESTIGATION", fieldLayout: "wide-investigation" },
     { label: "PROCEDURE" },
     { label: "MEDICATION" },
   ],
@@ -63,7 +66,9 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
     { label: "VITAL SIGNS" },
     { label: "PRESENTING COMPLAINTS" },
     { label: "PHYSICAL EXAMINATION" },
-    { label: "INVESTIGATION" },
+    { label: "DIAGNOSIS" },
+    { label: "INVESTIGATION", fieldLayout: "wide-investigation" },
+    { label: "PROCEDURE" },
     { label: "MEDICATION" },
   ],
 

@@ -1,143 +1,143 @@
-import { useState } from "react";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { useEffect, useState } from "react";
+import {
+  setPendingPhysicalExamination,
+  subscribePhysicalExaminationFormClear,
+  useMedicalTable,
+} from "../../../hooks/useMedicalTable";
+import CategoryMedicalTable from "../../category/CategoryMedicalTable";
+import {
+  formFieldGridClass,
+  formFieldInputClass,
+  formFieldTextareaClass,
+} from "../../../lib/formFieldStyles";
+
+const physicalExaminationTableColumns = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "general", label: "GENERAL" },
+  { key: "cns", label: "CNS" },
+  { key: "chest", label: "CHEST" },
+  { key: "cvs", label: "CVS" },
+  { key: "abdomen", label: "ABDOMEN" },
+  { key: "dre", label: "DRE" },
+  { key: "ve", label: "VE" },
+  { key: "mss", label: "MSS" },
+  { key: "ent", label: "ENT" },
+  { key: "comments", label: "COMMENTS" },
+];
+
+const EMPTY_FORM = {
+  general: "",
+  cns: "",
+  chest: "",
+  cvs: "",
+  abdomen: "",
+  dre: "",
+  ve: "",
+  mss: "",
+  ent: "",
+  comments: "",
+};
+
+type PhysicalExamForm = typeof EMPTY_FORM;
+
+const fieldPairs: { name: keyof PhysicalExamForm; label: string }[][] = [
+  [{ name: "cns", label: "CNS" }, { name: "chest", label: "Chest" }],
+  [{ name: "cvs", label: "CVS" }, { name: "abdomen", label: "Abdomen" }],
+  [{ name: "dre", label: "DRE" }, { name: "ve", label: "VE" }],
+  [{ name: "mss", label: "MSS" }, { name: "ent", label: "ENT" }],
+];
 
 export default function PhysicalExamination() {
+  const { history } = useMedicalTable("PHYSICAL EXAMINATION");
+  const [formData, setFormData] = useState<PhysicalExamForm>(EMPTY_FORM);
 
-  const [form, setForm] = useState({
-    general: "",
-    chest: "",
-    cvs: "",
-    abd: "",
-  });
+  useEffect(() => {
+    const general = formData.general.trim();
+    if (!general) {
+      setPendingPhysicalExamination(null);
+      return;
+    }
 
-  const {
-    history,
-    save,
-    remove,
-  } = useMedicalTable("PHYSICAL EXAMINATION");
-
-  const handleSave = () => {
-    const isEmpty =
-      !form.general &&
-      !form.chest &&
-      !form.cvs &&
-      !form.abd;
-
-    if (isEmpty) return;
-
-    save(form);
-
-    setForm({
-      general: "",
-      chest: "",
-      cvs: "",
-      abd: "",
+    setPendingPhysicalExamination({
+      general,
+      cns: formData.cns.trim(),
+      chest: formData.chest.trim(),
+      cvs: formData.cvs.trim(),
+      abdomen: formData.abdomen.trim(),
+      dre: formData.dre.trim(),
+      ve: formData.ve.trim(),
+      mss: formData.mss.trim(),
+      ent: formData.ent.trim(),
+      comments: formData.comments.trim(),
     });
-  };
+  }, [formData]);
 
-  const handleChange = (
-    key: keyof typeof form,
-    value: string
-  ) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+  useEffect(() => {
+    return subscribePhysicalExaminationFormClear(() => {
+      setFormData(EMPTY_FORM);
+    });
+  }, []);
+
+  const updateField = (name: keyof PhysicalExamForm, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-b text-sm">
+    <div className="space-y-6">
+      <div className={formFieldGridClass}>
+        <div className="col-span-2">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            General
+          </label>
+          <input
+            type="text"
+            value={formData.general}
+            onChange={(e) => updateField("general", e.target.value)}
+            placeholder="Text here..."
+            className={formFieldInputClass}
+          />
+        </div>
 
-      {/* ========= FORM ========= */}
+        {fieldPairs.map((pair) =>
+          pair.map((field) => (
+            <div key={field.name}>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                {field.label}
+              </label>
+              <input
+                type="text"
+                value={formData[field.name]}
+                onChange={(e) => updateField(field.name, e.target.value)}
+                placeholder="Text here..."
+                className={formFieldInputClass}
+              />
+            </div>
+          ))
+        )}
 
-      {/* General */}
-      <label className="block mb-1 font-medium">General</label>
-      <textarea
-        value={form.general}
-        onChange={(e) => handleChange("general", e.target.value)}
-        className="w-full border rounded p-3 mb-4"
-        placeholder="Enter notes here"
-      />
-
-      {/* Chest */}
-      <label className="block mb-1 font-medium">Chest</label>
-      <textarea
-        value={form.chest}
-        onChange={(e) => handleChange("chest", e.target.value)}
-        className="w-full border rounded p-3 mb-4"
-        placeholder="Enter notes here"
-      />
-
-      {/* CVS */}
-      <label className="block mb-1 font-medium">CVS</label>
-      <textarea
-        value={form.cvs}
-        onChange={(e) => handleChange("cvs", e.target.value)}
-        className="w-full border rounded p-3 mb-4"
-        placeholder="Enter notes here"
-      />
-
-      {/* ABD */}
-      <label className="block mb-1 font-medium">ABD</label>
-      <textarea
-        value={form.abd}
-        onChange={(e) => handleChange("abd", e.target.value)}
-        className="w-full border rounded p-3"
-        placeholder="Enter notes here"
-      />
-
-      {/* SAVE */}
-      <div className="mt-4 text-center">
-        <button
-          onClick={handleSave}
-          className="px-6 py-2 bg-purple-600 text-white rounded"
-        >
-          Save
-        </button>
+        <div className="col-span-2">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Comments
+          </label>
+          <textarea
+            rows={8}
+            value={formData.comments}
+            onChange={(e) => updateField("comments", e.target.value)}
+            placeholder="Text here..."
+            className={`${formFieldTextareaClass} min-h-[180px]`}
+          />
+        </div>
       </div>
 
-      {/* ========= TABLE ========= */}
-      {history.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-          <h4 className="font-semibold mb-2">
-            PHYSICAL EXAMINATION
-          </h4>
-
-          <table className="min-w-full text-sm text-left border">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>SN</th>
-                <th>Date | Time</th>
-                <th>Patient Type</th>
-                <th>General</th>
-                <th>Chest</th>
-                <th>CVS</th>
-                <th>ABD</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {history.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType}</td>
-                  <td>{row.general}</td>
-                  <td>{row.chest}</td>
-                  <td>{row.cvs}</td>
-                  <td>{row.abd}</td>
-                  <td>
-                    <button
-                      onClick={() => remove(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <CategoryMedicalTable
+        title="PHYSICAL EXAMINATION"
+        columns={physicalExaminationTableColumns}
+        rows={history}
+        emptyMessage="No physical examination recorded yet."
+        emptyCellLabel="nil"
+      />
     </div>
   );
 }

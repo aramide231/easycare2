@@ -1,4 +1,9 @@
-export type CategoryFieldType = "text" | "textarea" | "select" | "date";
+export type CategoryFieldType =
+  | "text"
+  | "textarea"
+  | "select"
+  | "date"
+  | "amount";
 
 export type CategoryFieldConfig = {
   name: string;
@@ -6,14 +11,15 @@ export type CategoryFieldConfig = {
   type?: CategoryFieldType;
   fullWidth?: boolean;
   required?: boolean;
+  placeholder?: string;
   /** Short column header in the shared details table. */
   tableLabel?: string;
   /** Hide from table (form-only). */
   showInTable?: boolean;
   /** For type "select". Defaults to YES / NO. */
   options?: { value: string; label: string }[];
-  /** Input / textarea placeholder (Figma spec). */
-  placeholder?: string;
+  /** For type "date" on next-appointment fields — today and future only. */
+  dateAllowFutureOnly?: boolean;
 };
 
 export type CategoryTableColumn = {

@@ -1,207 +1,293 @@
-import { useState } from "react";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Search } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
+import {
+  PROCEDURE_LOOKUP,
+  formatProcedureNaira,
+  type ProcedureLookupOption,
+} from "../../../data/procedureLookup";
+import {
+  buildBatchPendingEntry,
+  useMedicalTable,
+} from "../../../hooks/useMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
+import { useMedicalRemarkView } from "../../../hooks/useMedicalRemarkView";
+import CategoryMedicalTable from "../../category/CategoryMedicalTable";
+import MedicalRemarkViewPanel, {
+  rowHasUploadedResult,
+} from "../../category/MedicalRemarkViewPanel";
+import NumberedSummaryList from "../../category/NumberedSummaryList";
+import NairaAmountInput, {
+  parseAmountDigits,
+} from "../../category/NairaAmountInput";
+import { formFieldInputClass } from "../../../lib/formFieldStyles";
+
+const procedureHistoryColumns = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "procedure", label: "PROCEDURE" },
+  { key: "price", label: "PRICE" },
+  { key: "remarks", label: "REMARKS" },
+  { key: "doctor", label: "DOCTOR" },
+];
+
+const TABLE_KEY = "PROCEDURE";
+
+type SelectedProcedure = {
+  id: string;
+  name: string;
+  amount: number;
+};
 
 export default function Procedure() {
+  const { user } = useAuth();
+  const doctorName = user?.fullName ? `Dr. ${user.fullName}` : "Dr. Chibuzor";
 
-  /* TEMP BUILDER STATE */
-  const [procedure, setProcedure] = useState("");
+  const [search, setSearch] = useState("");
+  const [amountInput, setAmountInput] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [picked, setPicked] = useState<SelectedProcedure[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [items, setItems] = useState<any[]>([]);
+  const { history } = useMedicalTable(TABLE_KEY);
+  const remarkView = useMedicalRemarkView();
 
-  const procedurePrices: Record<string, number> = {
-    "OXYGEN THERAPY": 3000,
-    "THERMAL PROTECTION": 2000,
-    "VITAMIN K INJECTION": 4000,
-  };
-
-  /* MEDICAL TABLE */
-  const {
-    history,
-    save,
-    remove,
-  } = useMedicalTable("PROCEDURE");
-
-  /* ADD PROCEDURE */
-  const addProcedure = () => {
-    if (!procedure) return;
-
-    setItems((prev) => [
-      ...prev,
-      {
-        name: procedure,
-        price: procedurePrices[procedure] || 0,
-        remarks: "",
-        doctor: "Dr. Chibuzo Alen", // later dynamic
-      },
-    ]);
-
-    setProcedure("");
-  };
-
-  /* UPDATE REMARKS */
-  const updateRemark = (index: number, value: string) => {
-    setItems((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, remarks: value } : item
-      )
+  const filteredOptions = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return PROCEDURE_LOOKUP;
+    return PROCEDURE_LOOKUP.filter((option) =>
+      option.name.toLowerCase().includes(query)
     );
-  };
+  }, [search]);
 
-  /* REMOVE TEMP ROW */
-  const removeItem = (index: number) => {
-    setItems((prev) => prev.filter((_, i) => i !== index));
-  };
+  const entryAmount = parseAmountDigits(amountInput);
+  const totalAmount = picked.reduce((sum, item) => sum + item.amount, 0);
+  const canAddProcedure = Boolean(search.trim()) && entryAmount !== null;
 
-  /* TOTAL */
-  const total = items.reduce(
-    (sum, item) => sum + item.price,
-    0
+  const clearEntryFields = useCallback(() => {
+    setSearch("");
+    setAmountInput("");
+    setDropdownOpen(false);
+  }, []);
+
+  const clearForm = useCallback(() => {
+    setPicked([]);
+    clearEntryFields();
+  }, [clearEntryFields]);
+
+  usePendingCategoryDraft(
+    TABLE_KEY,
+    () => {
+      if (picked.length === 0) return null;
+
+      return buildBatchPendingEntry(
+        picked.map((item) => ({
+          procedure: item.name,
+          price: formatProcedureNaira(item.amount),
+          remarks: "",
+          doctor: doctorName,
+          hasResult: "false",
+        }))
+      );
+    },
+    [picked, doctorName],
+    clearForm
   );
 
-  /* FINAL SAVE */
-  const handleSave = () => {
-    if (!items.length) return;
+  useEffect(() => {
+    if (!dropdownOpen) return;
 
-    save({
-      procedures: items,
-      total,
-    });
+    const handlePointerDown = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
 
-    setItems([]);
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, [dropdownOpen]);
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setDropdownOpen(true);
+
+    const exactMatch = PROCEDURE_LOOKUP.find(
+      (option) => option.name.toLowerCase() === value.trim().toLowerCase()
+    );
+    if (exactMatch) {
+      setAmountInput(String(exactMatch.amount));
+    }
   };
 
-  return (
-    <div className="p-4 bg-gray-50 rounded-b text-sm">
+  const handleSelectOption = (option: ProcedureLookupOption) => {
+    setSearch(option.name);
+    setAmountInput(String(option.amount));
+    setDropdownOpen(false);
+  };
 
-      {/* SELECT PROCEDURE */}
-      <div className="flex gap-3 items-end">
-        <div className="flex-1">
-          <label className="block mb-1 font-medium">
+  const handleAddProcedure = () => {
+    const name = search.trim();
+    if (!name || entryAmount === null) return;
+
+    setPicked((prev) => [
+      ...prev,
+      {
+        id: `procedure-${Date.now()}`,
+        name,
+        amount: entryAmount,
+      },
+    ]);
+    clearEntryFields();
+  };
+
+  const removeProcedure = (id: string) => {
+    setPicked((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const tableRows = history.map((row) => ({
+    ...row,
+    remarks: "VIEW",
+  }));
+
+  return (
+    <div className="space-y-6 text-sm">
+      <div className="grid w-full grid-cols-1 items-end gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(140px,2fr)_auto]">
+        <div ref={dropdownRef} className="relative min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
             Procedure
           </label>
+          <div className="relative">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={() => setDropdownOpen(true)}
+              placeholder="Type or select procedure"
+              className={`${formFieldInputClass} pr-10`}
+            />
+            <Search
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+              aria-hidden
+            />
+          </div>
 
-          <select
-            value={procedure}
-            onChange={(e) => setProcedure(e.target.value)}
-            className="w-full border rounded p-2"
-          >
-            <option value="">Select Procedure</option>
-            {Object.keys(procedurePrices).map((p) => (
-              <option key={p}>{p}</option>
-            ))}
-          </select>
+          {dropdownOpen && (
+            <ul className="absolute left-0 right-0 top-full z-30 mt-1 max-h-52 overflow-y-auto rounded-[8px] border border-gray-200 bg-white py-1 shadow-lg">
+              {filteredOptions.length === 0 ? (
+                <li className="px-3 py-2 text-sm text-gray-500">
+                  No procedure found
+                </li>
+              ) : (
+                filteredOptions.map((option) => (
+                  <li key={option.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectOption(option)}
+                      className="flex w-full items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-gray-50"
+                    >
+                      <span className="text-gray-800">{option.name}</span>
+                      <span className="shrink-0 text-gray-500">
+                        {formatProcedureNaira(option.amount)}
+                      </span>
+                    </button>
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Amount
+          </label>
+          <NairaAmountInput
+            value={amountInput}
+            onChange={setAmountInput}
+          />
         </div>
 
         <button
-          onClick={addProcedure}
-          className="px-6 py-2 bg-purple-600 text-white rounded"
+          type="button"
+          onClick={handleAddProcedure}
+          disabled={!canAddProcedure}
+          className="h-[45px] whitespace-nowrap rounded-lg bg-[#573FD1] px-4 text-xs font-bold uppercase tracking-wide text-white hover:bg-[#4a35b8] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Save
+          Add Procedure
         </button>
       </div>
 
-      {/* TEMP TABLE */}
-      {items.length > 0 && (
-        <div className="mt-5 space-y-2">
+      {picked.length > 0 && (
+        <div className="space-y-2">
+          <NumberedSummaryList
+            items={picked.map((item) => ({
+              id: item.id,
+              text: item.name,
+              meta: formatProcedureNaira(item.amount),
+            }))}
+            onRemove={removeProcedure}
+          />
 
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-5 gap-3 items-center border-b py-2"
-            >
-              <span>{index + 1}</span>
-              <span>{item.name}</span>
-              <span>₦ {item.price.toLocaleString()}</span>
-
-              <input
-                value={item.remarks}
-                onChange={(e) =>
-                  updateRemark(index, e.target.value)
-                }
-                placeholder="Remarks"
-                className="border rounded p-1"
+          <div className="flex justify-end">
+            <div className="w-full max-w-xs">
+              <label className="mb-1 block text-right text-sm font-medium text-gray-700">
+                Total Amount
+              </label>
+              <NairaAmountInput
+                readOnly
+                value={String(totalAmount)}
+                className="text-right font-semibold text-gray-900"
               />
-
-              <div className="flex justify-between items-center">
-                <span className="text-sm">
-                  {item.doctor}
-                </span>
-
-                <button
-                  onClick={() => removeItem(index)}
-                  className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                >
-                  DELETE
-                </button>
-              </div>
             </div>
-          ))}
-
-          <div className="text-right font-semibold pt-2">
-            TOTAL ₦ {total.toLocaleString()}
           </div>
         </div>
       )}
 
-      {/* FINAL SAVE */}
-      <div className="mt-6 text-center">
-        <button
-          onClick={handleSave}
-          className="px-8 py-2 bg-purple-600 text-white rounded"
-        >
-          Save
-        </button>
-      </div>
+      <CategoryMedicalTable
+        title={categoryDetailsTitle("PROCEDURE")}
+        columns={procedureHistoryColumns}
+        rows={tableRows}
+        linkColumns={["remarks"]}
+        onLinkClick={(row) => remarkView.openRow(row)}
+      />
 
-      {/* HISTORY TABLE */}
-      {history.length > 0 && (
-        <div className="mt-6 overflow-x-auto">
-          <h4 className="font-semibold mb-2">PROCEDURE</h4>
-
-          <table className="min-w-full text-sm border">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>SN</th>
-                <th>Date | Time</th>
-                <th>Patient Type</th>
-                <th>Procedure</th>
-                <th>Price</th>
-                <th>Remarks</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {history.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType}</td>
-                  <td>
-                    {row.procedures
-                      ?.map((p: any) => p.name)
-                      .join(", ")}
-                  </td>
-                  <td>₦ {row.total?.toLocaleString()}</td>
-                  <td>
-                    {row.procedures
-                      ?.map((p: any) => p.remarks)
-                      .join(", ")}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => remove(index)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <MedicalRemarkViewPanel
+        open={remarkView.isOpen}
+        onClose={remarkView.close}
+        title="Procedure Report"
+        subtitle={
+          remarkView.selectedRow
+            ? String(remarkView.selectedRow.procedure ?? "")
+            : undefined
+        }
+        hasResult={
+          remarkView.selectedRow
+            ? rowHasUploadedResult(remarkView.selectedRow)
+            : false
+        }
+      >
+        {remarkView.selectedRow ? (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-[#573FD1]/20 bg-purple-50/50 px-4 py-3">
+              <p className="text-sm font-semibold text-gray-900">
+                {String(remarkView.selectedRow.procedure ?? "")}
+              </p>
+              <p className="text-xs text-gray-600">
+                {String(remarkView.selectedRow.dateTime ?? "")}
+              </p>
+            </div>
+            <p className="text-sm text-gray-700">
+              Procedure completed as documented. Full structured reports will
+              connect here when the procedure module is wired.
+            </p>
+          </div>
+        ) : null}
+      </MedicalRemarkViewPanel>
     </div>
   );
 }

@@ -1,96 +1,120 @@
-import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useCallback, useState } from "react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
-import CategoryMedicalTable from "../../category/CategoryMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
+import FormDatePicker from "../../category/FormDatePicker";
+import { isFutureAppointmentDateField } from "../../../lib/dateFieldRules";
 import {
-  genConsultInputClass,
-  genConsultLabelClass,
-  genConsultSaveBtn,
-  genConsultTextareaClass,
-} from "../genConsult/genConsultStyles";
+  formFieldGridClass,
+  formFieldTextareaClass,
+} from "../../../lib/formFieldStyles";
 
-const HISTORY_COLUMNS = [
-  { key: "sn", label: "SN" },
-  { key: "dateTime", label: "DATE | TIME" },
-  { key: "patientType", label: "PATIENT TYPE" },
-  { key: "appointmentDate", label: "APPOINTMENT DATE" },
-  { key: "nurse", label: "NURSE" },
-];
+const pairedFieldMinHeight = "min-h-[180px]";
 
 export default function FollowUp() {
-  const { user } = useAuth();
-  const [nextDoseDate, setNextDoseDate] = useState("");
-  const [followUpNotes, setFollowUpNotes] = useState("");
-  const [extraNotes, setExtraNotes] = useState("");
+  const [form, setForm] = useState<Record<string, string>>({});
 
-  const { history, save } = useMedicalTable("IMMUNIZATION — FOLLOW-UP");
+  const {
+    history: followUpHistory,
+    remove: deleteFollowUp,
+  } = useMedicalTable("FOLLOW-UP");
 
-  const inputClass = genConsultInputClass.replace("max-w-[354px]", "max-w-none");
-  const textareaClass = genConsultTextareaClass.replace(
-    "max-w-[354px]",
-    "max-w-none",
+  const clearForm = useCallback(() => setForm({}), []);
+
+  usePendingCategoryDraft(
+    "FOLLOW-UP",
+    () => {
+      if (!form.nextDoseDate?.trim() && !form.notes?.trim() && !form.extraNotes?.trim()) {
+        return null;
+      }
+      return {
+        appointmentDate: form.nextDoseDate || "",
+        nurse: form.nurse || "TOBA AYO",
+        notes: form.notes || "",
+        extraNotes: form.extraNotes || "",
+      };
+    },
+    [form],
+    clearForm
   );
 
-  const handleSave = () => {
-    if (!nextDoseDate && !followUpNotes && !extraNotes) return;
-    save({
-      patientType: "OPD",
-      appointmentDate: nextDoseDate,
-      nurse: user?.fullName ?? "TOBA AYO",
-      notes: followUpNotes,
-      extraNotes,
-    });
-    setNextDoseDate("");
-    setFollowUpNotes("");
-    setExtraNotes("");
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label className={genConsultLabelClass}>Next Dose Due Date</label>
-          <input
-            type="date"
-            value={nextDoseDate}
-            onChange={(e) => setNextDoseDate(e.target.value)}
-            placeholder="DD/MM/YYY"
-            className={inputClass}
-          />
+    <div className="space-y-6 text-sm">
+      <div className={`${formFieldGridClass} items-stretch`}>
+        <div className={`flex ${pairedFieldMinHeight} flex-col`}>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Next Dose Due Date
+          </label>
+          <div className="flex flex-1 flex-col justify-center">
+            <FormDatePicker
+              value={form.nextDoseDate || ""}
+              onChange={(next) => setForm({ ...form, nextDoseDate: next })}
+              allowFutureOnly={isFutureAppointmentDateField("nextDoseDate")}
+            />
+          </div>
         </div>
-        <div>
-          <label className={genConsultLabelClass}>Follow-up Notes</label>
+
+        <div className={`flex ${pairedFieldMinHeight} flex-col`}>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Follow-up Notes
+          </label>
           <textarea
-            value={followUpNotes}
-            onChange={(e) => setFollowUpNotes(e.target.value)}
-            rows={3}
-            className={textareaClass}
+            className={`${formFieldTextareaClass} min-h-0 flex-1`}
+            value={form.notes || ""}
+            onChange={(e) => setForm({ ...form, notes: e.target.value })}
           />
         </div>
       </div>
 
       <div>
-        <label className={genConsultLabelClass}>Follow-up Notes</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">
+          FOLLOW-UP NOTES
+        </label>
         <textarea
-          value={extraNotes}
-          onChange={(e) => setExtraNotes(e.target.value)}
-          rows={4}
-          className={textareaClass}
+          className={`${formFieldTextareaClass} min-h-[180px]`}
+          value={form.extraNotes || ""}
+          onChange={(e) => setForm({ ...form, extraNotes: e.target.value })}
         />
       </div>
 
-      <div className="text-center">
-        <button type="button" onClick={handleSave} className={genConsultSaveBtn}>
-          Save
-        </button>
-      </div>
+      {followUpHistory.length > 0 && (
+        <div className="overflow-x-auto">
+          <h4 className="mb-2 font-semibold">FOLLOW-UP VISIT</h4>
 
-      <CategoryMedicalTable
-        title="FOLLOW-UP VISIT"
-        columns={HISTORY_COLUMNS}
-        rows={history}
-        emptyMessage="No follow-up visits recorded yet."
-      />
+          <table className="min-w-max w-full border text-left text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th>S/N</th>
+                <th>Date | Time</th>
+                <th>Patient Type</th>
+                <th>Appointment Date</th>
+                <th>Nurse</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {followUpHistory.map((row, index) => (
+                <tr key={index} className="even:bg-gray-50">
+                  <td>{row.sn}</td>
+                  <td>{row.dateTime}</td>
+                  <td>{row.patientType || "OPD"}</td>
+                  <td>{row.appointmentDate}</td>
+                  <td>{row.nurse}</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => deleteFollowUp(index)}
+                      className="rounded bg-red-500 px-2 py-1 text-xs text-white"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

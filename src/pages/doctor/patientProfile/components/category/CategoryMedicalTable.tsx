@@ -8,6 +8,14 @@ type Props = {
   columns: CategoryTableColumn[];
   rows: MedicalTableRow[];
   emptyMessage?: string;
+  /** Shown when a cell value is empty. Defaults to "—". */
+  emptyCellLabel?: string;
+  /** Column keys that render as a purple VIEW link. */
+  linkColumns?: string[];
+  /** Fired when a VIEW link cell is clicked. */
+  onLinkClick?: (row: MedicalTableRow, columnKey: string) => void;
+  /** Column keys that allow wrapped / multiline cell text. */
+  wrapColumns?: string[];
 };
 
 /**
@@ -19,6 +27,10 @@ const CategoryMedicalTable = ({
   columns,
   rows,
   emptyMessage = "No records yet.",
+  emptyCellLabel = "—",
+  linkColumns = [],
+  onLinkClick,
+  wrapColumns = [],
 }: Props) => {
   return (
     <div className="border-t border-gray-200 pt-4">
@@ -51,14 +63,27 @@ const CategoryMedicalTable = ({
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className="whitespace-nowrap px-4 py-3 text-gray-800"
+                      className={`px-4 py-3 text-gray-800 ${
+                        wrapColumns.includes(col.key)
+                          ? "whitespace-pre-line"
+                          : "whitespace-nowrap"
+                      }`}
                     >
-                      {col.key === "patientType" ? (
+                      {linkColumns.includes(col.key) &&
+                      formatCell(row[col.key], emptyCellLabel) === "VIEW" ? (
+                        <button
+                          type="button"
+                          onClick={() => onLinkClick?.(row, col.key)}
+                          className="text-sm font-semibold text-[#573FD1] hover:underline"
+                        >
+                          VIEW
+                        </button>
+                      ) : col.key === "patientType" ? (
                         <span className="text-xs font-medium text-gray-600">
-                          {formatCell(row[col.key])}
+                          {formatCell(row[col.key], emptyCellLabel)}
                         </span>
                       ) : (
-                        formatCell(row[col.key])
+                        formatCell(row[col.key], emptyCellLabel)
                       )}
                     </td>
                   ))}
@@ -81,8 +106,8 @@ const CategoryMedicalTable = ({
   );
 };
 
-function formatCell(value: unknown): string {
-  if (value === null || value === undefined || value === "") return "—";
+function formatCell(value: unknown, emptyLabel: string): string {
+  if (value === null || value === undefined || value === "") return emptyLabel;
   return String(value);
 }
 

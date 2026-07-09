@@ -1,176 +1,124 @@
-import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
-import { DEFAULT_META_TABLE_COLUMNS } from "../../../config/categoryFieldTypes";
-import { CategoryFormWithHistory } from "../../category";
-import { SWAB_COUNT_OPTIONS } from "./surgicalFieldOptions";
+import { useCallback, useState } from "react";
+import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
+import ProfileInlineFieldGrid, {
+  type InlineFieldConfig,
+} from "../../category/ProfileInlineFieldGrid";
 
-const postOpFields: CategoryFieldConfig[] = [
-  {
-    name: "surgeon",
-    label: "Surgeon",
-    tableLabel: "SURGEON",
-    placeholder: "-input (name) text here-",
-  },
-  {
-    name: "assistant",
-    label: "Assistant",
-    tableLabel: "ASSISTANT",
-    placeholder: "-input (name) text here-",
-  },
-  {
-    name: "circulatingNurse",
-    label: "Circulating Nurse",
-    tableLabel: "CIR. NURSE",
-    placeholder: "-input (name) text here-",
-  },
-  {
-    name: "anaesthetist",
-    label: "Anaesthetists",
-    tableLabel: "ANAESTHETISTS",
-    placeholder: "-input (name) text here-",
-  },
-  {
-    name: "anaesthesia",
-    label: "Anaesthesia",
-    placeholder: "-input (name) text here-",
-    showInTable: false,
-  },
-  {
-    name: "knifeOnSkin",
-    label: "Knife on Skin",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "tourniquet",
-    label: "Torniquete Used and Duration",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "patientPosition",
-    label: "Patient's Position",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "skinPreparation",
-    label: "Skin Preparation",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "exposure",
-    label: "Exposure/Access",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "procedureFindings",
-    label: "Procedure/Findings",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "closure",
-    label: "Closure of Incision",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "duration",
-    label: "Duration of Operation (Skin to Skin)",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "sutureMaterials",
-    label: "Suture Materials Used",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "drains",
-    label: "Drains",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "packs",
-    label: "Packs",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
-  {
-    name: "specimen",
-    label: "Specimen",
-    placeholder: "-input text here-",
-    showInTable: false,
-  },
+const fields: InlineFieldConfig[] = [
+  { name: "surgeon", label: "Surgeon" },
+  { name: "assistant", label: "Assistant" },
+  { name: "circulatingNurse", label: "Circulating Nurse" },
+  { name: "anaesthetist", label: "Anaesthetists" },
+  { name: "anaesthesia", label: "Anaesthesia" },
+  { name: "knifeOnSkin", label: "Knife on Skin" },
+  { name: "tourniquet", label: "Tourniquet Used and Duration" },
+  { name: "patientPosition", label: "Patient's Position" },
+  { name: "skinPreparation", label: "Skin Preparation" },
+  { name: "exposure", label: "Exposure/Access" },
+  { name: "procedureFindings", label: "Procedure/Findings" },
+  { name: "closure", label: "Closure of Incision" },
+  { name: "duration", label: "Duration of Operation (Skin to Skin)" },
+  { name: "sutureMaterials", label: "Suture Materials Used" },
+  { name: "drains", label: "Drains" },
+  { name: "packs", label: "Packs" },
+  { name: "specimen", label: "Specimen" },
   {
     name: "swabCount",
     label: "Swab Count Correct (YES/NO)",
     type: "select",
-    placeholder: "-Select option-",
-    options: SWAB_COUNT_OPTIONS,
-    showInTable: false,
   },
-  {
-    name: "bloodLoss",
-    label: "Measured/Estimated Blood Loss",
-    placeholder: "-mls-",
-    showInTable: false,
-  },
-  {
-    name: "bloodPressure",
-    label: "Blood Pressure",
-    placeholder: "-mmHg-",
-    showInTable: false,
-  },
-  {
-    name: "pulse",
-    label: "Pulse",
-    placeholder: "-bpm-",
-    showInTable: false,
-  },
-  {
-    name: "respiration",
-    label: "Respiration / SPO2",
-    placeholder: "-cpm%-",
-    showInTable: false,
-  },
-  {
-    name: "signature",
-    label: "Signature of Surgeon/Assistant",
-    placeholder: "-name of clinician-",
-    showInTable: false,
-  },
-  {
-    name: "recordedAt",
-    label: "Date | Time",
-    type: "date",
-    placeholder: "capture cur date & time",
-    fullWidth: true,
-    showInTable: false,
-  },
-];
-
-const postOpTableColumns = [
-  ...DEFAULT_META_TABLE_COLUMNS.filter((c) => c.key !== "enteredBy"),
-  { key: "surgeon", label: "SURGEON" },
-  { key: "assistant", label: "ASSISTANT" },
-  { key: "circulatingNurse", label: "CIR. NURSE" },
-  { key: "anaesthetist", label: "ANAESTHETISTS" },
+  { name: "bloodLoss", label: "Measured/Estimated Blood Loss" },
+  { name: "bloodPressure", label: "Blood Pressure" },
+  { name: "pulse", label: "Pulse" },
+  { name: "respiration", label: "Respiration / SPO2" },
+  { name: "signature", label: "Signature of Surgeon/Assistant" },
+  { name: "dateTime", label: "Date | Time", type: "datetime-local" },
 ];
 
 export default function PostOperationNote() {
+  const [form, setForm] = useState<Record<string, string>>({});
+
+  const {
+    history: postOpHistory,
+    remove: deletePostOp,
+  } = useMedicalTable("POST-OPERATION NOTE");
+
+  const clearForm = useCallback(() => setForm({}), []);
+
+  usePendingCategoryDraft(
+    "POST-OPERATION NOTE",
+    () => {
+      const hasValue = Object.values(form).some((value) => value?.trim());
+      if (!hasValue) return null;
+      return { ...form };
+    },
+    [form],
+    clearForm
+  );
+
+  const handleChange = (name: string, value: string) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const renderSelectOptions = (field: InlineFieldConfig) => {
+    if (field.name === "swabCount") {
+      return (
+        <>
+          <option value="YES">YES</option>
+          <option value="NO">NO</option>
+        </>
+      );
+    }
+    return null;
+  };
+
   return (
-    <CategoryFormWithHistory
-      sectionName="POST-OPERATION NOTE"
-      tableKey="SURGICAL — POST-OPERATION NOTE"
-      fields={postOpFields}
-      detailsTitle="POST-OPERATION NOTE DETAILS"
-      fullWidth
-      tableColumns={postOpTableColumns}
-    />
+    <div className="space-y-6 text-sm">
+      <ProfileInlineFieldGrid
+        fields={fields}
+        values={form}
+        onChange={handleChange}
+        renderSelectOptions={renderSelectOptions}
+      />
+
+      {postOpHistory.length > 0 && (
+        <div className="overflow-x-auto">
+          <h4 className="mb-2 font-semibold">POST-OPERATION NOTE DETAILS</h4>
+
+          <table className="min-w-max w-full border text-left text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th>S/N</th>
+                <th>Date | Time</th>
+                <th>Surgeon</th>
+                <th>Procedure</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {postOpHistory.map((row, index) => (
+                <tr key={index} className="even:bg-gray-50">
+                  <td>{row.sn}</td>
+                  <td>{row.dateTime}</td>
+                  <td>{row.surgeon}</td>
+                  <td>{row.procedureFindings}</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => deletePostOp(index)}
+                      className="rounded bg-red-500 px-2 py-1 text-xs text-white"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }

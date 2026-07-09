@@ -1,13 +1,49 @@
-import { CategoryRenderer } from "../components/CategoryRenderer";
-import { categoryRegistry } from "../components/categoryRegistry";
+import { createElement, type ReactNode } from "react";
+import type { ComponentType } from "react";
+import { categoryComponents } from "@/pages/doctor/patientProfile/components/CategoryRenderer";
+import ImmunizationVitalSigns from "@/pages/doctor/patientProfile/components/categories/immunization/ImmunizationVitalSigns";
+import GenConsultVitalSigns from "@/pages/doctor/patientProfile/components/categories/genConsult/GenConsultVitalSigns";
+import NeoNatalVitalSigns from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
+import SpecialistPresentingComplaints from "@/pages/doctor/patientProfile/components/categories/specialistConsult/SpecialistPresentingComplaints";
 
-/** Prefer category-specific form (e.g. Gen Consult Figma) over shared renderer. */
-export function resolveCategoryForm(
-  category: string | null,
+const healthCategorySectionOverrides: Record<
+  string,
+  Record<string, ComponentType>
+> = {
+  Immunization: {
+    "VITAL SIGNS": ImmunizationVitalSigns,
+  },
+  "Gen Consult": {
+    "VITAL SIGNS": GenConsultVitalSigns,
+  },
+  "Neo Natal Care": {
+    "VITAL SIGNS": NeoNatalVitalSigns,
+  },
+  "Specialist Consult": {
+    "PRESENTING COMPLAINTS": SpecialistPresentingComplaints,
+  },
+};
+
+function resolveFormComponent(
+  healthCategory: string | null | undefined,
   sectionLabel: string,
-): React.ReactNode | undefined {
-  if (category && categoryRegistry[category]?.[sectionLabel]) {
-    return categoryRegistry[category][sectionLabel];
+): ComponentType | undefined {
+  const override =
+    healthCategory &&
+    healthCategorySectionOverrides[healthCategory]?.[sectionLabel];
+
+  return override ?? categoryComponents[sectionLabel];
+}
+
+export function resolveCategoryForm(
+  selectedCategory: string | null | undefined,
+  sectionLabel: string,
+): ReactNode {
+  const FormComponent = resolveFormComponent(selectedCategory, sectionLabel);
+
+  if (!FormComponent) {
+    return null;
   }
-  return CategoryRenderer[sectionLabel];
+
+  return createElement(FormComponent);
 }

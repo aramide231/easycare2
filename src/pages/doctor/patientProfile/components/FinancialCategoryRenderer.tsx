@@ -1,29 +1,32 @@
-import ComingSoonPage from "@/components/ui/ComingSoonPage";
-import ClaimsProcessor from "./financial/ClaimsProcessor";
+import type { ComponentType } from "react";
+import AccountReview from "./categories/financial/AccountReview";
+import AdmissionBill from "./categories/financial/AdmissionBill";
+import ClaimsProcessor from "./categories/financial/ClaimsProcessor";
+import Invoice from "./categories/financial/Invoice";
+import Receipt from "./categories/financial/Receipt";
+import PaymentHistory from "./categories/financial/PaymentHistory";
+import ServiceFee from "./categories/financial/ServiceFee";
 
 export const FINANCIAL_TABLE_KEYS: Record<string, string> = {
-  "Account Review": "FINANCIAL — ACCOUNT REVIEW",
-  "Admission Bill": "FINANCIAL — ADMISSION BILL",
-  "Service Fee": "FINANCIAL — SERVICE FEE",
-  "Claims Processor": "FINANCIAL — CLAIMS PROCESSOR",
-  Receipt: "FINANCIAL — RECEIPT",
-  "Payment History": "FINANCIAL — PAYMENT HISTORY",
-  Invoice: "FINANCIAL — INVOICE",
+  "Account Review": "ACCOUNT REVIEW",
+  "Admission Bill": "ADMISSION BILL",
+  "Service Fee": "SERVICE FEE",
+  "Claims Processor": "CLAIMS PROCESSOR",
+  Receipt: "RECEIPT",
+  "Payment History": "PAYMENT HISTORY",
+  Invoice: "INVOICE",
 };
 
-function FinancialComingSoon({ title }: { title: string }) {
-  return <ComingSoonPage title={title} />;
-}
-
-export const financialCategoryComponents: Record<
-  string,
-  React.ComponentType
-> = {
-  "Account Review": () => <FinancialComingSoon title="Account Review" />,
-  "Admission Bill": () => <FinancialComingSoon title="Admission Bill" />,
-  "Service Fee": () => <FinancialComingSoon title="Service Fee" />,
+export const financialCategoryComponents: Record<string, ComponentType> = {
+  "Account Review": AccountReview,
+  "Admission Bill": AdmissionBill,
+  "Service Fee": ServiceFee,
   "Claims Processor": ClaimsProcessor,
-  Receipt: () => <FinancialComingSoon title="Receipt" />,
-  "Payment History": () => <FinancialComingSoon title="Payment History" />,
-  Invoice: () => <FinancialComingSoon title="Invoice" />,
+  Receipt: Receipt,
+  "Payment History": PaymentHistory,
+  Invoice: Invoice,
 };
+
+export const FINANCIAL_CATEGORY_LABELS = Object.keys(
+  financialCategoryComponents
+);

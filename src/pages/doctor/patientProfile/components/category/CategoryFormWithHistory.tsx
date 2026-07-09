@@ -1,9 +1,12 @@
-import type { CategoryFieldConfig } from "../../config/categoryFieldTypes";
+import type {
+  CategoryFieldConfig,
+  CategoryTableColumn,
+} from "../../config/categoryFieldTypes";
 import {
   buildTableColumnsFromFields,
   categoryDetailsTitle,
 } from "../../config/categoryFieldTypes";
-import { useMedicalTable, markSectionSaved } from "../../hooks/useMedicalTable";
+import { useMedicalTable } from "../../hooks/useMedicalTable";
 import CategoryForm from "./CategoryForm";
 import CategoryMedicalTable from "./CategoryMedicalTable";
 
@@ -17,17 +20,12 @@ type Props = {
   detailsTitle?: string;
   emptyMessage?: string;
   includeMetaColumns?: boolean;
-  /** Gen Consult Figma: full-width inputs in 2-column grid. */
-  fullWidth?: boolean;
-  variant?: "default" | "genConsult";
-  /** Override table columns (e.g. Figma column set). */
-  tableColumns?: import("../../config/categoryFieldTypes").CategoryTableColumn[];
+  /** Full column override when the default meta + field columns are not enough. */
+  tableColumns?: CategoryTableColumn[];
+  /** Only Vital Signs keeps per-section Save; others commit on category Submit. */
+  showSaveButton?: boolean;
 };
 
-/**
- * Standard category block: form fields → Save → shared details table.
- * Same table design everywhere; only section title and columns differ.
- */
 const CategoryFormWithHistory = ({
   sectionName,
   tableKey,
@@ -35,9 +33,8 @@ const CategoryFormWithHistory = ({
   detailsTitle,
   emptyMessage,
   includeMetaColumns,
-  fullWidth = false,
-  variant = "default",
   tableColumns,
+  showSaveButton = false,
 }: Props) => {
   const key = tableKey ?? sectionName;
   const { history, save } = useMedicalTable(key);
@@ -48,18 +45,13 @@ const CategoryFormWithHistory = ({
     });
   const title = detailsTitle ?? categoryDetailsTitle(sectionName);
 
-  const handleSave = (data: Record<string, string>) => {
-    save(data);
-    markSectionSaved(sectionName);
-  };
-
   return (
     <div className="space-y-6">
       <CategoryForm
         fields={fields}
-        onSave={handleSave}
-        fullWidth={fullWidth}
-        variant={variant}
+        onSave={save}
+        showSaveButton={showSaveButton}
+        pendingTableKey={showSaveButton ? undefined : key}
       />
       <CategoryMedicalTable
         title={title}

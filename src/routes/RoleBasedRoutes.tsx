@@ -56,6 +56,13 @@ import Verification from "@/pages/auth/components/Verification";
 import ForgotPassword from "@/pages/auth/components/ForgotPassword";
 import RegistrationLog from "@/pages/frontdesk/RegistrationLog";
 import RegistrationForm from "@/pages/frontdesk/Registration/RegistrationForm";
+import PreviewEntry from "@/pages/preview/PreviewEntry";
+import DoctorAdmission from "@/pages/doctor/admission/Admission";
+import DoctorDischarge from "@/pages/doctor/discharge/Discharge";
+import DoctorAccountSettings from "@/pages/doctor/account/AccountSettings";
+import DoctorYourProfile from "@/pages/doctor/account/YourProfile";
+import DoctorFlagProfile from "@/pages/doctor/flag-profile/DoctorFlagProfile";
+import DoctorPreviousPatientRecords from "@/pages/doctor/previousPatientRecords/PreviousPatientRecords";
 
 function AuthLoadingScreen() {
   return (
@@ -74,11 +81,11 @@ const RoleBasedRoutes = () => {
     return <AuthLoadingScreen />;
   }
 
-  const homePath = "/nurse/dashboard";
+  const homePath = "/";
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={homePath} replace />} />
+      <Route path="/" element={<PreviewEntry />} />
 
       <Route
         path="/auth"
@@ -119,8 +126,7 @@ const RoleBasedRoutes = () => {
       )}
 
       {/* Nurse */}
-      {(
-        <Route path="/nurse" element={<NurseLayout />}>
+      <Route path="/nurse" element={<NurseLayout />}>
           <Route index element={<NurseDashboard />} />
           <Route path="dashboard" element={<NurseDashboard />} />
           <Route path="notifications" element={<Notifications />} />
@@ -145,20 +151,22 @@ const RoleBasedRoutes = () => {
             element={<PreviousPatientRecords />}
           />
         </Route>
-      )}
 
       {/* Doctor */}
-      {user?.userRole === "doctor" && (
-        <Route path="/doctor" element={<DoctorLayout />}>
-          <Route index element={<DoctorDashboard />} />
-          <Route path="notifications-doctor" element={<DoctorNotification />} />
-          <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
-          <Route
-            path="previous-patient-records/:patientId"
-            element={<PreviousPatientRecords />}
-          />
-        </Route>
-      )}
+      <Route path="/doctor" element={<DoctorLayout />}>
+        <Route index element={<DoctorDashboard />} />
+        <Route path="notifications-doctor" element={<DoctorNotification />} />
+        <Route path="admission" element={<DoctorAdmission />} />
+        <Route path="discharge" element={<DoctorDischarge />} />
+        <Route path="account" element={<DoctorAccountSettings />} />
+        <Route path="account/profile" element={<DoctorYourProfile />} />
+        <Route path="flag-profile/:id" element={<DoctorFlagProfile />} />
+        <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
+        <Route
+          path="previous-patient-records/:patientId"
+          element={<DoctorPreviousPatientRecords />}
+        />
+      </Route>
 
       {/* Admin */}
       {user?.userRole === "admin" && (
