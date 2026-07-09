@@ -1,64 +1,75 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
-import CategoryMedicalTable from "../../category/CategoryMedicalTable";
-import {
-  genConsultLabelClass,
-  genConsultSaveBtn,
-  genConsultTextareaClass,
-} from "../genConsult/genConsultStyles";
-
-const HISTORY_COLUMNS = [
-  { key: "sn", label: "SN" },
-  { key: "dateTime", label: "DATE | TIME" },
-  { key: "patientType", label: "PATIENT TYPE" },
-  { key: "notes", label: "NOTES" },
-];
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
+import { formFieldTextareaClass } from "../../../lib/formFieldStyles";
 
 export default function ClinicalNotes() {
   const [notes, setNotes] = useState("");
-  const { history, save, remove } = useMedicalTable(
-    "IMMUNIZATION — CLINICAL NOTES",
-  );
 
-  const textareaClass = genConsultTextareaClass.replace(
-    "max-w-[354px]",
-    "max-w-none",
-  );
+  const { history: notesHistory, remove } = useMedicalTable("CLINICAL NOTES");
 
-  const handleSave = () => {
-    if (!notes.trim()) return;
-    save({
-      patientType: "OPD",
-      notes: notes.trim(),
-    });
-    setNotes("");
-  };
+  const clearForm = useCallback(() => setNotes(""), []);
+
+  usePendingCategoryDraft(
+    "CLINICAL NOTES",
+    () => {
+      if (!notes.trim()) return null;
+      return { notes };
+    },
+    [notes],
+    clearForm
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-sm">
       <div>
-        <label className={genConsultLabelClass}>Additional Notes</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">
+          CLINICAL NOTES
+        </label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Enter additional clinical notes..."
-          className={`${textareaClass} min-h-[140px]`}
+          className={formFieldTextareaClass}
+          rows={6}
         />
       </div>
 
-      <div className="text-center">
-        <button type="button" onClick={handleSave} className={genConsultSaveBtn}>
-          Save
-        </button>
-      </div>
+      {notesHistory.length > 0 && (
+        <div className="overflow-x-auto">
+          <h4 className="mb-2 font-semibold">CLINICAL NOTES</h4>
 
-      {history.length > 0 && (
-        <CategoryMedicalTable
-          title="CLINICAL NOTES"
-          columns={HISTORY_COLUMNS}
-          rows={history}
-          emptyMessage="No clinical notes recorded yet."
-        />
+          <table className="min-w-full border text-left text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th>SN</th>
+                <th>Date | Time</th>
+                <th>Patient Type</th>
+                <th>Notes</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {notesHistory.map((row, index) => (
+                <tr key={index} className="even:bg-gray-50">
+                  <td>{row.sn}</td>
+                  <td>{row.dateTime}</td>
+                  <td>{row.patientType}</td>
+                  <td>{row.notes}</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="rounded bg-red-500 px-2 py-1 text-xs text-white"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -194,7 +194,6 @@ const MONTH_INDEX: Record<string, number> = {
   Dec: 11,
 };
 
-/** Parses admission/discharge log strings like `20-Feb-2025` and `12:20 PM`. */
 export function parseLogDateTime(dateStr: string, timeStr: string): Date | null {
   const parts = dateStr.trim().split("-");
   if (parts.length !== 3) return null;
@@ -242,4 +241,31 @@ export function calculateStayDurationBetween(
   const discharge = parseLogDateTime(dischargeDateStr, dischargeTimeStr);
   if (!discharge) return "—";
   return calculateStayDuration(admissionDateStr, admissionTimeStr, discharge);
+}
+
+/** Parses patient last-seen strings like `20-Feb-2025`. */
+export function parsePatientLastSeen(value: string): Date | null {
+  const parts = value.split("-");
+  if (parts.length !== 3) return null;
+
+  const day = Number(parts[0]);
+  const monthKey = parts[1].slice(0, 3);
+  const year = Number(parts[2]);
+  const month = MONTH_INDEX[monthKey];
+
+  if (Number.isNaN(day) || Number.isNaN(year) || month === undefined) {
+    return null;
+  }
+
+  return new Date(year, month, day);
+}
+
+export function isDateWithinRange(
+  date: Date,
+  range: DateRangeValue,
+): boolean {
+  const value = startOfDay(date).getTime();
+  const start = startOfDay(range.startDate).getTime();
+  const end = startOfDay(range.endDate).getTime();
+  return value >= start && value <= end;
 }

@@ -1,83 +1,26 @@
-import { useState } from "react";
+import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
-import {
-  genConsultLabelClass,
-  genConsultSaveBtn,
-  genConsultSelectClass,
-  genConsultTextareaClass,
-} from "./genConsultStyles";
 
-const WARD_OPTIONS = [
-  "Male Ward",
-  "Female Ward",
-  "Paediatric Ward",
-  "ICU",
-  "Private Ward",
-];
-
-const TABLE_COLUMNS = [
+const reportTableColumns = [
   { key: "sn", label: "SN" },
   { key: "dateTime", label: "DATE | TIME" },
   { key: "patientType", label: "PATIENT TYPE" },
-  { key: "pxWard", label: "PX WARD" },
+  { key: "wardType", label: "SELECT WARD" },
+  { key: "ward", label: "WARD" },
   { key: "comment", label: "COMMENT" },
 ];
 
+/** Clinician: read-only review of report writing the nurses documented. */
 export default function ReportWriting() {
-  const [pxWard, setPxWard] = useState("");
-  const [comment, setComment] = useState("");
-
-  const { history, save } = useMedicalTable("GEN CONSULT — REPORT WRITING");
-
-  const handleSave = () => {
-    if (!comment.trim()) return;
-    save({
-      pxWard: pxWard || "—",
-      comment,
-    });
-    setPxWard("");
-    setComment("");
-  };
+  const { history } = useMedicalTable("REPORT WRITING");
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label className={genConsultLabelClass}>Patient Ward</label>
-          <select
-            value={pxWard}
-            onChange={(e) => setPxWard(e.target.value)}
-            className={genConsultSelectClass}
-          >
-            <option value="">-Select ward-</option>
-            {WARD_OPTIONS.map((w) => (
-              <option key={w} value={w}>
-                {w}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="md:col-span-2">
-          <label className={genConsultLabelClass}>Assessment / Comment</label>
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Assessment:&#10;• Patient reports..."
-            className={`${genConsultTextareaClass} min-h-[140px]`}
-          />
-        </div>
-      </div>
-      <div className="text-center">
-        <button type="button" onClick={handleSave} className={genConsultSaveBtn}>
-          Save
-        </button>
-      </div>
-      <CategoryMedicalTable
-        title="REPORT WRITING"
-        columns={TABLE_COLUMNS}
-        rows={history}
-      />
-    </div>
+    <CategoryMedicalTable
+      title={categoryDetailsTitle("REPORT WRITING")}
+      columns={reportTableColumns}
+      rows={history}
+      emptyMessage="No report writing entries documented by nurses yet."
+    />
   );
 }

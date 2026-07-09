@@ -24,8 +24,8 @@ import ComingSoonPage from "@/components/ui/ComingSoonPage";
 import UploadedDocumentsSection from "@/components/patient/UploadedDocumentsSection";
 import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 import { getSubCategories } from "@/pages/doctor/patientProfile/config/subCategoryMap";
-import ConsultationTypeSelector from "@/pages/doctor/patientProfile/components/categories/specialistConsult/ConsultationTypeSelector";
-import ClaimsProcessor from "@/pages/doctor/patientProfile/components/financial/ClaimsProcessor";
+import SpecialistConsultTypeSelector from "@/pages/doctor/patientProfile/components/SpecialistConsultTypeSelector";
+import ClaimsProcessor from "@/pages/doctor/patientProfile/components/categories/financial/ClaimsProcessor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -41,7 +41,7 @@ const NursePatientProfile = () => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(
     null
   );
-  const [consultationType, setConsultationType] = useState("Dental Consultation");
+  const [consultationType, setConsultationType] = useState("dental");
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
 
   const activeFormSections = getSubCategories(selectedCategory);
@@ -412,7 +412,7 @@ const NursePatientProfile = () => {
               </div>
 
               {selectedCategory === "Specialist Consult" ? (
-                <ConsultationTypeSelector
+                <SpecialistConsultTypeSelector
                   value={consultationType}
                   onChange={setConsultationType}
                 />

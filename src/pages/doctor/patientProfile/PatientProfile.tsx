@@ -38,13 +38,33 @@ import {
   clearPendingSectionEntries,
   commitPendingCategoryEntries,
   getSectionEntryCount,
+  getSectionTableRows,
   getUnfilledSectionLabels,
   getUserSavedSectionLabels,
+  hasAnySectionFilled,
+  isSectionFilled,
   resetUserSavedSections,
 } from "./hooks/useMedicalTable";
 import EmptyFormAlertModal from "./components/EmptyFormAlertModal";
 import FormPreviewModal from "./components/FormPreviewModal";
+import {
+  buildPreviewSectionLines,
+  sectionSupportsNumberedPreview,
+} from "./lib/previewSectionLines";
 import FlagPatientModal from "./components/FlagPatientModal";
+import GenConsultController from "./components/genConsult/GenConsultController";
+import GenConsultQueueModal from "./components/genConsult/GenConsultQueueModal";
+import { isQueuedForClinicianVisitToday } from "./data/genConsultQueueSeed";
+import {
+  GEN_CONSULT_STRICT_SECTIONS,
+  isCasualGenConsultPatientType,
+  isGenConsultSessionReady,
+  requiresStrictGenConsultSections,
+  setGenConsultModeActive,
+  shouldSkipQueueCheckForGenConsult,
+  useGenConsultSession,
+} from "./hooks/genConsultSession";
+import { shouldShowGenConsultConsultationType } from "./config/genConsultPatientTypes";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -87,7 +107,11 @@ const DoctorPatientProfile = () => {
   >([]);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewSections, setPreviewSections] = useState<
-    { label: string; count: number }[]
+    {
+      label: string;
+      count: number;
+      lines?: { text: string; meta?: string }[];
+    }[]
   >([]);
   const [previewCategoryName, setPreviewCategoryName] = useState("");
   const [submittedHealthCategory, setSubmittedHealthCategory] = useState<
@@ -112,22 +136,49 @@ const DoctorPatientProfile = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   const [isPersonalDetailsOpen, setIsPersonalDetailsOpen] = useState(true);
   const [isInsuranceDetailsOpen, setIsInsuranceDetailsOpen] = useState(true);
+  const [showGenConsultQueueModal, setShowGenConsultQueueModal] = useState(false);
+  const [highlightedGenConsultSections, setHighlightedGenConsultSections] =
+    useState<string[]>([]);
+
+  const genConsultSession = useGenConsultSession();
 
   const activeFormSections = getSubCategories(selectedHealthCategory);
 
+  const isGenConsult = selectedHealthCategory === "Gen Consult";
   const isSpecialistConsult = selectedHealthCategory === "Specialist Consult";
   const isComingSoonCategory =
     selectedHealthCategory === "Family Planning" ||
     selectedHealthCategory === "Fertility Clinics";
 
   const financeCategories = [
-    { icon: FaPiggyBank, label: "Account Review" },
-    { icon: FaMoneyBill, label: "Admission Bill" },
-    { icon: NairaCategoryIcon, label: "Service Fee" },
-    { icon: FaUserCog, label: "Claims Processor" },
-    { icon: FaRecordVinyl, label: "Receipt" },
-    { icon: FaLocationArrow, label: "Payment History" },
-    { icon: FaBookReader, label: "Invoice" },
+    {
+      icon: FaPiggyBank,
+      label: "Account Review",
+    },
+    {
+      icon: FaMoneyBill,
+      label: "Admission Bill",
+    },
+    {
+      icon: NairaCategoryIcon,
+      label: "Service Fee",
+    },
+    {
+      icon: FaUserCog,
+      label: "Claims Processor",
+    },
+    {
+      icon: FaRecordVinyl,
+      label: "Receipt",
+    },
+    {
+      icon: FaLocationArrow,
+      label: "Payment History",
+    },
+    {
+      icon: FaBookReader,
+      label: "Invoice",
+    },
   ];
 
   const tabLabels = [
@@ -137,37 +188,72 @@ const DoctorPatientProfile = () => {
   ] as const;
 
   const categories = [
-    { icon: FaBaby, label: "Ante Natal Care" },
-    { icon: FaBaby, label: "Child Birth" },
-    { icon: FaUserFriends, label: "Family Planning" },
-    { icon: FaSeedling, label: "Fertility Clinics" },
-    { icon: FaPeopleCarry, label: "Immunization" },
-    { icon: FaRecycle, label: "Gen Consult" },
-    { icon: FaSmile, label: "Neo Natal Care" },
-    { icon: FaBaby, label: "Post Natal Care" },
-    { icon: FaSnowman, label: "Specialist Consult" },
-    { icon: FaHandScissors, label: "Surgical" },
+    {
+      icon: FaBaby,
+      label: "Ante Natal Care",
+    },
+    {
+      icon: FaBaby,
+      label: "Child Birth",
+    },
+    {
+      icon: FaUserFriends,
+      label: "Family Planning",
+    },
+    {
+      icon: FaSeedling,
+      label: "Fertility Clinics",
+    },
+    {
+      icon: FaPeopleCarry,
+      label: "Immunization",
+    },
+    {
+      icon: FaRecycle,
+      label: "Gen Consult",
+    },
+    {
+      icon: FaSmile,
+      label: "Neo Natal Care",
+    },
+    {
+      icon: FaBaby,
+      label: "Post Natal Care",
+    },
+    {
+      icon: FaSnowman,
+      label: "Specialist Consult",
+    },
+    {
+      icon: FaHandScissors,
+      label: "Surgical",
+    },
   ];
 
   const toggleCategory = (label: string) => {
     setExpandedCategories((prev) =>
       prev.includes(label)
         ? prev.filter((item) => item !== label)
-        : [...prev, label],
+        : [...prev, label]
     );
   };
 
-  const categorySectionLabels = activeFormSections.map(
-    (section) => section.label,
-  );
+  const categorySectionLabels = activeFormSections.map((section) => section.label);
+
+  useEffect(() => {
+    setGenConsultModeActive(isGenConsult);
+    if (!isGenConsult) {
+      setHighlightedGenConsultSections([]);
+    }
+  }, [isGenConsult]);
 
   useEffect(() => {
     if (!selectedHealthCategory || isComingSoonCategory) return;
     clearPendingSectionEntries(
-      getSubCategories(selectedHealthCategory).map((section) => section.label),
+      getSubCategories(selectedHealthCategory).map((section) => section.label)
     );
     resetUserSavedSections(
-      getSubCategories(selectedHealthCategory).map((section) => section.label),
+      getSubCategories(selectedHealthCategory).map((section) => section.label)
     );
   }, [selectedHealthCategory, isComingSoonCategory]);
 
@@ -188,6 +274,50 @@ const DoctorPatientProfile = () => {
       selectedFinancialCategory !== null &&
       submittedFinancialCategory === selectedFinancialCategory);
 
+  const getGenConsultUnfilledLabels = (sectionKeys: string[]): string[] => {
+    if (!genConsultSession.patientTypeId) {
+      return ["SELECT PATIENT TYPE"];
+    }
+
+    if (
+      shouldShowGenConsultConsultationType(genConsultSession.patientTypeId) &&
+      !genConsultSession.consultationTypeId
+    ) {
+      return ["SELECT CONSULTATION TYPE"];
+    }
+
+    if (requiresStrictGenConsultSections()) {
+      return getUnfilledSectionLabels([...GEN_CONSULT_STRICT_SECTIONS]);
+    }
+
+    if (isCasualGenConsultPatientType()) {
+      return hasAnySectionFilled(sectionKeys)
+        ? []
+        : ["AT LEAST ONE SUB-CATEGORY WITH ENTRIES"];
+    }
+
+    return [];
+  };
+
+  const hasFilledActiveForm = () => {
+    if (step === 1 && isSpecialistConsult && !selectedConsultationType) {
+      return false;
+    }
+    const sectionKeys = getActiveSectionKeys();
+
+    if (step === 1 && isGenConsult) {
+      if (!isGenConsultSessionReady()) return false;
+      if (requiresStrictGenConsultSections()) {
+        return GEN_CONSULT_STRICT_SECTIONS.every((label) =>
+          isSectionFilled(label)
+        );
+      }
+      return hasAnySectionFilled(sectionKeys);
+    }
+
+    return areAllSectionsFilled(sectionKeys);
+  };
+
   const getActiveSectionKeys = (): string[] => {
     if (step === 1 && selectedHealthCategory && !isComingSoonCategory) {
       return categorySectionLabels;
@@ -197,13 +327,6 @@ const DoctorPatientProfile = () => {
       return tableKey ? [tableKey] : [];
     }
     return [];
-  };
-
-  const hasFilledActiveForm = () => {
-    if (step === 1 && isSpecialistConsult && !selectedConsultationType) {
-      return false;
-    }
-    return areAllSectionsFilled(getActiveSectionKeys());
   };
 
   const getActiveCategoryName = () => {
@@ -224,9 +347,20 @@ const DoctorPatientProfile = () => {
   };
 
   const showIncompleteFormAlert = (action: "preview" | "submit") => {
-    setEmptyAlertUnfilledSections(
-      getUnfilledSectionLabels(getActiveSectionKeys()),
-    );
+    const sectionKeys = getActiveSectionKeys();
+    let unfilled = isGenConsult
+      ? getGenConsultUnfilledLabels(sectionKeys)
+      : getUnfilledSectionLabels(sectionKeys);
+
+    if (isGenConsult && requiresStrictGenConsultSections()) {
+      setHighlightedGenConsultSections(
+        getUnfilledSectionLabels([...GEN_CONSULT_STRICT_SECTIONS])
+      );
+    } else {
+      setHighlightedGenConsultSections([]);
+    }
+
+    setEmptyAlertUnfilledSections(unfilled);
     setEmptyAlertAction(action);
   };
 
@@ -241,10 +375,16 @@ const DoctorPatientProfile = () => {
     const savedLabels = getUserSavedSectionLabels(getActiveSectionKeys());
     setPreviewCategoryName(getActiveCategoryName());
     setPreviewSections(
-      savedLabels.map((label) => ({
-        label,
-        count: getSectionEntryCount(label),
-      })),
+      savedLabels.map((label) => {
+        const rows = getSectionTableRows(label);
+        return {
+          label,
+          count: getSectionEntryCount(label),
+          lines: sectionSupportsNumberedPreview(label)
+            ? buildPreviewSectionLines(label, rows)
+            : undefined,
+        };
+      })
     );
     setShowPreviewModal(true);
   };
@@ -255,11 +395,25 @@ const DoctorPatientProfile = () => {
       return;
     }
 
+    const sectionKeys = getActiveSectionKeys();
+
+    if (
+      step === 1 &&
+      isGenConsult &&
+      !shouldSkipQueueCheckForGenConsult() &&
+      hasAnySectionFilled(sectionKeys) &&
+      !isQueuedForClinicianVisitToday(patient.patientId)
+    ) {
+      setShowGenConsultQueueModal(true);
+      return;
+    }
+
     if (!hasFilledActiveForm()) {
       showIncompleteFormAlert("submit");
       return;
     }
 
+    setHighlightedGenConsultSections([]);
     flushPendingCategoryEntries();
 
     if (step === 1 && selectedHealthCategory) {
@@ -269,7 +423,9 @@ const DoctorPatientProfile = () => {
       setSubmittedFinancialCategory(selectedFinancialCategory);
     }
 
-    toast.success(`${getActiveCategoryName()} submitted successfully!`);
+    toast.success(
+      `${getActiveCategoryName()} submitted successfully!`
+    );
   };
 
   const handleFlagPatient = () => {
@@ -294,7 +450,9 @@ const DoctorPatientProfile = () => {
     ? financialCategoryComponents[selectedFinancialCategory]
     : null;
 
-  const categoryGridClass = "grid-cols-3 sm:grid-cols-4 lg:grid-cols-5";
+  const categoryGridClass =
+    "grid-cols-3 sm:grid-cols-4 lg:grid-cols-5";
+
   const financeGridClass =
     "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7";
 
@@ -302,8 +460,50 @@ const DoctorPatientProfile = () => {
     (step === 1 && selectedHealthCategory && !isComingSoonCategory) ||
     (step === 2 && Boolean(selectedFinancialCategory));
 
+  ////////////////  TO BE LATER USED FOR OTHER CATEGORIES  ////////////////
+
+  // const diagnosiscolumns = ["SN", "PATIENT TYPE", "DIAGNOSIS", "DOCTOR"];
+
+  // const diagnosisRows = [
+  //   ["1", "2025-04-21 | 10:30 AM", "Malaria R/O Sepsis", "Dr. Chibuzo Akewe"],
+  // ];
+
+  // const investigstionColums = [
+  //   "S/N",
+  //   "DATE | TIME",
+  //   "PATIENT TYPE",
+  //   "INVESTIGATION",
+  //   "AMOUNT",
+  // ];
+
+  // const investigationRows = [
+  //   ["1", "2025-04-21 | 10:30 AM", "Out-Patient", "HVS", "N 4,000.00"],
+  // ];
+
+  // const medicationColumns = [
+  //   "SN",
+  //   "MEDICATION",
+  //   "D.FORM",
+  //   "DURATION",
+  //   "DOSAGE",
+  //   "DURATION",
+  //   "PERIOD",
+  //   "QTY",
+  //   "AMOUNT",
+  // ];
+
+  // const medicationRows = [
+  //   ["1", "Vitamin A", "Tablets", "2", "BD", "3", "Days", "1", "4000"],
+  //   ["2", "Cough Syrup", "Syrup", "1", "TDS", "1", "Days", "1", "4000"],
+  //   ["3", "PCM", "Injection", "1", "STAT", "1", "Days", "1", "4000"],
+  // ];
+
+
+
+
   return (
     <div className="flex min-h-[calc(100dvh-5.75rem)] w-full min-w-0 rounded-xl border border-gray-200 bg-white shadow-sm">
+      {/* Left column — collapses to a slim rail; app sidebar stays fixed separately */}
       <div
         className={`relative shrink-0 self-start overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out ${
           isDetailsOpen ? "w-64" : "w-10"
@@ -315,165 +515,165 @@ const DoctorPatientProfile = () => {
           }`}
         >
           <div className="flex min-h-0 flex-1 flex-col">
-            <button
-              type="button"
-              onClick={() => setIsDetailsOpen(false)}
-              className="mb-3 flex w-full shrink-0 items-center gap-3 rounded-lg border border-purple-100 bg-purple-50 p-3 text-left transition hover:border-[#573FD1]/30 hover:bg-purple-100"
-              aria-label="Hide patient details"
-              title="Hide patient details"
-            >
-              <img
-                src={clientimage}
-                alt="Patient"
-                className="h-14 w-14 shrink-0 rounded-full object-cover"
-              />
-              <div className="min-w-0 flex-1">
-                <h2 className="truncate text-base font-semibold text-gray-900">
-                  {patient.firstName} {patient.lastName}
-                </h2>
-                <p className="text-sm text-gray-500">ID: {patient.patientId}</p>
-              </div>
-              <ChevronLeft className="h-5 w-5 shrink-0 text-[#573FD1]" />
-            </button>
+          <button
+            type="button"
+            onClick={() => setIsDetailsOpen(false)}
+            className="mb-3 flex w-full shrink-0 items-center gap-3 rounded-lg border border-purple-100 bg-purple-50 p-3 text-left transition hover:border-[#573FD1]/30 hover:bg-purple-100"
+            aria-label="Hide patient details"
+            title="Hide patient details"
+          >
+            <img
+              src={clientimage}
+              alt="Patient"
+              className="h-14 w-14 shrink-0 rounded-full object-cover"
+            />
+            <div className="min-w-0 flex-1">
+              <h2 className="truncate text-base font-semibold text-gray-900">
+                {patient.firstName} {patient.lastName}
+              </h2>
+              <p className="text-sm text-gray-500">ID: {patient.patientId}</p>
+            </div>
+            <ChevronLeft className="h-5 w-5 shrink-0 text-[#573FD1]" />
+          </button>
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-              <div className="py-1">
-                <button
-                  type="button"
-                  onClick={() => setIsPersonalDetailsOpen((prev) => !prev)}
-                  className="relative w-full border-b-2 border-[#573FD1] py-3 text-left"
-                >
-                  <span className="absolute -bottom-0.5 left-0 z-10 max-w-[min(100%,14rem)] rounded-t-md bg-[#573FD1] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm">
-                    Personal Details
-                  </span>
-                  <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
-                    {isPersonalDetailsOpen ? (
-                      <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
-                    )}
-                  </div>
-                </button>
-                {isPersonalDetailsOpen && (
-                  <div className="space-y-1.5 pt-3 text-sm text-gray-600">
-                    <p>
-                      <span className="font-medium text-gray-700">Last Name:</span>{" "}
-                      {patient.lastName}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">First Name:</span>{" "}
-                      {patient.firstName}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Middle Name:</span>{" "}
-                      OluwaPac
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Phone NO:</span>{" "}
-                      {patient.phoneNumber}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Email:</span>{" "}
-                      {patient.email || "Not available"}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Gender:</span>{" "}
-                      {patient.gender}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Age:</span>{" "}
-                      {patient.age}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Marital Status:</span>{" "}
-                      Married
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Address:</span> 2,
-                      Omega lane, Lekki, Lagos.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="py-1">
-                <button
-                  type="button"
-                  onClick={() => setIsInsuranceDetailsOpen((prev) => !prev)}
-                  className="relative w-full border-b-2 border-[#573FD1] py-3 text-left"
-                >
-                  <span className="absolute -bottom-0.5 left-0 z-10 max-w-[min(100%,14rem)] rounded-t-md bg-[#573FD1] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm">
-                    Insurance Details
-                  </span>
-                  <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
-                    {isInsuranceDetailsOpen ? (
-                      <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
-                    )}
-                  </div>
-                </button>
-                {isInsuranceDetailsOpen && (
-                  <div className="space-y-1.5 pt-3 text-sm text-gray-600">
-                    <p>
-                      <span className="font-medium text-gray-700">Insurance Type:</span>{" "}
-                      HMO
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Insurance Group No:</span>{" "}
-                      LDW/200
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Employer Name:</span>{" "}
-                      7up Bottling Company
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Eligibility:</span>{" "}
-                      <span className="text-green-600">Active</span>
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">
-                        Insurance Provider Name:
-                      </span>{" "}
-                      Leadway HMO
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Treatment Guide:</span>{" "}
-                      Fee for service
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Policy No:</span> bd2345
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Patient Type:</span>{" "}
-                      {patient.visitType || "Gen. consult"}
-                    </p>
-                  </div>
-                )}
-              </div>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+            <div className="py-1">
+              <button
+                type="button"
+                onClick={() => setIsPersonalDetailsOpen((prev) => !prev)}
+                className="relative w-full border-b-2 border-[#573FD1] py-3 text-left"
+              >
+                <span className="absolute -bottom-0.5 left-0 z-10 max-w-[min(100%,14rem)] rounded-t-md bg-[#573FD1] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm">
+                  Personal Details
+                </span>
+                <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
+                  {isPersonalDetailsOpen ? (
+                    <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
+                  )}
+                </div>
+              </button>
+              {isPersonalDetailsOpen && (
+                <div className="space-y-1.5 pt-3 text-sm text-gray-600">
+                  <p>
+                    <span className="font-medium text-gray-700">Last Name:</span>{" "}
+                    {patient.lastName}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">First Name:</span>{" "}
+                    {patient.firstName}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Middle Name:</span>{" "}
+                    OluwaPac
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Phone NO:</span>{" "}
+                    {patient.phoneNumber}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Email:</span>{" "}
+                    {patient.email || "Not available"}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Gender:</span>{" "}
+                    {patient.gender}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Age:</span>{" "}
+                    {patient.age}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Marital Status:</span>{" "}
+                    Married
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Address:</span> 2,
+                    Omega lane, Lekki, Lagos.
+                  </p>
+                </div>
+              )}
             </div>
 
-            <button
-              type="button"
-              onClick={handleFlagPatient}
-              className={`relative z-10 mt-4 flex shrink-0 cursor-pointer items-center gap-2 text-sm font-medium transition ${
-                isFlagged
-                  ? "text-red-600 hover:text-red-700"
-                  : "text-orange-500 hover:text-orange-600"
-              }`}
-            >
-              <FaFlag className="text-base" />
-              {isFlagged ? "View Flag Report" : "Flag Patient"}
-            </button>
-            <button
-              type="button"
-              onClick={handlePreviousPatientRecords}
-              className="relative z-10 mt-2 flex shrink-0 cursor-pointer items-center gap-2 text-left text-sm font-medium text-[#573FD1] transition hover:text-[#4a35b8]"
-            >
-              <FaHistory className="text-base" />
-              Previous Patient Records
-            </button>
+            <div className="py-1">
+              <button
+                type="button"
+                onClick={() => setIsInsuranceDetailsOpen((prev) => !prev)}
+                className="relative w-full border-b-2 border-[#573FD1] py-3 text-left"
+              >
+                <span className="absolute -bottom-0.5 left-0 z-10 max-w-[min(100%,14rem)] rounded-t-md bg-[#573FD1] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm">
+                  Insurance Details
+                </span>
+                <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
+                  {isInsuranceDetailsOpen ? (
+                    <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
+                  )}
+                </div>
+              </button>
+              {isInsuranceDetailsOpen && (
+                <div className="space-y-1.5 pt-3 text-sm text-gray-600">
+                  <p>
+                    <span className="font-medium text-gray-700">Insurance Type:</span>{" "}
+                    HMO
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Insurance Group No:</span>{" "}
+                    LDW/200
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Employer Name:</span>{" "}
+                    7up Bottling Company
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Eligibility:</span>{" "}
+                    <span className="text-green-600">Active</span>
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">
+                      Insurance Provider Name:
+                    </span>{" "}
+                    Leadway HMO
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Treatment Guide:</span>{" "}
+                    Fee for service
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Policy No:</span> bd2345
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Patient Type:</span>{" "}
+                    {patient.visitType || "Gen. consult"}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={handleFlagPatient}
+            className={`relative z-10 mt-4 flex shrink-0 cursor-pointer items-center gap-2 text-sm font-medium transition ${
+              isFlagged
+                ? "text-red-600 hover:text-red-700"
+                : "text-orange-500 hover:text-orange-600"
+            }`}
+          >
+            <FaFlag className="text-base" />
+            {isFlagged ? "View Flag Report" : "Flag Patient"}
+          </button>
+          <button
+            type="button"
+            onClick={handlePreviousPatientRecords}
+            className="relative z-10 mt-2 flex shrink-0 cursor-pointer items-center gap-2 text-left text-sm font-medium text-[#573FD1] transition hover:text-[#4a35b8]"
+          >
+            <FaHistory className="text-base" />
+            Previous Patient Records
+          </button>
+        </div>
         </div>
 
         {!isDetailsOpen && (
@@ -489,6 +689,7 @@ const DoctorPatientProfile = () => {
         )}
       </div>
 
+      {/* Right column — health / financial / documents (layout stays fixed) */}
       <div className="relative flex min-h-[calc(100dvh-5.75rem)] min-w-0 flex-1 flex-col overflow-hidden p-4 lg:p-5 xl:p-6">
         <div className="mb-5 w-full shrink-0 overflow-x-auto">
           <div className="flex flex-nowrap items-center justify-center gap-2 px-1">
@@ -528,11 +729,14 @@ const DoctorPatientProfile = () => {
 
         <hr className="mb-3 shrink-0 border-gray-200" />
 
+        {/* Step Content */}
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
           {step === 1 && (
             <>
-              <h2 className="text-sm text-gray-400">Step 1</h2>
-              <h3 className="mb-2 font-semibold text-gray-700">Select category</h3>
+              <h2 className="text-sm text-gray-400 ">Step 1</h2>
+              <h3 className="text-gray-700 font-semibold mb-2">
+                Select category
+              </h3>
               <div className={`relative mb-4 grid shrink-0 gap-2 ${categoryGridClass}`}>
                 {categories.map((item, index) => (
                   <SelectCategoryCard
@@ -544,7 +748,7 @@ const DoctorPatientProfile = () => {
                       setSelectedHealthCategory(item.label);
                       setExpandedCategories([]);
                       setSelectedConsultationType(
-                        item.label === "Specialist Consult" ? "dental" : null,
+                        item.label === "Specialist Consult" ? "dental" : null
                       );
                     }}
                   />
@@ -568,33 +772,7 @@ const DoctorPatientProfile = () => {
               )}
 
               {!isSpecialistConsult && (
-                <div className="relative min-w-0 rounded-lg border border-gray-300 p-4">
-                  {!selectedHealthCategory ? (
-                    <div className="flex flex-col items-center justify-center px-4 py-16 text-center text-sm text-gray-400">
-                      <p className="text-black">Text Field Goes Here</p>
-                      <p className="text-gray-400">
-                        Becomes Active when a category is clicked
-                      </p>
-                    </div>
-                  ) : isComingSoonCategory ? (
-                    <ComingSoonPage title={selectedHealthCategory} />
-                  ) : (
-                    <CategoryFormAccordion
-                      sections={activeFormSections}
-                      expandedCategories={expandedCategories}
-                      onToggle={toggleCategory}
-                      healthCategory={selectedHealthCategory}
-                    />
-                  )}
-                </div>
-              )}
-
-              {isSpecialistConsult && (
                 <>
-                  <h2 className="mt-4 text-sm text-gray-400">Step 3</h2>
-                  <h3 className="mb-2 font-semibold text-gray-700">
-                    Fill Category Form
-                  </h3>
                   <div className="relative min-w-0 rounded-lg border border-gray-300 p-4">
                     {!selectedHealthCategory ? (
                       <div className="flex flex-col items-center justify-center px-4 py-16 text-center text-sm text-gray-400">
@@ -603,24 +781,49 @@ const DoctorPatientProfile = () => {
                           Becomes Active when a category is clicked
                         </p>
                       </div>
+                    ) : isComingSoonCategory ? (
+                      <ComingSoonPage title={selectedHealthCategory} />
                     ) : (
-                      <CategoryFormAccordion
-                        sections={activeFormSections}
-                        expandedCategories={expandedCategories}
-                        onToggle={toggleCategory}
-                        healthCategory={selectedHealthCategory}
-                      />
+                      <>
+                        {isGenConsult ? <GenConsultController /> : null}
+                        <CategoryFormAccordion
+                          sections={activeFormSections}
+                          expandedCategories={expandedCategories}
+                          onToggle={toggleCategory}
+                          healthCategory={selectedHealthCategory}
+                          highlightedSections={highlightedGenConsultSections}
+                        />
+                      </>
                     )}
+                  </div>
+                </>
+              )}
+
+              {isSpecialistConsult && (
+                <>
+                  <h2 className="mt-4 text-sm text-gray-400">Step 3</h2>
+                  <h3 className="mb-2 font-semibold text-gray-700">
+                    Fill Category Form
+                  </h3>
+
+                  <div className="relative min-w-0 rounded-lg border border-gray-300 p-4">
+                    <CategoryFormAccordion
+                      sections={activeFormSections}
+                      expandedCategories={expandedCategories}
+                      onToggle={toggleCategory}
+                      healthCategory={selectedHealthCategory}
+                    />
                   </div>
                 </>
               )}
             </>
           )}
-
           {step === 2 && (
             <>
-              <h2 className="mb-2 text-sm text-gray-400">Step 1</h2>
-              <h3 className="mb-2 font-semibold text-gray-700">Select category</h3>
+              <h2 className="text-sm text-gray-400 mb-2">Step 1</h2>
+              <h3 className="text-gray-700 font-semibold mb-2">
+                Select category
+              </h3>
               <div className={`relative mb-4 grid shrink-0 gap-2 ${financeGridClass}`}>
                 {financeCategories.map((item, index) => (
                   <SelectCategoryCard
@@ -628,12 +831,16 @@ const DoctorPatientProfile = () => {
                     icon={item.icon}
                     label={item.label}
                     selected={selectedFinancialCategory === item.label}
-                    onClick={() => setSelectedFinancialCategory(item.label)}
+                    onClick={() => {
+                      setSelectedFinancialCategory(item.label);
+                    }}
                   />
                 ))}
               </div>
               <h2 className="mt-2 text-sm text-gray-400">Step 2</h2>
-              <h3 className="mb-2 font-semibold text-gray-700">Fill Category Form</h3>
+              <h3 className="mb-2 font-semibold text-gray-700">
+                Fill Category Form
+              </h3>
               <div className="relative min-w-0 rounded-lg border border-gray-300 p-4">
                 {!selectedFinancialCategory ? (
                   <div className="flex flex-col items-center justify-center px-4 py-16 text-center text-sm text-gray-400">
@@ -650,12 +857,15 @@ const DoctorPatientProfile = () => {
               </div>
             </>
           )}
-
           {step === 3 && (
             <>
-              <h2 className="mb-2 text-sm text-gray-400">Step 1</h2>
-              <h3 className="mb-2 font-semibold text-gray-700">Select category</h3>
-              <div className={`relative mb-4 grid shrink-0 gap-2 ${categoryGridClass}`}>
+              <h2 className="text-sm text-gray-400 mb-2">Step 1</h2>
+              <h3 className="text-gray-700 font-semibold mb-2">
+                Select category
+              </h3>
+              <div
+                className={`relative mb-4 grid shrink-0 gap-2 ${categoryGridClass}`}
+              >
                 <SelectCategoryCard
                   icon={FaCloudUploadAlt}
                   label="Upload Files"
@@ -670,8 +880,8 @@ const DoctorPatientProfile = () => {
                 />
               </div>
 
-              <h2 className="mt-4 text-sm text-gray-400">Step 2</h2>
-              <h3 className="mb-2 font-semibold text-gray-700">
+              <h2 className="text-sm text-gray-400 mt-4">Step 2</h2>
+              <h3 className="font-semibold text-gray-700 mb-2">
                 {selectedDocumentsCategory === "Upload Files"
                   ? "Upload Documents"
                   : selectedDocumentsCategory === "Uploaded Files"
@@ -704,6 +914,7 @@ const DoctorPatientProfile = () => {
           )}
         </div>
 
+        {/* Step Navigation */}
         <div className="mt-4 flex shrink-0 items-center justify-between border-t border-gray-100 pt-4">
           {showPreviewSubmit ? (
             <>
@@ -740,7 +951,9 @@ const DoctorPatientProfile = () => {
               <button
                 type="button"
                 className="rounded-lg bg-[#573FD1] px-10 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#4a35b0]"
-                onClick={() => (step < 3 ? goToStep(step + 1) : handleSubmit())}
+                onClick={() =>
+                  step < 3 ? goToStep(step + 1) : handleSubmit()
+                }
               >
                 {step < 3 ? "Next" : "Confirm"}
               </button>
@@ -748,7 +961,6 @@ const DoctorPatientProfile = () => {
           )}
         </div>
       </div>
-
       <EmptyFormAlertModal
         open={emptyAlertAction !== null}
         action={emptyAlertAction ?? "submit"}
@@ -768,6 +980,11 @@ const DoctorPatientProfile = () => {
         open={showFlagModal}
         onClose={() => setShowFlagModal(false)}
         patient={patient}
+      />
+      <GenConsultQueueModal
+        open={showGenConsultQueueModal}
+        patientName={`${patient.firstName} ${patient.lastName}`}
+        onClose={() => setShowGenConsultQueueModal(false)}
       />
       <ToastContainer position="bottom-center" autoClose={2500} />
     </div>

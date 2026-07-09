@@ -3,11 +3,35 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  isDateWithinRange,
+  parsePatientLastSeen,
+  type DateRangeValue,
+} from "@/lib/dateTime";
 
-import { buildMockPatients, type Patient } from "@/pages/nurse/dashboard/data/mockPatients";
+// type and datat check
+
+type Patient = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  patientId: string;
+  phoneNumber: string;
+  lastSeen: string;
+  time: string;
+  gender: string;
+  age: number;
+  patientType: string;
+  visitType: string;
+  staffName: string;
+  flagged: boolean;
+  bloodPressure: string;
+  name: string;
+};
 
 interface PatientsLogProps {
   onSelectPatient: (patient: Patient) => void;
+  dateRange?: DateRangeValue | null;
 }
 // Custom Toast Component
 const Toast = ({ message }: { message: string }) => {
@@ -20,7 +44,10 @@ const Toast = ({ message }: { message: string }) => {
   );
 };
 
-const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
+const PatientsLog: React.FC<PatientsLogProps> = ({
+  onSelectPatient,
+  dateRange = null,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,9 +68,110 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
 
-  const [patients, setPatients] = useState<Patient[]>(() =>
-    buildMockPatients().slice(0, 6),
-  );
+  const [patients, setPatients] = useState<Patient[]>([
+    {
+      id: 1,
+      name: "Abiola Adebayo",
+      firstName: "Abiola",
+      lastName: "Adebayo",
+      patientId: "P-2025001",
+      phoneNumber: "09012345678",
+      lastSeen: "15-Feb-2020",
+      time: "10:25 AM",
+      gender: "M",
+      age: 31,
+      patientType: "COMPANY",
+      visitType: "GEN. CONSULT",
+      staffName: "Titilayo Olayinka",
+      flagged: false,
+      bloodPressure: "120/80",
+    },
+    {
+      id: 2,
+      name: "Chinonso Eze",
+      firstName: "Chinonso",
+      lastName: "Eze",
+      patientId: "P-2025002",
+      phoneNumber: "09012345678",
+      lastSeen: "15-Feb-2020",
+      time: "10:25 AM",
+      gender: "M",
+      age: 31,
+      patientType: "PRIVATE",
+      visitType: "GEN. CONSULT",
+      staffName: "Bayo Hammed",
+      flagged: false,
+      bloodPressure: "130/85",
+    },
+    {
+      id: 3,
+      name: "Damilola Ogunleye",
+      firstName: "Damilola",
+      lastName: "Ogunleye",
+      patientId: "P-2025003",
+      phoneNumber: "09012345678",
+      lastSeen: "15-Feb-2020",
+      time: "10:25 AM",
+      gender: "F",
+      age: 31,
+      patientType: "COMPANY",
+      visitType: "ANTE. NATAL",
+      staffName: "Titilayo Olayinka",
+      flagged: false,
+      bloodPressure: "118/78",
+    },
+    {
+      id: 4,
+      name: "Emeka Nwankwo",
+      firstName: "Emeka",
+      lastName: "Nwankwo",
+      patientId: "P-2025004",
+      phoneNumber: "09012345678",
+      lastSeen: "15-Feb-2020",
+      time: "10:25 AM",
+      gender: "M",
+      age: 31,
+      patientType: "HMO",
+      visitType: "POST NATAL",
+      staffName: "Titilayo Olayinka",
+      flagged: false,
+      bloodPressure: "135/90",
+    },
+    {
+      id: 5,
+      name: "Ifeoma Okeke",
+      firstName: "Ifeoma",
+      lastName: "Okeke",
+      patientId: "P-2025005",
+      phoneNumber: "09012345678",
+      lastSeen: "15-Feb-2020",
+      time: "10:25 AM",
+      gender: "F",
+      age: 31,
+      patientType: "COMPANY",
+      visitType: "CHILDBIRTH",
+      staffName: "Titilayo Olayinka",
+      flagged: false,
+      bloodPressure: "122/79",
+    },
+    {
+      id: 6,
+      name: "Toluwa Afolabi",
+      firstName: "Toluwa",
+      lastName: "Afolabi",
+      patientId: "P-2025006",
+      phoneNumber: "09012345678",
+      lastSeen: "15-Feb-2020",
+      time: "10:25 AM",
+      gender: "M",
+      age: 31,
+      patientType: "COMPANY",
+      visitType: "ANTE. NATAL",
+      staffName: "Titilayo Olayinka",
+      flagged: false,
+      bloodPressure: "125/82",
+    },
+  ]);
 
   const getPatientTypeClass = (type: string) => {
     switch (type) {
@@ -123,7 +251,16 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   // filter model for the search button
 
   const filteredPatients = patients.filter((patient) => {
+    if (dateRange) {
+      const lastSeenDate = parsePatientLastSeen(patient.lastSeen);
+      if (!lastSeenDate || !isDateWithinRange(lastSeenDate, dateRange)) {
+        return false;
+      }
+    }
+
     const search = searchTerm.toLowerCase();
+    if (!search) return true;
+
     return (
       patient.name.toLowerCase().includes(search) ||
       patient.patientId.toLowerCase().includes(search) ||
@@ -217,8 +354,8 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
             </tr>
           </thead>
           <tbody>
-            {(searchTerm ? filteredPatients : patients).length > 0 ? (
-              (searchTerm ? filteredPatients : patients).map((patient) => (
+            {filteredPatients.length > 0 ? (
+              filteredPatients.map((patient) => (
                 <tr
                   key={patient.id}
                   className={`${
@@ -324,7 +461,11 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   colSpan={9}
                   className="text-center text-gray-500 py-6 text-sm bg-gray-50"
                 >
-                  No results found for "{searchTerm}"
+                  {searchTerm
+                    ? `No results found for "${searchTerm}"`
+                    : dateRange
+                      ? "No patients found for the selected date range."
+                      : "No patients found."}
                 </td>
               </tr>
             )}
