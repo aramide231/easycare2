@@ -1,6 +1,6 @@
 import { FaFlag } from "react-icons/fa";
 import { X } from "lucide-react";
-import FlagProfileReport from "@/components/ui/flagprofile-report";
+import FlagProfileReport from "@doctor-shared/components/FlagProfileReport";
 
 type PatientInfo = {
   id?: number;

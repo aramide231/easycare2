@@ -1,4 +1,4 @@
-import NotificationTable from "@/components/ui/notificationTable";
+import NotificationTable from "@doctor-shared/components/NotificationTable";
 
 const DoctorNotification = () => {
   return <NotificationTable />;

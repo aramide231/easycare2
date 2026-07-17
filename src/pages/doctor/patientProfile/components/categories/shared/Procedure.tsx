@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
 import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
 import {
   PROCEDURE_LOOKUP,

@@ -11,6 +11,7 @@ import DateRangeFilter, {
 import { PAGE_SIZE } from "@/constant/pagination";
 import { usePaginatedList } from "@/hooks/usePaginatedList";
 import { useAuth } from "@/context/AuthContext";
+import { getActiveModuleRole } from "@/lib/authRoutes";
 import LogSearchBar from "@/pages/nurse/shared/components/LogSearchBar";
 import TablePagination from "@/pages/nurse/shared/components/TablePagination";
 import {
@@ -43,7 +44,7 @@ const PreviousPatientRecords = () => {
   const { user } = useAuth();
   const tableRef = useRef<HTMLTableElement>(null);
 
-  const role = user?.userRole?.toLowerCase() || "nurse";
+  const role = getActiveModuleRole(location.pathname, user?.userRole);
   const homePath = role === "nurse" ? "/nurse" : `/${role}`;
 
   const patient = resolvePatient(

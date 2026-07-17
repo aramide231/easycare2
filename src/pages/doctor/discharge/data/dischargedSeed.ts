@@ -1,4 +1,4 @@
-import type { DischargedPatientRecord } from "@/pages/nurse/patient-management/discharge/data/mockDischargedPatients";
+import type { DischargedPatientRecord } from "@doctor-shared/discharge/data/mockDischargedPatients";
 
 export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] = [
   {

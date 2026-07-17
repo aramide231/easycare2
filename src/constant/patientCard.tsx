@@ -1,7 +1,8 @@
 import { Expand, Undo2 } from "lucide-react";
 import clientimage from "../assets/image/haywhy.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { getActiveModuleRole } from "@/lib/authRoutes";
 import { mockNextAppointmentDate } from "@/lib/dateTime";
 
 interface PatientCardProps {
@@ -22,17 +23,18 @@ interface PatientCardProps {
 const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const nextAppointment = mockNextAppointmentDate(7 + (patient.id % 21));
 
   const handleViewProfile = () => {
-    const role = user?.userRole?.toLowerCase() || "nurse";
+    const role = getActiveModuleRole(location.pathname, user?.userRole);
     navigate(`/${role}/patient-profile/${patient.patientId}`, {
       state: { patient },
     });
   };
 
   const handlePreviousRecords = () => {
-    const role = user?.userRole?.toLowerCase() || "nurse";
+    const role = getActiveModuleRole(location.pathname, user?.userRole);
     navigate(`/${role}/previous-patient-records/${patient.patientId}`, {
       state: { patient },
     });

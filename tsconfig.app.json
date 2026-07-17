@@ -17,7 +17,9 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@frontdesk/*": ["./src/modules/frontdesk/*"],
+      "@doctor-shared/*": ["./src/pages/doctor/shared/*"]
     }
   },
   "include": ["src"]

@@ -10,3 +10,15 @@ export function getRoleHomePath(role: string): string {
 }
 
 export const AUTH_SIGNIN_PATH = "/auth?tab=signin";
+
+/** Prefer the module in the URL so preview/demo navigation stays in the right area. */
+export function getActiveModuleRole(
+  pathname: string,
+  userRole?: string | null,
+): string {
+  if (pathname.startsWith("/doctor")) return "doctor";
+  if (pathname.startsWith("/nurse")) return "nurse";
+  if (pathname.startsWith("/frontdesk")) return "frontdesk";
+  if (pathname.startsWith("/admin")) return "admin";
+  return userRole?.toLowerCase() || "nurse";
+}

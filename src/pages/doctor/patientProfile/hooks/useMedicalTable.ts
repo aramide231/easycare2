@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
 import { DIAGNOSIS_SEED } from "../data/diagnosisSeed";
 import { INVESTIGATION_SEED } from "../data/investigationSeed";
 import { PHYSICAL_EXAMINATION_SEED } from "../data/physicalExaminationSeed";

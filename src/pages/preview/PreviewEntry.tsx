@@ -4,6 +4,7 @@ import ModuleSelectionModal, {
 } from "@/components/preview/ModuleSelectionModal";
 
 const modulePaths: Record<PreviewModule, string> = {
+  frontdesk: "/frontdesk",
   nurse: "/nurse/dashboard",
   doctor: "/doctor",
 };

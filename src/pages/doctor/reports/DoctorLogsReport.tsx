@@ -1,4 +1,4 @@
-import DoctorLog from "@/pages/frontdesk/doctors-assignment/components/DoctorLog";
+import DoctorLog from "@doctor-shared/reports/frontdesk/DoctorLog";
 
 const DoctorLogsReport = () => <DoctorLog />;
 

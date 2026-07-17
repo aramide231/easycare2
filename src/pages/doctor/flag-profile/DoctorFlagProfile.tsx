@@ -1,4 +1,4 @@
-import FlagProfileReport from "@/components/ui/flagprofile-report";
+import FlagProfileReport from "@doctor-shared/components/FlagProfileReport";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const MOCK_PATIENT = {

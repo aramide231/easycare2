@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 
-export type PreviewModule = "nurse" | "doctor";
+export type PreviewModule = "frontdesk" | "nurse" | "doctor";
 
 type Props = {
   onSelect: (module: PreviewModule) => void;
@@ -12,6 +12,12 @@ const moduleOptions: {
   description: string;
   icon: string;
 }[] = [
+  {
+    id: "frontdesk",
+    title: "Frontdesk",
+    description: "Review registration, visitation, and front-office workflows.",
+    icon: "mdi:desk",
+  },
   {
     id: "nurse",
     title: "Nursing",
@@ -34,7 +40,7 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
       aria-modal="true"
       aria-labelledby="module-selection-title"
     >
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-2xl">
+      <div className="w-full max-w-4xl rounded-2xl bg-white p-8 shadow-2xl">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-[#573FD1]">
             EasyCare Preview
@@ -50,7 +56,7 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {moduleOptions.map((option) => (
             <button
               key={option.id}

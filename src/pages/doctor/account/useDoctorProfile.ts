@@ -1,5 +1,5 @@
 import { useCallback, useSyncExternalStore } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
 import {
   DEFAULT_DOCTOR_PROFILE,
   type DoctorProfile,

@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import ExportButton from "@/constant/ExportButton";
-import LogSearchBar from "@/pages/nurse/shared/components/LogSearchBar";
-import TablePagination from "@/pages/nurse/shared/components/TablePagination";
-import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
+import ExportButton from "@doctor-shared/components/ExportButton";
+import LogSearchBar from "@doctor-shared/components/LogSearchBar";
+import TablePagination from "@doctor-shared/components/TablePagination";
+import { getTotalPages } from "@doctor-shared/lib/pagination";
 import ReportDateRangeFilter from "@/pages/doctor/reports/components/ReportDateRangeFilter";
 import PatientSummaryCard from "./components/PatientSummaryCard";
 import {
