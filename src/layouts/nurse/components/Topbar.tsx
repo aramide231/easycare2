@@ -18,6 +18,7 @@ import { createPortal } from "react-dom";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { getActiveModuleRole } from "@/lib/authRoutes";
 import clientimage from "@/assets/image/haywhy.jpg";
 import AppGridMenu from "@/components/header/AppGridMenu";
 import ProfileMenu from "@/components/header/ProfileMenu";
@@ -274,6 +275,7 @@ function PatientSearchModal({
 }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const anchorRect = useSearchAnchorPosition(anchorRef, open);
 
@@ -317,7 +319,7 @@ function PatientSearchModal({
   }, [query, setCurrentPage]);
 
   const handleSelect = (patient: Patient) => {
-    const role = user?.userRole?.toLowerCase() || "nurse";
+    const role = getActiveModuleRole(location.pathname, user?.userRole);
     navigate(`/${role}/patient-profile/${patient.patientId}`, {
       state: { patient },
     });

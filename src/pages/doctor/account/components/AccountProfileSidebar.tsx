@@ -1,4 +1,4 @@
-import clientimage from "@/assets/image/haywhy.jpg";
+import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
 import type { DoctorProfile } from "../types";
 
 type Props = {

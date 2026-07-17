@@ -2,28 +2,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-import FrontdeskLayout from "../layouts/FrontdeskLayout";
+import { FrontdeskRoutes } from "@/modules/frontdesk";
 import NurseLayout from "../layouts/NurseLayout";
 import DoctorLayout from "../layouts/DoctorLayout";
 import AdminLayout from "../layouts/AdminLayout";
 
-// Import frontDesk components
-import FrontdeskDashboard from "../pages/frontdesk/dashboard/Dashboard";
-import EditPatient from "@/pages/frontdesk/editPatient/EditPatient";
-import Visitation from "@/pages/frontdesk/visitation";
-import Notifications from "@/pages/frontdesk/notifications/Notifications";
-import ManageAccess from "@/pages/frontdesk/manage-access/ManageAccess";
-import ManageCard from "@/pages/frontdesk/manage-card/ManageCard";
-import ReminderPage from "@/pages/frontdesk/set-reminder/ReminderPage";
-import SetReminder from "@/pages/frontdesk/set-reminder/components/SetReminder";
-import ViewReminder from "@/pages/frontdesk/set-reminder/components/ViewReminder";
-import DoctorAssignment from "@/pages/frontdesk/doctors-assignment/DoctorAssignment";
-import AnteNatal from "@/pages/frontdesk/ante-natal/AnteNatal";
-import ChildBirth from "@/pages/frontdesk/child-birth/ChildBirth";
-import PostNatal from "@/pages/frontdesk/post-natal/PostNatal";
-import Immunization from "@/pages/frontdesk/immunization/Immunization";
-import FamilyPlanning from "@/pages/frontdesk/family-planning/FamilyPlanning";
-import FlagProfile from "@/pages/frontdesk/flag-profile/FlagProfile";
+import Notifications from "@frontdesk/pages/notifications/Notifications";
 
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboard/Dashboard";
@@ -54,8 +38,6 @@ import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
 import Verification from "@/pages/auth/components/Verification";
 import ForgotPassword from "@/pages/auth/components/ForgotPassword";
-import RegistrationLog from "@/pages/frontdesk/RegistrationLog";
-import RegistrationForm from "@/pages/frontdesk/Registration/RegistrationForm";
 import PreviewEntry from "@/pages/preview/PreviewEntry";
 import DoctorAdmission from "@/pages/doctor/admission/Admission";
 import DoctorDischarge from "@/pages/doctor/discharge/Discharge";
@@ -63,6 +45,15 @@ import DoctorAccountSettings from "@/pages/doctor/account/AccountSettings";
 import DoctorYourProfile from "@/pages/doctor/account/YourProfile";
 import DoctorFlagProfile from "@/pages/doctor/flag-profile/DoctorFlagProfile";
 import DoctorPreviousPatientRecords from "@/pages/doctor/previousPatientRecords/PreviousPatientRecords";
+import DoctorAdmissionReport from "@/pages/doctor/reports/AdmissionReport";
+import DoctorDischargeReport from "@/pages/doctor/reports/DischargeReport";
+import DoctorAnteNatalReport from "@/pages/doctor/reports/AnteNatalReport";
+import DoctorChildBirthReport from "@/pages/doctor/reports/ChildBirthReport";
+import DoctorImmunizationReport from "@/pages/doctor/reports/ImmunizationReport";
+import DoctorPostNatalReport from "@/pages/doctor/reports/PostNatalReport";
+import DoctorFamilyPlanningReport from "@/pages/doctor/reports/FamilyPlanningReport";
+import DoctorLogsReport from "@/pages/doctor/reports/DoctorLogsReport";
+import DoctorRegistrationReport from "@/pages/doctor/reports/RegistrationReport";
 
 function AuthLoadingScreen() {
   return (
@@ -101,29 +92,8 @@ const RoleBasedRoutes = () => {
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* Frontdesk */}
-      {user?.userRole === "frontdesk" && (
-        <Route path="/frontdesk" element={<FrontdeskLayout />}>
-          <Route index element={<FrontdeskDashboard />} />
-          <Route path="edit/:id" element={<EditPatient />} />
-          <Route path="visitation-log" element={<Visitation />} />
-          <Route path="registration" element={<RegistrationForm />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="manage-access" element={<ManageAccess />} />
-          <Route path="manage-card" element={<ManageCard />} />
-          <Route path="reminder" element={<ReminderPage />} />
-          <Route path="reminder/set-reminder" element={<SetReminder />} />
-          <Route path="reminder/view-schedule" element={<ViewReminder />} />
-          <Route path="doctor-assignments" element={<DoctorAssignment />} />
-          <Route path="ante-natal" element={<AnteNatal />} />
-          <Route path="child-birth" element={<ChildBirth />} />
-          <Route path="post-natal" element={<PostNatal />} />
-          <Route path="immunization" element={<Immunization />} />
-          <Route path="family-planning" element={<FamilyPlanning />} />
-          <Route path="registration-log" element={<RegistrationLog />} />
-          <Route path="flag-profile/:id" element={<FlagProfile />} />
-        </Route>
-      )}
+      {/* Frontdesk — available for preview without login */}
+      {FrontdeskRoutes()}
 
       {/* Nurse */}
       <Route path="/nurse" element={<NurseLayout />}>
@@ -166,6 +136,15 @@ const RoleBasedRoutes = () => {
           path="previous-patient-records/:patientId"
           element={<DoctorPreviousPatientRecords />}
         />
+        <Route path="reports/admission" element={<DoctorAdmissionReport />} />
+        <Route path="reports/discharge" element={<DoctorDischargeReport />} />
+        <Route path="ante-natal" element={<DoctorAnteNatalReport />} />
+        <Route path="child-birth" element={<DoctorChildBirthReport />} />
+        <Route path="immunization" element={<DoctorImmunizationReport />} />
+        <Route path="post-natal" element={<DoctorPostNatalReport />} />
+        <Route path="family-planning" element={<DoctorFamilyPlanningReport />} />
+        <Route path="doctor-assignments" element={<DoctorLogsReport />} />
+        <Route path="registration-log" element={<DoctorRegistrationReport />} />
       </Route>
 
       {/* Admin */}

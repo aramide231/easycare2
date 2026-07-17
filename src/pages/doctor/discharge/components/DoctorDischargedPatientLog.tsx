@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useAuth } from "@/context/AuthContext";
-import LogSearchBar from "@/pages/nurse/shared/components/LogSearchBar";
-import TablePagination from "@/pages/nurse/shared/components/TablePagination";
-import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
-import { getPatientTypeClass } from "@/pages/nurse/shared/lib/patientTypeStyles";
-import type { DischargedPatientRecord } from "@/pages/nurse/patient-management/discharge/data/mockDischargedPatients";
-import { usePatientManagement } from "@/pages/nurse/shared/context/PatientManagementContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
+import LogSearchBar from "@doctor-shared/components/LogSearchBar";
+import TablePagination from "@doctor-shared/components/TablePagination";
+import { getTotalPages } from "@doctor-shared/lib/pagination";
+import { getPatientTypeClass } from "@doctor-shared/lib/patientTypeStyles";
+import type { DischargedPatientRecord } from "@doctor-shared/discharge/data/mockDischargedPatients";
+import { usePatientManagement } from "@doctor-shared/context/PatientManagementContext";
 import {
   getRemarkClass,
   getRemarkDotClass,
-} from "@/pages/nurse/patient-management/discharge/lib/remarkStyles";
-import DischargeActionMenu from "@/pages/nurse/patient-management/discharge/components/DischargeActionMenu";
+} from "@doctor-shared/discharge/lib/remarkStyles";
+import DischargeActionMenu from "@doctor-shared/discharge/components/DischargeActionMenu";
 
 const PAGE_SIZE = 9;
 

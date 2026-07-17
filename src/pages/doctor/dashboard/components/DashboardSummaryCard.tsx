@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
-import cardPattern from "@/assets/image/dashboard-card-pattern.png";
-import notificationPattern from "@/assets/image/dashboard-card-pattern-notification.png";
+import { cn } from "@doctor-shared/lib/utils";
+import cardPattern from "@doctor-shared/assets/image/dashboard-card-pattern.png";
+import notificationPattern from "@doctor-shared/assets/image/dashboard-card-pattern-notification.png";
 
 type Variant = "dark" | "notification";
 

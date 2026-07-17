@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { startOfDay } from "@/lib/dateTime";
-export { parsePatientLastSeen, startOfDay as startOfDayDate } from "@/lib/dateTime";
+import { startOfDay } from "@doctor-shared/lib/dateTime";
+export { parsePatientLastSeen, startOfDay as startOfDayDate } from "@doctor-shared/lib/dateTime";
 
 export type DashboardDateRange = {
   startDate: Date;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, User } from "lucide-react";
-import type { AdmissionRecord } from "@/pages/nurse/patient-management/admission/data/mockAdmissions";
+import type { AdmissionRecord } from "@doctor-shared/admission/data/mockAdmissions";
 
 const TAKE_ACTION_OPTIONS = [
   { id: "absconded", label: "Absconded" },

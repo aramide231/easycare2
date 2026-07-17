@@ -7,7 +7,7 @@ import {
   isDateWithinRange,
   parsePatientLastSeen,
   type DateRangeValue,
-} from "@/lib/dateTime";
+} from "@doctor-shared/lib/dateTime";
 
 // type and datat check
 

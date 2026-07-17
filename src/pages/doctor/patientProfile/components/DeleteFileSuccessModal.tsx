@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import successIcon from "@/assets/image/Succes 2 (1).png";
+import successIcon from "@doctor-shared/assets/image/Succes 2 (1).png";
 
 type Props = {
   open: boolean;

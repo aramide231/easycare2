@@ -1,6 +1,6 @@
 import Topbar from "@/constant/topbar";
 import { Outlet } from "react-router-dom";
-import { PatientManagementProvider } from "@/pages/nurse/shared/context/PatientManagementContext";
+import { PatientManagementProvider } from "@doctor-shared/context/PatientManagementContext";
 import DoctorSidebar from "./doctor/components/Sidebar";
 
 const DoctorLayout = () => {

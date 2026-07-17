@@ -1,6 +1,6 @@
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import clientImage from "@/assets/image/haywhy.jpg";
+import clientImage from "@doctor-shared/assets/image/haywhy.jpg";
 import type { PreviousPatientSummary } from "../data/medicalHistorySeed";
 
 type Props = {

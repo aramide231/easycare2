@@ -1,4 +1,4 @@
-import Register from "@/pages/frontdesk/RegistrationLog/components/register";
+import Register from "@doctor-shared/reports/frontdesk/register";
 
 const RegistrationReport = () => <Register />;
 

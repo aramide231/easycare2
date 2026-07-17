@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { Upload, FileText, Image, X } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
 import { toast } from "react-toastify";
 import DeleteFileConfirmModal from "./DeleteFileConfirmModal";
 import DeleteFileSuccessModal from "./DeleteFileSuccessModal";

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { getActiveModuleRole } from "@/lib/authRoutes";
 import clientimage from "@/assets/image/haywhy.jpg";
 import TablePagination from "@/pages/nurse/shared/components/TablePagination";
 import { usePaginatedList } from "@/hooks/usePaginatedList";
@@ -35,6 +36,7 @@ const PatientSearchModal = ({
 }: Props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const anchorRect = useSearchAnchorPosition(anchorRef, open);
 
@@ -78,7 +80,7 @@ const PatientSearchModal = ({
   }, [query, setCurrentPage]);
 
   const handleSelect = (patient: Patient) => {
-    const role = user?.userRole?.toLowerCase() || "nurse";
+    const role = getActiveModuleRole(location.pathname, user?.userRole);
     navigate(`/${role}/patient-profile/${patient.patientId}`, {
       state: { patient },
     });

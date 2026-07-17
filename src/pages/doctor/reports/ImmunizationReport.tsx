@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from "react";
-import ExportButton from "@/constant/ExportButton";
-import LogSearchBar from "@/pages/nurse/shared/components/LogSearchBar";
-import TablePagination from "@/pages/nurse/shared/components/TablePagination";
-import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
-import { getPatientTypeClass } from "@/pages/nurse/shared/lib/patientTypeStyles";
+import ExportButton from "@doctor-shared/components/ExportButton";
+import LogSearchBar from "@doctor-shared/components/LogSearchBar";
+import TablePagination from "@doctor-shared/components/TablePagination";
+import { getTotalPages } from "@doctor-shared/lib/pagination";
+import { getPatientTypeClass } from "@doctor-shared/lib/patientTypeStyles";
 import ReportDateRangeFilter from "./components/ReportDateRangeFilter";
 import {
   IMMUNIZATION_REPORT_SEED,

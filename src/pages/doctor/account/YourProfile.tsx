@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import clientimage from "@/assets/image/haywhy.jpg";
+import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
 import AccountInformationTab from "./components/AccountInformationTab";
 import { useDoctorProfile } from "./useDoctorProfile";
 import type { DoctorProfile } from "./types";

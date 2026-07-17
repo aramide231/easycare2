@@ -9,7 +9,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@frontdesk': fileURLToPath(
+        new URL('./src/modules/frontdesk', import.meta.url),
+      ),
+      '@doctor-shared': fileURLToPath(
+        new URL('./src/pages/doctor/shared', import.meta.url),
+      ),
     }
   }
 })

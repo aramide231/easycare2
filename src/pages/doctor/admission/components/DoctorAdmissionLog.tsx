@@ -1,21 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useLocation } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import LogSearchBar from "@/pages/nurse/shared/components/LogSearchBar";
-import AdmissionActionMenu from "@/pages/nurse/patient-management/admission/components/AdmissionActionMenu";
-import AdmissionPreviewPanel from "@/pages/nurse/patient-management/admission/components/AdmissionPreviewPanel";
+import { useAuth } from "@doctor-shared/context/useAuth";
+import LogSearchBar from "@doctor-shared/components/LogSearchBar";
+import AdmissionActionMenu from "@doctor-shared/admission/components/AdmissionActionMenu";
+import AdmissionPreviewPanel from "@doctor-shared/admission/components/AdmissionPreviewPanel";
 import DoctorAssignPatientToWardModal from "./DoctorAssignPatientToWardModal";
-import AssignWardSuccessModal from "@/pages/nurse/patient-management/admission/components/AssignWardSuccessModal";
+import AssignWardSuccessModal from "@doctor-shared/admission/components/AssignWardSuccessModal";
 import DoctorTakeActionModal from "./DoctorTakeActionModal";
 import DoctorTakeActionSuccessModal from "./DoctorTakeActionSuccessModal";
-import { getTakeActionSuccessMessage } from "@/pages/nurse/patient-management/admission/data/takeActionOptions";
-import TablePagination from "@/pages/nurse/shared/components/TablePagination";
-import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
-import type { AdmissionRecord } from "@/pages/nurse/patient-management/admission/data/mockAdmissions";
-import { usePatientManagement } from "@/pages/nurse/shared/context/PatientManagementContext";
+import { getTakeActionSuccessMessage } from "@doctor-shared/admission/data/takeActionOptions";
+import TablePagination from "@doctor-shared/components/TablePagination";
+import { getTotalPages } from "@doctor-shared/lib/pagination";
+import type { AdmissionRecord } from "@doctor-shared/admission/data/mockAdmissions";
+import { usePatientManagement } from "@doctor-shared/context/PatientManagementContext";
 
-import { getPatientTypeClass } from "@/pages/nurse/shared/lib/patientTypeStyles";
+import { getPatientTypeClass } from "@doctor-shared/lib/patientTypeStyles";
 
 const PAGE_SIZE = 9;
 

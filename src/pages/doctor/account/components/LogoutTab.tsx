@@ -1,6 +1,6 @@
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
 
 const LogoutTab = () => {
   const { signOut } = useAuth();

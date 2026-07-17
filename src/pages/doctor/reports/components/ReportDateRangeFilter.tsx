@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Calendar } from "lucide-react";
 import { DateRange, RangeKeyDict } from "react-date-range";
-import { cn } from "@/lib/utils";
+import { cn } from "@doctor-shared/lib/utils";
 import {
   DEFAULT_REPORT_DATE_RANGE,
   type ReportDateRange,

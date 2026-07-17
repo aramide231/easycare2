@@ -1,4 +1,4 @@
-import AnteLog from "@/pages/frontdesk/ante-natal/components/AnteLog";
+import AnteLog from "@doctor-shared/reports/frontdesk/AnteLog";
 
 const AnteNatalReport = () => <AnteLog />;
 

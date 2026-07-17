@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@doctor-shared/lib/utils";
 import {
   setPendingDiagnosis,
   subscribeDiagnosisFormClear,

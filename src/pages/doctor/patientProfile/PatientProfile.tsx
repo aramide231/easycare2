@@ -21,18 +21,18 @@ import {
 } from "react-icons/fa";
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import clientimage from "@/assets/image/haywhy.jpg";
+import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
 import SelectCategoryCard from "./components/SelectCategoryCard";
 import CategoryFormAccordion from "./components/CategoryFormAccordion";
 import SpecialistConsultTypeSelector from "./components/SpecialistConsultTypeSelector";
 import { getSubCategories } from "./config/subCategoryMap";
-import ComingSoonPage from "@/components/ui/ComingSoonPage";
+import ComingSoonPage from "@doctor-shared/components/ComingSoonPage";
 import DoctorUploadedDocumentsSection from "./components/DoctorUploadedDocumentsSection";
 import {
   financialCategoryComponents,
   FINANCIAL_TABLE_KEYS,
 } from "./components/FinancialCategoryRenderer";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@doctor-shared/context/useAuth";
 import {
   areAllSectionsFilled,
   clearPendingSectionEntries,

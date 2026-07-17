@@ -1,4 +1,4 @@
-import PatientCard from "@/constant/patientCard";
+import PatientCard from "@doctor-shared/components/PatientCard";
 import CustomCalendar, {
   type DashboardDateRange,
 } from "./components/calendar";

@@ -1,4 +1,4 @@
-import PostRecord from "@/pages/frontdesk/post-natal/components/PostRecord";
+import PostRecord from "@doctor-shared/reports/frontdesk/PostRecord";
 
 const PostNatalReport = () => <PostRecord />;
 

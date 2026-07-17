@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import easyCareLogoFull from "@/assets/icon/Frame 121.svg";
-import hospitalLogo from "@/assets/icon/Frame 5.svg";
-import EasyCareMark from "@/layouts/nurse/components/EasyCareMark";
-import ChevronToggle from "@/layouts/nurse/components/ChevronToggle";
+import easyCareLogoFull from "@doctor-shared/assets/icon/Frame 121.svg";
+import hospitalLogo from "@doctor-shared/assets/icon/Frame 5.svg";
+import EasyCareMark from "@doctor-shared/components/layout/EasyCareMark";
+import ChevronToggle from "@doctor-shared/components/layout/ChevronToggle";
 import { useSidebar } from "@/layouts/nurse/hooks/useSidebar";
 import {
   ACCOUNT,
   MAIN_MENU,
   PATIENT_MANAGEMENT,
+  REPORTS,
   type NavItem,
 } from "../config/doctorNavItems";
 
@@ -18,7 +19,7 @@ type SidebarProp = NavItem & {
   isCollapsed: boolean;
 };
 
-type MenuSection = "main" | "patientManagement" | "account";
+type MenuSection = "main" | "patientManagement" | "account" | "reports";
 
 export default function DoctorSidebar() {
   const location = useLocation();
@@ -29,6 +30,7 @@ export default function DoctorSidebar() {
     main: true,
     patientManagement: true,
     account: true,
+    reports: false,
   });
 
   const toggleMenu = (menuName: MenuSection) => {
@@ -55,6 +57,20 @@ export default function DoctorSidebar() {
 
     if (location.pathname.startsWith("/doctor/account")) {
       setOpenMenus((prev) => ({ ...prev, account: true }));
+    }
+
+    const reportPaths = [
+      "/doctor/reports/",
+      "/doctor/child-birth",
+      "/doctor/immunization",
+      "/doctor/ante-natal",
+      "/doctor/post-natal",
+      "/doctor/family-planning",
+      "/doctor/doctor-assignments",
+      "/doctor/registration-log",
+    ];
+    if (reportPaths.some((path) => location.pathname.startsWith(path))) {
+      setOpenMenus((prev) => ({ ...prev, reports: true }));
     }
   }, [location.pathname]);
 
@@ -224,6 +240,7 @@ export default function DoctorSidebar() {
           PATIENT_MANAGEMENT,
         )}
         {renderSection("Account", "account", ACCOUNT)}
+        {renderSection("Reports", "reports", REPORTS)}
       </nav>
     </aside>
   );
