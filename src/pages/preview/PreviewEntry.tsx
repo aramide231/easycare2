@@ -7,6 +7,7 @@ const modulePaths: Record<PreviewModule, string> = {
   frontdesk: "/frontdesk",
   nurse: "/nurse/dashboard",
   doctor: "/doctor",
+  hmo: "/hmo/dashboard",
 };
 
 const PreviewEntry = () => {

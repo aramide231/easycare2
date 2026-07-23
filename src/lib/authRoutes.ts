@@ -3,6 +3,7 @@ export const ROLE_HOME_PATHS: Record<string, string> = {
   nurse: "/nurse/dashboard",
   doctor: "/doctor",
   admin: "/admin",
+  hmo: "/hmo/dashboard",
 };
 
 export function getRoleHomePath(role: string): string {
@@ -19,6 +20,7 @@ export function getActiveModuleRole(
   if (pathname.startsWith("/doctor")) return "doctor";
   if (pathname.startsWith("/nurse")) return "nurse";
   if (pathname.startsWith("/frontdesk")) return "frontdesk";
+  if (pathname.startsWith("/hmo")) return "hmo";
   if (pathname.startsWith("/admin")) return "admin";
   return userRole?.toLowerCase() || "nurse";
 }

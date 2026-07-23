@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { FrontdeskRoutes } from "@/modules/frontdesk";
+import { HmoRoutes } from "@/modules/hmo";
 import NurseLayout from "../layouts/NurseLayout";
 import DoctorLayout from "../layouts/DoctorLayout";
 import AdminLayout from "../layouts/AdminLayout";
@@ -94,6 +95,9 @@ const RoleBasedRoutes = () => {
 
       {/* Frontdesk — available for preview without login */}
       {FrontdeskRoutes()}
+
+      {/* HMO — available for preview without login */}
+      {HmoRoutes()}
 
       {/* Nurse */}
       <Route path="/nurse" element={<NurseLayout />}>

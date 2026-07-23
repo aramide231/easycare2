@@ -6,7 +6,7 @@ export const COUNTRY_PHONE_LENGTH: { [key: string]: number } = {
   au: 9,
 };
 
-export const USER_ROLES = ["frontdesk", "nurse", "doctor", "admin"];
+export const USER_ROLES = ["frontdesk", "nurse", "doctor", "admin", "hmo"];
 
 // Kept from your original code in case your API still requires them elsewhere
 export const USER_DESIGNATIONS = [
