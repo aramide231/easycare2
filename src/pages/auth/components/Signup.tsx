@@ -11,7 +11,7 @@ interface FormData {
   lastName: string;
   email: string;
   username: string;
-  userRole: "frontdesk" | "nurse" | "doctor" | "admin";
+  userRole: "frontdesk" | "nurse" | "doctor" | "admin" | "hmo";
   phoneNumber: string;
   password: string;
   confirmPassword: string;
@@ -78,7 +78,7 @@ const SignupForm = () => {
     setValue("phoneNumber", trimmedValue, { shouldValidate: true });
   };
 
-  const userRoles = ["frontdesk", "nurse", "doctor", "admin"];
+  const userRoles = ["frontdesk", "nurse", "doctor", "admin", "hmo"];
 
   const userDesignations = [
     "Accountant",

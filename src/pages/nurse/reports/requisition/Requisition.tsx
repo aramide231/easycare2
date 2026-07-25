@@ -1,7 +1,5 @@
-import ComingSoonPage from "@/components/ui/ComingSoonPage";
+import RequisitionLog from "./components/RequisitionLog";
 
-const Requisition = () => {
-  return <ComingSoonPage title="Requisition" emphasized />;
-};
+const Requisition = () => <RequisitionLog />;
 
 export default Requisition;

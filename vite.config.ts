@@ -13,6 +13,9 @@ export default defineConfig({
       '@frontdesk': fileURLToPath(
         new URL('./src/modules/frontdesk', import.meta.url),
       ),
+      '@hmo': fileURLToPath(
+        new URL('./src/modules/hmo', import.meta.url),
+      ),
       '@doctor-shared': fileURLToPath(
         new URL('./src/pages/doctor/shared', import.meta.url),
       ),

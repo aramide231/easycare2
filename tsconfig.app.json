@@ -19,6 +19,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@frontdesk/*": ["./src/modules/frontdesk/*"],
+      "@hmo/*": ["./src/modules/hmo/*"],
       "@doctor-shared/*": ["./src/pages/doctor/shared/*"]
     }
   },

@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 
-export type PreviewModule = "frontdesk" | "nurse" | "doctor";
+export type PreviewModule = "frontdesk" | "nurse" | "doctor" | "hmo";
 
 type Props = {
   onSelect: (module: PreviewModule) => void;
@@ -30,6 +30,12 @@ const moduleOptions: {
     description: "Review the doctor module and clinical workflows.",
     icon: "mdi:doctor",
   },
+  {
+    id: "hmo",
+    title: "HMO",
+    description: "Review insurance registration, claims, and billing workflows.",
+    icon: "mdi:shield-account",
+  },
 ];
 
 const ModuleSelectionModal = ({ onSelect }: Props) => {
@@ -56,7 +62,7 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {moduleOptions.map((option) => (
             <button
               key={option.id}

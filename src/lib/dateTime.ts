@@ -125,6 +125,12 @@ export function mockVisitAt(daysAgo: number, minuteOffset = 0) {
   };
 }
 
+/** Mock visit dates that always fall within the current calendar month. */
+export function mockVisitAtCurrentMonth(index: number, minuteOffset = 0) {
+  const dayOfMonth = new Date().getDate();
+  return mockVisitAt(index % Math.max(dayOfMonth, 1), minuteOffset);
+}
+
 export function mockDateTimeDaysAgo(daysAgo: number): string {
   return formatLogDateTime(dateAtDaysAgo(daysAgo));
 }
