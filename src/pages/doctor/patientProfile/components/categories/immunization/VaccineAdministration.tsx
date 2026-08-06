@@ -225,12 +225,14 @@ const VaccineAdministration = () => {
           value={vaccineRow.dosage}
           onChange={(value) => handleRowChange("dosage", value)}
           options={DOSAGE_OPTIONS}
+          placeholder="-Select dosage-"
         />
         <SelectField
           label="Administration Route"
           value={vaccineRow.route}
           onChange={(value) => handleRowChange("route", value)}
           options={ROUTE_OPTIONS}
+          placeholder="-Select admin route-"
         />
       </div>
 
@@ -240,6 +242,7 @@ const VaccineAdministration = () => {
           value={vaccineRow.site}
           onChange={(value) => handleRowChange("site", value)}
           options={SITE_OPTIONS}
+          placeholder="-Select site-"
         />
 
         <div>

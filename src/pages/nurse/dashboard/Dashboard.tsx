@@ -43,7 +43,18 @@ const NurseDashboard = () => {
           onChange={setDateRange}
           className="w-full shrink-0"
         />
-        {selectedPatient && <PatientCard patient={selectedPatient} />}
+        {selectedPatient ? (
+          <PatientCard patient={selectedPatient} />
+        ) : (
+          <div className="flex min-h-[16rem] flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center shadow-sm">
+            <p className="text-sm font-medium text-gray-800">
+              No patient selected
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-gray-500">
+              Select a patient from the log to view their card and details here.
+            </p>
+          </div>
+        )}
       </div>
       <ToastContainer position="bottom-center" autoClose={2500} />
     </div>

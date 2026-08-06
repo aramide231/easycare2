@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ElementType } from "react";
 import {
   Bell,
+  Brain,
+  ChartColumn,
   CreditCard,
   FolderOpen,
   HandHelping,
@@ -36,11 +38,29 @@ export const AppGridIcon = () => (
 type AppItem = {
   id: string;
   label: string;
+  subtitle?: string;
   icon: ElementType;
 };
 
 const APP_ITEMS: AppItem[] = [
-  { id: "ai", label: "EasyCare AI", icon: Sparkles },
+  {
+    id: "ai",
+    label: "EasyCare AI",
+    subtitle: "Artificial Intelligence",
+    icon: Sparkles,
+  },
+  {
+    id: "bi",
+    label: "EasyCare BI",
+    subtitle: "Business Intelligence",
+    icon: ChartColumn,
+  },
+  {
+    id: "ci",
+    label: "EasyCare CI",
+    subtitle: "Customer Intelligence",
+    icon: Brain,
+  },
   { id: "chats", label: "Chats", icon: MessageCircleMore },
   { id: "alerts", label: "Alerts", icon: Bell },
   { id: "giver", label: "EasyCare Giver", icon: HandHelping },
@@ -102,6 +122,11 @@ const AppGridMenu = () => {
                   </div>
                   <span className="max-w-[5.5rem] text-center text-[11px] font-medium leading-tight text-gray-800">
                     {item.label}
+                    {item.subtitle ? (
+                      <span className="mt-0.5 block text-[9px] font-normal text-gray-500">
+                        {item.subtitle}
+                      </span>
+                    ) : null}
                   </span>
                 </button>
               );

@@ -112,7 +112,7 @@ const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex items-center rounded-full border border-[#573FD1] px-3 py-1.5 text-sm font-medium text-[#573FD1]"
+        className="flex items-center rounded-lg border border-[#573FD1] px-3 py-1.5 text-sm font-medium text-[#573FD1]"
       >
         <Calendar className="mr-2 h-4 w-4 shrink-0" />
         {formatRangeLabel(startDate, endDate)}

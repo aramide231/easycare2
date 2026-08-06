@@ -1,4 +1,5 @@
-import { BedDouble, ClipboardPen } from "lucide-react";
+import { BedDouble, ClipboardList, ClipboardPen } from "lucide-react";
+import { toast } from "react-toastify";
 
 type Props = {
   onAssignToWard: () => void;
@@ -8,7 +9,7 @@ type Props = {
 const AdmissionActionMenu = ({ onAssignToWard, onTakeAction }: Props) => {
   return (
     <div
-      className="absolute right-0 top-full z-30 mt-1 min-w-[11.5rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+      className="absolute right-0 top-full z-30 mt-1 min-w-[12.5rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
       role="menu"
     >
       <button
@@ -20,8 +21,27 @@ const AdmissionActionMenu = ({ onAssignToWard, onTakeAction }: Props) => {
           onAssignToWard();
         }}
       >
-        <BedDouble className="h-[18px] w-[18px] shrink-0 text-gray-500" strokeWidth={1.75} />
+        <BedDouble
+          className="h-[18px] w-[18px] shrink-0 text-gray-500"
+          strokeWidth={1.75}
+        />
         Assign to Ward
+      </button>
+      <div className="mx-3 border-t border-gray-100" />
+      <button
+        type="button"
+        role="menuitem"
+        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-600 hover:bg-gray-50"
+        onClick={(e) => {
+          e.stopPropagation();
+          toast.info("Nursing Care Plan will open here.");
+        }}
+      >
+        <ClipboardList
+          className="h-[18px] w-[18px] shrink-0 text-gray-500"
+          strokeWidth={1.75}
+        />
+        Nursing Care Plan
       </button>
       <div className="mx-3 border-t border-gray-100" />
       <button
@@ -33,7 +53,10 @@ const AdmissionActionMenu = ({ onAssignToWard, onTakeAction }: Props) => {
           onTakeAction();
         }}
       >
-        <ClipboardPen className="h-[18px] w-[18px] shrink-0 text-gray-500" strokeWidth={1.75} />
+        <ClipboardPen
+          className="h-[18px] w-[18px] shrink-0 text-gray-500"
+          strokeWidth={1.75}
+        />
         Take Action
       </button>
     </div>

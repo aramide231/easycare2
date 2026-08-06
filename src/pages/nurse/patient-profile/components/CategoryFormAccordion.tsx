@@ -1,10 +1,10 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { resolveCategoryForm } from "@/pages/doctor/patientProfile/lib/resolveCategoryForm";
 import type { SubCategory } from "@/pages/doctor/patientProfile/config/subCategoryMap";
 
 type Props = {
   sections: SubCategory[];
-  expandedCategory: string | null;
+  expandedCategories: string[];
   onToggle: (label: string) => void;
   /** When set, uses category-specific forms (e.g. Gen Consult Figma). */
   selectedCategory?: string | null;
@@ -12,14 +12,14 @@ type Props = {
 
 const CategoryFormAccordion = ({
   sections,
-  expandedCategory,
+  expandedCategories,
   onToggle,
   selectedCategory = null,
 }: Props) => {
   return (
     <div className="flex w-full flex-col divide-y divide-gray-200">
       {sections.map((section) => {
-        const isOpen = expandedCategory === section.label;
+        const isOpen = expandedCategories.includes(section.label);
         const form = resolveCategoryForm(selectedCategory, section.label);
 
         return (
@@ -33,23 +33,25 @@ const CategoryFormAccordion = ({
                 {section.label}
               </span>
               <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
-                {isOpen ? (
-                  <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
-                )}
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                  aria-hidden
+                />
               </div>
             </button>
 
-            {isOpen && (
-              <div className="pt-3">
-                {form ?? (
-                  <p className="px-1 py-2 text-sm text-gray-500">
-                    Form for this section is not available yet.
-                  </p>
-                )}
-              </div>
-            )}
+            <div
+              className={`pt-3 ${isOpen ? "" : "hidden"}`}
+              aria-hidden={!isOpen}
+            >
+              {form ?? (
+                <p className="px-1 py-2 text-sm text-gray-500">
+                  Form for this section is not available yet.
+                </p>
+              )}
+            </div>
           </div>
         );
       })}

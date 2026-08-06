@@ -91,13 +91,14 @@ export function formatTopBarDateTime(date: Date): string {
 }
 
 export function formatClockDateTime(date: Date): string {
-  const day = date.getDate();
+  const day = String(date.getDate()).padStart(2, "0");
   const month = date.toLocaleString("en-US", { month: "long" });
   const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, "0");
+  const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");
-  const seconds = date.getSeconds().toString().padStart(2, "0");
-  return `${day}${getOrdinalSuffix(day)} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+  const hour12 = hours % 12 || 12;
+  const meridiem = hours >= 12 ? "PM" : "AM";
+  return `${day}-${month}-${year} | ${String(hour12).padStart(2, "0")}:${minutes}${meridiem}`;
 }
 
 export function dateAtDaysAgo(

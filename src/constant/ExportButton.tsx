@@ -17,7 +17,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({
       <button
         type="button"
         onClick={() => setIsPopupOpen(true)}
-        className="flex items-center rounded-full border border-[#573FD1] px-3 py-1.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-50"
+        className="flex items-center rounded-lg border border-[#573FD1] px-3 py-1.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-50"
       >
         <svg
           className="mr-2 h-4 w-4 shrink-0"
