@@ -209,7 +209,7 @@ function getWardGroupOrder(wardNames: Iterable<string>): string[] {
   return ordered;
 }
 
-/** Keeps existing ward groups together; beds within each ward sort high → low. */
+/** Keeps existing ward groups together; beds within each ward sort low → high (Bed 1 first). */
 export function sortWardBedsGrouped(beds: WardBed[]): WardBed[] {
   const byWard = new Map<string, WardBed[]>();
 
@@ -227,7 +227,7 @@ export function sortWardBedsGrouped(beds: WardBed[]): WardBed[] {
     if (!group) continue;
 
     group.sort(
-      (a, b) => parseBedNumber(b.bedNumber) - parseBedNumber(a.bedNumber),
+      (a, b) => parseBedNumber(a.bedNumber) - parseBedNumber(b.bedNumber),
     );
     sorted.push(...group);
   }

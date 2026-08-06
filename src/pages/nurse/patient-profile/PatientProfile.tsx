@@ -37,17 +37,17 @@ const NursePatientProfile = () => {
 
   const [step, setStep] = useState<number>(1);
   const [flagPanelOpen, setFlagPanelOpen] = useState(false);
+  const [flagCount] = useState(4);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(
-    null
-  );
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [consultationType, setConsultationType] = useState("dental");
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
 
   const activeFormSections = getSubCategories(selectedCategory);
   const isComingSoonCategory =
     selectedCategory === "Family Planning" ||
-    selectedCategory === "Fertility Clinics";
+    selectedCategory === "Fertility Clinics" ||
+    selectedCategory === "Post Natal Care";
 
   const categories = [
     {
@@ -93,13 +93,17 @@ const NursePatientProfile = () => {
   ];
 
   const toggleCategory = (label: string) => {
-    setExpandedCategory((prev) => (prev === label ? null : label));
+    setExpandedCategories((prev) =>
+      prev.includes(label)
+        ? prev.filter((item) => item !== label)
+        : [...prev, label],
+    );
   };
 
   const handleStepChange = (nextStep: number) => {
     setStep(nextStep);
     setSelectedCategory(null);
-    setExpandedCategory(null);
+    setExpandedCategories([]);
   };
 
   const handleConfirm = () => {
@@ -108,6 +112,14 @@ const NursePatientProfile = () => {
     } else if (step === 2) {
       toast.success("Financial information confirmed.");
     }
+  };
+
+  const handlePreview = () => {
+    if (!selectedCategory) {
+      toast.info("Select a category to preview.");
+      return;
+    }
+    toast.info(`Preview ready for ${selectedCategory}.`);
   };
 
   const handleSubmit = () => {
@@ -282,10 +294,15 @@ const NursePatientProfile = () => {
           <button
             type="button"
             onClick={() => setFlagPanelOpen(true)}
-            className="flex w-full items-center gap-2 text-sm font-medium text-orange-500 hover:text-orange-600"
+            className="flex w-full items-center justify-between gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2.5 text-sm font-medium text-orange-600 transition hover:bg-orange-100"
           >
-            <FaFlag className="text-base" />
-            Flag Patient
+            <span className="flex items-center gap-2">
+              <FaFlag className="text-base" />
+              Flag Profile
+            </span>
+            <span className="rounded-md bg-white px-2 py-0.5 text-xs font-semibold text-orange-600 ring-1 ring-orange-200">
+              {flagCount}
+            </span>
           </button>
           <button
             type="button"
@@ -405,7 +422,7 @@ const NursePatientProfile = () => {
                     selected={selectedCategory === item.label}
                     onClick={() => {
                       setSelectedCategory(item.label);
-                      setExpandedCategory(null);
+                      setExpandedCategories([]);
                     }}
                   />
                 ))}
@@ -436,7 +453,14 @@ const NursePatientProfile = () => {
                     </p>
                   </div>
                 ) : isComingSoonCategory ? (
-                  <ComingSoonPage title={selectedCategory} emphasized />
+                  <ComingSoonPage
+                    title={
+                      selectedCategory === "Post Natal Care"
+                        ? "Info Coming Soon"
+                        : selectedCategory
+                    }
+                    emphasized
+                  />
                 ) : activeFormSections.length === 0 ? (
                   <div className="flex flex-1 items-center justify-center p-8 text-center text-sm text-gray-500">
                     Forms for {selectedCategory} will be added soon.
@@ -444,7 +468,7 @@ const NursePatientProfile = () => {
                 ) : (
                   <CategoryFormAccordion
                     sections={activeFormSections}
-                    expandedCategory={expandedCategory}
+                    expandedCategories={expandedCategories}
                     onToggle={toggleCategory}
                     selectedCategory={selectedCategory}
                   />
@@ -467,7 +491,7 @@ const NursePatientProfile = () => {
                     selected={selectedCategory === item.label}
                     onClick={() => {
                       setSelectedCategory(item.label);
-                      setExpandedCategory(null);
+                      setExpandedCategories([]);
                     }}
                   />
                 ))}
@@ -517,7 +541,19 @@ const NursePatientProfile = () => {
           )}
         </div>
 
-        <div className="mt-4 flex shrink-0 items-center justify-end border-t border-gray-100 pt-4">
+        <div className="mt-4 flex shrink-0 items-center justify-end gap-3 border-t border-gray-100 pt-4">
+          {step === 1 &&
+            selectedCategory &&
+            !isComingSoonCategory &&
+            activeFormSections.length > 0 && (
+              <button
+                type="button"
+                className="rounded-lg border border-[#573FD1] bg-white px-10 py-2.5 text-sm font-semibold text-[#573FD1] shadow-sm hover:bg-purple-50"
+                onClick={handlePreview}
+              >
+                Preview
+              </button>
+            )}
           <button
             type="button"
             className="rounded-lg bg-[#573FD1] px-10 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#4a35b0]"

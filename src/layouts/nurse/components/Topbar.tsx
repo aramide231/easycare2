@@ -371,7 +371,7 @@ function PatientSearchModal({
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search Patients ID"
+              placeholder="Search with Surname, Other Names, Unique ID, Enrollee Policy/Code Number or Telephone Number"
               className="h-12 w-full rounded-lg border border-gray-200 bg-white pl-14 pr-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-2 focus:border-[#573FD1] focus:outline-none"
             />
           </div>
@@ -460,7 +460,7 @@ function HeaderPatientSearch({ className = "" }: { className?: string }) {
           onKeyDown={(e) => {
             if (e.key === "Enter") openSearch();
           }}
-          placeholder="Search Patients ID"
+          placeholder="Search with Surname, Other Names, Unique ID, Enrollee Policy/Code Number or Telephone Number"
           className="h-12 w-full cursor-pointer rounded-lg border border-gray-200 bg-white pl-14 pr-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-2 focus:border-[#573FD1] focus:outline-none"
         />
       </div>

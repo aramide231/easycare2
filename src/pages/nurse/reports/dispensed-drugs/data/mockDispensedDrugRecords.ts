@@ -38,7 +38,7 @@ export type DispensedMedicationRow = DispensedVisitRecord & {
 
 export function formatMedicationLine(med: DispensedMedicationLine): string {
   const label = med.strength ? `${med.name} ${med.strength}` : med.name;
-  return `${label} x ${med.dosage} x ${med.interval} x ${med.duration} x ${med.qty}`;
+  return `${label} x ${med.dosage} x ${med.interval} x ${med.duration} = ${med.qty}`;
 }
 
 const ayoMedications: DispensedMedicationLine[] = [

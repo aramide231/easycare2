@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import emptyNotification from "@frontdesk/assets/image/empty-notification.png";
+import { getActiveModuleRole } from "@/lib/authRoutes";
+import { useAuth } from "@/context/AuthContext";
+import { useLocation } from "react-router-dom";
 
 type Patient = {
   id: number;
@@ -18,10 +22,13 @@ type Patient = {
 };
 
 const NotificationTable: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPatientId] = useState<number | null>(null); // omit setter
-  // const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null); // commented out unused setter
-
+  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
+    null,
+  );
 
   const [patients, setPatients] = useState<Patient[]>([
     {
@@ -172,6 +179,21 @@ const NotificationTable: React.FC = () => {
 
   const handleDelete = (id: number) => {
     setPatients((prev) => prev.filter((p) => p.id !== id));
+    if (selectedPatientId === id) setSelectedPatientId(null);
+  };
+
+  const handleViewProfile = (patient: Patient) => {
+    const role = getActiveModuleRole(location.pathname, user?.userRole);
+    const [firstName, ...rest] = patient.name.split(" ");
+    navigate(`/${role}/patient-profile/${patient.patientId}`, {
+      state: {
+        patient: {
+          ...patient,
+          firstName,
+          lastName: rest.join(" ") || firstName,
+        },
+      },
+    });
   };
 
   const filteredPatients = patients.filter((patient) => {
@@ -223,7 +245,12 @@ const NotificationTable: React.FC = () => {
               {(searchTerm ? filteredPatients : patients).map((patient) => (
                 <tr
                   key={patient.id}
-                  className="hover:bg-gray-50 border-b border-gray-200"
+                  className={`border-b border-gray-200 transition ${
+                    selectedPatientId === patient.id
+                      ? "bg-purple-50 ring-1 ring-inset ring-[#573FD1]/30"
+                      : "hover:bg-gray-50"
+                  }`}
+                  onClick={() => setSelectedPatientId(patient.id)}
                 >
                   <td className="px-4 py-3">{patient.id}</td>
 
@@ -269,12 +296,30 @@ const NotificationTable: React.FC = () => {
                     {patient.staffName}
                   </td>
 
-                  <td className="px-4 py-3 text-red-500 cursor-pointer">
-                    <Trash2
-                      size={18}
-                      className="hover:text-red-700"
-                      onClick={() => handleDelete(patient.id)}
-                    />
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        className="text-sm font-medium text-[#573FD1] underline hover:text-[#4a35b8]"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewProfile(patient);
+                        }}
+                      >
+                        View Px Profile
+                      </button>
+                      <button
+                        type="button"
+                        className="text-red-500 hover:text-red-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(patient.id);
+                        }}
+                        aria-label="Delete notification"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

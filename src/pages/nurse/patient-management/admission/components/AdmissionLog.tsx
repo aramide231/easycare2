@@ -208,7 +208,7 @@ const AdmissionLog = () => {
                         setOpenActionMenuId(null);
                       }}
                     >
-                      Review
+                      Preview
                     </button>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">

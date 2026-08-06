@@ -16,15 +16,16 @@ export default function Clock() {
     return () => clearInterval(timer);
   }, []);
 
+  const [datePart, timePart] = currentTime.split(" | ");
+
   return (
     <div className="flex items-center justify-center whitespace-nowrap">
       <p className="text-center text-sm font-medium text-gray-600">
-        {currentTime ? (
+        {datePart}
+        {timePart ? (
           <>
-            {currentTime.split(",")[0]},
-            <span className="ml-1 text-gray-500">
-              {currentTime.split(",")[1]}
-            </span>
+            <span className="mx-1 text-gray-400">|</span>
+            <span className="text-gray-500">{timePart}</span>
           </>
         ) : null}
       </p>

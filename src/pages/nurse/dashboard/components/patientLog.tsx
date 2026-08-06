@@ -372,6 +372,17 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                             </button>
                             <button
                               className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setShowOptions(null);
+                                navigate("/nurse/admission", {
+                                  state: { admitPatient: patient },
+                                });
+                              }}
+                            >
+                              Admit
+                            </button>
+                            <button
+                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
                               onClick={() => handleFlagPatient(patient)}
                             >
                               {patient.flagged

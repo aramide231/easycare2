@@ -206,13 +206,21 @@ export default function Stage2Pushing() {
 
         <div className="min-w-0">
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            Date + Time of Delivery
+            Date of Delivery
           </label>
           <div className="relative">
             <input
-              type="datetime-local"
-              value={stageTwoForm.deliveryDateTime || ""}
-              onChange={(e) => handleChange("deliveryDateTime", e.target.value)}
+              type="date"
+              value={stageTwoForm.deliveryDate || ""}
+              onChange={(e) => {
+                const nextDate = e.target.value;
+                handleChange("deliveryDate", nextDate);
+                const time = stageTwoForm.deliveryTime || "00:00";
+                handleChange(
+                  "deliveryDateTime",
+                  nextDate ? `${nextDate}T${time}` : "",
+                );
+              }}
               className={`${formFieldInputClass} pr-10`}
             />
             <Calendar
@@ -220,6 +228,26 @@ export default function Stage2Pushing() {
               aria-hidden
             />
           </div>
+        </div>
+
+        <div className="min-w-0">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Time of Delivery
+          </label>
+          <input
+            type="time"
+            value={stageTwoForm.deliveryTime || ""}
+            onChange={(e) => {
+              const nextTime = e.target.value;
+              handleChange("deliveryTime", nextTime);
+              const date = stageTwoForm.deliveryDate || "";
+              handleChange(
+                "deliveryDateTime",
+                date && nextTime ? `${date}T${nextTime}` : "",
+              );
+            }}
+            className={formFieldInputClass}
+          />
         </div>
 
         <div className="col-span-2 min-w-0">

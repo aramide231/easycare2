@@ -117,7 +117,7 @@ const DispensedDrugsLog = () => {
             Dispensed Med. Logs
           </h1>
           <LogSearchBar
-            placeholder="Search patient name as stored on the database"
+            placeholder="Search Here"
             value={search}
             onChange={(value) => {
               setSearch(value);

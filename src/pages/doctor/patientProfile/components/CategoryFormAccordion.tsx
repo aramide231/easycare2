@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { categoryComponents } from "./CategoryRenderer";
 import ImmunizationVitalSigns from "./categories/immunization/ImmunizationVitalSigns";
 import GenConsultVitalSigns from "./categories/genConsult/GenConsultVitalSigns";
@@ -77,11 +77,12 @@ const CategoryFormAccordion = ({
                 {section.label}
               </span>
               <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
-                {isOpen ? (
-                  <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
-                )}
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                  aria-hidden
+                />
               </div>
             </button>
 
