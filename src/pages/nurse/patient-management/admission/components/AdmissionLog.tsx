@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import ComingSoonPage from "@/components/ui/ComingSoonPage";
 import LogSearchBar from "@/pages/nurse/shared/components/LogSearchBar";
 import AdmissionActionMenu from "./AdmissionActionMenu";
 import AdmissionPreviewPanel from "./AdmissionPreviewPanel";
@@ -19,20 +22,27 @@ import { PAGE_SIZE } from "@/constant/pagination";
 
 const AdmissionLog = () => {
   const { user } = useAuth();
-  const { admissions, assignPatientToWard, dischargeFromAdmission } =
-    usePatientManagement();
+  const location = useLocation();
+  const {
+    admissions,
+    admitPatient,
+    assignPatientToWard,
+    dischargeFromAdmission,
+  } = usePatientManagement();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
   const [openActionMenuId, setOpenActionMenuId] = useState<number | null>(null);
   const actionMenuRef = useRef<HTMLDivElement | null>(null);
   const [previewPatient, setPreviewPatient] = useState<AdmissionRecord | null>(
-    null
+    null,
   );
   const [assignPatient, setAssignPatient] = useState<AdmissionRecord | null>(
-    null
+    null,
   );
   const [takeActionPatient, setTakeActionPatient] =
+    useState<AdmissionRecord | null>(null);
+  const [carePlanPatient, setCarePlanPatient] =
     useState<AdmissionRecord | null>(null);
   const [assignSuccess, setAssignSuccess] = useState<{
     patientName: string;
@@ -43,12 +53,14 @@ const AdmissionLog = () => {
     patientName: string;
     message: string;
   } | null>(null);
+  const admitHandledRef = useRef<string | null>(null);
 
   const isAdmissionOverlayOpen =
     assignPatient !== null ||
     takeActionPatient !== null ||
     takeActionSuccess !== null ||
-    assignSuccess !== null;
+    assignSuccess !== null ||
+    carePlanPatient !== null;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,6 +74,36 @@ const AdmissionLog = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const incoming = (
+      location.state as { admitPatient?: Record<string, unknown> } | null
+    )?.admitPatient;
+    if (!incoming?.patientId) return;
+
+    const key = String(incoming.patientId);
+    if (admitHandledRef.current === key) return;
+    admitHandledRef.current = key;
+
+    const performedBy = user?.fullName ?? "Unknown User";
+    const admitted = admitPatient(
+      {
+        name: String(incoming.name ?? ""),
+        patientId: String(incoming.patientId ?? ""),
+        phoneNumber: String(incoming.phoneNumber ?? ""),
+        gender: String(incoming.gender ?? ""),
+        patientType: String(incoming.patientType ?? "PRIVATE"),
+        age: Number(incoming.age ?? 0),
+        visitType: String(incoming.visitType ?? ""),
+      },
+      performedBy,
+    );
+
+    if (admitted) {
+      setSelectedRowId(admitted.id);
+      toast.success(`${admitted.name} admitted successfully.`);
+    }
+  }, [admitPatient, location.state, user?.fullName]);
 
   const filtered = admissions.filter((row) => {
     const q = searchTerm.toLowerCase();
@@ -182,7 +224,7 @@ const AdmissionLog = () => {
                   <td className="whitespace-nowrap px-4 py-3">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-medium ${getPatientTypeClass(
-                        row.patientType
+                        row.patientType,
                       )}`}
                     >
                       {row.patientType}
@@ -216,9 +258,7 @@ const AdmissionLog = () => {
                   </td>
                   <td className="relative whitespace-nowrap px-4 py-3 text-right">
                     <div
-                      ref={
-                        openActionMenuId === row.id ? actionMenuRef : null
-                      }
+                      ref={openActionMenuId === row.id ? actionMenuRef : null}
                       className="relative inline-block"
                     >
                       <button
@@ -228,7 +268,7 @@ const AdmissionLog = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setOpenActionMenuId((prev) =>
-                            prev === row.id ? null : row.id
+                            prev === row.id ? null : row.id,
                           );
                         }}
                       >
@@ -239,6 +279,10 @@ const AdmissionLog = () => {
                           <AdmissionActionMenu
                             onAssignToWard={() => {
                               setAssignPatient(row);
+                              setOpenActionMenuId(null);
+                            }}
+                            onNursingCarePlan={() => {
+                              setCarePlanPatient(row);
                               setOpenActionMenuId(null);
                             }}
                             onTakeAction={() => {
@@ -314,6 +358,26 @@ const AdmissionLog = () => {
           open={Boolean(takeActionSuccess)}
           onDismiss={() => setTakeActionSuccess(null)}
         />
+      )}
+
+      {carePlanPatient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Nursing Care Plan — {carePlanPatient.name}
+              </h2>
+              <button
+                type="button"
+                className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => setCarePlanPatient(null)}
+              >
+                Close
+              </button>
+            </div>
+            <ComingSoonPage title="Nursing Care Plan" emphasized />
+          </div>
+        </div>
       )}
     </div>
   );

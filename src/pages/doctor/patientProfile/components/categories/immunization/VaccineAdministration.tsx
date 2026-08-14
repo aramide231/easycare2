@@ -24,18 +24,6 @@ const VACCINE_OPTIONS = [
   "Yellow Fever",
 ];
 
-const DOSAGE_OPTIONS = ["0.5 ml", "1 dose", "2 drops", "5 drops"];
-
-const ROUTE_OPTIONS = ["Intramuscular", "Oral", "Subcutaneous", "Intradermal"];
-
-const SITE_OPTIONS = [
-  "Left Thigh",
-  "Right Thigh",
-  "Left Arm",
-  "Right Arm",
-  "Oral",
-];
-
 const AGE_GRADE_OPTIONS = [
   "At Birth",
   "6 Weeks",
@@ -53,6 +41,8 @@ const vaccineDetailsColumns = [
   { key: "ageGrade", label: "AGE GRADE" },
   { key: "vaccineType", label: "TYPE OF VACCINE" },
   { key: "dosage", label: "DOSAGE" },
+  { key: "route", label: "ADMIN ROUTE" },
+  { key: "site", label: "SITE" },
 ];
 
 type VaccineRow = {
@@ -120,6 +110,33 @@ function SelectField({
           aria-hidden
         />
       </div>
+    </div>
+  );
+}
+
+function StaticPlaceholderField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={formFieldInputClass}
+      />
     </div>
   );
 }
@@ -193,6 +210,8 @@ const VaccineAdministration = () => {
       vaccineType:
         payload.vaccineType ?? firstVaccine?.vaccine ?? "—",
       dosage: payload.dosage ?? firstVaccine?.dosage ?? "—",
+      route: firstVaccine?.route ?? payload.route ?? "—",
+      site: firstVaccine?.site ?? payload.site ?? "—",
     };
   });
 
@@ -220,29 +239,26 @@ const VaccineAdministration = () => {
           onChange={(value) => handleRowChange("vaccine", value)}
           options={VACCINE_OPTIONS}
         />
-        <SelectField
+        <StaticPlaceholderField
           label="Dosage"
           value={vaccineRow.dosage}
           onChange={(value) => handleRowChange("dosage", value)}
-          options={DOSAGE_OPTIONS}
-          placeholder="-Select dosage-"
+          placeholder="-Enter dosage-"
         />
-        <SelectField
+        <StaticPlaceholderField
           label="Administration Route"
           value={vaccineRow.route}
           onChange={(value) => handleRowChange("route", value)}
-          options={ROUTE_OPTIONS}
-          placeholder="-Select admin route-"
+          placeholder="-Enter admin route-"
         />
       </div>
 
       <div className="grid grid-cols-2 items-end gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_minmax(0,1.5fr)_auto]">
-        <SelectField
+        <StaticPlaceholderField
           label="Site (Body Part)"
           value={vaccineRow.site}
           onChange={(value) => handleRowChange("site", value)}
-          options={SITE_OPTIONS}
-          placeholder="-Select site-"
+          placeholder="-Enter site-"
         />
 
         <div>

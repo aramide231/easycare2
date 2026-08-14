@@ -1,12 +1,16 @@
 import { BedDouble, ClipboardList, ClipboardPen } from "lucide-react";
-import { toast } from "react-toastify";
 
 type Props = {
   onAssignToWard: () => void;
+  onNursingCarePlan: () => void;
   onTakeAction: () => void;
 };
 
-const AdmissionActionMenu = ({ onAssignToWard, onTakeAction }: Props) => {
+const AdmissionActionMenu = ({
+  onAssignToWard,
+  onNursingCarePlan,
+  onTakeAction,
+}: Props) => {
   return (
     <div
       className="absolute right-0 top-full z-30 mt-1 min-w-[12.5rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
@@ -34,7 +38,7 @@ const AdmissionActionMenu = ({ onAssignToWard, onTakeAction }: Props) => {
         className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-600 hover:bg-gray-50"
         onClick={(e) => {
           e.stopPropagation();
-          toast.info("Nursing Care Plan will open here.");
+          onNursingCarePlan();
         }}
       >
         <ClipboardList

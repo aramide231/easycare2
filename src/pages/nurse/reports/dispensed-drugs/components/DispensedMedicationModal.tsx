@@ -116,10 +116,12 @@ const DispensedMedicationModal = ({ record, open, onClose }: Props) => {
                 Medication Dispensed
               </span>
             </div>
-            <ol className="mt-2 list-decimal space-y-4 pl-5 text-sm leading-relaxed tracking-wide text-gray-800">
+            <ol className="mt-2 list-decimal space-y-5 pl-5 text-sm leading-relaxed tracking-wide text-gray-800">
               {record.medications.map((med, index) => (
                 <li key={`${record.id}-med-${index}`} className="pl-1">
-                  <span className="font-medium">{formatMedicationLine(med)}</span>
+                  <span className="font-medium tracking-wide">
+                    {formatMedicationLine(med)}
+                  </span>
                 </li>
               ))}
             </ol>

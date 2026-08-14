@@ -58,6 +58,9 @@ const labourTableColumns = [
   { key: "intensity", label: "INT. OF CONT." },
   { key: "cervicalDilatation", label: "C.V" },
   { key: "presentation", label: "PRESENTATION" },
+  { key: "fhr", label: "FHR" },
+  { key: "bloodPressure", label: "B.P" },
+  { key: "additional", label: "ADDITIONAL" },
 ];
 
 export default function Stage1Labour() {

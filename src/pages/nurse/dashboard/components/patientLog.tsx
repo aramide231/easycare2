@@ -286,9 +286,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
               <th className="px-4 py-2 font-medium whitespace-nowrap">
                 STAFF NAME
               </th>
-              {isVisitationPage && (
-                <th className="px-4 py-2 font-medium whitespace-nowrap"></th>
-              )}
+              <th className="px-4 py-2 font-medium whitespace-nowrap"></th>
             </tr>
           </thead>
           <tbody>
@@ -346,33 +344,39 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                   <td className="px-4 py-3 whitespace-nowrap">
                     {patient.staffName}
                   </td>
-                  {isVisitationPage && (
-                    <td className="px-4 py-3 whitespace-nowrap">
+                  <td className="px-4 py-3 whitespace-nowrap">
                       <div
                         className="relative"
                         ref={showOptions === patient.id ? dropdownRef : null}
                       >
                         <button
                           className="text-gray-500"
-                          onClick={() =>
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setShowOptions(
                               patient.id === showOptions ? null : patient.id
-                            )
-                          }
+                            );
+                          }}
                         >
                           <HiOutlineDotsVertical size={20} />
                         </button>
                         {showOptions === patient.id && (
-                          <div className="absolute right-0 flex flex-col mt-2 bg-white border shadow-lg rounded-lg w-48 z-10">
+                          <div className="absolute right-0 z-10 mt-2 flex w-48 flex-col rounded-lg border bg-white shadow-lg">
+                            {isVisitationPage && (
+                              <button
+                                className="mb-2 w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditPatient(patient);
+                                }}
+                              >
+                                Edit Profile
+                              </button>
+                            )}
                             <button
-                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => handleEditPatient(patient)}
-                            >
-                              Edit Profile
-                            </button>
-                            <button
-                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => {
+                              className="mb-2 w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setShowOptions(null);
                                 navigate("/nurse/admission", {
                                   state: { admitPatient: patient },
@@ -382,30 +386,37 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                               Admit
                             </button>
                             <button
-                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => handleFlagPatient(patient)}
+                              className="mb-2 w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleFlagPatient(patient);
+                              }}
                             >
                               {patient.flagged
                                 ? "Unflag Profile"
                                 : "Flag Profile"}
                             </button>
-                            <button
-                              className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => setShowSendModal(true)}
-                            >
-                              Send Profile
-                            </button>
+                            {isVisitationPage && (
+                              <button
+                                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowSendModal(true);
+                                }}
+                              >
+                                Send Profile
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
                     </td>
-                  )}
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan={isVisitationPage ? 7 : 6}
+                  colSpan={7}
                   className="text-center text-gray-500 py-6 text-sm bg-gray-50"
                 >
                   No results found for "{searchTerm}"

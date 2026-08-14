@@ -64,7 +64,6 @@ export const anteNatalVitalFields: CategoryFieldConfig[] = [
     tableLabel: "COMMENT",
     type: "select",
     options: VITAL_COMMENT_OPTIONS,
-    showInTable: false,
   },
 ];
 
@@ -80,7 +79,16 @@ export const anteNatalVitalTableColumns = [
   { key: "bloodPressure", label: "B.P" },
   { key: "weight", label: "WEIGHT" },
   { key: "height", label: "HEIGHT" },
+  { key: "bloodSugar", label: "B.S" },
+  { key: "pulseRate", label: "PULSE" },
+  { key: "respiration", label: "RESP" },
   { key: "bmi", label: "BMI" },
+  { key: "urinalysis", label: "UR" },
+  { key: "spo2", label: "SPO₂" },
+  { key: "fhr", label: "FHR" },
+  { key: "comment", label: "COMMENT" },
 ];
 
-export const genConsultVitalTableColumns = anteNatalVitalTableColumns;
+export const genConsultVitalTableColumns = anteNatalVitalTableColumns.filter(
+  (column) => column.key !== "fhr",
+);

@@ -67,7 +67,7 @@ const ayoMedications: DispensedMedicationLine[] = [
     qty: 10,
   },
   {
-    name: "D. Cough Syrup",
+    name: "Adukt Cough Syrup",
     strength: "",
     dosage: 2,
     interval: "b.d",
