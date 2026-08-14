@@ -34,10 +34,7 @@ export function syncWardBedsWithAdmissions(
       }
     }
 
-    const freeBed = next.find(
-      (bed) =>
-        bed.wardName === admission.ward && bed.occupiedByAdmissionId === null
-    );
+    const freeBed = findAvailableBedInWard(next, admission.ward);
 
     if (freeBed) {
       freeBed.occupiedByAdmissionId = admission.id;
@@ -76,9 +73,13 @@ export function findAvailableBedInWard(
   beds: WardBed[],
   wardName: string
 ): WardBed | undefined {
-  return beds.find(
-    (bed) => bed.wardName === wardName && bed.occupiedByAdmissionId === null
-  );
+  return beds
+    .filter(
+      (bed) => bed.wardName === wardName && bed.occupiedByAdmissionId === null,
+    )
+    .sort(
+      (a, b) => parseBedNumber(a.bedNumber) - parseBedNumber(b.bedNumber),
+    )[0];
 }
 
 export function canAssignPatientToWard(

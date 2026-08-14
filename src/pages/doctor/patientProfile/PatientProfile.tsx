@@ -148,7 +148,8 @@ const DoctorPatientProfile = () => {
   const isSpecialistConsult = selectedHealthCategory === "Specialist Consult";
   const isComingSoonCategory =
     selectedHealthCategory === "Family Planning" ||
-    selectedHealthCategory === "Fertility Clinics";
+    selectedHealthCategory === "Fertility Clinics" ||
+    selectedHealthCategory === "Post Natal Care";
 
   const financeCategories = [
     {
@@ -782,7 +783,13 @@ const DoctorPatientProfile = () => {
                         </p>
                       </div>
                     ) : isComingSoonCategory ? (
-                      <ComingSoonPage title={selectedHealthCategory} />
+                      <ComingSoonPage
+                        title={
+                          selectedHealthCategory === "Post Natal Care"
+                            ? "Info Coming Soon"
+                            : selectedHealthCategory
+                        }
+                      />
                     ) : (
                       <>
                         {isGenConsult ? <GenConsultController /> : null}

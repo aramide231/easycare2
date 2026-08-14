@@ -130,6 +130,10 @@ export default function PreOperationNote() {
                 <th>Genotype</th>
                 <th>HIV</th>
                 <th>Hepatitis</th>
+                <th>Blood Group</th>
+                <th>Allergies</th>
+                <th>Indication</th>
+                <th>Consent</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -143,6 +147,10 @@ export default function PreOperationNote() {
                   <td>{row.genotype}</td>
                   <td>{row.hiv}</td>
                   <td>{row.hepatitis}</td>
+                  <td>{row.bloodGroup}</td>
+                  <td>{row.allergies}</td>
+                  <td>{row.indication}</td>
+                  <td>{row.consentGiven}</td>
                   <td>
                     <button
                       type="button"

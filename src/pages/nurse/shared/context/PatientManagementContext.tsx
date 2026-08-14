@@ -47,6 +47,34 @@ function formatDischargeTime(date: Date): string {
   });
 }
 
+function formatAdmissionClock(date = new Date()) {
+  return {
+    dateOfAdmission: formatDischargeDate(date),
+    timeOfAdmission: formatDischargeTime(date),
+  };
+}
+
+type AdmitPatientInput = {
+  name: string;
+  patientId: string;
+  phoneNumber: string;
+  gender: string;
+  patientType: string;
+  age: number;
+  visitType?: string;
+};
+
+function visitTypeToTreatmentCategory(visitType?: string): string {
+  const value = (visitType ?? "").toUpperCase();
+  if (value.includes("ANTE")) return "Ante Natal Care";
+  if (value.includes("CHILD")) return "Child Birth";
+  if (value.includes("IMMUN")) return "Immunization";
+  if (value.includes("NEO")) return "Neo Natal Care";
+  if (value.includes("POST")) return "Post Natal Care";
+  if (value.includes("SURG")) return "Surgical";
+  return "Gen Consult";
+}
+
 function createInitialState() {
   const admissions = buildMockAdmissions();
   const wardBeds = sortWardBedsGrouped(
@@ -87,8 +115,10 @@ function admissionToDischarged(
 }
 
 function dischargedToAdmission(
-  record: DischargedPatientRecord
+  record: DischargedPatientRecord,
+  performedBy: string,
 ): AdmissionRecord {
+  const clock = formatAdmissionClock();
   return {
     id: record.id,
     name: record.name,
@@ -97,11 +127,11 @@ function dischargedToAdmission(
     gender: record.gender,
     patientType: record.patientType,
     age: record.age,
-    dateOfAdmission: record.dateOfAdmission,
-    timeOfAdmission: record.timeOfAdmission,
+    dateOfAdmission: clock.dateOfAdmission,
+    timeOfAdmission: clock.timeOfAdmission,
     ward: "Not Yet Assigned",
     assignedBedId: null,
-    admittedBy: record.dischargedBy,
+    admittedBy: performedBy,
     vitalSigns: { ...DEFAULT_ADMISSION_VITALS },
     treatmentCategory: "Gen Consult",
   };
@@ -125,6 +155,10 @@ type PatientManagementContextValue = {
   dischargeReports: DischargeReportEntry[];
   wardAvailability: WardAvailability[];
   setAdmissions: React.Dispatch<React.SetStateAction<AdmissionRecord[]>>;
+  admitPatient: (
+    patient: AdmitPatientInput,
+    performedBy: string,
+  ) => AdmissionRecord | null;
   assignPatientToWard: (
     admission: AdmissionRecord,
     wardName: string,
@@ -169,6 +203,52 @@ export function PatientManagementProvider({ children }: { children: ReactNode })
   const wardAvailability = useMemo(
     () => buildWardAvailability(wardBeds, WARD_DEFINITIONS, admissions),
     [wardBeds, admissions]
+  );
+
+  const admitPatient = useCallback(
+    (patient: AdmitPatientInput, performedBy: string) => {
+      const existing = admissions.find(
+        (row) =>
+          row.patientId.toLowerCase() === patient.patientId.toLowerCase(),
+      );
+      if (existing) return existing;
+
+      const clock = formatAdmissionClock();
+      const admission: AdmissionRecord = {
+        id: Date.now(),
+        name: patient.name,
+        patientId: patient.patientId,
+        phoneNumber: patient.phoneNumber,
+        gender: patient.gender,
+        patientType: patient.patientType,
+        age: patient.age,
+        dateOfAdmission: clock.dateOfAdmission,
+        timeOfAdmission: clock.timeOfAdmission,
+        ward: "Not Yet Assigned",
+        assignedBedId: null,
+        admittedBy: performedBy,
+        vitalSigns: { ...DEFAULT_ADMISSION_VITALS },
+        treatmentCategory: visitTypeToTreatmentCategory(patient.visitType),
+      };
+
+      setAdmissions((prev) => [admission, ...prev]);
+      setAdmissionReports((prev) => [
+        createAdmissionReportEntry({
+          patientName: admission.name,
+          patientId: admission.patientId,
+          action: "Admitted",
+          ward: admission.ward,
+          performedBy,
+          physicianName: performedBy,
+          date: admission.dateOfAdmission,
+          time: admission.timeOfAdmission,
+        }),
+        ...prev,
+      ]);
+
+      return admission;
+    },
+    [admissions],
   );
 
   const assignPatientToWard = useCallback(
@@ -242,7 +322,7 @@ export function PatientManagementProvider({ children }: { children: ReactNode })
 
   const readmitPatient = useCallback(
     (record: DischargedPatientRecord, performedBy: string) => {
-      const admission = dischargedToAdmission(record);
+      const admission = dischargedToAdmission(record, performedBy);
       setDischargedPatients((prev) => prev.filter((row) => row.id !== record.id));
       setAdmissions((prev) => [admission, ...prev]);
       setAdmissionReports((prev) => [
@@ -252,7 +332,9 @@ export function PatientManagementProvider({ children }: { children: ReactNode })
           action: "Re-Admitted",
           ward: "Not Yet Assigned",
           performedBy,
-          physicianName: record.dischargedBy,
+          physicianName: performedBy,
+          date: admission.dateOfAdmission,
+          time: admission.timeOfAdmission,
         }),
         ...prev,
       ]);
@@ -330,6 +412,7 @@ export function PatientManagementProvider({ children }: { children: ReactNode })
       dischargeReports,
       wardAvailability,
       setAdmissions,
+      admitPatient,
       assignPatientToWard,
       dischargeFromAdmission,
       readmitPatient,
@@ -345,6 +428,7 @@ export function PatientManagementProvider({ children }: { children: ReactNode })
       admissionReports,
       dischargeReports,
       wardAvailability,
+      admitPatient,
       assignPatientToWard,
       dischargeFromAdmission,
       readmitPatient,

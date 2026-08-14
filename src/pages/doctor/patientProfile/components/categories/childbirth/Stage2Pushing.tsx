@@ -76,6 +76,11 @@ const pushingTableColumns = [
   { key: "deliveryMode", label: "MODE" },
   { key: "apgarScore", label: "APGAR SCORE" },
   { key: "babyGender", label: "GENDER" },
+  { key: "babyWeight", label: "WEIGHT" },
+  { key: "babyHeight", label: "HEIGHT" },
+  { key: "babyTemperature", label: "TEMP" },
+  { key: "abnormality", label: "ABNORMALITY" },
+  { key: "additional", label: "ADDITIONAL" },
 ];
 
 function SuffixInput({

@@ -20,7 +20,11 @@ const CategoryFormAccordion = ({
     <div className="flex w-full flex-col divide-y divide-gray-200">
       {sections.map((section) => {
         const isOpen = expandedCategories.includes(section.label);
-        const form = resolveCategoryForm(selectedCategory, section.label);
+        const form = resolveCategoryForm(
+          selectedCategory,
+          section.label,
+          "nurse",
+        );
 
         return (
           <div key={section.label} className="py-3 first:pt-0 last:pb-0">

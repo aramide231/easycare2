@@ -7,6 +7,15 @@ import {
   type TreatmentTableSection,
   type TreatmentTextSection,
 } from "../data/mockTreatmentReview";
+import { getSubCategories } from "@/pages/doctor/patientProfile/config/subCategoryMap";
+import {
+  getSectionEntryCount,
+  getSectionTableRows,
+} from "@/pages/doctor/patientProfile/hooks/useMedicalTable";
+import {
+  buildPreviewSectionLines,
+  sectionSupportsNumberedPreview,
+} from "@/pages/doctor/patientProfile/lib/previewSectionLines";
 
 type Props = {
   patient: AdmissionRecord;
@@ -116,6 +125,46 @@ function TreatmentSectionBlock({
   );
 }
 
+function LiveRecordSection({
+  label,
+  isFirst = false,
+}: {
+  label: string;
+  isFirst?: boolean;
+}) {
+  const rows = getSectionTableRows(label);
+  const count = getSectionEntryCount(label);
+  const lines = sectionSupportsNumberedPreview(label)
+    ? buildPreviewSectionLines(label, rows)
+    : rows.slice(0, 8).map((row) => ({
+        text: Object.entries(row)
+          .filter(([key]) => !["sn", "id"].includes(key))
+          .slice(0, 4)
+          .map(([, value]) => String(value ?? "—"))
+          .join(" · "),
+      }));
+
+  return (
+    <div className={isFirst ? "mt-4" : "mt-8"}>
+      <SectionTab title={label} />
+      {count === 0 ? (
+        <p className="text-sm text-gray-500">No records captured yet.</p>
+      ) : (
+        <ol className="list-decimal space-y-2 pl-5 text-sm text-gray-800">
+          {lines.map((line, index) => (
+            <li key={`${label}-${index}`}>
+              <span>{line.text}</span>
+              {"meta" in line && line.meta ? (
+                <span className="ml-2 text-gray-500">{line.meta}</span>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
 const AdmissionPreviewPanel = ({
   patient,
   open,
@@ -126,6 +175,10 @@ const AdmissionPreviewPanel = ({
 
   const treatmentReview = getTreatmentReview(patient.treatmentCategory);
   const treatmentLabel = getTreatmentCategoryLabel(patient.treatmentCategory);
+  const liveSections = getSubCategories(patient.treatmentCategory);
+  const hasLiveRecords = liveSections.some(
+    (section) => getSectionEntryCount(section.label) > 0,
+  );
 
   const handleConfirm = () => {
     onConfirm?.();
@@ -137,7 +190,7 @@ const AdmissionPreviewPanel = ({
       <button
         type="button"
         className="absolute inset-0 bg-black/40"
-        aria-label="Close review"
+        aria-label="Close preview"
         onClick={onClose}
       />
       <aside
@@ -157,26 +210,26 @@ const AdmissionPreviewPanel = ({
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          <div>
-            <SectionTab title="DETAILS" />
-            <TextSectionContent
-              fields={[
-                { label: "Patient Name", value: patient.name },
-                {
-                  label: "Patient ID",
-                  value: `${patient.patientId} | ${patient.phoneNumber}`,
-                },
-                { label: "Gender", value: patient.gender },
-                { label: "Age", value: String(patient.age) },
-                { label: "Patient Type", value: patient.patientType },
-                {
-                  label: "Date of Admission",
-                  value: `${patient.dateOfAdmission} · ${patient.timeOfAdmission}`,
-                },
-                { label: "Ward", value: patient.ward },
-                { label: "Physician Name", value: patient.admittedBy },
-              ]}
-            />
+          <div className="rounded-xl border border-purple-100 bg-purple-50/60 p-4">
+            <SectionTab title="PATIENT DETAILS" />
+            <div className="mt-2 grid grid-cols-1 gap-x-10 md:grid-cols-2">
+              <div>
+                <FieldRow label="Patient Name" value={patient.name} />
+                <FieldRow label="Patient ID" value={patient.patientId} />
+                <FieldRow label="Phone Number" value={patient.phoneNumber} />
+                <FieldRow label="Gender" value={patient.gender} />
+              </div>
+              <div>
+                <FieldRow label="Age" value={String(patient.age)} />
+                <FieldRow label="Patient Type" value={patient.patientType} />
+                <FieldRow
+                  label="Date of Admission"
+                  value={`${patient.dateOfAdmission} · ${patient.timeOfAdmission}`}
+                />
+                <FieldRow label="Ward" value={patient.ward} />
+                <FieldRow label="Physician Name" value={patient.admittedBy} />
+              </div>
+            </div>
           </div>
 
           <div className="mt-8">
@@ -189,13 +242,45 @@ const AdmissionPreviewPanel = ({
               </p>
             </div>
 
-            {treatmentReview.sections.map((section, index) => (
-              <TreatmentSectionBlock
-                key={section.title}
-                section={section}
-                isFirst={index === 0}
-              />
-            ))}
+            <SectionTab title="VITAL SIGNS" />
+            <TextSectionContent
+              fields={[
+                { label: "Temperature", value: patient.vitalSigns.temperature },
+                {
+                  label: "Blood Pressure",
+                  value: patient.vitalSigns.bloodPressure,
+                },
+                { label: "Weight", value: patient.vitalSigns.weight },
+                { label: "Height", value: patient.vitalSigns.height },
+                { label: "Blood Sugar", value: patient.vitalSigns.bloodSugar },
+                { label: "Pulse Rate", value: patient.vitalSigns.pulseRate },
+                { label: "Respiration", value: patient.vitalSigns.respiration },
+                { label: "BMI", value: patient.vitalSigns.bmi },
+                { label: "Urinalysis", value: patient.vitalSigns.urinalysis },
+                { label: "SpO2", value: patient.vitalSigns.spo2 },
+                {
+                  label: "Fetal Heart Rate",
+                  value: patient.vitalSigns.fetalHeartRate,
+                },
+                { label: "Comments", value: patient.vitalSigns.comments },
+              ]}
+            />
+
+            {hasLiveRecords
+              ? liveSections.map((section, index) => (
+                  <LiveRecordSection
+                    key={section.label}
+                    label={section.label}
+                    isFirst={index === 0}
+                  />
+                ))
+              : treatmentReview.sections.map((section, index) => (
+                  <TreatmentSectionBlock
+                    key={section.title}
+                    section={section}
+                    isFirst={index === 0}
+                  />
+                ))}
           </div>
         </div>
 

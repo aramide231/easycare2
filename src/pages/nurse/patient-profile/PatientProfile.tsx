@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FaBaby,
   FaBookReader,
@@ -26,6 +26,19 @@ import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 import { getSubCategories } from "@/pages/doctor/patientProfile/config/subCategoryMap";
 import SpecialistConsultTypeSelector from "@/pages/doctor/patientProfile/components/SpecialistConsultTypeSelector";
 import ClaimsProcessor from "@/pages/doctor/patientProfile/components/categories/financial/ClaimsProcessor";
+import FormPreviewModal, {
+  type PreviewSection,
+} from "@/pages/doctor/patientProfile/components/FormPreviewModal";
+import {
+  getSectionEntryCount,
+  getSectionTableRows,
+  getUserSavedSectionLabels,
+} from "@/pages/doctor/patientProfile/hooks/useMedicalTable";
+import {
+  buildPreviewSectionLines,
+  sectionSupportsNumberedPreview,
+} from "@/pages/doctor/patientProfile/lib/previewSectionLines";
+import { buildMockFlagReports } from "@/pages/nurse/patient-profile/flag-profile/data/mockFlagReports";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -37,13 +50,21 @@ const NursePatientProfile = () => {
 
   const [step, setStep] = useState<number>(1);
   const [flagPanelOpen, setFlagPanelOpen] = useState(false);
-  const [flagCount] = useState(4);
+  const [flagReports] = useState(() => buildMockFlagReports());
+  const flagCount = flagReports.length;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [consultationType, setConsultationType] = useState("dental");
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewCategoryName, setPreviewCategoryName] = useState("");
+  const [previewSections, setPreviewSections] = useState<PreviewSection[]>([]);
 
   const activeFormSections = getSubCategories(selectedCategory);
+  const categorySectionLabels = useMemo(
+    () => activeFormSections.map((section) => section.label),
+    [activeFormSections],
+  );
   const isComingSoonCategory =
     selectedCategory === "Family Planning" ||
     selectedCategory === "Fertility Clinics" ||
@@ -119,7 +140,25 @@ const NursePatientProfile = () => {
       toast.info("Select a category to preview.");
       return;
     }
-    toast.info(`Preview ready for ${selectedCategory}.`);
+
+    const savedLabels = getUserSavedSectionLabels(categorySectionLabels);
+    const labelsToShow =
+      savedLabels.length > 0 ? savedLabels : categorySectionLabels;
+
+    setPreviewCategoryName(selectedCategory);
+    setPreviewSections(
+      labelsToShow.map((label) => {
+        const rows = getSectionTableRows(label);
+        return {
+          label,
+          count: getSectionEntryCount(label),
+          lines: sectionSupportsNumberedPreview(label)
+            ? buildPreviewSectionLines(label, rows)
+            : undefined,
+        };
+      }),
+    );
+    setShowPreviewModal(true);
   };
 
   const handleSubmit = () => {
@@ -569,6 +608,12 @@ const NursePatientProfile = () => {
         patientName={`${patient.firstName} ${patient.lastName}`}
         patientId={patient.patientId}
         variant="embedded"
+      />
+      <FormPreviewModal
+        open={showPreviewModal}
+        categoryName={previewCategoryName}
+        sections={previewSections}
+        onClose={() => setShowPreviewModal(false)}
       />
       <ToastContainer position="bottom-center" autoClose={2500} />
     </div>

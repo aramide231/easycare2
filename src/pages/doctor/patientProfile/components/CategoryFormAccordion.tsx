@@ -1,7 +1,6 @@
 import type { ComponentType } from "react";
 import { ChevronDown } from "lucide-react";
 import { categoryComponents } from "./CategoryRenderer";
-import ImmunizationVitalSigns from "./categories/immunization/ImmunizationVitalSigns";
 import GenConsultVitalSigns from "./categories/genConsult/GenConsultVitalSigns";
 import NeoNatalVitalSigns from "./categories/neonatal/NeoNatalVitalSigns";
 import SpecialistPresentingComplaints from "./categories/specialistConsult/SpecialistPresentingComplaints";
@@ -12,7 +11,7 @@ const healthCategorySectionOverrides: Record<
   Record<string, ComponentType>
 > = {
   Immunization: {
-    "VITAL SIGNS": ImmunizationVitalSigns,
+    "VITAL SIGNS": NeoNatalVitalSigns,
   },
   "Gen Consult": {
     "VITAL SIGNS": GenConsultVitalSigns,
