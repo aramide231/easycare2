@@ -31,8 +31,7 @@ export default function Sidebar() {
     reports: false,
   });
 
-  const hospitalSubtitle =
-    "DIAGNX (Laboratory) & RADIOLOGY (Scan & X-ray)";
+  const moduleName = "M.I (Radiology)";
 
   const toggleMenu = (menuName: MenuSection) => {
     if (isCollapsed) return;
@@ -214,8 +213,8 @@ export default function Sidebar() {
               <div className="truncate text-sm font-semibold text-gray-900">
                 St James Hospital
               </div>
-              <div className="text-[11px] font-medium leading-snug text-gray-500">
-                {hospitalSubtitle}
+              <div className="truncate text-[11px] font-medium text-gray-500">
+                {moduleName}
               </div>
             </div>
           )}
