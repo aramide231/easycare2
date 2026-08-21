@@ -43,8 +43,8 @@ const moduleOptions: {
   },
   {
     id: "diagnostics-and-radiologist",
-    title: "Diagnostics & Radiologist",
-    description: "Review laboratory, scans, investigations, and imaging workflows.",
+    title: "M.I (Radiology)",
+    description: "Review scans, investigations, and imaging workflows.",
     icon: "mdi:radiology-box",
   },
 ];
