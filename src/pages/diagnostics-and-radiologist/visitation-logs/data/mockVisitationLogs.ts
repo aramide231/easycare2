@@ -1,0 +1,156 @@
+import type { TreatmentType } from "../../dashboard/data/mockPatients";
+import type { PxType } from "../../dashboard/lib/patientTypeStyles";
+
+export type VisitationLogRow = {
+  id: number;
+  regName: string;
+  patientId: string;
+  phoneNumber: string;
+  date: string;
+  time: string;
+  gender: string;
+  pxType: PxType;
+  age: number;
+  invName: string;
+  invAmount: string;
+  treatmentType: TreatmentType;
+  clinician: string;
+};
+
+export const VISITATION_LOG_ROWS: VisitationLogRow[] = [
+  {
+    id: 1,
+    regName: "Alade Abiodun",
+    patientId: "MSH/1088",
+    phoneNumber: "0906025311",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Female",
+    pxType: "OUT-PATIENT",
+    age: 25,
+    invName: "MP",
+    invAmount: "N 2,000.00",
+    treatmentType: "PRIVATE",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 2,
+    regName: "Bola Oriyomi",
+    patientId: "SUNU/1088",
+    phoneNumber: "0707825322",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Male",
+    pxType: "OUT-PATIENT",
+    age: 22,
+    invName: "PCV",
+    invAmount: "N 3,000.00",
+    treatmentType: "STAFF",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 3,
+    regName: "Kemi Bankole",
+    patientId: "MSH/1088",
+    phoneNumber: "08160655311",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Female",
+    pxType: "IN-PATIENT",
+    age: 20,
+    invName: "URINE MCS",
+    invAmount: "N 2,000.00",
+    treatmentType: "HMO",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 4,
+    regName: "Yemisi Ayuba",
+    patientId: "MSH/1088",
+    phoneNumber: "07060655345",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Male",
+    pxType: "OUT-PATIENT",
+    age: 32,
+    invName: "URINALYSIS",
+    invAmount: "N 5,000.00",
+    treatmentType: "COMPANY",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 5,
+    regName: "Chinwe Eze",
+    patientId: "MSH/1088",
+    phoneNumber: "07034567890",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Male",
+    pxType: "OUT-PATIENT",
+    age: 32,
+    invName: "MP",
+    invAmount: "N 6,000.00",
+    treatmentType: "PRIVATE",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 6,
+    regName: "Adeola Abimbola",
+    patientId: "MSH/1088",
+    phoneNumber: "08023456789",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Female",
+    pxType: "OUT-PATIENT",
+    age: 32,
+    invName: "PCV",
+    invAmount: "N 2,000.00",
+    treatmentType: "COMPANY",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 7,
+    regName: "Abiola Adebayo A.",
+    patientId: "MSH/1088",
+    phoneNumber: "09045678901",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Female",
+    pxType: "IN-PATIENT",
+    age: 30,
+    invName: "URINE MCS",
+    invAmount: "N 3,000.00",
+    treatmentType: "HMO",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 8,
+    regName: "Akande Yakubu",
+    patientId: "MSH/1088",
+    phoneNumber: "09045678901",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Female",
+    pxType: "OUT-PATIENT",
+    age: 30,
+    invName: "URINE MCS",
+    invAmount: "N 3,000.00",
+    treatmentType: "PRIVATE",
+    clinician: "Titilayo O.",
+  },
+  {
+    id: 9,
+    regName: "Emeka Okwuosa",
+    patientId: "MSH/1088",
+    phoneNumber: "09045678901",
+    date: "12-Mar-2025",
+    time: "11:15 AM",
+    gender: "Female",
+    pxType: "IN-PATIENT",
+    age: 30,
+    invName: "URINE MCS",
+    invAmount: "N 3,000.00",
+    treatmentType: "HMO",
+    clinician: "Titilayo O.",
+  },
+];

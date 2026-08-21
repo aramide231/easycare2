@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 import { FrontdeskRoutes } from "@/modules/frontdesk";
 import { HmoRoutes } from "@/modules/hmo";
+import { DiagnosticsRadiologistRoutes } from "@/pages/diagnostics-and-radiologist/routes";
 import NurseLayout from "../layouts/NurseLayout";
 import DoctorLayout from "../layouts/DoctorLayout";
 import AdminLayout from "../layouts/AdminLayout";
@@ -98,6 +99,9 @@ const RoleBasedRoutes = () => {
 
       {/* HMO — available for preview without login */}
       {HmoRoutes()}
+
+      {/* Diagnostics & Radiologist — available for preview without login */}
+      {DiagnosticsRadiologistRoutes()}
 
       {/* Nurse */}
       <Route path="/nurse" element={<NurseLayout />}>

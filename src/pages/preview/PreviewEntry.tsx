@@ -8,6 +8,7 @@ const modulePaths: Record<PreviewModule, string> = {
   nurse: "/nurse/dashboard",
   doctor: "/doctor",
   hmo: "/hmo/dashboard",
+  "diagnostics-and-radiologist": "/diagnostics-and-radiologist",
 };
 
 const PreviewEntry = () => {
