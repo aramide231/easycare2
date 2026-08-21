@@ -40,7 +40,7 @@ export default function DiagnosticsRequestFormShell({
   submitLabel = "Submit",
 }: Props) {
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
       <h1 className="mb-6 text-xl font-bold text-gray-800">{title}</h1>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">

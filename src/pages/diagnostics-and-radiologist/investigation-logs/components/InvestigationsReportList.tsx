@@ -69,21 +69,21 @@ export default function InvestigationsReportList() {
 
   return (
     <>
-      <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-            <h1 className="shrink-0 text-xl font-bold text-gray-800">
+            <h1 className="shrink-0 text-lg font-bold text-gray-800 sm:text-xl">
               Investigations Report
             </h1>
             <LogSearchBar
               placeholder="Search with recipient name, ID or phone number"
               value={searchTerm}
               onChange={setSearchTerm}
-              className="max-w-md flex-1"
+              className="w-full max-w-md flex-1"
             />
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
             <DateRangeFilter
               value={dateRange}
               onChange={setDateRange}
@@ -97,7 +97,7 @@ export default function InvestigationsReportList() {
         </div>
 
         <div className="overflow-x-auto border-t border-gray-200 pt-4">
-          <table ref={tableRef} className="min-w-full text-left text-sm">
+          <table ref={tableRef} className="min-w-[960px] w-full text-left text-sm">
             <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
               <tr>
                 <th className="whitespace-nowrap px-4 py-2 font-medium">S/N</th>

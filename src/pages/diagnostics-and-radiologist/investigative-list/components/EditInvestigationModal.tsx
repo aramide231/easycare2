@@ -3,7 +3,6 @@ import { X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
   formFieldInputClass,
-  formFieldGridClass,
 } from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 import type { InvestigationCatalogRow } from "../data/investigationListFigma";
 
@@ -64,8 +63,8 @@ export default function EditInvestigationModal({
           </button>
         </div>
 
-        <div className={formFieldGridClass}>
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 gap-4">
+          <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Investigation Name
             </label>

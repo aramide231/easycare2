@@ -99,7 +99,7 @@ function PatientSearchModal({
       />
 
       <div
-        className="absolute flex max-h-[min(78vh,calc(100vh-80px))] min-h-[min(560px,78vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
+        className="absolute flex max-h-[min(78vh,calc(100vh-80px))] min-h-[min(420px,70vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl sm:min-h-[min(560px,78vh)]"
         style={{
           top: anchorRect.top,
           left: anchorRect.left,
@@ -204,13 +204,15 @@ export default function HeaderPatientSearch({
 
   return (
     <>
-      <div ref={anchorRef} className={`relative h-12 w-full ${className}`}>
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center gap-3 pl-4">
+      <div ref={anchorRef} className={`relative h-10 w-full sm:h-12 ${className}`}>
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center gap-2 pl-3 sm:gap-3 sm:pl-4">
           <Search
             className="h-[18px] w-[18px] text-gray-500"
             strokeWidth={2.5}
           />
-          <span className="pb-0.5 text-lg font-light text-gray-300">|</span>
+          <span className="hidden pb-0.5 text-lg font-light text-gray-300 sm:inline">
+            |
+          </span>
         </div>
         <input
           type="text"
@@ -221,8 +223,8 @@ export default function HeaderPatientSearch({
           onKeyDown={(e) => {
             if (e.key === "Enter") openSearch();
           }}
-          placeholder={SEARCH_PLACEHOLDER}
-          className="h-12 w-full cursor-pointer rounded-lg border border-gray-200 bg-white pl-14 pr-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-2 focus:border-[#573FD1] focus:outline-none"
+          placeholder="Search patients"
+          className="h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white pl-12 pr-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-2 focus:border-[#573FD1] focus:outline-none sm:h-12 sm:pl-14 sm:pr-4 md:placeholder:opacity-100"
         />
       </div>
 

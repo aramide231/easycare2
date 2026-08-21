@@ -13,17 +13,17 @@ export default function DiagnosticsPatientSummaryCard({ patient }: Props) {
 
   return (
     <div className="w-full shrink-0 rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:max-w-sm">
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <img
           src={clientimage}
           alt={patient.regName}
-          className="h-16 w-16 rounded-full object-cover"
+          className="h-16 w-16 shrink-0 rounded-full object-cover"
         />
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="min-w-0">
+          <h2 className="truncate text-lg font-semibold text-gray-900">
             {patient.firstName} {patient.lastName}
           </h2>
-          <p className="text-sm text-gray-500">ID: {patient.patientId}</p>
+          <p className="truncate text-sm text-gray-500">ID: {patient.patientId}</p>
         </div>
       </div>
 

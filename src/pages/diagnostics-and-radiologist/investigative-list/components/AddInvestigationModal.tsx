@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
-import {
-  formFieldGridClass,
-  formFieldInputClass,
-} from "@/pages/doctor/patientProfile/lib/formFieldStyles";
+import { formFieldInputClass } from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 import type { InvestigationCatalogRow } from "../data/investigationListFigma";
 
 type Props = {
@@ -68,8 +65,8 @@ export default function AddInvestigationModal({
           </button>
         </div>
 
-        <div className={formFieldGridClass}>
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Investigation Name
             </label>
@@ -81,7 +78,7 @@ export default function AddInvestigationModal({
               placeholder="e.g. Albumin"
             />
           </div>
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Amount
             </label>

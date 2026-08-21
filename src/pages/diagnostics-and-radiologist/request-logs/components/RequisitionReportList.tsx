@@ -147,11 +147,11 @@ export default function RequisitionReportList() {
 
   return (
     <>
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-xl font-bold text-gray-800">(Requisition) Report</h1>
+        <h1 className="text-lg font-bold text-gray-800 sm:text-xl">(Requisition) Report</h1>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
           <div className="relative" ref={calendarRef}>
             <button
               type="button"
@@ -162,7 +162,7 @@ export default function RequisitionReportList() {
             </button>
 
             {calendarOpen ? (
-              <div className="absolute right-0 top-full z-50 mt-2 rounded-lg border border-gray-200 bg-white p-4 shadow-xl">
+              <div className="absolute left-0 top-full z-50 mt-2 max-w-[calc(100vw-2rem)] overflow-x-auto rounded-lg border border-gray-200 bg-white p-3 shadow-xl sm:left-auto sm:right-0 sm:p-4">
                 <DateRange
                   ranges={tempRange}
                   onChange={handleRangeChange}
@@ -209,7 +209,7 @@ export default function RequisitionReportList() {
       </div>
 
       <div className="overflow-x-auto">
-        <table ref={tableRef} className="min-w-full text-left text-sm">
+        <table ref={tableRef} className="min-w-[880px] w-full text-left text-sm">
           <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
             <tr>
               <th className="whitespace-nowrap px-4 py-2 font-medium">S/N</th>

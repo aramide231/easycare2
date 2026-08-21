@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { Menu } from "lucide-react";
 import AppGridMenu from "@/components/header/AppGridMenu";
 import ProfileMenu from "@/components/header/ProfileMenu";
 import Clock from "./Clock";
@@ -50,12 +51,13 @@ function getPageSegment(pathname: string): string | null {
   return segments[1] ?? null;
 }
 
-export default function Topbar() {
+type TopbarProps = {
+  onOpenMobileNav?: () => void;
+};
+
+export default function Topbar({ onOpenMobileNav }: TopbarProps) {
   const location = useLocation();
   const segment = getPageSegment(location.pathname);
-
-  const isDashboard =
-    location.pathname === BASE || location.pathname === `${BASE}/dashboard`;
 
   const isBreadcrumbPage = breadcrumbPatterns.some((pattern) =>
     pattern.test(location.pathname),
@@ -89,48 +91,43 @@ export default function Topbar() {
 
   return (
     <header className="w-full shrink-0 border-b border-gray-200 bg-white">
-      <div
-        className={`grid min-h-[84px] w-full items-center gap-4 px-5 py-4 md:gap-6 md:px-8 ${
-          isDashboard
-            ? "grid-cols-[42%_1fr_auto]"
-            : "grid-cols-[minmax(0,60%)_1fr_auto]"
-        }`}
-      >
-        <div
-          className={`flex min-w-0 items-center gap-3 md:gap-5 ${
-            isDashboard ? "w-full" : "w-full justify-self-start"
-          }`}
-        >
+      <div className="flex min-h-[72px] w-full flex-wrap items-center gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4 md:min-h-[84px] md:gap-6 md:px-8">
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 md:gap-5">
+          <button
+            type="button"
+            onClick={onOpenMobileNav}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition hover:bg-gray-50 md:hidden"
+            aria-label="Open navigation"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
           {isBreadcrumbPage && (
-            <div className="max-w-[10rem] shrink-0 md:max-w-[14rem]">
+            <div className="hidden max-w-[10rem] shrink-0 sm:block md:max-w-[14rem]">
               {renderBreadcrumbs()}
             </div>
           )}
 
-          <div
-            className={
-              isDashboard
-                ? "w-full"
-                : "min-w-[16rem] w-full flex-1 md:min-w-[22rem]"
-            }
-          >
+          <div className="min-w-0 flex-1">
             <HeaderPatientSearch />
           </div>
         </div>
 
-        <div
-          className={`px-2 ${
-            isDashboard ? "flex justify-center" : "justify-self-center"
-          }`}
-        >
+        <div className="hidden shrink-0 px-2 lg:block">
           <Clock />
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-4 justify-self-end md:gap-6">
+        <div className="flex shrink-0 items-center justify-end gap-3 sm:gap-4 md:gap-6">
           <AppGridMenu />
           <ProfileMenu />
         </div>
       </div>
+
+      {isBreadcrumbPage ? (
+        <div className="border-t border-gray-100 px-3 py-2 sm:hidden">
+          {renderBreadcrumbs()}
+        </div>
+      ) : null}
     </header>
   );
 }

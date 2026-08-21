@@ -84,21 +84,21 @@ const DiagnosticsPreviousPatientRecords = () => {
       <div className="flex min-h-0 w-full flex-col gap-4 lg:flex-row lg:items-start">
         <DiagnosticsPatientSummaryCard patient={patient} />
 
-        <div className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
           <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-              <h1 className="shrink-0 text-xl font-bold text-gray-800">
+              <h1 className="shrink-0 text-lg font-bold text-gray-800 sm:text-xl">
                 Prev. Medical History
               </h1>
               <LogSearchBar
                 placeholder="Search with date or consultation type"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="sm:max-w-md"
+                className="w-full sm:max-w-md"
               />
             </div>
 
-            <div className="flex shrink-0 items-center gap-3 self-end sm:self-auto">
+            <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:self-auto">
               <ReportDateRangeFilter />
               <ExportButton
                 reportTitle="Prev. Medical History"

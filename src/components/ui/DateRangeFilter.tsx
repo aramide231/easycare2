@@ -269,17 +269,17 @@ const DateRangeFilter = ({
 
       {isOpen && (
         <div
-          className={`date-range-filter absolute top-12 z-50 flex overflow-hidden rounded-[10px] border border-[#D4D4D4] bg-white shadow-lg ${
-            align === "right" ? "right-0" : "left-0"
+          className={`date-range-filter absolute top-12 z-50 flex max-h-[min(80vh,700px)] max-w-[calc(100vw-1.5rem)] flex-col overflow-auto rounded-[10px] border border-[#D4D4D4] bg-white shadow-lg sm:max-h-none sm:flex-row sm:overflow-hidden ${
+            align === "right" ? "right-0 left-auto" : "left-0 right-auto"
           }`}
         >
-          <aside className="flex w-36 shrink-0 flex-col gap-1 border-r border-[#D4D4D4] p-4">
+          <aside className="flex w-full shrink-0 flex-row gap-1 overflow-x-auto border-b border-[#D4D4D4] p-3 sm:w-36 sm:flex-col sm:overflow-visible sm:border-b-0 sm:border-r sm:p-4">
             {PRESETS.map((preset) => (
               <button
                 key={preset.label}
                 type="button"
                 onClick={() => handlePreset(preset)}
-                className={`rounded-lg px-3 py-2 text-left text-sm transition ${
+                className={`shrink-0 rounded-lg px-3 py-2 text-left text-sm transition ${
                   activePreset === preset.label
                     ? "bg-[#EDE9FE] font-semibold text-[#573FD1]"
                     : "text-gray-800 hover:bg-gray-50"
@@ -290,9 +290,9 @@ const DateRangeFilter = ({
             ))}
           </aside>
 
-          <div className="flex min-w-[620px] flex-1 flex-col">
-            <div className="grid grid-cols-2">
-              <div className="flex flex-col border-r border-[#D4D4D4]">
+          <div className="flex min-w-0 w-full flex-1 flex-col sm:min-w-[min(620px,calc(100vw-10rem))]">
+            <div className="grid grid-cols-1 sm:grid-cols-2">
+              <div className="flex flex-col border-b border-[#D4D4D4] sm:border-b-0 sm:border-r">
                 <MonthHeader
                   label="From"
                   monthView={fromMonth}

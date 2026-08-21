@@ -36,14 +36,16 @@ export default function DashboardSummary() {
 
   return (
     <div>
-      <div className="p-4">
-        <h2 className="text-2xl font-semibold text-gray-900">
+      <div className="px-1 py-3 sm:p-4">
+        <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">
           {getTimeGreeting()}, {displayName}
         </h2>
-        <p className="text-gray-600">Have a wonderful day at work</p>
+        <p className="text-sm text-gray-600 sm:text-base">
+          Have a wonderful day at work
+        </p>
       </div>
 
-      <div className="mb-4 flex w-full gap-4 p-4">
+      <div className="mb-4 flex w-full flex-col gap-3 p-1 sm:flex-row sm:gap-4 sm:p-4">
         {items.map((item) => (
           <DashboardSummaryCard
             key={item.title}
