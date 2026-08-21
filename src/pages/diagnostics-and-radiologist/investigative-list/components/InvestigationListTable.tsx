@@ -103,26 +103,28 @@ export default function InvestigationListTable() {
         </button>
       </div>
 
-      <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-4 flex flex-col gap-4 border-b border-gray-200 pb-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-            <h1 className="shrink-0 text-xl font-bold text-gray-800">
+            <h1 className="shrink-0 text-lg font-bold text-gray-800 sm:text-xl">
               Investigation List
             </h1>
             <LogSearchBar
               placeholder="Search investigation name here...."
               value={searchTerm}
               onChange={setSearchTerm}
+              className="w-full"
             />
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
             <button
               type="button"
               className="inline-flex items-center gap-2 rounded-lg border border-[#573FD1] bg-white px-3 py-2 text-sm font-medium text-[#573FD1] transition hover:bg-purple-50"
             >
-              <Calendar className="h-4 w-4" />
-              25/03/2025 - 28/03/2025
+              <Calendar className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">25/03/2025 - 28/03/2025</span>
+              <span className="sm:hidden">Date</span>
             </button>
             <button
               type="button"
@@ -135,7 +137,7 @@ export default function InvestigationListTable() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
+          <table className="min-w-[720px] w-full text-left text-sm">
             <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
               <tr>
                 <th className="whitespace-nowrap px-4 py-2 font-medium">S/N</th>

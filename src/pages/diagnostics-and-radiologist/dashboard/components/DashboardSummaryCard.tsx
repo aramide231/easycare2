@@ -27,7 +27,7 @@ export default function DashboardSummaryCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative flex w-1/3 overflow-hidden rounded-lg text-left shadow-md transition hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#573FD1] focus-visible:ring-offset-2",
+        "relative flex w-full overflow-hidden rounded-lg text-left shadow-md transition hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#573FD1] focus-visible:ring-offset-2 sm:w-1/3",
         isNotification
           ? "border border-[#FA7401] bg-gradient-to-br from-[#FFF5EE] via-white to-white"
           : "bg-[#0c1628] text-white",

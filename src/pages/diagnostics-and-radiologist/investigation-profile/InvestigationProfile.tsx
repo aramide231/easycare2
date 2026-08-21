@@ -80,10 +80,10 @@ const InvestigationProfile = () => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-bold text-gray-900 sm:text-xl">
               {investigation.patientName}
             </h1>
             <p className="text-sm text-gray-600">
@@ -97,14 +97,14 @@ const InvestigationProfile = () => {
           <button
             type="button"
             onClick={() => setResultsOpen(true)}
-            className="rounded-lg border border-[#573FD1] px-4 py-2 text-sm font-semibold text-[#573FD1] hover:bg-purple-50"
+            className="w-full rounded-lg border border-[#573FD1] px-4 py-2 text-sm font-semibold text-[#573FD1] hover:bg-purple-50 sm:w-auto"
           >
             View Results
           </button>
         </div>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-gray-800">
           Prescribed Drugs / Items
         </h2>

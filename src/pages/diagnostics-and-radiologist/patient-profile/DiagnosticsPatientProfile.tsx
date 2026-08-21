@@ -61,10 +61,12 @@ const DiagnosticsPatientProfile = () => {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100dvh-5.75rem)] w-full min-w-0 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="relative flex min-h-[calc(100dvh-5.75rem)] w-full min-w-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:flex-row">
       <div
-        className={`relative flex shrink-0 flex-col border-r border-gray-200 transition-[width] duration-300 ease-in-out ${
-          isDetailsOpen ? "w-80 p-4 pr-3" : "w-0 overflow-hidden border-r-0 p-0"
+        className={`relative flex w-full shrink-0 flex-col border-b border-gray-200 transition-[width] duration-300 ease-in-out lg:border-b-0 lg:border-r ${
+          isDetailsOpen
+            ? "p-4 pr-3 lg:w-80"
+            : "hidden overflow-hidden border-0 p-0 lg:block lg:w-10"
         }`}
       >
         <div
@@ -92,7 +94,7 @@ const DiagnosticsPatientProfile = () => {
             <ChevronLeft className="h-5 w-5 shrink-0 text-[#573FD1]" />
           </button>
 
-          <div className="space-y-4 overflow-hidden">
+          <div className="min-h-0 max-h-[50vh] space-y-4 overflow-y-auto lg:max-h-none">
             <div>
               <h3 className="mb-2 text-xs font-bold tracking-wide text-gray-800">
                 PERSONAL DETAILS
@@ -256,7 +258,7 @@ const DiagnosticsPatientProfile = () => {
                   )}
                   {index < TAB_LABELS.length - 1 ? (
                     <div
-                      className={`h-0.5 w-10 shrink-0 ${
+                      className={`h-0.5 w-4 shrink-0 sm:w-10 ${
                         !tab.disabled && step > tab.step
                           ? "bg-[#573FD1]"
                           : "bg-gray-300"

@@ -71,14 +71,15 @@ export default function PatientsLog({
 
   return (
     <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex flex-col gap-4 border-b border-gray-200 pb-4 md:flex-row md:items-center md:justify-between">
-        <h1 className="shrink-0 text-xl font-bold text-gray-800">
+      <div className="mb-4 flex flex-col gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="shrink-0 text-lg font-bold text-gray-800 sm:text-xl">
           Patients Log
         </h1>
         <LogSearchBar
           placeholder="Search with Surname, Patient ID or Phone number"
           value={searchTerm}
           onChange={setSearchTerm}
+          className="w-full sm:max-w-md"
         />
       </div>
 

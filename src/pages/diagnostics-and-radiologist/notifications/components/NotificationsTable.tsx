@@ -55,15 +55,16 @@ export default function NotificationsTable() {
   };
 
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex flex-col gap-4 border-b border-gray-200 pb-4 md:flex-row md:items-center md:justify-between">
-        <h1 className="shrink-0 text-xl font-bold text-gray-800">
+    <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+      <div className="mb-4 flex flex-col gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="shrink-0 text-lg font-bold text-gray-800 sm:text-xl">
           Notification
         </h1>
         <LogSearchBar
           placeholder="Search with Surname, Patient ID or Phone number"
           value={searchTerm}
           onChange={setSearchTerm}
+          className="w-full"
         />
       </div>
 
@@ -72,7 +73,7 @@ export default function NotificationsTable() {
       ) : (
         <>
           <div className="min-h-0 flex-1 overflow-x-auto">
-            <table className="w-full min-w-[1050px] text-left">
+            <table className="w-full min-w-[760px] text-left">
               <thead className="border-b border-[#D4D4D4] text-xs font-medium uppercase tracking-wide text-gray-500">
                 <tr>
                   <th className="h-11 px-4">S/N</th>

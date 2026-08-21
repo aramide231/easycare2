@@ -502,7 +502,7 @@ const RequestMedicationsSection = forwardRef<RequestMedicationsHandle>(
             )}
           </div>
 
-          <div className="flex min-w-0 items-end gap-2">
+          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end">
             <div className="min-w-0 flex-1">
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Amount
@@ -516,7 +516,7 @@ const RequestMedicationsSection = forwardRef<RequestMedicationsHandle>(
               type="button"
               onClick={addMedication}
               disabled={!canAddMedication}
-              className="h-[45px] shrink-0 rounded-[8px] bg-[#573FD1] px-4 text-sm font-semibold text-white hover:bg-[#4a35b8] disabled:cursor-not-allowed disabled:opacity-50"
+              className="h-[45px] w-full shrink-0 rounded-[8px] bg-[#573FD1] px-4 text-sm font-semibold text-white hover:bg-[#4a35b8] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               Add Medication
             </button>
@@ -525,7 +525,7 @@ const RequestMedicationsSection = forwardRef<RequestMedicationsHandle>(
 
         {picked.length > 0 ? (
           <div className="overflow-x-auto rounded-lg border border-gray-200">
-            <table className="min-w-full text-left text-sm">
+            <table className="min-w-[800px] w-full text-left text-sm">
               <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
                 <tr>
                   <th className="px-4 py-2 font-medium">S/N</th>

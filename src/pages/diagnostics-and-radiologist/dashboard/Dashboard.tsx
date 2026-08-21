@@ -13,8 +13,8 @@ const Dashboard = () => {
   const [dateRange, setDateRange] = useState<DashboardDateRange | null>(null);
 
   return (
-    <div className="flex w-full gap-6">
-      <div className="min-w-0 flex-[3]" data-search-panel-region>
+    <div className="flex w-full flex-col gap-4 lg:flex-row lg:gap-6">
+      <div className="min-w-0 flex-1 lg:flex-[3]" data-search-panel-region>
         <DashboardSummary />
         <PatientsLog
           selectedId={selectedPatient?.id ?? null}
@@ -23,15 +23,12 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="flex w-full max-w-[17.5rem] flex-col gap-4">
-        <DashboardCalendar
-          value={dateRange}
-          onChange={setDateRange}
-        />
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:max-w-[17.5rem] lg:shrink-0 lg:flex-col">
+        <DashboardCalendar value={dateRange} onChange={setDateRange} />
         {selectedPatient ? (
           <DashboardPatientCard patient={selectedPatient} />
         ) : (
-          <div className="flex min-h-[16rem] flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center shadow-sm">
+          <div className="flex min-h-[12rem] flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center shadow-sm sm:min-h-[16rem]">
             <p className="text-sm font-medium text-gray-800">
               No patient selected
             </p>

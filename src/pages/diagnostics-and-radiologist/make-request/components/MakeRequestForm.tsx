@@ -124,9 +124,9 @@ export default function MakeRequestForm() {
   };
 
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="mb-4 border-b border-gray-200 pb-4">
-        <h1 className="text-xl font-bold text-gray-800">Make Request</h1>
+        <h1 className="text-lg font-bold text-gray-800 sm:text-xl">Make Request</h1>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -155,7 +155,7 @@ export default function MakeRequestForm() {
 
           <div className="w-full shrink-0 lg:w-[302px]">
             <FieldLabel>Dosage</FieldLabel>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <div className="relative min-w-0 flex-1">
                 <select
                   value={form.dosageFrequency}
@@ -218,7 +218,7 @@ export default function MakeRequestForm() {
         {items.length > 0 && (
           <div className="mt-2 flex w-full flex-col gap-4">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] text-left">
+              <table className="w-full min-w-[720px] text-left sm:min-w-[900px]">
                 <tbody>
                   {items.map((item, index) => (
                     <tr

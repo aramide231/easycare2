@@ -13,7 +13,7 @@ export default function LogSearchBar({
 }: Props) {
   return (
     <div
-      className={`flex w-full min-w-0 flex-1 items-center rounded-xl border border-[#D4D4D4] bg-white sm:max-w-md ${className ?? ""}`}
+      className={`flex w-full min-w-0 flex-1 items-center rounded-xl border border-[#D4D4D4] bg-white ${className ?? ""}`}
     >
       <svg
         className="ml-3 h-4 w-4 shrink-0 text-gray-400"

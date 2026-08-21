@@ -58,27 +58,27 @@ export default function LaboratoryReportList() {
 
   return (
     <>
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <h1 className="shrink-0 text-xl font-bold text-gray-800">
-          Medical Imaging Report Logs
+        <h1 className="shrink-0 text-lg font-bold text-gray-800 sm:text-xl">
+          Visitation Report Logs
         </h1>
 
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center xl:w-auto xl:justify-end">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto xl:justify-end">
           <LogSearchBar
             placeholder="Search with recipient name, ID or phone number"
             value={searchTerm}
             onChange={setSearchTerm}
-            className="sm:max-w-md xl:min-w-[320px]"
+            className="w-full sm:max-w-md"
           />
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
             <DateRangeFilter
               value={dateRange}
               onChange={setDateRange}
               align="right"
             />
             <ExportButton
-              reportTitle="Medical Imaging Report Logs"
+              reportTitle="Visitation Report Logs"
               tableRef={tableRef}
             />
           </div>
@@ -86,7 +86,7 @@ export default function LaboratoryReportList() {
       </div>
 
       <div className="overflow-x-auto border-t border-gray-200 pt-4">
-        <table ref={tableRef} className="min-w-full text-left text-sm">
+        <table ref={tableRef} className="min-w-[960px] w-full text-left text-sm">
           <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
             <tr>
               <th className="whitespace-nowrap px-4 py-2 font-medium">S/N</th>
