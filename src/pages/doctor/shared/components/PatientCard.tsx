@@ -1,6 +1,7 @@
 import { FaExpandArrowsAlt, FaArrowLeft } from "react-icons/fa";
 import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
 import { useNavigate } from "react-router-dom";
+import { resolvePreviousPatient } from "@/pages/doctor/previousPatientRecords/data/medicalHistorySeed";
 
 interface PatientCardProps {
   patient: {
@@ -14,11 +15,22 @@ interface PatientCardProps {
     gender: string;
     age: number;
     bloodPressure: string;
+    patientType?: string;
   };
 }
 
 const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   const navigate = useNavigate();
+  const summary = resolvePreviousPatient({
+    firstName: patient.firstName,
+    lastName: patient.lastName,
+    patientId: patient.patientId,
+    phoneNumber: patient.phoneNumber,
+    gender: patient.gender === "F" ? "Female" : patient.gender === "M" ? "Male" : patient.gender,
+    age: patient.age,
+    bloodPressure: patient.bloodPressure,
+    patientType: patient.patientType,
+  });
 
   const handleViewProfile = () => {
     navigate(`/doctor/patient-profile/${patient.patientId}`, {
@@ -28,7 +40,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
 
   const handlePreviousPatientRecords = () => {
     navigate(`/doctor/previous-patient-records/${patient.patientId}`, {
-      state: { patient },
+      state: { patient: summary },
     });
   };
 
@@ -42,9 +54,9 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
         />
         <div>
           <h2 className="text-lg font-semibold">
-            {patient.firstName} {patient.lastName}
+            {summary.firstName} {summary.lastName}
           </h2>
-          <p className="text-gray-500 text-sm">ID: {patient.patientId}</p>
+          <p className="text-gray-500 text-sm">ID: {summary.patientId}</p>
         </div>
       </div>
 
@@ -69,40 +81,42 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
       <div className="text-sm flex flex-col space-y-3">
         <h3 className="text-purple-600 font-semibold">Prev. Vital Signs :</h3>
         <p>
-          <strong>Blood Pressure :</strong> {patient.bloodPressure}{" "}
+          <strong>Blood Pressure :</strong> {summary.bloodPressure}{" "}
           <span className="italic">mmHg</span>
         </p>
         <p>
-          <strong>Heart Rate :</strong> 75 <span className="italic">bpm</span>
+          <strong>Heart Rate :</strong> {summary.heartRate}{" "}
+          <span className="italic">bpm</span>
         </p>
         <p>
-          <strong>Weight :</strong> 85 <span className="font-semibold">kg</span>{" "}
-          │ <strong>Height :</strong> 5’99”
+          <strong>Weight :</strong> {summary.weight}{" "}
+          <span className="font-semibold">kg</span> │ <strong>Height :</strong>{" "}
+          {summary.height}
         </p>
       </div>
 
       <div className="text-sm mt-3 flex flex-col space-y-3">
         <h3 className="text-blue-600 font-semibold">Contact :</h3>
         <p>
-          <strong>Gender :</strong> Male
+          <strong>Gender :</strong> {summary.gender}
         </p>
         <p>
-          <strong>Address :</strong> Lagos, Nigeria
+          <strong>Address :</strong> {summary.address}
         </p>
         <p>
-          <strong>Relationship :</strong> Married
+          <strong>Relationship :</strong> {summary.relationship}
         </p>
         <p>
-          <strong>Patient Type :</strong> COMPANY
+          <strong>Patient Type :</strong> {summary.patientType}
         </p>
         <p>
-          <strong>Treatment Guide :</strong> Fee for Ser.
+          <strong>Treatment Guide :</strong> {summary.medicationGuide}
         </p>
         <p>
-          <strong>Last Visits Date :</strong> 21/02/2022
+          <strong>Last Visits Date :</strong> {summary.lastVisitDate}
         </p>
         <p>
-          <strong>Next Appointment :</strong> 01/03/2025
+          <strong>Next Appointment :</strong> {summary.nextAppointment}
         </p>
       </div>
     </div>

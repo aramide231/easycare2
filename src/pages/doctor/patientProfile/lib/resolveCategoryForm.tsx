@@ -1,76 +1,26 @@
-import { createElement, type ReactNode } from "react";
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { categoryComponents } from "@/pages/doctor/patientProfile/components/CategoryRenderer";
-import GenConsultVitalSigns from "@/pages/doctor/patientProfile/components/categories/genConsult/GenConsultVitalSigns";
-import NeoNatalVitalSigns from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
-import SpecialistPresentingComplaints from "@/pages/doctor/patientProfile/components/categories/specialistConsult/SpecialistPresentingComplaints";
-import PresentingComplaints from "@/pages/doctor/patientProfile/components/categories/shared/PresentingComplaints";
-import Diagnosis from "@/pages/doctor/patientProfile/components/categories/shared/Diagnosis";
-import PhysicalExaminationTableOnly from "@/pages/doctor/patientProfile/components/categories/shared/PhysicalExaminationTableOnly";
-import InvestigationTableOnly from "@/pages/doctor/patientProfile/components/categories/shared/InvestigationTableOnly";
-import ProcedureTableOnly from "@/pages/doctor/patientProfile/components/categories/shared/ProcedureTableOnly";
-import MedicationTableOnly from "@/pages/doctor/patientProfile/components/categories/shared/MedicationTableOnly";
 
-export type CategoryViewerRole = "doctor" | "nurse";
-
-const healthCategorySectionOverrides: Record<
-  string,
-  Record<string, ComponentType>
-> = {
-  Immunization: {
-    "VITAL SIGNS": NeoNatalVitalSigns,
-  },
-  "Gen Consult": {
-    "VITAL SIGNS": GenConsultVitalSigns,
-  },
-  "Neo Natal Care": {
-    "VITAL SIGNS": NeoNatalVitalSigns,
-  },
-  "Specialist Consult": {
-    "PRESENTING COMPLAINTS": SpecialistPresentingComplaints,
-  },
-};
-
-/** Nurse sees record tables only for clinician-authored clinical sections. */
-const nurseTableOnlyOverrides: Record<string, ComponentType> = {
-  "PRESENTING COMPLAINTS": PresentingComplaints,
-  "PHYSICAL EXAMINATION": PhysicalExaminationTableOnly,
-  DIAGNOSIS: Diagnosis,
-  INVESTIGATION: InvestigationTableOnly,
-  PROCEDURE: ProcedureTableOnly,
-  MEDICATION: MedicationTableOnly,
-};
-
-function resolveFormComponent(
-  healthCategory: string | null | undefined,
-  sectionLabel: string,
-  viewerRole: CategoryViewerRole = "doctor",
-): ComponentType | undefined {
-  if (viewerRole === "nurse" && nurseTableOnlyOverrides[sectionLabel]) {
-    return nurseTableOnlyOverrides[sectionLabel];
-  }
-
-  const override =
-    healthCategory &&
-    healthCategorySectionOverrides[healthCategory]?.[sectionLabel];
-
-  return override ?? categoryComponents[sectionLabel];
-}
-
+/**
+ * Compatibility shim for nurse CategoryFormAccordion after doctor module update.
+ * Maps section labels to category form components from CategoryRenderer.
+ */
 export function resolveCategoryForm(
-  selectedCategory: string | null | undefined,
+  _selectedCategory: string | null | undefined,
   sectionLabel: string,
-  viewerRole: CategoryViewerRole = "doctor",
+  _module?: string,
 ): ReactNode {
-  const FormComponent = resolveFormComponent(
-    selectedCategory,
-    sectionLabel,
-    viewerRole,
-  );
+  const FormComponent = categoryComponents[sectionLabel] as
+    | ComponentType
+    | undefined;
 
   if (!FormComponent) {
-    return null;
+    return (
+      <p className="px-1 py-2 text-sm text-gray-500">
+        Form for this section is not available yet.
+      </p>
+    );
   }
 
-  return createElement(FormComponent);
+  return <FormComponent />;
 }

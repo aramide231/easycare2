@@ -8,31 +8,33 @@ import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import NairaAmountInput, {
   sanitizeAmountDigits,
 } from "../../category/NairaAmountInput";
-import FormDatePicker from "../../category/FormDatePicker";
 import {
   formFieldInputClass,
   formFieldSelectClass,
 } from "../../../lib/formFieldStyles";
 
-const VACCINE_OPTIONS = [
-  "Pentavalent",
-  "Rotavirus",
-  "OPV 1",
-  "BCG",
-  "OPV",
-  "Measles",
-  "Yellow Fever",
-];
+/** Nigerian EPI-style schedule: vaccines listed under each Age-Grade. */
+const VACCINES_BY_AGE_GRADE: Record<string, string[]> = {
+  "At Birth": ["BCG", "Hepatitis B", "OPV"],
+  "6 Weeks": ["OPV 1", "Pentavalent 1", "PCV 1", "Rotavirus 1"],
+  "10 Weeks": ["OPV 2", "Pentavalent 2", "PCV 2", "Rotavirus 2"],
+  "14 Weeks": ["OPV 3", "Pentavalent 3", "PCV 3", "IPV"],
+  "9 Months": ["Measles", "Yellow Fever"],
+};
 
-const AGE_GRADE_OPTIONS = [
-  "At Birth",
-  "6 Weeks",
-  "10 Weeks",
-  "14 Weeks",
-  "9 Months",
-];
+const AGE_GRADE_OPTIONS = Object.keys(VACCINES_BY_AGE_GRADE);
 
-const TIME_PERIOD_OPTIONS = ["Morning", "Afternoon", "Evening"];
+const DOSAGE_OPTIONS = ["0.5 ml", "1 dose", "2 drops", "5 drops"];
+
+const ROUTE_OPTIONS = ["Intramuscular", "Oral", "Subcutaneous", "Intradermal"];
+
+const SITE_OPTIONS = [
+  "Left Thigh",
+  "Right Thigh",
+  "Left Arm",
+  "Right Arm",
+  "Oral",
+];
 
 const vaccineDetailsColumns = [
   { key: "sn", label: "SN" },
@@ -41,26 +43,24 @@ const vaccineDetailsColumns = [
   { key: "ageGrade", label: "AGE GRADE" },
   { key: "vaccineType", label: "TYPE OF VACCINE" },
   { key: "dosage", label: "DOSAGE" },
-  { key: "route", label: "ADMIN ROUTE" },
-  { key: "site", label: "SITE" },
 ];
 
 type VaccineRow = {
+  ageGrade: string;
   vaccine: string;
   dosage: string;
   route: string;
   site: string;
   amount: string;
-  period: string;
 };
 
 const EMPTY_VACCINE_ROW: VaccineRow = {
+  ageGrade: "",
   vaccine: "",
   dosage: "",
   route: "",
   site: "",
   amount: "",
-  period: "",
 };
 
 function parseAmount(value: string): number {
@@ -77,7 +77,9 @@ type SelectFieldProps = {
   value: string;
   onChange: (value: string) => void;
   options: string[];
+  disabledOptions?: string[];
   placeholder?: string;
+  disabled?: boolean;
 };
 
 function SelectField({
@@ -85,8 +87,15 @@ function SelectField({
   value,
   onChange,
   options,
+  disabledOptions = [],
   placeholder = "-Select an Option-",
+  disabled = false,
 }: SelectFieldProps) {
+  const disabledSet = useMemo(
+    () => new Set(disabledOptions),
+    [disabledOptions]
+  );
+
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -95,12 +104,17 @@ function SelectField({
       <div className="relative">
         <select
           value={value}
+          disabled={disabled}
           onChange={(e) => onChange(e.target.value)}
-          className={`${formFieldSelectClass} pr-10`}
+          className={`${formFieldSelectClass} pr-10 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400`}
         >
           <option value="">{placeholder}</option>
           {options.map((option) => (
-            <option key={option} value={option}>
+            <option
+              key={option}
+              value={option}
+              disabled={disabledSet.has(option)}
+            >
               {option}
             </option>
           ))}
@@ -114,57 +128,78 @@ function SelectField({
   );
 }
 
-function StaticPlaceholderField({
-  label,
-  value,
-  onChange,
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-}) {
-  return (
-    <div>
-      <label className="mb-1 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={formFieldInputClass}
-      />
-    </div>
-  );
-}
-
 const VaccineAdministration = () => {
   const [vaccineForm, setVaccineForm] = useState<Record<string, string>>({});
-  const [vaccineRow, setVaccineRow] = useState<VaccineRow>({ ...EMPTY_VACCINE_ROW });
+  const [vaccineRow, setVaccineRow] = useState<VaccineRow>({
+    ...EMPTY_VACCINE_ROW,
+  });
   const [vaccines, setVaccines] = useState<VaccineRow[]>([]);
 
   const { history: vaccineHistory } = useMedicalTable("VACCINE ADMINISTRATION");
+
+  const selectedAgeGrade = vaccineForm.ageGrade || "";
+
+  const vaccinesForAgeGrade = useMemo(
+    () => VACCINES_BY_AGE_GRADE[selectedAgeGrade] ?? [],
+    [selectedAgeGrade]
+  );
+
+  const savedVaccinesForAgeGrade = useMemo(
+    () =>
+      vaccines
+        .filter((row) => row.ageGrade === selectedAgeGrade)
+        .map((row) => row.vaccine),
+    [vaccines, selectedAgeGrade]
+  );
+
+  const completedAgeGrades = useMemo(() => {
+    return AGE_GRADE_OPTIONS.filter((grade) => {
+      const required = VACCINES_BY_AGE_GRADE[grade] ?? [];
+      if (required.length === 0) return false;
+      const saved = new Set(
+        vaccines.filter((row) => row.ageGrade === grade).map((row) => row.vaccine)
+      );
+      return required.every((vaccine) => saved.has(vaccine));
+    });
+  }, [vaccines]);
 
   const totalAmount = useMemo(
     () => vaccines.reduce((sum, row) => sum + parseAmount(row.amount), 0),
     [vaccines]
   );
 
-  const handleMetaChange = (name: string, value: string) => {
-    setVaccineForm((prev) => ({ ...prev, [name]: value }));
+  const handleAgeGradeChange = (value: string) => {
+    setVaccineForm((prev) => ({ ...prev, ageGrade: value }));
+    setVaccineRow((prev) => ({
+      ...prev,
+      ageGrade: value,
+      vaccine: "",
+    }));
   };
 
   const handleRowChange = (name: keyof VaccineRow, value: string) => {
     setVaccineRow((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleMetaChange = (name: string, value: string) => {
+    setVaccineForm((prev) => ({ ...prev, [name]: value }));
+  };
+
   const saveVaccineRow = () => {
-    if (!vaccineRow.vaccine.trim()) return;
-    setVaccines((prev) => [...prev, { ...vaccineRow }]);
-    setVaccineRow({ ...EMPTY_VACCINE_ROW });
+    if (!selectedAgeGrade.trim() || !vaccineRow.vaccine.trim()) return;
+    if (savedVaccinesForAgeGrade.includes(vaccineRow.vaccine)) return;
+
+    setVaccines((prev) => [
+      ...prev,
+      {
+        ...vaccineRow,
+        ageGrade: selectedAgeGrade,
+      },
+    ]);
+    setVaccineRow({
+      ...EMPTY_VACCINE_ROW,
+      ageGrade: selectedAgeGrade,
+    });
   };
 
   const removeVaccine = (index: number) => {
@@ -207,28 +242,20 @@ const VaccineAdministration = () => {
     return {
       ...row,
       ageGrade: payload.ageGrade ?? "—",
-      vaccineType:
-        payload.vaccineType ?? firstVaccine?.vaccine ?? "—",
+      vaccineType: payload.vaccineType ?? firstVaccine?.vaccine ?? "—",
       dosage: payload.dosage ?? firstVaccine?.dosage ?? "—",
-      route: firstVaccine?.route ?? payload.route ?? "—",
-      site: firstVaccine?.site ?? payload.site ?? "—",
     };
   });
 
   return (
     <div className="space-y-6 text-sm">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <SelectField
           label="Age-Grade"
-          value={vaccineForm.ageGrade || ""}
-          onChange={(value) => handleMetaChange("ageGrade", value)}
+          value={selectedAgeGrade}
+          onChange={handleAgeGradeChange}
           options={AGE_GRADE_OPTIONS}
-        />
-        <SelectField
-          label="Period"
-          value={vaccineForm.timePeriod || ""}
-          onChange={(value) => handleMetaChange("timePeriod", value)}
-          options={TIME_PERIOD_OPTIONS}
+          disabledOptions={completedAgeGrades}
         />
       </div>
 
@@ -237,28 +264,38 @@ const VaccineAdministration = () => {
           label="Type of Vaccine"
           value={vaccineRow.vaccine}
           onChange={(value) => handleRowChange("vaccine", value)}
-          options={VACCINE_OPTIONS}
+          options={vaccinesForAgeGrade}
+          disabledOptions={savedVaccinesForAgeGrade}
+          disabled={!selectedAgeGrade}
+          placeholder={
+            selectedAgeGrade
+              ? "-Select an Option-"
+              : "Select Age-Grade first"
+          }
         />
-        <StaticPlaceholderField
+        <SelectField
           label="Dosage"
           value={vaccineRow.dosage}
           onChange={(value) => handleRowChange("dosage", value)}
-          placeholder="-Enter dosage-"
+          options={DOSAGE_OPTIONS}
+          disabled={!selectedAgeGrade}
         />
-        <StaticPlaceholderField
+        <SelectField
           label="Administration Route"
           value={vaccineRow.route}
           onChange={(value) => handleRowChange("route", value)}
-          placeholder="-Enter admin route-"
+          options={ROUTE_OPTIONS}
+          disabled={!selectedAgeGrade}
         />
       </div>
 
-      <div className="grid grid-cols-2 items-end gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_minmax(0,1.5fr)_auto]">
-        <StaticPlaceholderField
+      <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_auto]">
+        <SelectField
           label="Site (Body Part)"
           value={vaccineRow.site}
           onChange={(value) => handleRowChange("site", value)}
-          placeholder="-Enter site-"
+          options={SITE_OPTIONS}
+          disabled={!selectedAgeGrade}
         />
 
         <div>
@@ -268,23 +305,14 @@ const VaccineAdministration = () => {
           <NairaAmountInput
             value={sanitizeAmountDigits(vaccineRow.amount)}
             onChange={(digits) => handleRowChange("amount", digits)}
-          />
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Period
-          </label>
-          <FormDatePicker
-            value={vaccineRow.period}
-            onChange={(next) => handleRowChange("period", next)}
+            readOnly={!selectedAgeGrade}
           />
         </div>
 
         <button
           type="button"
           onClick={saveVaccineRow}
-          disabled={!vaccineRow.vaccine.trim()}
+          disabled={!selectedAgeGrade.trim() || !vaccineRow.vaccine.trim()}
           className="h-[45px] whitespace-nowrap rounded-lg bg-[#573FD1] px-6 text-sm font-medium text-white hover:bg-[#4a35b8] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Save
@@ -293,8 +321,9 @@ const VaccineAdministration = () => {
 
       {vaccines.length > 0 && (
         <div className="space-y-2">
-          <div className="hidden text-xs uppercase text-gray-500 sm:grid sm:grid-cols-[2rem_minmax(0,1.2fr)_minmax(0,0.7fr)_minmax(0,0.9fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_4.5rem] sm:gap-2 sm:px-3 sm:pb-1">
+          <div className="hidden text-xs uppercase text-gray-500 sm:grid sm:grid-cols-[2rem_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.7fr)_minmax(0,0.9fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_4.5rem] sm:gap-2 sm:px-3 sm:pb-1">
             <span>S/N</span>
+            <span>Age Grade</span>
             <span>Vaccine Name</span>
             <span>Dosage</span>
             <span>Route</span>
@@ -306,14 +335,21 @@ const VaccineAdministration = () => {
           <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
             {vaccines.map((row, index) => (
               <li
-                key={index}
-                className="grid grid-cols-1 gap-2 px-3 py-2.5 text-sm sm:grid-cols-[2rem_minmax(0,1.2fr)_minmax(0,0.7fr)_minmax(0,0.9fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_4.5rem] sm:items-center sm:gap-2"
+                key={`${row.ageGrade}-${row.vaccine}-${index}`}
+                className="grid grid-cols-1 gap-2 px-3 py-2.5 text-sm sm:grid-cols-[2rem_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.7fr)_minmax(0,0.9fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_4.5rem] sm:items-center sm:gap-2"
               >
-                <span className="text-gray-500 sm:text-gray-800">{index + 1}</span>
+                <span className="text-gray-500 sm:text-gray-800">
+                  {index + 1}
+                </span>
+                <span className="min-w-0 text-gray-600">
+                  {row.ageGrade || "—"}
+                </span>
                 <span className="min-w-0 font-medium text-gray-800">
                   {row.vaccine}
                 </span>
-                <span className="min-w-0 text-gray-600">{row.dosage || "—"}</span>
+                <span className="min-w-0 text-gray-600">
+                  {row.dosage || "—"}
+                </span>
                 <span className="min-w-0 text-gray-600">{row.route || "—"}</span>
                 <span className="min-w-0 text-gray-600">{row.site || "—"}</span>
                 <span className="min-w-0 text-gray-600">

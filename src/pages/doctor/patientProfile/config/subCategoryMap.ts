@@ -62,7 +62,15 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
     { label: "MEDICATION" },
   ],
 
-  "Post Natal Care": [],
+  "Post Natal Care": [
+    { label: "VITAL SIGNS" },
+    { label: "PRESENTING COMPLAINTS" },
+    { label: "PHYSICAL EXAMINATION" },
+    { label: "DIAGNOSIS" },
+    { label: "INVESTIGATION", fieldLayout: "wide-investigation" },
+    { label: "PROCEDURE" },
+    { label: "MEDICATION" },
+  ],
 
   "Specialist Consult": [
     { label: "PRESENTING COMPLAINTS" },
@@ -74,7 +82,6 @@ export const subCategoryMap: Record<string, SubCategory[]> = {
     { label: "PRE-OPERATION NOTE" },
     { label: "POST-OPERATION NOTE" },
     { label: "POST-OPERATION ORDERS" },
-    { label: "MEDICATION" },
   ],
 };
 

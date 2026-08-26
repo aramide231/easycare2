@@ -54,51 +54,49 @@ const PatientSummaryCard = ({ patient }: Props) => {
         <h3 className="font-semibold text-[#573FD1]">Prev. Vital Signs :</h3>
         <p>
           <span className="font-medium">Blood Pressure :</span>{" "}
-          {patient.bloodPressure ?? "120/80"}{" "}
+          {patient.bloodPressure}{" "}
           <span className="italic text-gray-500">mmHg</span>
         </p>
         <p>
           <span className="font-medium">Heart Rate :</span>{" "}
-          {patient.heartRate ?? "75"}{" "}
+          {patient.heartRate}{" "}
           <span className="italic text-gray-500">bpm</span>
         </p>
         <p>
-          <span className="font-medium">Weight :</span> {patient.weight ?? "85"}{" "}
+          <span className="font-medium">Weight :</span> {patient.weight}{" "}
           <span className="font-semibold">kg</span>
           <span className="mx-1 text-gray-400">│</span>
-          <span className="font-medium">Height :</span>{" "}
-          {patient.height ?? "170cm"}
+          <span className="font-medium">Height :</span> {patient.height}
         </p>
       </div>
 
       <div className="mt-4 space-y-2 text-sm text-gray-700">
         <h3 className="font-semibold text-[#2563EB]">Contact :</h3>
         <p>
-          <span className="font-medium">Gender :</span> {patient.gender ?? "Male"}
+          <span className="font-medium">Gender :</span> {patient.gender}
         </p>
         <p>
-          <span className="font-medium">Address :</span>{" "}
-          {patient.address ?? "Lagos, Nigeria"}
+          <span className="font-medium">Address :</span> {patient.address}
         </p>
         <p>
           <span className="font-medium">Relationship :</span>{" "}
-          {patient.relationship ?? "Married"}
+          {patient.relationship}
         </p>
         <p>
           <span className="font-medium">Patient Type :</span>{" "}
-          {patient.patientType ?? "COMPANY"}
+          {patient.patientType}
         </p>
         <p>
           <span className="font-medium">Medication Guide :</span>{" "}
-          {patient.medicationGuide ?? "Fee for Ser."}
+          {patient.medicationGuide}
         </p>
         <p>
           <span className="font-medium">Last Visits Date :</span>{" "}
-          {patient.lastVisitDate ?? "21/02/2022"}
+          {patient.lastVisitDate}
         </p>
         <p>
           <span className="font-medium">Next Appointment :</span>{" "}
-          {patient.nextAppointment ?? "01/03/2025"}
+          {patient.nextAppointment}
         </p>
       </div>
     </div>

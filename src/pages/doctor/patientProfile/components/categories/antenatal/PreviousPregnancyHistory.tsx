@@ -1,11 +1,6 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
 import { CategoryFormWithHistory } from "../../category";
 
-const LIVING_CHILDREN_OPTIONS = Array.from({ length: 21 }, (_, index) => ({
-  value: String(index),
-  label: String(index),
-}));
-
 const pregnancyFields: CategoryFieldConfig[] = [
   {
     name: "totalGP",
@@ -14,10 +9,13 @@ const pregnancyFields: CategoryFieldConfig[] = [
   },
   {
     name: "livingChildren",
-    label: "No of Living Children",
+    label: "Number of Living Children",
     tableLabel: "LIVING",
     type: "select",
-    options: LIVING_CHILDREN_OPTIONS,
+    options: Array.from({ length: 21 }, (_, i) => ({
+      value: String(i),
+      label: String(i),
+    })),
   },
   {
     name: "dateOfBirth",

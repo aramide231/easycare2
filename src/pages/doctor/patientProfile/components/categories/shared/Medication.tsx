@@ -47,9 +47,6 @@ const medicationDetailsColumns = [
   { key: "medication", label: "MEDICATION" },
   { key: "adminRoute", label: "ADMIN ROUTE" },
   { key: "dosage", label: "DOSAGE" },
-  { key: "interval", label: "INTERVAL" },
-  { key: "period", label: "PERIOD" },
-  { key: "quantity", label: "QTY" },
 ];
 
 type PickedMedication = {
@@ -428,9 +425,6 @@ export default function Medication() {
               medication: item.medication,
               adminRoute: item.adminRoute ?? "—",
               dosage: item.dosage,
-              interval: item.interval ?? "—",
-              period: item.period ?? "—",
-              quantity: item.quantity ?? "—",
             };
           });
         }
@@ -443,9 +437,6 @@ export default function Medication() {
             medication: payload.medication,
             adminRoute: payload.adminRoute ?? "—",
             dosage: payload.dosage,
-            interval: payload.interval ?? "—",
-            period: payload.period ?? "—",
-            quantity: payload.quantity ?? "—",
           },
         ];
       }),

@@ -4,7 +4,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   DATE_PLACEHOLDER,
   formatDateToDDMMYY,
+  formatDateToDDMMYYYY,
   parseDDMMYY,
+  parseDDMMYYYY,
 } from "../../lib/dateFormat";
 import { formFieldInputClass } from "../../lib/formFieldStyles";
 
@@ -14,6 +16,8 @@ type Props = {
   className?: string;
   /** When true, only today and future dates are selectable. */
   allowFutureOnly?: boolean;
+  /** Use full year format DD/MM/YYYY (Figma expiry fields). */
+  fullYear?: boolean;
 };
 
 function startOfToday(): Date {
@@ -27,24 +31,33 @@ const FormDatePicker = ({
   onChange,
   className,
   allowFutureOnly = false,
+  fullYear = false,
 }: Props) => {
-  const selected = parseDDMMYY(value);
+  const selected = fullYear ? parseDDMMYYYY(value) : parseDDMMYY(value);
 
   return (
     <div className={`relative w-full ${className ?? ""}`}>
       <DatePicker
         selected={selected}
         onChange={(date: Date | null) =>
-          onChange(date ? formatDateToDDMMYY(date) : "")
+          onChange(
+            date
+              ? fullYear
+                ? formatDateToDDMMYYYY(date)
+                : formatDateToDDMMYY(date)
+              : ""
+          )
         }
-        placeholderText={DATE_PLACEHOLDER}
-        dateFormat="dd/MM/yy"
+        placeholderText={fullYear ? "DD/MM/YYYY" : DATE_PLACEHOLDER}
+        dateFormat={fullYear ? "dd/MM/yyyy" : "dd/MM/yy"}
         minDate={allowFutureOnly ? startOfToday() : undefined}
         maxDate={allowFutureOnly ? undefined : new Date()}
         showPopperArrow={false}
         calendarClassName="!rounded-lg !border !border-gray-200 !shadow-lg"
+        popperClassName="!z-[300]"
         className={`${formFieldInputClass} !pr-10`}
         wrapperClassName="w-full"
+        popperProps={{ strategy: "fixed" }}
       />
       <Calendar
         className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
