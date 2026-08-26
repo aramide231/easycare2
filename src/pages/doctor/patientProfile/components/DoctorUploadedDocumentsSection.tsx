@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Upload, FileText, Image, X } from "lucide-react";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import { toast } from "react-toastify";
@@ -34,6 +34,8 @@ type Props = {
   figmaLayout?: boolean;
   /** Figma Step 2: show only upload zone or only the files table. */
   viewMode?: "upload" | "list";
+  /** Per-patient seed documents; resets when patientId changes. */
+  initialDocuments?: UploadedDocument[];
 };
 
 const SEED_DOCUMENTS: UploadedDocument[] = [
@@ -96,10 +98,12 @@ const DoctorUploadedDocumentsSection = ({
   phoneNumber,
   figmaLayout = false,
   viewMode,
+  initialDocuments,
 }: Props) => {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [documents, setDocuments] = useState<UploadedDocument[]>(SEED_DOCUMENTS);
+  const seedDocuments = initialDocuments ?? SEED_DOCUMENTS;
+  const [documents, setDocuments] = useState<UploadedDocument[]>(seedDocuments);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showUploadPanel, setShowUploadPanel] = useState(!figmaLayout);
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
@@ -108,6 +112,13 @@ const DoctorUploadedDocumentsSection = ({
   const [isUploading, setIsUploading] = useState(false);
   const [docToDelete, setDocToDelete] = useState<UploadedDocument | null>(null);
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+
+  useEffect(() => {
+    setDocuments(initialDocuments ?? SEED_DOCUMENTS);
+    setSelectedIds(new Set());
+    setPendingUploads([]);
+    setFileError(null);
+  }, [patientId, initialDocuments]);
 
   const showUploadZone =
     !figmaLayout || viewMode === "upload" || (!viewMode && showUploadPanel);

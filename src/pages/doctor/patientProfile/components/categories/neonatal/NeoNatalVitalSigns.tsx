@@ -1,5 +1,4 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
-import { VITAL_COMMENT_OPTIONS } from "../../../config/vitalFieldOptions";
 import { CategoryFormWithHistory } from "../../category";
 
 const neoNatalVitalFields: CategoryFieldConfig[] = [
@@ -35,8 +34,8 @@ const neoNatalVitalFields: CategoryFieldConfig[] = [
     name: "comment",
     label: "Comments",
     tableLabel: "COMMENT",
-    type: "select",
-    options: VITAL_COMMENT_OPTIONS,
+    type: "textarea",
+    showInTable: false,
   },
 ];
 
@@ -49,7 +48,6 @@ const neoNatalVitalTableColumns = [
   { key: "pulseRate", label: "PULSE" },
   { key: "respiration", label: "RES" },
   { key: "spo2", label: "SPO2" },
-  { key: "comment", label: "COMMENT" },
 ];
 
 export default function NeoNatalVitalSigns() {

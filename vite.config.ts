@@ -16,6 +16,9 @@ export default defineConfig({
       '@hmo': fileURLToPath(
         new URL('./src/modules/hmo', import.meta.url),
       ),
+      '@pharmacy': fileURLToPath(
+        new URL('./src/modules/pharmacy', import.meta.url),
+      ),
       '@doctor-shared': fileURLToPath(
         new URL('./src/pages/doctor/shared', import.meta.url),
       ),

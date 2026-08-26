@@ -1,26 +1,35 @@
-import Topbar from "@/constant/topbar";
-import { Outlet } from "react-router-dom";
+import Topbar from "@/layouts/doctor/components/Topbar";
+import Sidebar from "@/layouts/doctor/components/Sidebar";
 import { PatientManagementProvider } from "@doctor-shared/context/PatientManagementContext";
-import DoctorSidebar from "./doctor/components/Sidebar";
+import { DOCTOR_DISCHARGED_SEED } from "@/pages/doctor/discharge/data/dischargedSeed";
+import { Outlet, useLocation } from "react-router-dom";
 
 const DoctorLayout = () => {
+  const location = useLocation();
+  const isAccountPage = /^\/doctor\/account(\/.*)?$/.test(location.pathname);
+  const isFlagProfile = /^\/doctor\/flag-profile\/.+/.test(location.pathname);
+  const hideSidebar = isAccountPage || isFlagProfile;
+
   return (
-    <PatientManagementProvider>
-      <div className="flex h-screen w-full overflow-hidden bg-gray-50/30">
-        <aside className="hidden md:flex h-screen shrink-0 overflow-hidden flex-col">
-          <DoctorSidebar />
-        </aside>
+    <PatientManagementProvider initialDischarged={DOCTOR_DISCHARGED_SEED}>
+      <div className="flex min-h-screen w-full flex-col bg-gray-50/30">
+        <Topbar />
 
-        <main className="flex flex-col flex-1 min-w-0 overflow-hidden">
-          <Topbar />
-
+        <div className="hide-scrollbar flex-1 overflow-y-auto px-3 py-4 md:px-5 lg:px-6">
           <div
-            className="flex-1 overflow-y-auto px-4 md:px-6 py-4 hide-scrollbar"
-            data-app-page-content
+            className={
+              hideSidebar
+                ? "flex min-h-0 w-full"
+                : "flex min-h-[calc(100dvh-5.75rem)] items-stretch gap-3"
+            }
           >
-            <Outlet />
+            {!hideSidebar && <Sidebar />}
+
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <Outlet />
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     </PatientManagementProvider>
   );

@@ -148,8 +148,7 @@ const DoctorPatientProfile = () => {
   const isSpecialistConsult = selectedHealthCategory === "Specialist Consult";
   const isComingSoonCategory =
     selectedHealthCategory === "Family Planning" ||
-    selectedHealthCategory === "Fertility Clinics" ||
-    selectedHealthCategory === "Post Natal Care";
+    selectedHealthCategory === "Fertility Clinics";
 
   const financeCategories = [
     {
@@ -455,7 +454,7 @@ const DoctorPatientProfile = () => {
     "grid-cols-3 sm:grid-cols-4 lg:grid-cols-5";
 
   const financeGridClass =
-    "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7";
+    "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5";
 
   const showPreviewSubmit =
     (step === 1 && selectedHealthCategory && !isComingSoonCategory) ||
@@ -783,13 +782,7 @@ const DoctorPatientProfile = () => {
                         </p>
                       </div>
                     ) : isComingSoonCategory ? (
-                      <ComingSoonPage
-                        title={
-                          selectedHealthCategory === "Post Natal Care"
-                            ? "Info Coming Soon"
-                            : selectedHealthCategory
-                        }
-                      />
+                      <ComingSoonPage title={selectedHealthCategory} />
                     ) : (
                       <>
                         {isGenConsult ? <GenConsultController /> : null}

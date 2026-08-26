@@ -20,6 +20,7 @@
       "@/*": ["./src/*"],
       "@frontdesk/*": ["./src/modules/frontdesk/*"],
       "@hmo/*": ["./src/modules/hmo/*"],
+      "@pharmacy/*": ["./src/modules/pharmacy/*"],
       "@doctor-shared/*": ["./src/pages/doctor/shared/*"]
     }
   },

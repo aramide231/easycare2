@@ -4,6 +4,7 @@ export const ROLE_HOME_PATHS: Record<string, string> = {
   doctor: "/doctor",
   admin: "/admin",
   hmo: "/hmo/dashboard",
+  pharmacy: "/pharmacy",
   "diagnostics-and-radiologist": "/diagnostics-and-radiologist",
 };
 
@@ -22,6 +23,7 @@ export function getActiveModuleRole(
   if (pathname.startsWith("/nurse")) return "nurse";
   if (pathname.startsWith("/frontdesk")) return "frontdesk";
   if (pathname.startsWith("/hmo")) return "hmo";
+  if (pathname.startsWith("/pharmacy")) return "pharmacy";
   if (pathname.startsWith("/diagnostics-and-radiologist"))
     return "diagnostics-and-radiologist";
   if (pathname.startsWith("/admin")) return "admin";

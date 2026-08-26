@@ -7,8 +7,8 @@ import { getTotalPages } from "@doctor-shared/lib/pagination";
 import ReportDateRangeFilter from "@/pages/doctor/reports/components/ReportDateRangeFilter";
 import PatientSummaryCard from "./components/PatientSummaryCard";
 import {
-  DEFAULT_PREVIOUS_PATIENT,
-  MEDICAL_HISTORY_SEED,
+  getMedicalHistoryForPatient,
+  resolvePreviousPatient,
   type MedicalHistoryEntry,
   type PreviousPatientSummary,
 } from "./data/medicalHistorySeed";
@@ -23,26 +23,27 @@ const PreviousPatientRecords = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const patient: PreviousPatientSummary =
-    (location.state?.patient as PreviousPatientSummary | undefined) ??
-    DEFAULT_PREVIOUS_PATIENT;
+  const patient = resolvePreviousPatient(
+    location.state?.patient as PreviousPatientSummary | undefined,
+    patientId
+  );
 
-  const resolvedPatient =
-    patientId && patient.patientId !== patientId
-      ? { ...patient, patientId }
-      : patient;
+  const historyRows = useMemo(
+    () => getMedicalHistoryForPatient(patient.patientId),
+    [patient.patientId]
+  );
 
   const filtered = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
-    if (!q) return MEDICAL_HISTORY_SEED;
+    if (!q) return historyRows;
 
-    return MEDICAL_HISTORY_SEED.filter(
+    return historyRows.filter(
       (row) =>
         row.date.toLowerCase().includes(q) ||
         row.time.toLowerCase().includes(q) ||
         row.consultationType.toLowerCase().includes(q)
     );
-  }, [searchTerm]);
+  }, [historyRows, searchTerm]);
 
   const totalPages = getTotalPages(filtered.length, PAGE_SIZE);
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -54,9 +55,9 @@ const PreviousPatientRecords = () => {
   };
 
   const handleViewRecord = (row: MedicalHistoryEntry) => {
-    navigate(`/doctor/patient-profile/${resolvedPatient.patientId}`, {
+    navigate(`/doctor/patient-profile/${patient.patientId}`, {
       state: {
-        patient: resolvedPatient,
+        patient,
         consultationRecord: row,
       },
     });
@@ -64,7 +65,7 @@ const PreviousPatientRecords = () => {
 
   return (
     <div className="flex min-h-0 w-full flex-col gap-4 lg:flex-row lg:items-start">
-      <PatientSummaryCard patient={resolvedPatient} />
+      <PatientSummaryCard patient={patient} />
 
       <div className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">

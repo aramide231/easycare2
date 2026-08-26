@@ -33,6 +33,13 @@ export function formatDateToDDMMYY(date: Date): string {
   return `${day}/${month}/${year}`;
 }
 
+export function formatDateToDDMMYYYY(date: Date): string {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear());
+  return `${day}/${month}/${year}`;
+}
+
 export function parseDDMMYY(value: string): Date | null {
   if (!value.trim()) return null;
   if (!isValidDateDDMMYY(value)) return null;
@@ -43,4 +50,30 @@ export function parseDDMMYY(value: string): Date | null {
     Number(match[2]) - 1,
     Number(match[1])
   );
+}
+
+export function isValidDateDDMMYYYY(value: string): boolean {
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());
+  if (!match) return false;
+
+  const day = Number(match[1]);
+  const month = Number(match[2]);
+  const year = Number(match[3]);
+
+  if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+}
+
+export function parseDDMMYYYY(value: string): Date | null {
+  if (!value.trim()) return null;
+  if (!isValidDateDDMMYYYY(value)) return null;
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());
+  if (!match) return null;
+  return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
 }

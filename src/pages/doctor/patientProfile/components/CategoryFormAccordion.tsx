@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { categoryComponents } from "./CategoryRenderer";
+import ImmunizationVitalSigns from "./categories/immunization/ImmunizationVitalSigns";
 import GenConsultVitalSigns from "./categories/genConsult/GenConsultVitalSigns";
 import NeoNatalVitalSigns from "./categories/neonatal/NeoNatalVitalSigns";
 import SpecialistPresentingComplaints from "./categories/specialistConsult/SpecialistPresentingComplaints";
@@ -11,7 +12,7 @@ const healthCategorySectionOverrides: Record<
   Record<string, ComponentType>
 > = {
   Immunization: {
-    "VITAL SIGNS": NeoNatalVitalSigns,
+    "VITAL SIGNS": ImmunizationVitalSigns,
   },
   "Gen Consult": {
     "VITAL SIGNS": GenConsultVitalSigns,
@@ -76,12 +77,11 @@ const CategoryFormAccordion = ({
                 {section.label}
               </span>
               <div className="flex min-h-[2.25rem] items-center justify-end pr-1">
-                <ChevronDown
-                  className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
-                  aria-hidden
-                />
+                {isOpen ? (
+                  <ChevronUp className="h-4 w-4 shrink-0 text-gray-500" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
+                )}
               </div>
             </button>
 

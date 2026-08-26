@@ -1,35 +1,46 @@
 import type { CategoryFieldConfig } from "../../../config/categoryFieldTypes";
 import { CategoryFormWithHistory } from "../../category";
 
-const BLOOD_GROUP_OPTIONS = [
-  { value: "A+", label: "A+" },
-  { value: "B+", label: "B+" },
-  { value: "O+", label: "O+" },
-  { value: "AB+", label: "AB+" },
-];
+const toOptions = (values: string[]) =>
+  values.map((value) => ({ value, label: value }));
 
-const GENOTYPE_OPTIONS = [
-  { value: "AA", label: "AA" },
-  { value: "AC", label: "AC" },
-  { value: "AS", label: "AS" },
-  { value: "SS", label: "SS" },
-  { value: "SC", label: "SC" },
-];
+const BLOOD_GROUP_OPTIONS = toOptions([
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "O+",
+  "O-",
+  "AB+",
+  "AB-",
+]);
 
-/** High-risk pregnancy factors (Figma / Gestation comment guidance). */
-const HIGH_RISK_PREGNANCY_OPTIONS = [
-  { value: "NONE", label: "None / Low Risk" },
-  { value: "GESTATIONAL_DIABETES", label: "Gestational Diabetes Mellitus" },
-  {
-    value: "HYPERTENSIVE_DISORDERS",
-    label: "Hypertensive Disorders in Pregnancy",
-  },
-  { value: "MULTIPLE_GESTATION", label: "Multiple Gestation" },
-  { value: "PREVIOUS_CS", label: "Previous Caesarean Section" },
-  { value: "APH", label: "Antepartum Haemorrhage" },
-  { value: "ADVANCED_MATERNAL_AGE", label: "Advanced Maternal Age" },
-  { value: "OTHER", label: "Other High Risk Factor" },
-];
+/** Genotype values from Figma. */
+const GENOTYPE_OPTIONS = toOptions(["AA", "AC", "AS", "SS", "SC"]);
+
+const HIGH_RISK_PREGNANCY_OPTIONS = toOptions([
+  "Bad Obstetrics Hx",
+  "Bleeding Pv In Early Pregnancy",
+  "Co-Existing Fibroid",
+  "Co-Existing Ovarian Cyst",
+  "Grand Multiparous = 5",
+  "Multiple Gestations",
+  "Pre-Existing Medical Conditions",
+  "Previous Aph",
+  "Previous Cesarian Section",
+  "Previous Cesarian Section x1",
+  "Previous Cesarian Section x2",
+  "Previous Cesarian Section x3",
+  "Previous Ectopic Pregnancy",
+  "Previous Gestgational Dm",
+  "Previous Hx Of Cervical Incompetence",
+  "Previous Infertility",
+  "Previous Myomectomy",
+  "Previous Preclampsia / Enclampsia",
+  "Previous Preterm Delivery",
+  "Previous Prom",
+  "Premigravida",
+]);
 
 const bookingFields: CategoryFieldConfig[] = [
   {

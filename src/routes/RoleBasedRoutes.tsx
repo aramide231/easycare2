@@ -4,12 +4,15 @@ import { useAuth } from "../context/AuthContext";
 
 import { FrontdeskRoutes } from "@/modules/frontdesk";
 import { HmoRoutes } from "@/modules/hmo";
+import { PharmacyRoutes } from "@/modules/pharmacy";
 import { DiagnosticsRadiologistRoutes } from "@/pages/diagnostics-and-radiologist/routes";
 import NurseLayout from "../layouts/NurseLayout";
 import DoctorLayout from "../layouts/DoctorLayout";
 import AdminLayout from "../layouts/AdminLayout";
 
 import Notifications from "@frontdesk/pages/notifications/Notifications";
+import ComingSoonPage from "@/components/ui/ComingSoonPage";
+import ReminderPage from "@frontdesk/pages/set-reminder/ReminderPage";
 
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboard/Dashboard";
@@ -100,6 +103,9 @@ const RoleBasedRoutes = () => {
       {/* HMO — available for preview without login */}
       {HmoRoutes()}
 
+      {/* Pharmacy — available for preview without login */}
+      {PharmacyRoutes()}
+
       {/* Diagnostics & Radiologist — available for preview without login */}
       {DiagnosticsRadiologistRoutes()}
 
@@ -130,29 +136,48 @@ const RoleBasedRoutes = () => {
           />
         </Route>
 
-      {/* Doctor */}
+      {/* Doctor — updated clinician module from EasyCare-Aramide */}
       <Route path="/doctor" element={<DoctorLayout />}>
         <Route index element={<DoctorDashboard />} />
         <Route path="notifications-doctor" element={<DoctorNotification />} />
-        <Route path="admission" element={<DoctorAdmission />} />
-        <Route path="discharge" element={<DoctorDischarge />} />
+        <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
         <Route path="account" element={<DoctorAccountSettings />} />
         <Route path="account/profile" element={<DoctorYourProfile />} />
         <Route path="flag-profile/:id" element={<DoctorFlagProfile />} />
-        <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
         <Route
           path="previous-patient-records/:patientId"
           element={<DoctorPreviousPatientRecords />}
         />
+        <Route path="admission" element={<DoctorAdmission />} />
+        <Route path="available-ward" element={<NurseAvailableWard />} />
+        <Route path="dispensed-drugs" element={<NurseDispensedDrugsReport />} />
+        <Route path="discharge" element={<DoctorDischarge />} />
+        <Route
+          path="make-request"
+          element={<ComingSoonPage title="Make Request" />}
+        />
+        <Route path="set-reminder" element={<ReminderPage />} />
         <Route path="reports/admission" element={<DoctorAdmissionReport />} />
         <Route path="reports/discharge" element={<DoctorDischargeReport />} />
+        <Route path="doctor-logs" element={<DoctorLogsReport />} />
+        <Route path="doctor-assignments" element={<DoctorLogsReport />} />
+        <Route path="immunization" element={<DoctorImmunizationReport />} />
         <Route path="ante-natal" element={<DoctorAnteNatalReport />} />
         <Route path="child-birth" element={<DoctorChildBirthReport />} />
-        <Route path="immunization" element={<DoctorImmunizationReport />} />
         <Route path="post-natal" element={<DoctorPostNatalReport />} />
-        <Route path="family-planning" element={<DoctorFamilyPlanningReport />} />
-        <Route path="doctor-assignments" element={<DoctorLogsReport />} />
         <Route path="registration-log" element={<DoctorRegistrationReport />} />
+        <Route
+          path="family-planning"
+          element={<DoctorFamilyPlanningReport />}
+        />
+        <Route
+          path="report-writing"
+          element={<ComingSoonPage title="Report Writing" />}
+        />
+        <Route
+          path="requisition"
+          element={<ComingSoonPage title="Requisition" />}
+        />
       </Route>
 
       {/* Admin */}

@@ -5,6 +5,7 @@ export type PreviewModule =
   | "nurse"
   | "doctor"
   | "hmo"
+  | "pharmacy"
   | "diagnostics-and-radiologist";
 
 type Props = {
@@ -32,7 +33,7 @@ const moduleOptions: {
   {
     id: "doctor",
     title: "Doctor",
-    description: "Review the doctor module and clinical workflows.",
+    description: "Review the clinician module and clinical workflows.",
     icon: "mdi:doctor",
   },
   {
@@ -40,6 +41,12 @@ const moduleOptions: {
     title: "HMO",
     description: "Review insurance registration, claims, and billing workflows.",
     icon: "mdi:shield-account",
+  },
+  {
+    id: "pharmacy",
+    title: "Pharmacy",
+    description: "Review store, purchases, dispensing, and medication tracking.",
+    icon: "mdi:pill",
   },
   {
     id: "diagnostics-and-radiologist",
