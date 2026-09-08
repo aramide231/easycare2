@@ -5,11 +5,14 @@ import DashboardCalendar, {
   type DashboardDateRange,
 } from "./components/DashboardCalendar";
 import DashboardPatientCard from "./components/DashboardPatientCard";
-import type { DiagnosticsPatientRow } from "./data/mockPatients";
+import {
+  PATIENTS_LOG_ROWS,
+  type DiagnosticsPatientRow,
+} from "./data/mockPatients";
 
 const Dashboard = () => {
   const [selectedPatient, setSelectedPatient] =
-    useState<DiagnosticsPatientRow | null>(null);
+    useState<DiagnosticsPatientRow | null>(PATIENTS_LOG_ROWS[0] ?? null);
   const [dateRange, setDateRange] = useState<DashboardDateRange | null>(null);
 
   return (
