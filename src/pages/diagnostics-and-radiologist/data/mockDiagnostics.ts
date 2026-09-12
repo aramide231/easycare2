@@ -86,8 +86,138 @@ export type PrescribedInvestigationItem = {
   amount: string;
 };
 
-/** Dashboard — Patients Log (7 rows, Figma Dashboard-001). */
+/** Dashboard — Patients Log (includes laboratory form seed patients). */
 export const PATIENTS_LOG_ROWS: DiagnosticsPatientsLogRow[] = [
+  {
+    id: 12,
+    regName: "Chinedu Okeke",
+    firstName: "Chinedu",
+    lastName: "Okeke",
+    patientId: "PVT-200",
+    phoneNumber: "0908025324",
+    date: "03-Sep-2026",
+    time: "09:20 AM",
+    gender: "Male",
+    treatmentType: "HMO",
+    age: 31,
+    invName: "Ultrasound Scan",
+    invAmount: "N 15,000.00",
+    staffName: "Titilayo Olayinka",
+    patientCategory: "OUT-PATIENT",
+    bloodPressure: "120/78",
+    heartRate: "72",
+    weight: "79",
+    height: "178cm",
+    address: "2 Omega Lane, Lekki, Lagos",
+    relationship: "Single",
+    treatmentGuide: "HMO Covered",
+    lastVisitDate: "18/08/2026",
+    nextAppointment: "20/09/2026",
+  },
+  {
+    id: 11,
+    regName: "Ibrahim Suleiman",
+    firstName: "Ibrahim",
+    lastName: "Suleiman",
+    patientId: "MSH/1099",
+    phoneNumber: "0908025323",
+    date: "03-Sep-2026",
+    time: "08:50 AM",
+    gender: "Male",
+    treatmentType: "COMPANY",
+    age: 52,
+    invName: "Electrolytes & UREA",
+    invAmount: "N 8,500.00",
+    staffName: "Titilayo Olayinka",
+    patientCategory: "OUT-PATIENT",
+    bloodPressure: "134/86",
+    heartRate: "78",
+    weight: "88",
+    height: "174cm",
+    address: "21 Ahmadu Bello Way, Victoria Island, Lagos",
+    relationship: "Married",
+    treatmentGuide: "Company Scheme",
+    lastVisitDate: "20/08/2026",
+    nextAppointment: "17/09/2026",
+  },
+  {
+    id: 10,
+    regName: "Ngozi Okonkwo",
+    firstName: "Ngozi",
+    lastName: "Okonkwo",
+    patientId: "MSH/1098",
+    phoneNumber: "0908025322",
+    date: "29-Aug-2026",
+    time: "11:30 AM",
+    gender: "Female",
+    treatmentType: "PRIVATE",
+    age: 38,
+    invName: "Liver Function Test (LFT)",
+    invAmount: "N 12,500.00",
+    staffName: "Titilayo Olayinka",
+    patientCategory: "OUT-PATIENT",
+    bloodPressure: "122/80",
+    heartRate: "74",
+    weight: "72",
+    height: "168cm",
+    address: "9 Bourdillon Rd, Ikoyi, Lagos",
+    relationship: "Married",
+    treatmentGuide: "Fee for Service",
+    lastVisitDate: "15/08/2026",
+    nextAppointment: "12/09/2026",
+  },
+  {
+    id: 9,
+    regName: "Tunde Bakare",
+    firstName: "Tunde",
+    lastName: "Bakare",
+    patientId: "MSH/1097",
+    phoneNumber: "0908025321",
+    date: "29-Aug-2026",
+    time: "10:15 AM",
+    gender: "Male",
+    treatmentType: "HMO",
+    age: 45,
+    invName: "Blood Glucose",
+    invAmount: "N 4,500.00",
+    staffName: "Titilayo Olayinka",
+    patientCategory: "OUT-PATIENT",
+    bloodPressure: "128/82",
+    heartRate: "80",
+    weight: "82",
+    height: "176cm",
+    address: "5 Ozumba Mbadiwe Ave, Victoria Island, Lagos",
+    relationship: "Married",
+    treatmentGuide: "HMO Covered",
+    lastVisitDate: "22/08/2026",
+    nextAppointment: "05/09/2026",
+  },
+  {
+    id: 8,
+    regName: "Funke Adeyemi",
+    firstName: "Funke",
+    lastName: "Adeyemi",
+    patientId: "MSH/1096",
+    phoneNumber: "0908025320",
+    date: "27-Aug-2026",
+    time: "09:40 AM",
+    gender: "Female",
+    treatmentType: "PRIVATE",
+    age: 34,
+    invName: "Haematology /CBC",
+    invAmount: "N 7,500.00",
+    staffName: "Titilayo Olayinka",
+    patientCategory: "OUT-PATIENT",
+    bloodPressure: "118/76",
+    heartRate: "76",
+    weight: "68",
+    height: "164cm",
+    address: "18 Admiralty Way, Lekki, Lagos",
+    relationship: "Married",
+    treatmentGuide: "Fee for Service",
+    lastVisitDate: "20/08/2026",
+    nextAppointment: "03/09/2026",
+  },
   {
     id: 1,
     regName: "Alade Abiodun",
@@ -403,28 +533,40 @@ export const NOTIFICATION_ROWS: DiagnosticsNotificationRow[] = [
 ];
 
 export const INVESTIGATION_REQUESTS: InvestigationRequest[] =
-  PATIENTS_LOG_ROWS.map((row, index) => ({
-    id: row.id,
-    patientId: row.patientId,
-    patientName: row.regName,
-    gender: row.gender,
-    age: row.age,
-    investigation: row.invName,
-    requestedBy: row.staffName,
-    date: row.date,
-    time: row.time,
-    status:
-      index % 3 === 0
-        ? "Completed"
-        : index % 3 === 1
-          ? "Pending"
-          : "In Progress",
-    hasResult: index % 3 === 0,
-    treatmentType: row.treatmentType,
-    patientCategory: row.patientCategory,
-    invAmount: row.invAmount,
-    phoneNumber: row.phoneNumber,
-  }));
+  PATIENTS_LOG_ROWS.map((row, index) => {
+    const invKey = row.invName.toLowerCase();
+    const isLabFormEntry =
+      invKey.includes("haematology") ||
+      invKey.includes("blood glucose") ||
+      invKey.includes("liver function") ||
+      invKey === "lft" ||
+      invKey.includes("electrolyte") ||
+      invKey.includes("urea") ||
+      invKey.includes("ultrasound");
+    return {
+      id: row.id,
+      patientId: row.patientId,
+      patientName: row.regName,
+      gender: row.gender,
+      age: row.age,
+      investigation: row.invName,
+      requestedBy: row.staffName,
+      date: row.date,
+      time: row.time,
+      status: isLabFormEntry
+        ? "Pending"
+        : index % 3 === 0
+          ? "Completed"
+          : index % 3 === 1
+            ? "Pending"
+            : "In Progress",
+      hasResult: isLabFormEntry ? false : index % 3 === 0,
+      treatmentType: row.treatmentType,
+      patientCategory: row.patientCategory,
+      invAmount: row.invAmount,
+      phoneNumber: row.phoneNumber,
+    };
+  });
 
 export const DIAGNOSTICS_PATIENTS: DiagnosticsPatient[] = [
   ...PATIENTS_LOG_ROWS.map((row) => ({
@@ -602,6 +744,36 @@ export const PRESCRIBED_ITEMS_BY_PATIENT: Record<
   "MSH/1090": [
     { id: "1", name: "URINE MCS", quantity: 1, amount: "N 2,000.00" },
   ],
+  "MSH/1096": [
+    { id: "1", name: "Haematology /CBC", quantity: 1, amount: "N 7,500.00" },
+  ],
+  "MSH/1097": [
+    { id: "1", name: "Blood Glucose", quantity: 1, amount: "N 4,500.00" },
+  ],
+  "MSH/1098": [
+    {
+      id: "1",
+      name: "Liver Function Test (LFT)",
+      quantity: 1,
+      amount: "N 12,500.00",
+    },
+  ],
+  "MSH/1099": [
+    {
+      id: "1",
+      name: "Electrolytes & UREA",
+      quantity: 1,
+      amount: "N 8,500.00",
+    },
+  ],
+  "PVT-200": [
+    {
+      id: "1",
+      name: "Ultrasound Scan",
+      quantity: 1,
+      amount: "N 15,000.00",
+    },
+  ],
 };
 
 export const NURSE_RECORDS_BY_PATIENT: Record<string, NurseRecordEntry[]> = {
@@ -624,6 +796,11 @@ export const NURSE_RECORDS_BY_PATIENT: Record<string, NurseRecordEntry[]> = {
 };
 
 export const INVESTIGATION_LOOKUP_OPTIONS = [
+  "Haematology /CBC",
+  "Blood Glucose",
+  "Liver Function Test (LFT)",
+  "Electrolytes & UREA",
+  "Ultrasound Scan",
   "MP",
   "PCV",
   "FBC",

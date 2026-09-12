@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { startOfDay } from "@/lib/dateTime";
 import LogSearchBar from "../../shared/components/LogSearchBar";
 import TablePagination from "../../shared/components/TablePagination";
@@ -26,6 +27,7 @@ export default function PatientsLog({
   onSelectRow,
   dateRange = null,
 }: Props) {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -142,7 +144,12 @@ export default function PatientsLog({
                     <button
                       type="button"
                       className="text-sm font-medium text-[#573FD1] hover:underline"
-                      onClick={(event) => event.stopPropagation()}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(
+                          `/diagnostics-and-radiologist/investigation-profile/${row.id}`,
+                        );
+                      }}
                     >
                       {row.invName}
                     </button>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ExportButton from "@/constant/ExportButton";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
 import LogSearchBar from "@/pages/diagnostics-and-radiologist/shared/components/LogSearchBar";
@@ -6,6 +7,7 @@ import InvestigationResultContent from "@/pages/doctor/patientProfile/components
 import MedicalRemarkViewPanel from "@/pages/doctor/patientProfile/components/category/MedicalRemarkViewPanel";
 import DiagnosticsTablePagination from "../../components/DiagnosticsTablePagination";
 import { getTotalPages } from "@/pages/diagnostics-and-radiologist/shared/lib/pagination";
+import { isInvestigationFormEntry } from "../../investigation-profile/data/laboratoryFormInvestigations";
 import { treatmentTypeBadgeClass } from "../../lib/diagnosticsBadgeStyles";
 import {
   INVESTIGATION_LOG_ROWS,
@@ -16,6 +18,7 @@ import {
 const PAGE_SIZE = 9;
 
 export default function InvestigationsReportList() {
+  const navigate = useNavigate();
   const tableRef = useRef<HTMLTableElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -171,6 +174,12 @@ export default function InvestigationsReportList() {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (isInvestigationFormEntry(row.invName)) {
+                              navigate(
+                                `/diagnostics-and-radiologist/investigation-profile/${row.id}`,
+                              );
+                              return;
+                            }
                             openRowView(row);
                           }}
                           className="text-sm font-semibold text-[#573FD1] underline hover:text-[#4a35b8]"
