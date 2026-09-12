@@ -64,40 +64,38 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
       aria-modal="true"
       aria-labelledby="module-selection-title"
     >
-      <div className="w-full max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
+      <div className="w-full max-w-4xl rounded-2xl bg-white p-8 shadow-2xl">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-[#573FD1]">
             EasyCare Preview
           </p>
           <h1
             id="module-selection-title"
-            className="mt-2 text-xl font-bold text-gray-900"
+            className="mt-2 text-2xl font-bold text-gray-900"
           >
             Choose what you want to go into
           </h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600">
             Select a module to continue reviewing this build.
           </p>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {moduleOptions.map((option) => (
             <button
               key={option.id}
               type="button"
               onClick={() => onSelect(option.id)}
-              className="flex items-start gap-3 border border-gray-200 bg-white p-4 text-left hover:border-[#573FD1] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#573FD1] focus:ring-offset-1"
+              className="group flex flex-col items-start rounded-xl border border-gray-200 p-6 text-left transition hover:border-[#573FD1] hover:bg-[#F7F5FF] focus:outline-none focus:ring-2 focus:ring-[#573FD1] focus:ring-offset-2"
             >
-              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center bg-[#573FD1]/10 text-[#573FD1]">
-                <Icon icon={option.icon} width={20} height={20} />
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#573FD1]/10 text-[#573FD1] transition group-hover:bg-[#573FD1] group-hover:text-white">
+                <Icon icon={option.icon} width={26} height={26} />
               </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-semibold text-gray-900">
-                  {option.title}
-                </span>
-                <span className="mt-1 block text-xs leading-snug text-gray-600">
-                  {option.description}
-                </span>
+              <span className="mt-4 text-lg font-semibold text-gray-900">
+                {option.title}
+              </span>
+              <span className="mt-2 text-sm text-gray-600">
+                {option.description}
               </span>
             </button>
           ))}
