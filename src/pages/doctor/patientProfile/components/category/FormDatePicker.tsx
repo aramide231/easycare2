@@ -45,22 +45,27 @@ const FormDatePicker = ({
               ? fullYear
                 ? formatDateToDDMMYYYY(date)
                 : formatDateToDDMMYY(date)
-              : ""
+              : "",
           )
         }
-        placeholderText={fullYear ? "DD/MM/YYYY" : DATE_PLACEHOLDER}
+        placeholderText={
+          fullYear ? "DD/MM/YYYY" : `${DATE_PLACEHOLDER} or pick date`
+        }
         dateFormat={fullYear ? "dd/MM/yyyy" : "dd/MM/yy"}
         minDate={allowFutureOnly ? startOfToday() : undefined}
         maxDate={allowFutureOnly ? undefined : new Date()}
         showPopperArrow={false}
-        calendarClassName="!rounded-lg !border !border-gray-200 !shadow-lg"
+        showMonthDropdown
+        showYearDropdown
+        dropdownMode="select"
+        calendarClassName="!rounded-xl !border !border-[#A8C4E8] !shadow-xl !font-sans"
         popperClassName="!z-[300]"
         className={`${formFieldInputClass} !pr-10`}
         wrapperClassName="w-full"
         popperProps={{ strategy: "fixed" }}
       />
       <Calendar
-        className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+        className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#573FD1]"
         aria-hidden
       />
     </div>

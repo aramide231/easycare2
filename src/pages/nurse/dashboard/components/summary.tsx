@@ -134,9 +134,9 @@ const DashboardSummaryForAll = ({
     <div>
       <div className="p-4">
         <h2 className="text-2xl font-semibold">
-          {getTimeGreeting()}, {user?.fullName}
+          {getTimeGreeting()}, {user?.fullName?.trim() || "Nurse"}
         </h2>
-        <p>Have a wonderful day at work</p>
+        <p className="text-sm text-gray-600">Have a wonderful day at work</p>
       </div>
       <div className="flex w-full gap-4 p-4">
         {activeSummaryItems.map((item) => (

@@ -50,10 +50,13 @@ const neoNatalVitalTableColumns = [
   { key: "spo2", label: "SPO2" },
 ];
 
+export const NEO_NATAL_VITALS_TABLE_KEY = "NEO NATAL::VITAL SIGNS";
+
 export default function NeoNatalVitalSigns() {
   return (
     <CategoryFormWithHistory
       sectionName="VITAL SIGNS"
+      tableKey={NEO_NATAL_VITALS_TABLE_KEY}
       fields={neoNatalVitalFields}
       tableColumns={neoNatalVitalTableColumns}
       showSaveButton
