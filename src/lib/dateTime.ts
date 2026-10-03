@@ -96,9 +96,10 @@ export function formatClockDateTime(date: Date): string {
   const year = date.getFullYear();
   const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
   const hour12 = hours % 12 || 12;
   const meridiem = hours >= 12 ? "PM" : "AM";
-  return `${day}-${month}-${year} | ${String(hour12).padStart(2, "0")}:${minutes}${meridiem}`;
+  return `${day}-${month}-${year} | ${String(hour12).padStart(2, "0")}:${minutes}:${seconds}${meridiem}`;
 }
 
 export function dateAtDaysAgo(

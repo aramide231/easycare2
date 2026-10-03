@@ -17,6 +17,7 @@ import ReminderPage from "@frontdesk/pages/set-reminder/ReminderPage";
 // import Nurse component
 import NurseDashboard from "@/pages/nurse/dashboard/Dashboard";
 import NursePatientProfile from "@/pages/nurse/patient-profile/PatientProfile";
+import NurseFlagProfile from "@/pages/nurse/patient-profile/flag-profile/FlagProfile";
 import NurseAdmission from "@/pages/nurse/patient-management/admission/Admission";
 import NurseAvailableWard from "@/pages/nurse/patient-management/available-ward/AvailableWard";
 import NurseDischarge from "@/pages/nurse/patient-management/discharge/Discharge";
@@ -130,6 +131,7 @@ const RoleBasedRoutes = () => {
           <Route path="report-writing" element={<NurseReportWriting />} />
           <Route path="requisition" element={<NurseRequisition />} />
           <Route path="patient-profile/:id" element={<NursePatientProfile />} />
+          <Route path="flag-profile/:id" element={<NurseFlagProfile />} />
           <Route
             path="previous-patient-records/:patientId"
             element={<PreviousPatientRecords />}

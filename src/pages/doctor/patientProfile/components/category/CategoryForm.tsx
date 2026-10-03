@@ -7,6 +7,10 @@ import {
   DATE_PLACEHOLDER,
   isValidDateDDMMYY,
 } from "../../lib/dateFormat";
+import {
+  calculateEddFromLmp,
+  calculateEgaFromLmp,
+} from "../../lib/pregnancyDates";
 import FormDatePicker from "./FormDatePicker";
 import { isFutureAppointmentDateField } from "../../lib/dateFieldRules";
 import NairaAmountInput, { sanitizeAmountDigits } from "./NairaAmountInput";
@@ -29,6 +33,18 @@ type Props = {
   pendingTableKey?: string;
 };
 
+const NUMERIC_FIELD_NAMES = new Set([
+  "temperature",
+  "weight",
+  "height",
+  "bloodSugar",
+  "pulseRate",
+  "respiration",
+  "spo2",
+  "fhr",
+  "bmi",
+]);
+
 const CategoryForm = ({
   fields,
   onSave,
@@ -45,9 +61,32 @@ const CategoryForm = ({
     if (weight > 0 && heightCm > 0) {
       const heightM = heightCm / 100;
       const bmi = (weight / (heightM * heightM)).toFixed(1);
-      setFormData((prev) => ({ ...prev, bmi }));
+      setFormData((prev) =>
+        prev.bmi === bmi ? prev : { ...prev, bmi },
+      );
     }
-  }, [formData.weight, formData.height]);
+  }, [formData.weight, formData.height, formData.bmi]);
+
+  useEffect(() => {
+    const lmp = formData.lastMenstrualPeriod?.trim() ?? "";
+    if (!lmp || !isValidDateDDMMYY(lmp)) return;
+
+    const edd = calculateEddFromLmp(lmp);
+    const ega = calculateEgaFromLmp(lmp);
+    setFormData((prev) => {
+      if (
+        prev.expectedDeliveryDate === edd &&
+        prev.estimatedGestationalAge === ega
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        expectedDeliveryDate: edd,
+        estimatedGestationalAge: ega,
+      };
+    });
+  }, [formData.lastMenstrualPeriod]);
 
   const syncDraft = useCallback(
     (data: Record<string, string>) => {
@@ -55,7 +94,7 @@ const CategoryForm = ({
       const hasContent = Object.values(data).some((value) => value?.trim());
       setPendingSectionEntry(pendingTableKey, hasContent ? data : null);
     },
-    [pendingTableKey]
+    [pendingTableKey],
   );
 
   useEffect(() => {
@@ -81,7 +120,12 @@ const CategoryForm = ({
         return;
       }
 
-      if (field.type === "date" && value && !isValidDateDDMMYY(value)) {
+      if (
+        field.type === "date" &&
+        !field.readOnly &&
+        value &&
+        !isValidDateDDMMYY(value)
+      ) {
         newErrors[field.name] = `Use ${DATE_PLACEHOLDER} format`;
       }
     });
@@ -111,78 +155,105 @@ const CategoryForm = ({
   const isSelectField = (field: CategoryFieldConfig) =>
     field.type === "select" || Boolean(field.options?.length);
 
+  const isNumericField = (field: CategoryFieldConfig) =>
+    field.type === "number" || NUMERIC_FIELD_NAMES.has(field.name);
+
   return (
     <form onSubmit={handleSubmit} className={formFieldGridClass}>
       {fields.map((field) => {
         const resolvedField = resolveField(field);
+        const readOnly =
+          Boolean(resolvedField.readOnly) || resolvedField.name === "bmi";
 
         return (
-        <div
-          key={field.name}
-          className={field.fullWidth ? "col-span-2" : undefined}
-        >
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            {resolvedField.label}
-          </label>
+          <div
+            key={field.name}
+            className={field.fullWidth ? "col-span-2" : undefined}
+          >
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              {resolvedField.label}
+            </label>
 
-          {resolvedField.type === "textarea" ? (
-            <textarea
-              rows={field.fullWidth ? 8 : 3}
-              value={formData[field.name] || ""}
-              onChange={(e) => updateField(field.name, e.target.value)}
-              placeholder={resolvedField.placeholder}
-              className={`${formFieldTextareaClass} ${
-                field.fullWidth ? "min-h-[180px]" : ""
-              }`}
-            />
-          ) : isSelectField(resolvedField) ? (
-            <div className="relative">
-              <select
+            {resolvedField.type === "textarea" ? (
+              <textarea
+                rows={field.fullWidth ? 8 : 3}
                 value={formData[field.name] || ""}
                 onChange={(e) => updateField(field.name, e.target.value)}
-                className={`${formFieldSelectClass} pr-10`}
-              >
-                <option value="">-Select an Option-</option>
-                {(resolvedField.options ?? YES_NO_OPTIONS).map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
-                aria-hidden
+                placeholder={
+                  resolvedField.placeholder || `Enter ${resolvedField.label}`
+                }
+                readOnly={readOnly}
+                className={`${formFieldTextareaClass} ${
+                  field.fullWidth ? "min-h-[180px]" : ""
+                } ${readOnly ? "bg-gray-50" : ""}`}
               />
-            </div>
-          ) : resolvedField.type === "date" ? (
-            <FormDatePicker
-              value={formData[field.name] || ""}
-              onChange={(next) => updateField(field.name, next)}
-              allowFutureOnly={
-                Boolean(resolvedField.dateAllowFutureOnly) ||
-                isFutureAppointmentDateField(field.name)
-              }
-            />
-          ) : resolvedField.type === "amount" ? (
-            <NairaAmountInput
-              value={sanitizeAmountDigits(formData[field.name] || "")}
-              onChange={(digits) => updateField(field.name, digits)}
-            />
-          ) : (
-            <input
-              type="text"
-              readOnly={field.name === "bmi"}
-              value={formData[field.name] || ""}
-              onChange={(e) => updateField(field.name, e.target.value)}
-              placeholder={resolvedField.placeholder}
-              className={formFieldInputClass}
-            />
-          )}
+            ) : isSelectField(resolvedField) ? (
+              <div className="relative">
+                <select
+                  value={formData[field.name] || ""}
+                  onChange={(e) => updateField(field.name, e.target.value)}
+                  disabled={readOnly}
+                  className={`${formFieldSelectClass} pr-10 disabled:bg-gray-50`}
+                >
+                  <option value="">-Select an Option-</option>
+                  {(resolvedField.options ?? YES_NO_OPTIONS).map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+                  aria-hidden
+                />
+              </div>
+            ) : resolvedField.type === "date" ? (
+              readOnly ? (
+                <input
+                  type="text"
+                  readOnly
+                  value={formData[field.name] || ""}
+                  placeholder={resolvedField.placeholder || "Auto-calculated"}
+                  className={`${formFieldInputClass} bg-gray-50`}
+                />
+              ) : (
+                <FormDatePicker
+                  value={formData[field.name] || ""}
+                  onChange={(next) => updateField(field.name, next)}
+                  allowFutureOnly={
+                    Boolean(resolvedField.dateAllowFutureOnly) ||
+                    isFutureAppointmentDateField(field.name)
+                  }
+                />
+              )
+            ) : resolvedField.type === "amount" ? (
+              <NairaAmountInput
+                value={sanitizeAmountDigits(formData[field.name] || "")}
+                onChange={(digits) => updateField(field.name, digits)}
+              />
+            ) : (
+              <input
+                type={isNumericField(resolvedField) ? "number" : "text"}
+                inputMode={isNumericField(resolvedField) ? "decimal" : undefined}
+                readOnly={readOnly}
+                value={formData[field.name] || ""}
+                onChange={(e) => updateField(field.name, e.target.value)}
+                placeholder={
+                  resolvedField.placeholder ||
+                  (resolvedField.name === "bloodPressure"
+                    ? "e.g. 120/80"
+                    : `Enter ${resolvedField.label}`)
+                }
+                className={`${formFieldInputClass} ${
+                  readOnly ? "bg-gray-50" : ""
+                }`}
+              />
+            )}
 
-          {errors[field.name] && (
-            <p className="text-xs text-red-500">{errors[field.name]}</p>
-          )}
-        </div>
+            {errors[field.name] && (
+              <p className="text-xs text-red-500">{errors[field.name]}</p>
+            )}
+          </div>
         );
       })}
 

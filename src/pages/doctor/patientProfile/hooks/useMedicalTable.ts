@@ -265,6 +265,7 @@ function appendTableRow(
       {
         sn: currentTable.length + 1,
         dateTime: formatMedicalDateTime(new Date()),
+        committedAt: Date.now(),
         patientType: getGenConsultRecordPatientType(),
         enteredBy,
         doctor,
@@ -320,6 +321,42 @@ function commitPendingSection(
     const count = (tables[tableKey] ?? []).length;
     rowData.invoiceNo = `INV-2023-${String(count + 150).padStart(4, "0")}`;
     rowData.status = rowData.status ?? "Unpaid";
+  }
+
+  // Same clinician within 24h: append new diagnosis on the existing row, separated by ;
+  if (tableKey === DIAGNOSIS_TABLE_KEY) {
+    const currentTable = tables[tableKey] ?? [];
+    const latest = currentTable[currentTable.length - 1] as
+      | (Record<string, unknown> & {
+          doctor?: string;
+          diagnosis?: string;
+          committedAt?: number;
+        })
+      | undefined;
+    if (latest?.doctor === doctor) {
+      const latestAt = Number(latest.committedAt ?? 0);
+      const within24h =
+        latestAt > 0 && Date.now() - latestAt <= 24 * 60 * 60 * 1000;
+      const incoming = String(rowData.diagnosis ?? "").trim();
+      const existing = String(latest.diagnosis ?? "").trim();
+      if (within24h && incoming && existing) {
+        tables = {
+          ...tables,
+          [tableKey]: [
+            ...currentTable.slice(0, -1),
+            {
+              ...latest,
+              diagnosis: `${existing}; ${incoming}`,
+              committedAt: Date.now(),
+            },
+          ],
+        };
+        userSavedTableKeys.add(tableKey);
+        emitChange();
+        clearPendingSection(tableKey);
+        return true;
+      }
+    }
   }
 
   appendTableRow(tableKey, rowData, enteredBy, doctor);

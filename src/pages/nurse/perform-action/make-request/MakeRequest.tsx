@@ -129,6 +129,31 @@ const MakeRequest = () => {
     user?.fullName ?? "Sample Testing Tester",
   );
 
+  const staffDirectory = useMemo(() => {
+    const names = new Map<string, string>();
+    const selfPhone = (user as { phoneNumber?: string } | null)?.phoneNumber;
+    if (selfPhone) {
+      names.set(selfPhone.replace(/\D/g, "").slice(-10), user?.fullName ?? "");
+    }
+    // Demo staff numbers mapped for Request Dept auto-fill.
+    names.set("8012345678", user?.fullName ?? "Sample Testing Tester");
+    names.set("8023456789", "Nurse Adaobi Okeke");
+    names.set("8034567890", "Nurse Chinedu Bello");
+    directoryPatients.forEach((row) => {
+      const digits = row.phoneNumber.replace(/\D/g, "").slice(-10);
+      if (digits) names.set(digits, row.staffName || row.name);
+    });
+    return names;
+  }, [directoryPatients, user]);
+
+  const handleDepartmentPhoneChange = (value: string) => {
+    setDepartmentPhone(value);
+    const digits = value.replace(/\D/g, "").slice(-10);
+    if (digits.length < 10) return;
+    const matchedName = staffDirectory.get(digits);
+    if (matchedName) setDepartmentName(matchedName);
+  };
+
   const [patientType, setPatientType] = useState<PatientTypeOption>("");
   const [patient, setPatient] = useState<PatientDetails>(EMPTY_PATIENT);
   const [patientError, setPatientError] = useState<string | null>(null);
@@ -248,7 +273,7 @@ const MakeRequest = () => {
   return (
     <div className="flex h-full w-full">
       <main className="flex-1 p-6">
-        <Card className="mx-auto my-6 w-full max-w-4xl rounded border-2 p-5">
+        <Card className="mx-auto my-6 w-full max-w-6xl rounded border-2 p-5">
           <CardContent className="p-0">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -318,8 +343,12 @@ const MakeRequest = () => {
                     <FieldLabel>Phone Number</FieldLabel>
                     <PhoneField
                       value={departmentPhone}
-                      onChange={setDepartmentPhone}
+                      onChange={handleDepartmentPhoneChange}
                     />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Enter a registered staff mobile number to auto-load their
+                      name.
+                    </p>
                   </div>
 
                   <div>

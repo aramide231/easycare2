@@ -69,17 +69,22 @@ const bookingFields: CategoryFieldConfig[] = [
     label: "Last Menstrual Period (LMP)",
     tableLabel: "LMP",
     type: "date",
+    placeholder: "Select or type LMP",
+  },
+  {
+    name: "expectedDeliveryDate",
+    label: "Estimated Date of Delivery (EDD)",
+    tableLabel: "EDD",
+    type: "date",
+    readOnly: true,
+    placeholder: "Auto from LMP",
   },
   {
     name: "estimatedGestationalAge",
     label: "Estimated Gestational Age (EGA)",
     tableLabel: "EGA",
-  },
-  {
-    name: "expectedDeliveryDate",
-    label: "Expected Date of Delivery (EDD)",
-    tableLabel: "EDD",
-    type: "date",
+    readOnly: true,
+    placeholder: "Auto weeks & days",
   },
   {
     name: "nextAppointmentDate",

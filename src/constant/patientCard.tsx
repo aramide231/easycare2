@@ -20,6 +20,7 @@ interface PatientCardProps {
   };
 }
 
+/** Aligned with Frontdesk patient card layout/fields. */
 const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[17.5rem] flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="mx-auto flex w-full max-w-[17.5rem] flex-1 flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
       <div className="flex items-center gap-3">
         <img
           src={clientimage}
@@ -63,12 +64,12 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
           onClick={handleViewProfile}
         >
           <Expand className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-          View Patient&apos;s Profile
+          View Patient&apos;s Info
         </button>
         <button
           type="button"
           onClick={handlePreviousRecords}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] bg-purple-50 px-3 py-2.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-100"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] bg-white px-3 py-2.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-50"
         >
           <Undo2 className="h-4 w-4 shrink-0" strokeWidth={2.25} />
           Prev. Patient Records
@@ -80,22 +81,22 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
       <div className="flex flex-col space-y-3 text-sm">
         <h3 className="font-semibold text-[#573FD1]">Prev. Vital Signs :</h3>
         <p>
-          <strong>Blood Pressure :</strong> {patient.bloodPressure}{" "}
+          <strong>Blood Pressure :</strong> {patient.bloodPressure || "120/80"}{" "}
           <span className="italic">mmHg</span>
         </p>
         <p>
           <strong>Heart Rate :</strong> 75 <span className="italic">bpm</span>
         </p>
         <p>
-          <strong>Weight :</strong> 85 <span className="italic">kg</span> │{" "}
-          <strong>Height :</strong> 170<span className="italic">cm</span>
+          <strong>Weight :</strong> 85 <span className="font-semibold">kg</span>{" "}
+          │ <strong>Height :</strong> 170<span className="italic">cm</span>
         </p>
       </div>
 
       <div className="mt-3 flex flex-col space-y-3 text-sm">
-        <h3 className="font-semibold text-[#573FD1]">Contact :</h3>
+        <h3 className="font-semibold text-blue-600">Contact :</h3>
         <p>
-          <strong>Gender :</strong> Male
+          <strong>Gender :</strong> {patient.gender || "—"}
         </p>
         <p>
           <strong>Address :</strong> Lagos, Nigeria
@@ -107,7 +108,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
           <strong>Patient Type :</strong> COMPANY
         </p>
         <p>
-          <strong>MEDICATION Guide :</strong> Fee for Ser.
+          <strong>Treatment Guide :</strong> Fee for Ser.
         </p>
         <p>
           <strong>Last Visits Date :</strong> {patient.lastSeen}

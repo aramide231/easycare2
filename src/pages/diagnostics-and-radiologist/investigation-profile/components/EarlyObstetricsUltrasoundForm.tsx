@@ -17,6 +17,9 @@ const selectClass = `${inputClass} appearance-none`;
 const mmInputClass =
   "h-11 w-full rounded-lg border border-[#A8C4E8] bg-white px-3 pr-10 text-sm text-gray-900 focus:border-[#573FD1] focus:outline-none focus:ring-1 focus:ring-[#573FD1]/20";
 
+const textareaClass =
+  "min-h-[11rem] w-full resize-y rounded-xl border border-[#A8C4E8] bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#573FD1] focus:outline-none focus:ring-1 focus:ring-[#573FD1]/20";
+
 type Props = {
   values: EarlyObstetricsUltrasoundReport;
   onChange: (field: keyof EarlyObstetricsUltrasoundReport, value: string) => void;
@@ -82,13 +85,11 @@ function LabeledSelect({
   value,
   onChange,
   options,
-  placeholder,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: readonly string[];
-  placeholder: string;
 }) {
   return (
     <div className="min-w-0">
@@ -99,13 +100,43 @@ function LabeledSelect({
         className={`${selectClass} ${value ? "text-gray-900" : "text-gray-400"}`}
         aria-label={label}
       >
-        <option value="">{placeholder}</option>
+        <option value="">Select</option>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function ExpandableTextarea({
+  label,
+  value,
+  onChange,
+  placeholder,
+  italicPlaceholder = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  italicPlaceholder?: boolean;
+}) {
+  return (
+    <div className="min-w-0">
+      <label className={labelClass}>{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={6}
+        className={`${textareaClass} ${
+          italicPlaceholder ? "italic placeholder:italic" : ""
+        }`}
+        aria-label={label}
+      />
     </div>
   );
 }
@@ -125,22 +156,20 @@ export default function EarlyObstetricsUltrasoundForm({
       <div className="space-y-4 p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <LabeledSelect
-            label="No of Fetuses"
+            label="No of Foetus"
             value={values.noOfFetuses}
             onChange={(value) => onChange("noOfFetuses", value)}
             options={EARLY_OBSTETRICS_FETUS_OPTIONS}
-            placeholder="Singleton (1) | Twins (2) | Triplets (3) -- Deceplet (10)"
           />
           <LabeledSelect
             label="Placentation"
             value={values.placentation}
             onChange={(value) => onChange("placentation", value)}
             options={EARLY_OBSTETRICS_PLACENTATION_OPTIONS}
-            placeholder="Cephalic | Breech | Transverse"
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <LabeledInput
             label="Cardiac Activity"
             value={values.cardiacActivity}
@@ -156,9 +185,6 @@ export default function EarlyObstetricsUltrasoundForm({
             value={values.fetalLie}
             onChange={(value) => onChange("fetalLie", value)}
           />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <MmInput
             label="Biparimeter Diameter (BPD)"
             value={values.bpd}
@@ -174,9 +200,6 @@ export default function EarlyObstetricsUltrasoundForm({
             value={values.fetalHeartRate}
             onChange={(value) => onChange("fetalHeartRate", value)}
           />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <MmInput
             label="Femur Length (FL)"
             value={values.femurLength}
@@ -193,9 +216,6 @@ export default function EarlyObstetricsUltrasoundForm({
             value={values.abdominalCircumference}
             onChange={(value) => onChange("abdominalCircumference", value)}
           />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <MmInput
             label="Amniotic Fluid Index"
             value={values.amnioticFluidIndex}
@@ -211,17 +231,12 @@ export default function EarlyObstetricsUltrasoundForm({
             value={values.estimatedGestationalAge}
             onChange={(value) => onChange("estimatedGestationalAge", value)}
             options={EARLY_OBSTETRICS_EGA_OPTIONS}
-            placeholder="Alive | No Cardiac Activity"
           />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <LabeledSelect
             label="Gender"
             value={values.gender}
             onChange={(value) => onChange("gender", value)}
             options={EARLY_OBSTETRICS_GENDER_OPTIONS}
-            placeholder="Male | Female"
           />
           <MmInput
             label="Liquor Volume"
@@ -235,29 +250,20 @@ export default function EarlyObstetricsUltrasoundForm({
           />
         </div>
 
-        <div className="min-w-0">
-          <label className={labelClass}>Impression</label>
-          <input
-            type="text"
-            value={values.impression}
-            onChange={(e) => onChange("impression", e.target.value)}
-            placeholder="text here........"
-            className={inputClass}
-            aria-label="Impression"
-          />
-        </div>
+        <ExpandableTextarea
+          label="Impression"
+          value={values.impression}
+          onChange={(value) => onChange("impression", value)}
+          placeholder="text here........"
+        />
 
-        <div className="min-w-0">
-          <label className={labelClass}>Recommendation(s)</label>
-          <input
-            type="text"
-            value={values.recommendation}
-            onChange={(e) => onChange("recommendation", e.target.value)}
-            placeholder="ultrasounds recommendations are (optional)"
-            className={`${inputClass} italic placeholder:italic`}
-            aria-label="Recommendation(s)"
-          />
-        </div>
+        <ExpandableTextarea
+          label="Recommendation(s)"
+          value={values.recommendation}
+          onChange={(value) => onChange("recommendation", value)}
+          placeholder="ultrasounds recommendations are (optional)"
+          italicPlaceholder
+        />
       </div>
     </div>
   );
