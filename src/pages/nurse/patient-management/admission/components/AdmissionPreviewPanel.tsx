@@ -1,4 +1,5 @@
 import ModalCloseButton from "@/components/ui/ModalCloseButton";
+import { calculateStayDuration } from "@/lib/dateTime";
 import type { AdmissionRecord } from "../data/mockAdmissions";
 import {
   getTreatmentCategoryLabel,
@@ -176,8 +177,17 @@ const AdmissionPreviewPanel = ({
   const treatmentReview = getTreatmentReview(patient.treatmentCategory);
   const treatmentLabel = getTreatmentCategoryLabel(patient.treatmentCategory);
   const liveSections = getSubCategories(patient.treatmentCategory);
-  const hasLiveRecords = liveSections.some(
+  /** Preview should show In-Patient documentation for the active treatment category only. */
+  const inPatientSections = liveSections.filter((section) => {
+    const label = section.label.toUpperCase();
+    return !label.includes("OUT") && label !== "PHARMACY DISPENSE";
+  });
+  const hasLiveRecords = inPatientSections.some(
     (section) => getSectionEntryCount(section.label) > 0,
+  );
+  const stayDays = calculateStayDuration(
+    patient.dateOfAdmission,
+    patient.timeOfAdmission,
   );
 
   const handleConfirm = () => {
@@ -226,6 +236,7 @@ const AdmissionPreviewPanel = ({
                   label="Date of Admission"
                   value={`${patient.dateOfAdmission} · ${patient.timeOfAdmission}`}
                 />
+                <FieldRow label="Number of Days" value={stayDays} />
                 <FieldRow label="Ward" value={patient.ward} />
                 <FieldRow label="Physician Name" value={patient.admittedBy} />
               </div>
@@ -234,10 +245,10 @@ const AdmissionPreviewPanel = ({
 
           <div className="mt-8">
             <div className="mb-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <h3 className="text-lg font-bold text-gray-900">
                 Treatment Type
-              </p>
-              <p className="mt-1 text-base font-bold text-gray-900">
+              </h3>
+              <p className="mt-1 text-base font-semibold text-[#573FD1]">
                 {treatmentLabel}
               </p>
             </div>
@@ -267,20 +278,25 @@ const AdmissionPreviewPanel = ({
             />
 
             {hasLiveRecords
-              ? liveSections.map((section, index) => (
+              ? inPatientSections.map((section, index) => (
                   <LiveRecordSection
                     key={section.label}
                     label={section.label}
                     isFirst={index === 0}
                   />
                 ))
-              : treatmentReview.sections.map((section, index) => (
-                  <TreatmentSectionBlock
-                    key={section.title}
-                    section={section}
-                    isFirst={index === 0}
-                  />
-                ))}
+              : treatmentReview.sections
+                  .filter(
+                    (section) =>
+                      !section.title.toUpperCase().includes("OUT PATIENT"),
+                  )
+                  .map((section, index) => (
+                    <TreatmentSectionBlock
+                      key={section.title}
+                      section={section}
+                      isFirst={index === 0}
+                    />
+                  ))}
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import {
@@ -150,14 +151,22 @@ export default function Stage3Placenta() {
             </label>
 
             {field.type === "select" ? (
-              <select
-                value={stageThreeForm[field.name] || ""}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                className={formFieldSelectClass}
-              >
-                <option value="">{field.placeholder ?? "-Select option-"}</option>
-                {renderSelectOptions(field.name)}
-              </select>
+              <div className="relative">
+                <select
+                  value={stageThreeForm[field.name] || ""}
+                  onChange={(e) => handleChange(field.name, e.target.value)}
+                  className={`${formFieldSelectClass} pr-10`}
+                >
+                  <option value="">
+                    {field.placeholder ?? "-Select option-"}
+                  </option>
+                  {renderSelectOptions(field.name)}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+                  aria-hidden
+                />
+              </div>
             ) : (
               <input
                 type="text"

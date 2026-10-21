@@ -24,16 +24,18 @@ import ComingSoonPage from "@/components/ui/ComingSoonPage";
 import UploadedDocumentsSection from "@/components/patient/UploadedDocumentsSection";
 import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 import { getSubCategories } from "@/pages/doctor/patientProfile/config/subCategoryMap";
-import SpecialistConsultTypeSelector from "@/pages/doctor/patientProfile/components/SpecialistConsultTypeSelector";
 import ClaimsProcessor from "@/pages/doctor/patientProfile/components/categories/financial/ClaimsProcessor";
 import FormPreviewModal, {
   type PreviewSection,
 } from "@/pages/doctor/patientProfile/components/FormPreviewModal";
 import {
+  commitPendingCategoryEntries,
   getSectionEntryCount,
   getSectionTableRows,
   getUserSavedSectionLabels,
 } from "@/pages/doctor/patientProfile/hooks/useMedicalTable";
+import { NEO_NATAL_VITALS_TABLE_KEY } from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
+import { useAuth } from "@/context/AuthContext";
 import {
   buildPreviewSectionLines,
   sectionSupportsNumberedPreview,
@@ -42,10 +44,33 @@ import { buildMockFlagReports } from "@/pages/nurse/patient-profile/flag-profile
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+function resolveSectionStorageKey(
+  category: string | null,
+  label: string,
+): string {
+  if (category === "Neo Natal Care" && label === "VITAL SIGNS") {
+    return NEO_NATAL_VITALS_TABLE_KEY;
+  }
+  return label;
+}
+
+function isMalePatient(gender: unknown): boolean {
+  const value = String(gender ?? "")
+    .trim()
+    .toLowerCase();
+  return value === "m" || value === "male";
+}
+
+function patientAgeYears(age: unknown): number {
+  const parsed = Number(age);
+  return Number.isFinite(parsed) ? parsed : NaN;
+}
+
 const NursePatientProfile = () => {
   // const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const patient = location.state?.patient;
 
   const [step, setStep] = useState<number>(1);
@@ -54,7 +79,6 @@ const NursePatientProfile = () => {
   const flagCount = flagReports.length;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [consultationType, setConsultationType] = useState("dental");
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewCategoryName, setPreviewCategoryName] = useState("");
@@ -68,7 +92,8 @@ const NursePatientProfile = () => {
   const isComingSoonCategory =
     selectedCategory === "Family Planning" ||
     selectedCategory === "Fertility Clinics" ||
-    selectedCategory === "Post Natal Care";
+    selectedCategory === "Post Natal Care" ||
+    selectedCategory === "Specialist Consult";
 
   const categories = [
     {
@@ -127,8 +152,35 @@ const NursePatientProfile = () => {
     setExpandedCategories([]);
   };
 
+  const assertAncSubmitAllowed = () => {
+    if (selectedCategory !== "Ante Natal Care") return true;
+    if (isMalePatient(patient?.gender)) {
+      toast.error(
+        "ANC cannot be submitted for a patient registered as Male.",
+      );
+      return false;
+    }
+    const age = patientAgeYears(patient?.age);
+    const gender = String(patient?.gender ?? "")
+      .trim()
+      .toLowerCase();
+    const isFemale = gender === "f" || gender === "female";
+    if (isFemale && !Number.isNaN(age) && age < 10) {
+      toast.error(
+        "ANC cannot be submitted for a female patient under 10 years.",
+      );
+      return false;
+    }
+    return true;
+  };
+
   const handleConfirm = () => {
     if (step === 1) {
+      if (!assertAncSubmitAllowed()) return;
+      commitPendingCategoryEntries(
+        user?.fullName?.trim() || "Nurse",
+        "Clinician",
+      );
       toast.success("Health information confirmed.");
     } else if (step === 2) {
       toast.success("Financial information confirmed.");
@@ -141,6 +193,11 @@ const NursePatientProfile = () => {
       return;
     }
 
+    commitPendingCategoryEntries(
+      user?.fullName?.trim() || "Nurse",
+      "Clinician",
+    );
+
     const savedLabels = getUserSavedSectionLabels(categorySectionLabels);
     const labelsToShow =
       savedLabels.length > 0 ? savedLabels : categorySectionLabels;
@@ -148,10 +205,11 @@ const NursePatientProfile = () => {
     setPreviewCategoryName(selectedCategory);
     setPreviewSections(
       labelsToShow.map((label) => {
-        const rows = getSectionTableRows(label);
+        const storageKey = resolveSectionStorageKey(selectedCategory, label);
+        const rows = getSectionTableRows(storageKey);
         return {
           label,
-          count: getSectionEntryCount(label),
+          count: getSectionEntryCount(storageKey),
           lines: sectionSupportsNumberedPreview(label)
             ? buildPreviewSectionLines(label, rows)
             : undefined,
@@ -467,19 +525,14 @@ const NursePatientProfile = () => {
                 ))}
               </div>
 
-              {selectedCategory === "Specialist Consult" ? (
-                <SpecialistConsultTypeSelector
-                  value={consultationType}
-                  onChange={setConsultationType}
-                />
-              ) : (
+              {selectedCategory && !isComingSoonCategory ? (
                 <>
                   <h2 className="shrink-0 text-xs text-gray-400">Step 2</h2>
                   <h3 className="mb-1.5 shrink-0 text-sm font-semibold text-gray-800">
                     Fill Category Form
                   </h3>
                 </>
-              )}
+              ) : null}
 
               <div className="relative flex w-full flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4">
                 {!selectedCategory ? (
@@ -494,6 +547,7 @@ const NursePatientProfile = () => {
                 ) : isComingSoonCategory ? (
                   <ComingSoonPage
                     title={
+                      selectedCategory === "Specialist Consult" ||
                       selectedCategory === "Post Natal Care"
                         ? "Info Coming Soon"
                         : selectedCategory

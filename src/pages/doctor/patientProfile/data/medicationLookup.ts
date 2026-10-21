@@ -141,6 +141,7 @@ const MEDICATION_FORM_KEYWORDS = [
   "Mixture",
   "Foam",
   "Spray",
+  "Drop",
   "Drops",
   "Vial",
   "Amp",
@@ -187,7 +188,7 @@ function normalizeCatalogForm(form: string): string {
   if (/^cream$/i.test(value)) return "Cream";
   if (/^ointment|eye ointment$/i.test(value)) return "Ointment";
   if (/^lotion$/i.test(value)) return "Lotion";
-  if (/^drops|eye drops|ear drops|nasal drops$/i.test(value)) return "Drops";
+  if (/^drop|drops|eye drops|ear drops|nasal drops$/i.test(value)) return "Drops";
   if (/^powder|granule|granules$/i.test(value)) return "Powder";
   if (/^supp|suppository|suppossitory$/i.test(value)) return "Suppository";
   if (/^vial$/i.test(value)) return "Vial";
@@ -354,6 +355,8 @@ export const UNIT_QUANTITY_FORMS = [
   "Ampoules",
   "Bottle",
   "Cream",
+  "Drop",
+  "Drops",
   "Dry Powder Inhaler (DPI)",
   "Ear Drops",
   "Elixir",

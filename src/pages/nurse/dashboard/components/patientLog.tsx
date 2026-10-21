@@ -16,7 +16,7 @@ import {
   type DashboardDateRange,
 } from "./calendar";
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 50;
 
 interface PatientsLogProps {
   onSelectPatient: (patient: Patient) => void;
@@ -109,12 +109,24 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
   };
 
   const handleFlagPatient = (patient: Patient) => {
+    if (patient.flagged) {
+      const updatedPatients = patients.map((p) =>
+        p.id === patient.id ? { ...p, flagged: false } : p,
+      );
+      setPatients(updatedPatients);
+      setToastMessage("Patient unflagged");
+      toast.success("Patient unflagged");
+      return;
+    }
+
     const updatedPatients = patients.map((p) =>
-      p.id === patient.id ? { ...p, flagged: !p.flagged } : p
+      p.id === patient.id ? { ...p, flagged: true } : p,
     );
     setPatients(updatedPatients);
-    setToastMessage(patient.flagged ? "Patient unflagged" : "Patient flagged");
-    toast.success(patient.flagged ? "Patient unflagged" : "Patient flagged");
+    setShowOptions(null);
+    navigate(`/nurse/flag-profile/${patient.patientId}`, {
+      state: { patient },
+    });
   };
 
   const handleSaveChanges = async () => {

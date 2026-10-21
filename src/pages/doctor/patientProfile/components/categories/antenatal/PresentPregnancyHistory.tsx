@@ -1,20 +1,57 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import FormDatePicker from "../../category/FormDatePicker";
-import { formFieldInputClass, formFieldTextareaClass } from "../../../lib/formFieldStyles";
+import {
+  formFieldInputClass,
+  formFieldTextareaClass,
+} from "../../../lib/formFieldStyles";
+import { isValidDateDDMMYY } from "../../../lib/dateFormat";
+import {
+  calculateEddFromLmp,
+  calculateEgaFromLmp,
+} from "../../../lib/pregnancyDates";
 
 export default function PresentPregnancyHistory() {
   const [form, setForm] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    const lmp = form.lmp?.trim() ?? "";
+    if (!lmp || !isValidDateDDMMYY(lmp)) return;
+    const edd = calculateEddFromLmp(lmp);
+    const ega = calculateEgaFromLmp(lmp);
+    setForm((prev) => {
+      if (prev.edd === edd && prev.gestationalAge === ega) return prev;
+      return { ...prev, edd, gestationalAge: ega };
+    });
+  }, [form.lmp]);
+
   const fields = [
     { name: "lmp", label: "Last Menstrual Period (LMP)", type: "date" },
-    { name: "edd", label: "Expected Date of Delivery (EDD)", type: "date" },
-    { name: "gestationalAge", label: "Estimated Gestational Age (EGA)" },
+    {
+      name: "edd",
+      label: "Estimated Date of Delivery (EDD)",
+      type: "readonly",
+      placeholder: "Auto from LMP",
+    },
+    {
+      name: "gestationalAge",
+      label: "Estimated Gestational Age (EGA)",
+      type: "readonly",
+      placeholder: "Auto weeks & days",
+    },
     { name: "parity", label: "Gravidity / Parity at Presentation" },
     { name: "plannedDelivery", label: "Planned Place of Delivery" },
-    { name: "riskFactors", label: "Risk Factors / High-Risk Notes", type: "textarea" },
-    { name: "currentComplaints", label: "Current Pregnancy Complaints", type: "textarea" },
+    {
+      name: "riskFactors",
+      label: "Risk Factors / High-Risk Notes",
+      type: "textarea",
+    },
+    {
+      name: "currentComplaints",
+      label: "Current Pregnancy Complaints",
+      type: "textarea",
+    },
   ];
 
   const { history, remove } = useMedicalTable("PRESENT PREGNANCY HISTORY");
@@ -29,7 +66,7 @@ export default function PresentPregnancyHistory() {
       return { ...form };
     },
     [form],
-    clearForm
+    clearForm,
   );
 
   return (
@@ -44,6 +81,7 @@ export default function PresentPregnancyHistory() {
                 onChange={(e) =>
                   setForm({ ...form, [field.name]: e.target.value })
                 }
+                placeholder={`Enter ${field.label}`}
                 className={formFieldTextareaClass}
                 rows={3}
               />
@@ -52,6 +90,14 @@ export default function PresentPregnancyHistory() {
                 value={form[field.name] || ""}
                 onChange={(next) => setForm({ ...form, [field.name]: next })}
               />
+            ) : field.type === "readonly" ? (
+              <input
+                type="text"
+                readOnly
+                value={form[field.name] || ""}
+                placeholder={field.placeholder}
+                className={`${formFieldInputClass} bg-gray-50`}
+              />
             ) : (
               <input
                 type="text"
@@ -59,6 +105,7 @@ export default function PresentPregnancyHistory() {
                 onChange={(e) =>
                   setForm({ ...form, [field.name]: e.target.value })
                 }
+                placeholder={`Enter ${field.label}`}
                 className={formFieldInputClass}
               />
             )}

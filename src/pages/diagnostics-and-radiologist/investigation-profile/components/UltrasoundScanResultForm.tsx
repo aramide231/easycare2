@@ -498,7 +498,7 @@ export default function UltrasoundScanResultForm({
                   label="Impression"
                   value={breastReport.impression}
                   onChange={(value) => updateBreastReport("impression", value)}
-                  rows={4}
+                  rows={6}
                 />
                 <UssReportField
                   label="Recommendation"
@@ -506,7 +506,7 @@ export default function UltrasoundScanResultForm({
                   onChange={(value) =>
                     updateBreastReport("recommendation", value)
                   }
-                  rows={3}
+                  rows={6}
                 />
               </div>
             </div>
@@ -546,7 +546,7 @@ export default function UltrasoundScanResultForm({
                   label="Impression"
                   value={scrotalReport.impression}
                   onChange={(value) => updateScrotalReport("impression", value)}
-                  rows={4}
+                  rows={6}
                 />
                 <UssReportField
                   label="Recommendation"
@@ -554,7 +554,7 @@ export default function UltrasoundScanResultForm({
                   onChange={(value) =>
                     updateScrotalReport("recommendation", value)
                   }
-                  rows={4}
+                  rows={6}
                 />
               </div>
             </div>
@@ -582,7 +582,7 @@ export default function UltrasoundScanResultForm({
                   onChange={(value) =>
                     updateTransvaginalReport("impression", value)
                   }
-                  rows={4}
+                  rows={6}
                 />
                 <UssReportField
                   label="Recommendation"
@@ -590,7 +590,7 @@ export default function UltrasoundScanResultForm({
                   onChange={(value) =>
                     updateTransvaginalReport("recommendation", value)
                   }
-                  rows={4}
+                  rows={6}
                 />
               </div>
             </div>

@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
-import { VITAL_COMMENT_OPTIONS } from "../../../config/vitalFieldOptions";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
@@ -12,6 +11,13 @@ import {
   formFieldInputClass,
   formFieldSelectClass,
 } from "../../../lib/formFieldStyles";
+
+const VACCINE_COMMENT_OPTIONS = [
+  { value: "Obesity", label: "Obesity" },
+  { value: "Overweight", label: "Overweight" },
+  { value: "Severely Underweight", label: "Severely Underweight" },
+  { value: "Underweight", label: "Underweight" },
+] as const;
 
 /** Nigerian EPI-style schedule: vaccines listed under each Age-Grade. */
 const VACCINES_BY_AGE_GRADE: Record<string, string[]> = {
@@ -398,7 +404,7 @@ const VaccineAdministration = () => {
               className={`${formFieldSelectClass} pr-10`}
             >
               <option value="">-Select an Option-</option>
-              {VITAL_COMMENT_OPTIONS.map((option) => (
+              {VACCINE_COMMENT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>

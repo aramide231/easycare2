@@ -23,14 +23,13 @@ export default function FollowUp() {
   usePendingCategoryDraft(
     "FOLLOW-UP",
     () => {
-      if (!form.nextDoseDate?.trim() && !form.notes?.trim() && !form.extraNotes?.trim()) {
+      if (!form.nextDoseDate?.trim() && !form.notes?.trim()) {
         return null;
       }
       return {
         appointmentDate: form.nextDoseDate || "",
         nurse: form.nurse || "TOBA AYO",
         notes: form.notes || "",
-        extraNotes: form.extraNotes || "",
       };
     },
     [form],
@@ -63,17 +62,6 @@ export default function FollowUp() {
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
           />
         </div>
-      </div>
-
-      <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          FOLLOW-UP NOTES
-        </label>
-        <textarea
-          className={`${formFieldTextareaClass} min-h-[180px]`}
-          value={form.extraNotes || ""}
-          onChange={(e) => setForm({ ...form, extraNotes: e.target.value })}
-        />
       </div>
 
       {followUpHistory.length > 0 && (
