@@ -1,20 +1,10 @@
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-
 import { Plus } from "lucide-react";
-
 import InputField from "./components/InputField";
-
 import type { PatientData } from "./Registration";
 
-const MARITAL_STATUS = [
-  "Single",
-  "Married",
-  "Divorced",
-  "Widow",
-  "Widower",
-  "Others",
-];
+const MARITAL_STATUS = ["Single", "Married", "Divorced", "Separated"];
 
 const NIGERIA_STATES = [
   "Abia",
@@ -64,6 +54,36 @@ type Props = {
   handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhoneChange?: (value: string) => void;
 };
+
+// Shared label + select wrapper that fills its grid cell
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  children,
+}: {
+  label: string;
+  name: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm font-medium text-txt">{label}</label>
+      <select
+        className="w-full rounded-md px-4 py-2 border-2 focus:outline-txt focus:outline-2"
+        name={name}
+        value={value}
+        onChange={onChange}
+      >
+        {children}
+      </select>
+    </div>
+  );
+}
+
 export default function PatientInfoRegistration({
   handleChange,
   handleFileChange,
@@ -71,14 +91,16 @@ export default function PatientInfoRegistration({
   formData,
 }: Props) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-6">
+      {/* Step heading */}
       <div>
-        <p className="text-txt-muted text-sm">Step 1</p>
+        <p className="text-sm text-txt-muted">Step 1</p>
         <h2 className="font-medium">Patient Information</h2>
         <div className="mt-4 w-full border-b border-[#A5A5A5]" />
       </div>
-      {/* First & Middle Name */}
-      <div className="flex gap-10">
+
+      <div className="grid grid-cols-1 gap-x-12 gap-y-6 sm:grid-cols-2">
+        {/* First Name */}
         <InputField
           label="First Name"
           placeholder="John"
@@ -86,6 +108,8 @@ export default function PatientInfoRegistration({
           name="firstName"
           handleChange={handleChange}
         />
+
+        {/* Middle Name */}
         <InputField
           label="Middle Name"
           placeholder="Eg: Thuranus"
@@ -93,10 +117,8 @@ export default function PatientInfoRegistration({
           name="middleName"
           handleChange={handleChange}
         />
-      </div>
 
-      {/* Last Name & Phone Number */}
-      <div className="flex gap-10">
+        {/* Surname */}
         <InputField
           label="Surname"
           placeholder="Eg: Doe"
@@ -104,36 +126,34 @@ export default function PatientInfoRegistration({
           name="surname"
           handleChange={handleChange}
         />
-        <div className="flex flex-col mt-6">
-          <label>Phone Number</label>
+
+        {/* Phone Number */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-txt">Phone Number</label>
           <PhoneInput
             country={"ng"}
             placeholder="Phone Number"
-            containerClass="!w-[290px] mt-2"
-            inputClass="!w-[290px] outline outline-[#A5A5A5] focus:outline-txt px-4 py-5 rounded-lg"
+            containerClass="!w-full"
+            inputClass="!w-full rounded-lg outline outline-[#A5A5A5] focus:outline-txt px-4 py-5"
             enableSearch={true}
             value={formData?.phone}
-            // name="phone"
             onChange={handlePhoneChange}
           />
         </div>
-      </div>
 
-      {/* Gender & Email Address */}
-      <div className="flex gap-10">
-        <div className="flex flex-col mt-6">
-          <label>Gender</label>
-          <select
-            className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-            value={formData?.gender}
-            name="gender"
-            onChange={handleChange}
-          >
-            <option value="">Select a Type</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
+        {/* Gender */}
+        <SelectField
+          label="Gender"
+          name="gender"
+          value={formData?.gender}
+          onChange={handleChange}
+        >
+          <option value="">Select a Type</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </SelectField>
+
+        {/* Email */}
         <InputField
           label="Email Address"
           placeholder="johndoe@gmail.com"
@@ -141,90 +161,69 @@ export default function PatientInfoRegistration({
           name="email"
           handleChange={handleChange}
         />
-      </div>
 
-      {/* Date Of Birth & Age */}
-      <div className="flex gap-10">
-        <div className="flex gap-10">
-          <InputField
-            label="Date Of Birth"
-            placeholder="Date of birth"
-            value={formData?.dob}
-            type="date"
-            name="dob"
-            handleChange={handleChange}
-          />
+        {/* Date of Birth */}
+        <InputField
+          label="Date Of Birth"
+          placeholder="Date of birth"
+          value={formData?.dob}
+          type="date"
+          name="dob"
+          handleChange={handleChange}
+        />
 
-          <div className="flex flex-col mt-6">
-            <label>Age</label>
-            <div className="outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 mt-2 w-[290px] rounded-md bg-gray-50">
-              {formData?.age || "0 years, 0 months, 0 days"}
-            </div>
+        {/* Age (auto-calculated, read-only) */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-txt">Age</label>
+          <div className="w-full rounded-md bg-gray-50 px-4 py-2 border-2">
+            {formData?.age || "0 years, 0 months, 0 days"}
           </div>
         </div>
 
-        {/* <InputField
-          label="Age"
-          placeholder=""
-          type="number"
-          value={formData?.age}
-          name="age"
-          handleChange={handleChange}
-        /> */}
-      </div>
+        {/* State of Origin */}
+        <SelectField
+          label="State Of Origin"
+          name="stateOfOrigin"
+          value={formData?.stateOfOrigin}
+          onChange={handleChange}
+        >
+          <option value="">Select a Type</option>
+          {NIGERIA_STATES.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </SelectField>
 
-      {/* State of Origin & Marital Status */}
-      <div className="flex gap-10">
-        <div className="flex flex-col mt-6">
-          <label>State Of Origin</label>
-          <select
-            className="w-[290px] outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 mt-2 rounded-md"
-            value={formData?.stateOfOrigin}
-            name="stateOfOrigin"
-            onChange={handleChange}
-          >
-            <option value="">Select a Type</option>
-            {NIGERIA_STATES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col mt-6">
-          <label>Marital Status</label>
-          <select
-            className="w-[290px] outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 mt-2 rounded-md"
-            value={formData?.maritalStatus}
-            name="maritalStatus"
-            onChange={handleChange}
-          >
-            <option value="">Select a Type</option>
-            {MARITAL_STATUS.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+        {/* Marital Status */}
+        <SelectField
+          label="Marital Status"
+          name="maritalStatus"
+          value={formData?.maritalStatus}
+          onChange={handleChange}
+        >
+          <option value="">Select a Type</option>
+          {MARITAL_STATUS.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </SelectField>
 
-      {/* Religion & Occupation */}
-      <div className="flex gap-10">
-        <div className="flex flex-col mt-6">
-          <label>Religion</label>
-          <select
-            className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-            value={formData?.religion}
-            name="religion"
-            onChange={handleChange}
-          >
-            <option value="">Select a Type</option>
-            <option value="Christian">Christian</option>
-            <option value="Muslim">Muslim</option>
-            <option value="Traditional">Traditional</option>
-          </select>
-        </div>
+        {/* Religion */}
+        <SelectField
+          label="Religion"
+          name="religion"
+          value={formData?.religion}
+          onChange={handleChange}
+        >
+          <option value="">Select a Type</option>
+          <option value="Christian">Christian</option>
+          <option value="Muslim">Muslim</option>
+          <option value="Traditional">Traditional</option>
+        </SelectField>
+
+        {/* Occupation */}
         <InputField
           label="Occupation"
           placeholder="Student, Civil servant...."
@@ -232,32 +231,36 @@ export default function PatientInfoRegistration({
           name="occupation"
           handleChange={handleChange}
         />
-      </div>
 
-      <div className="flex flex-col mt-6">
-        <label>Home Address</label>
-        <input
-          className="w-full outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 mt-2 rounded-md"
-          placeholder="Street number, Street name, Junction, Town//City, State, Country"
-          value={formData?.address}
-          name="address"
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="mt-6">
-        <p>Upload Profile Picture</p>
-        <label className="mt-2 w-full border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-50">
-          <Plus className="w-6 h-6 mb-2" />
-          <span>Click or drag image here</span>
+        {/* Home Address — full width */}
+        <div className="flex flex-col gap-2 sm:col-span-2">
+          <label className="text-sm font-medium text-txt">Home Address</label>
           <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            name="picture"
-            onChange={handleFileChange}
+            className="w-full rounded-md px-4 py-2 border-2 focus:outline-txt focus:outline-2"
+            placeholder="Street number, Street name, Junction, Town/City, State, Country"
+            value={formData?.address}
+            name="address"
+            onChange={handleChange}
           />
-        </label>
+        </div>
+
+        {/* Upload Picture — full width */}
+        <div className="sm:col-span-2">
+          <p className="mb-2 text-sm font-medium text-txt">
+            Upload Profile Picture
+          </p>
+          <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-gray-400 hover:bg-gray-50">
+            <Plus className="mb-2 h-6 w-6" />
+            <span>Click or drag image here</span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              name="picture"
+              onChange={handleFileChange}
+            />
+          </label>
+        </div>
       </div>
     </div>
   );

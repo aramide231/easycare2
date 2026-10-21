@@ -1,0 +1,116 @@
+@Dev. Iszie✌️ 
+ON FRONTDESK
+
+1. After launching, zooming should remain 100% of the screen size. ✅
+
+2. Change topbar search-box to What we've now on the other modules ✅
+
+3. User's profile at the top right corner should be the same in all modules + display of date & time display ✅ 
+
+4. On click *“:::”* display extension, it's also on the other screens.✅
+
+5. Add the empty  state box design on Figma beneath  the calendar. ✅
+
+6. On the side content, *EasyCare* should be able to refresh the whole page. ✅
+
+7. When user On-click & display “New Registration” page, allow the width on both ends to be well balanced on the screen, with sizable column box & fittings. ✅
+
+8. Under Marital Status add;
+* Single
+* Married
+* Divorce
+* Separated ✅
+
+9. Let's maintain 50 in a row for every page with pagination, then others too can the remaining numbers spread subsequently.🚫
+
+10. Radio Button on “Select type of Visitation”. ✅
+
+11. Front desk shouldn’t be having a notification yet, because they are the front liners mostly sending patients’ info according to workflow. ✅
+
+12. Differentiate “Book Appointment” away from “Set They're appearing to have the same screen in them. ✅
+
+13. Number patient list on Manage Access page. ✅
+
+14. Find working on Manage Card because of its logic. ❌
+
+15. Review “Flag Profile” screen & flow from other works done. Appears from the left as a modal ❌
+
+16. Onclick Provider Name, it displayed Provider Code, let it also that code with the next available ID number. {Hygeia} n' {HYG} n' {HYG-200} 🚫
+
+17. We need to change the uploaded displayed list under NHIS drop-down values because it has *"/"* instead of *"-"* 🚫
+
+18. The "View Patient Profile" is redirecting back to "Edit Profile" again. ✅
+
+19. "Prev Patient Records" screen is on the other modules done.✅
+
+20. We can only review a bit of work on Report if only we have perfected Nursing & Clinician page, until then let's just pend it for now. 🚫
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    SIWES
+    REPORT FORMAT AND PRESENTAION
+
+INSTRUCTION: 
+a.   Page: Page should be of A4 size
+b.  Font: times new roman, 12
+c.   Justification: the whole document should be fully justified
+d.  Spacing: the body of the report should have 1.5 line spacing
+e.   Margin: 3cm all round
+f.   Paragraph must be justified
+g.   Headings & Subheading: All subheadings and their subheading should be properly formatted.
+h.  Punctuation, spelling and grammar check. Use correct punctuation marks, spelling and grammar should be accurate
+i.	Page Numbering: all pages before chapter one should be given in roman numerals. First page of chapter one should start with 1.
+j.   Figures and table labelling
+k.  Spiral bound
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+PRELIMINARY PAGES
+Title Page
+ Declaration
+ Acknowledgements
+d.   Table of Contents
+
+CHAPTER ONE – INTRODUCTION
+1.0 Brief introduction about the SIWES, aims and objectives
+1.1 Organisation history: this section should give a brief history of the Organisation, nature of
+the Organisation, products or services of the Organisation, business volume, number of employees etc)
+1.2 Organogram and responsibilities:  this shows the pyramid of the Organisation and relative responsibilities of major positions
+
+CHAPTER TWO – DETAILED STUDENT’S ROLE/RESPONSIBILITIES
+AND DAILY ACTIVITIES
+This section gives a detailed account of the day-to-day activities of the workplace. 
+a.   Student’s role/responsibilities and activities: list and describes in details all activities
+throughout the six months program. (HOSPITAL PRACTICE and HOSPITALITY INDUSTRY or FOOD/WATER INDUSTRY)
+A basic summary of exactly what the student did, for whom, and what types, as well as levels of skills were required.
+       b.   It is important to attach pictures, diagram or show flowchart (where applicable)
+        c.  Description of tools and equipment used
+
+ CHAPTER THREE – DISCUSSION
+a.   Discuss experience gained and what you learnt during the SIWES (each job, section or
+department) to reflect on professional identity and practice in work places, as well as the nature and quality of job or service.
+b.   Discuss problems encountered and how it was solved.
+
+CHAPTER FOUR – LIMITATIONS, CONCLUSION AND RECOMMENDATIONS
+a.  Limitations: identify limitations in the facilities provided by the organization in the course of the Internship.
+b.   Conclusion: findings of the student.
+c.   Recommendations: Recommendations based on the limitations.

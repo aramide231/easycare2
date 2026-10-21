@@ -152,15 +152,45 @@ const PROVIDER_MAP: Record<string, { [providerName: string]: string }> = {
 type Props = {
   formData: PatientData;
   handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
 };
+
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  disabled,
+  children,
+}: {
+  label: string;
+  name: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm font-medium text-txt">{label}</label>
+      <select
+        className="w-full rounded-md px-4 py-2 outline outline-[#A5A5A5] focus:outline-txt focus:outline-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+      >
+        {children}
+      </select>
+    </div>
+  );
+}
 
 export default function PatientInsuranceReg({ formData, handleChange }: Props) {
   const [providerNames, setProviderNames] = useState<string[]>([]);
   const [providerCode, setProviderCode] = useState<string>("");
 
-  // Update Provider Name list when PatientType changes
   useEffect(() => {
     const patientTypeValue = formData?.patientType || "";
     if (patientTypeValue && PROVIDER_MAP[patientTypeValue]) {
@@ -170,7 +200,6 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
     }
   }, [formData?.patientType]);
 
-  // Auto-update Provider Code when Provider Name changes
   useEffect(() => {
     const typeKey = formData?.patientType || "";
     const providerName = formData?.insuranceProvider || "";
@@ -182,52 +211,47 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
   }, [formData?.insuranceProvider, formData?.patientType]);
 
   return (
-    <div>
-      <p className="text-txt-muted text-sm">Step 2</p>
-      <h2 className="font-medium">Patient Insurance Information</h2>
-      <div className="mt-4 w-full border-b border-[#A5A5A5]" />
-
-      <div className="flex gap-10">
-        {/* Patient Type */}
-        <div className="flex flex-col mt-6">
-          <label>Patient Type</label>
-          <select
-            className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-            value={formData?.patientType}
-            name="patientType"
-            onChange={handleChange}
-          >
-            <option value="">Select a type</option>
-            {PATIENT_TYPE.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Provider Name */}
-        <div className="flex flex-col mt-6">
-          <label>Insurance Provider Name</label>
-          <select
-            className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-            value={formData?.insuranceProvider}
-            name="insuranceProvider"
-            onChange={handleChange}
-            disabled={!providerNames.length}
-          >
-            <option value="">Select an Organization</option>
-            {providerNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="flex flex-col gap-6">
+      {/* Step heading */}
+      <div>
+        <p className="text-sm text-txt-muted">Step 2</p>
+        <h2 className="font-medium">Patient Insurance Information</h2>
+        <div className="mt-4 w-full border-b border-[#A5A5A5]" />
       </div>
 
-      <div className="flex gap-10">
-        {/* Auto-filled Code */}
+      <div className="grid grid-cols-1 gap-x-12 gap-y-6 sm:grid-cols-2">
+        {/* Patient Type */}
+        <SelectField
+          label="Patient Type"
+          name="patientType"
+          value={formData?.patientType}
+          onChange={handleChange}
+        >
+          <option value="">Select a type</option>
+          {PATIENT_TYPE.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </SelectField>
+
+        {/* Insurance Provider Name */}
+        <SelectField
+          label="Insurance Provider Name"
+          name="insuranceProvider"
+          value={formData?.insuranceProvider}
+          onChange={handleChange}
+          disabled={!providerNames.length}
+        >
+          <option value="">Select an Organization</option>
+          {providerNames.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </SelectField>
+
+        {/* Insurance Provider Code (auto-filled) */}
         <InputField
           label="Insurance Provider Code"
           placeholder="Auto-filled"
@@ -244,9 +268,8 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           name="patientId"
           handleChange={handleChange}
         />
-      </div>
 
-      <div className="flex gap-10">
+        {/* Insurance Policy Number */}
         <InputField
           label="Insurance Policy Number"
           placeholder="Eg: 012345"
@@ -255,6 +278,7 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           handleChange={handleChange}
         />
 
+        {/* Employer Name */}
         <InputField
           label="Patient's Employer Name"
           placeholder="Eg: 7up Bottling Company"
@@ -262,26 +286,23 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           name="employerName"
           handleChange={handleChange}
         />
-      </div>
 
-      <div className="flex gap-10">
-        <div className="flex flex-col mt-6">
-          <label>Treatment Guide</label>
-          <select
-            className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-            value={formData?.treatmentGuide}
-            name="treatmentGuide"
-            onChange={handleChange}
-          >
-            <option value="">Select one</option>
-            {TREATMENT_GUIDE.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Treatment Guide */}
+        <SelectField
+          label="Treatment Guide"
+          name="treatmentGuide"
+          value={formData?.treatmentGuide}
+          onChange={handleChange}
+        >
+          <option value="">Select one</option>
+          {TREATMENT_GUIDE.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </SelectField>
 
+        {/* Plan Type */}
         <InputField
           label="Patient Plan Type"
           placeholder="Eg: DashfsAAHFAH"
@@ -289,190 +310,22 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           name="planType"
           handleChange={handleChange}
         />
-      </div>
 
-      <div className="flex gap-10">
-        <div className="flex flex-col mt-6">
-          <label>Eligibility</label>
-          <select
-            className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-            value={formData?.eligibility}
-            name="eligibility"
-            onChange={handleChange}
-          >
-            <option value="">Select one</option>
-            {ELIGIBILITY.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="w-[290px]" />
+        {/* Eligibility */}
+        <SelectField
+          label="Eligibility"
+          name="eligibility"
+          value={formData?.eligibility}
+          onChange={handleChange}
+        >
+          <option value="">Select one</option>
+          {ELIGIBILITY.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </SelectField>
       </div>
     </div>
   );
 }
-
-// import InputField from "./components/InputField";
-// import type { PatientData } from "./Registration";
-
-// const PATIENT_TYPE = [
-//   "Private",
-//   "Company",
-//   "HMO",
-//   "NHIS",
-//   "Family",
-//   "Staff",
-//   "Walk-In",
-// ];
-
-// const INSURANCE_PROV_NAME = ["placeholder"];
-// const INSURANCE_PROV_CODE = ["placeholder"];
-// const TREATMENT_GUIDE = ["Capitated", "Fee For Service", "NHIS", "Private"];
-// const ELIGIBILITY = ["Active", "Not-Active"];
-
-// type Props = {
-//   formData?: PatientData;
-//   handleChange?: (
-//     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-//   ) => void;
-//   handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//   handlePhoneChange?: (value: string) => void;
-// };
-
-// export default function PatientInsuranceReg({ formData, handleChange }: Props) {
-//   return (
-//     <div>
-//       <div>
-//         <p className="text-txt-muted text-sm">Step 2</p>
-//         <h2 className="font-medium">Patient Insurance Information</h2>
-//         <div className="mt-4 w-full border-b border-[#A5A5A5]" />
-//       </div>
-
-//       <div className="flex gap-10">
-//         {/* Patient Type */}
-//         <div className="flex flex-col mt-6">
-//           <label>Patient Type</label>
-//           <select
-//             className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-//             value={formData?.patientType}
-//             name="patientType"
-//             onChange={handleChange}
-//           >
-//             <option value="">Select a type</option>
-//             {PATIENT_TYPE.map((type) => (
-//               <option value={type}>{type}</option>
-//             ))}
-//           </select>
-//         </div>
-//         {/* Insurance Provider Name */}
-//         <div className="flex flex-col mt-6">
-//           <label> Insurance Provider Name</label>
-//           <select
-//             className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-//             value={formData?.insuranceProvider}
-//             name="insuranceProvider"
-//             onChange={handleChange}
-//           >
-//             <option value="">Select an Organization</option>
-
-//             {INSURANCE_PROV_NAME.map((type) => (
-//               <option value={type}>{type}</option>
-//             ))}
-//           </select>
-//         </div>
-//       </div>
-
-//       <div className="flex gap-10">
-//         {/* Insurance Group Number */}
-//         <div className="flex flex-col mt-6">
-//           <label>Insurance Provider Code</label>
-//           <select
-//             className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-//             value={formData?.insuranceProviderCode}
-//             name="insuranceProviderCode"
-//             onChange={handleChange}
-//           >
-//             <option value="">Select one</option>
-//             {INSURANCE_PROV_CODE.map((type) => (
-//               <option value={type}>{type}</option>
-//             ))}
-//           </select>
-//         </div>
-//         {/* Insurance Provider Name */}
-
-//         {/* Patient ID */}
-//         <InputField
-//           label="Patient ID"
-//           placeholder="P-2025001"
-//           value={formData?.patientId}
-//           name="patientId"
-//           handleChange={handleChange}
-//         />
-//       </div>
-
-//       <div className="flex gap-10">
-//         {/* Insurance Policy Number */}
-//         <InputField
-//           label="Insurance Policy Number"
-//           placeholder="Eg: 012345"
-//           value={formData?.insurancePolicyNumber}
-//           name="insurancePolicyNumber"
-//           handleChange={handleChange}
-//         />
-//         <InputField
-//           label="Patient's Employer Name"
-//           placeholder="Eg: 7up Bottling Company"
-//           value={formData?.employerName}
-//           name="employerName"
-//           handleChange={handleChange}
-//         />
-//       </div>
-
-//       <div className="flex gap-10">
-//         {/* Insurance Group Number */}
-//         <div className="flex flex-col mt-6">
-//           <label>Treatment Guide</label>
-//           <select
-//             className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-//             value={formData?.treatmentGuide}
-//             name="treatmentGuide"
-//             onChange={handleChange}
-//           >
-//             <option value="">Select one</option>
-
-//             {TREATMENT_GUIDE.map((type) => (
-//               <option value={type}>{type}</option>
-//             ))}
-//           </select>
-//         </div>
-//         <InputField
-//           label="Patient Plan Type"
-//           placeholder="Eg: DashfsAAHFAH"
-//           value={formData?.planType}
-//           name="planType"
-//           handleChange={handleChange}
-//         />
-//       </div>
-
-//       <div className="flex gap-10">
-//         <div className="flex flex-col mt-6">
-//           <label>Eligibility</label>
-//           <select
-//             className="w-[290px] mt-2 outline outline-[#A5A5A5] focus:outline-txt px-4 py-2 rounded-md"
-//             value={formData?.eligibility}
-//             name="eligibility"
-//             onChange={handleChange}
-//           >
-//             <option value="">Select one</option>
-//             {ELIGIBILITY.map((type) => (
-//               <option value={type}>{type}</option>
-//             ))}
-//           </select>
-//         </div>
-//         <div className="w-[290px]"></div>
-//       </div>
-//     </div>
-//   );
-// }

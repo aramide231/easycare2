@@ -16,10 +16,23 @@ const ProfileMenu = () => {
   const [helpdeskMessage, setHelpdeskMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const roleDisplayNames: Record<string, string> = {
+    frontdesk: "Front Desk Personnel",
+    doctor: "Doctor",
+    nurse: "Nurse",
+    admin: "Administrator",
+    pharmacist: "Pharmacist",
+    lab: "Lab Technician",
+    accountant: "Accountant",
+  };
+
+  const displayName = user?.fullName ?? "John Doe";
+
   const roleLabel =
     user?.userRole && user.userRole.length > 0
-      ? user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1)
-      : "";
+      ? (roleDisplayNames[user.userRole.toLowerCase()] ??
+        user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1))
+      : "Front Desk Personnel";
 
   const registrationDate = formatOrdinalDate(new Date(2025, 0, 31));
   const lastLoginDate = formatOrdinalDate(new Date(2025, 6, 15));
@@ -68,18 +81,18 @@ const ProfileMenu = () => {
         <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full border border-gray-200">
           <img
             src={clientimage}
-            alt={user?.fullName ?? "User"}
+            alt={displayName}
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="hidden min-w-0 text-left sm:block">
+        <div className="min-w-0 text-left">
           <p className="truncate text-sm font-semibold text-gray-900">
-            {user?.fullName}
+            {displayName}
           </p>
           <p className="text-xs text-gray-500">{roleLabel}</p>
         </div>
         <ChevronDown
-          className={`hidden h-4 w-4 shrink-0 text-gray-500 transition-transform sm:block ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
           aria-hidden
         />
       </button>

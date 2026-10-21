@@ -22,12 +22,12 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative flex items-center justify-between py-4 px-6 h-[105px] rounded-lg w-1/2 shadow-sm cursor-pointer overflow-hidden transition-transform duration-200 hover:scale-[1.02] ${bgClass}`}
+      className={`relative flex items-center justify-between py-3 px-5 h-[78px] rounded-lg w-1/2 shadow-sm cursor-pointer overflow-hidden transition-transform duration-200 hover:scale-[1.02] ${bgClass}`}
     >
       <div className="flex items-center gap-4 z-10">
         <div className="flex items-center justify-center">{icon}</div>
         <div className="flex flex-col">
-          <h3 className={`font-semibold text-lg tracking-wide ${titleClass}`}>
+          <h3 className={`font-semibold text-sm tracking-wide ${titleClass}`}>
             {title}
           </h3>
           <p className={`text-sm font-medium mt-0.5 ${subtitleClass}`}>

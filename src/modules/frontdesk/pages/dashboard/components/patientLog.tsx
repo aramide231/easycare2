@@ -49,7 +49,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const [toastMessage, setToastMessage] = useState("");
   // const dropdownRef = useRef(null);
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
-    null
+    null,
   );
 
   // to dynamically reader the headingText
@@ -227,7 +227,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
     if (isConfirmed && editPatient) {
       const updatedPatients = patients.map((patient) =>
-        patient.id === editPatient.id ? editPatient : patient
+        patient.id === editPatient.id ? editPatient : patient,
       );
       setPatients(updatedPatients);
       setToastMessage("Patient details updated successfully!");
@@ -240,7 +240,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const confirmSave = () => {
     return new Promise((resolve) => {
       const confirmation = window.confirm(
-        "Are you sure you want to save the changes?"
+        "Are you sure you want to save the changes?",
       );
       resolve(confirmation);
     });
@@ -279,7 +279,8 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
   // send profile model
   const [showSendModal, setShowSendModal] = useState(false);
-  const [selectedSendOptions, setSelectedSendOptions] = useState<string[]>([]);
+  const [selectedVisitationType, setSelectedVisitationType] =
+    useState<string>("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const sendOptions = [
@@ -297,18 +298,14 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   ];
 
   const handleCheckboxChange = (option: string) => {
-    setSelectedSendOptions((prev) =>
-      prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option]
-    );
+    setSelectedVisitationType(option);
   };
 
   const handleSendProfile = () => {
-    // Handle logic to send the profile to selected options
-    console.log("Send to:", selectedSendOptions);
-    setShowSendModal(false); // Close modal after send
-    setShowSuccessMessage(true); // Show success screen
+    console.log("Send to:", selectedVisitationType);
+    setShowSendModal(false);
+    setSelectedVisitationType("");
+    setShowSuccessMessage(true);
   };
 
   return (
@@ -394,7 +391,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
-                        patient.patientType
+                        patient.patientType,
                       )}`}
                     >
                       {patient.patientType}
@@ -403,7 +400,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
-                        patient.visitType
+                        patient.visitType,
                       )}`}
                     >
                       {patient.visitType}
@@ -422,7 +419,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                           className="text-gray-500"
                           onClick={() =>
                             setShowOptions(
-                              patient.id === showOptions ? null : patient.id
+                              patient.id === showOptions ? null : patient.id,
                             )
                           }
                         >
@@ -685,16 +682,17 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                 {sendOptions.map((option) => (
                   <div key={option} className="flex items-center">
                     <input
-                      type="checkbox"
+                      type="radio"
                       id={option}
+                      name="visitationType"
                       value={option}
-                      checked={selectedSendOptions.includes(option)}
+                      checked={selectedVisitationType === option}
                       onChange={() => handleCheckboxChange(option)}
-                      className="w-5 h-5 text-purple-600 border-purple-600 rounded focus:ring-purple-500"
+                      className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500 accent-purple-600"
                     />
                     <label
                       htmlFor={option}
-                      className="ml-3 text-sm text-gray-700"
+                      className="ml-3 text-sm text-gray-700 cursor-pointer"
                     >
                       {option}
                     </label>

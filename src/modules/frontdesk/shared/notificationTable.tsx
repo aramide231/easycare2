@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import emptyNotification from "@frontdesk/assets/image/empty-notification.png";
 import { getActiveModuleRole } from "@/lib/authRoutes";
 import { useAuth } from "@/context/AuthContext";
 import { useLocation } from "react-router-dom";
+import EmptyNotification from "@frontdesk/pages/notifications/components/EmptyNotification";
 
 type Patient = {
   id: number;
@@ -30,134 +30,7 @@ const NotificationTable: React.FC = () => {
     null,
   );
 
-  const [patients, setPatients] = useState<Patient[]>([
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      patientId: "P-2025002",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed",
-      flagged: false,
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      patientId: "P-2025003",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 6,
-      name: "Emeka Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 7,
-      name: "Fatima Zara",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 8,
-      name: "Deola Kadir",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "FAMILY PLAN",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-    {
-      id: 9,
-      name: "Chioma Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN.CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-    },
-  ]);
+  const [patients, setPatients] = useState<Patient[]>([]);
 
   const getPatientTypeClass = (type: string) => {
     const typeClasses: Record<string, string> = {
@@ -221,7 +94,7 @@ const NotificationTable: React.FC = () => {
         <input
           type="search"
           className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full md:w-1/2 p-2.5"
-          placeholder="Search for patients"
+          placeholder="Search with Surname, Patient ID or Phone number"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -257,7 +130,7 @@ const NotificationTable: React.FC = () => {
                   <td className="px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
-                        patient.visitType
+                        patient.visitType,
                       )}`}
                     >
                       {patient.visitType}
@@ -285,7 +158,7 @@ const NotificationTable: React.FC = () => {
                   <td className="px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
-                        patient.patientType
+                        patient.patientType,
                       )}`}
                     >
                       {patient.patientType}
@@ -326,22 +199,7 @@ const NotificationTable: React.FC = () => {
             </tbody>
           </table>
         ) : (
-          /* EMPTY STATE */
-          <div className="text-center text-black bg-gray-50">
-            <div className="h-[35rem] w-full flex items-center justify-center">
-              <div className="w-[392px] h-[225px] flex items-center flex-col gap-4">
-                <img
-                  className="w-24 h-24"
-                  src={emptyNotification}
-                  alt="empty-notification"
-                />
-                <p className="text-[32px] font-semibold">No Notification Yet</p>
-                <p className="text-2xl font-normal">
-                  You don't have any notifications yet. Check back later.
-                </p>
-              </div>
-            </div>
-          </div>
+          <EmptyNotification />
         )}
       </div>
     </div>

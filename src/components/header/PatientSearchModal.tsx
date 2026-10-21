@@ -7,7 +7,6 @@ import { getActiveModuleRole } from "@/lib/authRoutes";
 import clientimage from "@/assets/image/haywhy.jpg";
 import TablePagination from "@/pages/nurse/shared/components/TablePagination";
 import { usePaginatedList } from "@/hooks/usePaginatedList";
-import { useSearchAnchorPosition } from "@/hooks/useSearchAnchorPosition";
 import {
   buildMockPatients,
   type Patient,
@@ -38,7 +37,6 @@ const PatientSearchModal = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [query, setQuery] = useState(initialQuery);
-  const anchorRect = useSearchAnchorPosition(anchorRef, open);
 
   useEffect(() => {
     if (open) setQuery(initialQuery);
@@ -87,10 +85,10 @@ const PatientSearchModal = ({
     onClose();
   };
 
-  if (!open || !anchorRect) return null;
+  if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100]">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4">
       <button
         type="button"
         className="absolute inset-0 bg-black/40"
@@ -99,12 +97,7 @@ const PatientSearchModal = ({
       />
 
       <div
-        className="absolute flex max-h-[min(78vh,calc(100vh-80px))] min-h-[min(560px,78vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
-        style={{
-          top: anchorRect.top,
-          left: anchorRect.left,
-          width: anchorRect.width,
-        }}
+        className="relative flex w-full max-w-2xl max-h-[min(78vh,calc(100vh-120px))] min-h-[min(480px,78vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
         role="dialog"
         aria-modal="true"
         aria-label="Search patients"

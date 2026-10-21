@@ -96,16 +96,13 @@ export function formatClockDateTime(date: Date): string {
   const year = date.getFullYear();
   const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
   const hour12 = hours % 12 || 12;
   const meridiem = hours >= 12 ? "PM" : "AM";
-  return `${day}-${month}-${year} | ${String(hour12).padStart(2, "0")}:${minutes}${meridiem}`;
+  return `${day}-${month}-${year} | ${String(hour12).padStart(2, "0")}:${minutes}:${seconds}${meridiem}`;
 }
 
-export function dateAtDaysAgo(
-  daysAgo: number,
-  hour = 10,
-  minute = 25,
-): Date {
+export function dateAtDaysAgo(daysAgo: number, hour = 10, minute = 25): Date {
   const date = startOfDay(new Date());
   date.setDate(date.getDate() - daysAgo);
   date.setHours(hour, minute, 0, 0);
@@ -201,14 +198,18 @@ const MONTH_INDEX: Record<string, number> = {
   Dec: 11,
 };
 
-export function parseLogDateTime(dateStr: string, timeStr: string): Date | null {
+export function parseLogDateTime(
+  dateStr: string,
+  timeStr: string,
+): Date | null {
   const parts = dateStr.trim().split("-");
   if (parts.length !== 3) return null;
 
   const day = Number.parseInt(parts[0], 10);
   const month = MONTH_INDEX[parts[1]];
   const year = Number.parseInt(parts[2], 10);
-  if (Number.isNaN(day) || month === undefined || Number.isNaN(year)) return null;
+  if (Number.isNaN(day) || month === undefined || Number.isNaN(year))
+    return null;
 
   const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!match) return null;
@@ -267,10 +268,7 @@ export function parsePatientLastSeen(value: string): Date | null {
   return new Date(year, month, day);
 }
 
-export function isDateWithinRange(
-  date: Date,
-  range: DateRangeValue,
-): boolean {
+export function isDateWithinRange(date: Date, range: DateRangeValue): boolean {
   const value = startOfDay(date).getTime();
   const start = startOfDay(range.startDate).getTime();
   const end = startOfDay(range.endDate).getTime();

@@ -167,11 +167,13 @@ export default function Registration() {
   };
 
   return (
-    <div className="pt-15 space-y-10 lg:flex flex-col items-center">
-      <FormHeader />
-      <ActiveFormBar currentStep={step} />
+    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-10">
+      <div className="mb-6 space-y-6">
+        <FormHeader />
+        <ActiveFormBar currentStep={step} />
+      </div>
 
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
         {step === 1 && (
           <PatientInfoRegistration
             formData={formData}
@@ -197,41 +199,41 @@ export default function Registration() {
         )}
 
         {step === 4 && <PatientRegSuccess />}
+
+        {step < 4 && (
+          <div className="flex items-center justify-between pt-2">
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={() => setStep(step - 1)}
+                className="rounded-lg border border-[#A5A5A5] px-6 py-2 cursor-pointer hover:bg-gray-50"
+              >
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
+
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="rounded-lg border bg-primary px-6 py-2 text-white cursor-pointer hover:bg-primary/90"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="rounded-lg border bg-primary px-6 py-2 text-white cursor-pointer hover:bg-primary/90"
+              >
+                Submit
+              </button>
+            )}
+          </div>
+        )}
       </form>
-
-      {step < 4 && (
-        <div className="flex justify-between gap-[480px]">
-          {step > 1 ? (
-            <button
-              type="button"
-              onClick={() => setStep(step - 1)}
-              className="py-1 px-4 border rounded-lg border-[#A5A5A5] cursor-pointer"
-            >
-              Back
-            </button>
-          ) : (
-            <div></div>
-          )}
-
-          {step < 3 ? (
-            <button
-              type="button"
-              onClick={handleNext}
-              className="py-1 px-4 border rounded-lg bg-primary text-white cursor-pointer hover:bg-primary/90"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="py-1 px-4 border rounded-lg bg-primary text-white cursor-pointer hover:bg-primary/90"
-            >
-              Submit
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

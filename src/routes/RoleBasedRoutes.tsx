@@ -2,7 +2,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-import { FrontdeskRoutes } from "@/modules/frontdesk";
+import { FrontdeskRoutes, FrontdeskLayout } from "@/modules/frontdesk";
+import BookAppointment from "@/modules/frontdesk/pages/book-appointment/BookAppointment";
 import { HmoRoutes } from "@/modules/hmo";
 import { PharmacyRoutes } from "@/modules/pharmacy";
 import { DiagnosticsRadiologistRoutes } from "@/pages/diagnostics-and-radiologist/routes";
@@ -91,14 +92,21 @@ const RoleBasedRoutes = () => {
       />
       <Route
         path="/auth/verification"
-        element={
-          user ? <Navigate to={homePath} replace /> : <Verification />
-        }
+        element={user ? <Navigate to={homePath} replace /> : <Verification />}
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Frontdesk — available for preview without login */}
       {FrontdeskRoutes()}
+
+      {/* Frontdesk additional routes */}
+      <Route path="/frontdesk" element={<FrontdeskLayout />}>
+        <Route
+          path="previous-patient-records/:patientId"
+          element={<PreviousPatientRecords />}
+        />
+        <Route path="book-appointment" element={<BookAppointment />} />
+      </Route>
 
       {/* HMO — available for preview without login */}
       {HmoRoutes()}
@@ -111,30 +119,30 @@ const RoleBasedRoutes = () => {
 
       {/* Nurse */}
       <Route path="/nurse" element={<NurseLayout />}>
-          <Route index element={<NurseDashboard />} />
-          <Route path="dashboard" element={<NurseDashboard />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="admission" element={<NurseAdmission />} />
-          <Route path="available-ward" element={<NurseAvailableWard />} />
-          <Route path="discharge" element={<NurseDischarge />} />
-          <Route path="make-request" element={<NurseMakeRequest />} />
-          <Route path="reminder" element={<NurseSetReminder />} />
-          <Route path="reports/admission" element={<NurseAdmissionReport />} />
-          <Route path="reports/discharge" element={<NurseDischargeReport />} />
-          <Route path="child-birth" element={<NurseChildBirthReport />} />
-          <Route path="ante-natal" element={<NurseAnteNatalReport />} />
-          <Route path="post-natal" element={<NursePostNatalReport />} />
-          <Route path="family-planning" element={<NurseFamilyPlanningReport />} />
-          <Route path="immunization" element={<NurseImmunizationReport />} />
-          <Route path="dispensed-drugs" element={<NurseDispensedDrugsReport />} />
-          <Route path="report-writing" element={<NurseReportWriting />} />
-          <Route path="requisition" element={<NurseRequisition />} />
-          <Route path="patient-profile/:id" element={<NursePatientProfile />} />
-          <Route
-            path="previous-patient-records/:patientId"
-            element={<PreviousPatientRecords />}
-          />
-        </Route>
+        <Route index element={<NurseDashboard />} />
+        <Route path="dashboard" element={<NurseDashboard />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="admission" element={<NurseAdmission />} />
+        <Route path="available-ward" element={<NurseAvailableWard />} />
+        <Route path="discharge" element={<NurseDischarge />} />
+        <Route path="make-request" element={<NurseMakeRequest />} />
+        <Route path="reminder" element={<NurseSetReminder />} />
+        <Route path="reports/admission" element={<NurseAdmissionReport />} />
+        <Route path="reports/discharge" element={<NurseDischargeReport />} />
+        <Route path="child-birth" element={<NurseChildBirthReport />} />
+        <Route path="ante-natal" element={<NurseAnteNatalReport />} />
+        <Route path="post-natal" element={<NursePostNatalReport />} />
+        <Route path="family-planning" element={<NurseFamilyPlanningReport />} />
+        <Route path="immunization" element={<NurseImmunizationReport />} />
+        <Route path="dispensed-drugs" element={<NurseDispensedDrugsReport />} />
+        <Route path="report-writing" element={<NurseReportWriting />} />
+        <Route path="requisition" element={<NurseRequisition />} />
+        <Route path="patient-profile/:id" element={<NursePatientProfile />} />
+        <Route
+          path="previous-patient-records/:patientId"
+          element={<PreviousPatientRecords />}
+        />
+      </Route>
 
       {/* Doctor — updated clinician module from EasyCare-Aramide */}
       <Route path="/doctor" element={<DoctorLayout />}>

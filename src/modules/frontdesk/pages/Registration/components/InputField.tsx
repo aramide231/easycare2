@@ -5,10 +5,10 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
 
 export default function InputField({ label, handleChange, ...props }: Props) {
   return (
-    <div className="mt-6 flex flex-col">
-      <label className="text-txt">{label}</label>
+    <div className="flex flex-col gap-2">
+      <label className="text-txt text-sm font-medium">{label}</label>
       <input
-        className="input-field"
+        className="w-full rounded-md px-4 py-2 border-2 focus:outline-txt focus:outline-2"
         {...props}
         onChange={handleChange ?? (() => {})}
       />

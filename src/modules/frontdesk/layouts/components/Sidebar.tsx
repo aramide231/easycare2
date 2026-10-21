@@ -43,7 +43,7 @@ const PERFORM_ACTION = [
   {
     label: "Book Appointment",
     icon: ReceiptIcon,
-    link: "/frontdesk/reminder",
+    link: "/frontdesk/book-appointment",
   },
   { label: "Manage Access", icon: BlockIcon, link: "/frontdesk/manage-access" },
   { label: "Manage Card", icon: GridMenuIcon, link: "/frontdesk/manage-card" },
@@ -61,7 +61,11 @@ const REPORT = [
     icon: BreastfeedingIcon,
     link: "/frontdesk/child-birth",
   },
-  { label: "Doctor Logs", icon: Activity, link: "/frontdesk/doctor-assignments" },
+  {
+    label: "Doctor Logs",
+    icon: Activity,
+    link: "/frontdesk/doctor-assignments",
+  },
   {
     label: "Family Planning",
     icon: FamilyIcon,
@@ -151,7 +155,10 @@ export default function Sidebar() {
         className={`px-4 pt-6 pb-4 flex items-center justify-between ${isCollapsed && "flex-col gap-4"}`}
       >
         {/* Logo Section */}
-        <div className="flex items-center gap-2 overflow-hidden">
+        <button
+          onClick={() => window.location.reload()}
+          className="flex items-center gap-2 overflow-hidden"
+        >
           <img
             className="w-8 h-8 shrink-0"
             src={easycareLogo}
@@ -162,7 +169,7 @@ export default function Sidebar() {
               EasyCare<span className="text-black font-light">™</span>
             </p>
           )}
-        </div>
+        </button>
 
         {/* Collapse Toggle */}
         <button
