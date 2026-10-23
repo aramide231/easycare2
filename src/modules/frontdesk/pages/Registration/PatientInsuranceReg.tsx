@@ -191,6 +191,8 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
   const [providerNames, setProviderNames] = useState<string[]>([]);
   const [providerCode, setProviderCode] = useState<string>("");
 
+  const isPrivate = formData?.patientType === "PRIVATE";
+
   useEffect(() => {
     const patientTypeValue = formData?.patientType || "";
     if (patientTypeValue && PROVIDER_MAP[patientTypeValue]) {
@@ -241,7 +243,7 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           name="insuranceProvider"
           value={formData?.insuranceProvider}
           onChange={handleChange}
-          disabled={!providerNames.length}
+          disabled={isPrivate || !providerNames.length}
         >
           <option value="">Select an Organization</option>
           {providerNames.map((name) => (
@@ -258,11 +260,12 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           value={providerCode}
           name="insuranceProviderCode"
           readOnly
+          disabled={isPrivate}
         />
 
         {/* Patient ID */}
         <InputField
-          label="Patient ID"
+          label="Unique ID"
           placeholder="P-2025001"
           value={formData?.patientId}
           name="patientId"
@@ -276,6 +279,7 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           value={formData?.insurancePolicyNumber}
           name="insurancePolicyNumber"
           handleChange={handleChange}
+          disabled={isPrivate}
         />
 
         {/* Employer Name */}
@@ -285,6 +289,7 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           value={formData?.employerName}
           name="employerName"
           handleChange={handleChange}
+          disabled={isPrivate}
         />
 
         {/* Treatment Guide */}
@@ -304,11 +309,12 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
 
         {/* Plan Type */}
         <InputField
-          label="Patient Plan Type"
+          label="Plan Type"
           placeholder="Eg: DashfsAAHFAH"
           value={formData?.planType}
           name="planType"
           handleChange={handleChange}
+          disabled={isPrivate}
         />
 
         {/* Eligibility */}

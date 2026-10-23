@@ -50,6 +50,17 @@ ON FRONTDESK
 
 
 
+Remove registration indicator from the sidebar
+Under Report tab category in the sidebar suffix logs to the name
+Flag profile button under patient view should be more shady for the button background
+In the profile view the three tab at the top "Health info should be inactive
+
+The easycare logo on the sidebar should refresh to frontdesk dashboard when clicked
+The file input field border in the registration should be more bold and the placeholder should state the file size(200kb max size), and make the file input field optional
+
+Unique Id Number for the label under insurance info reg
+The eligibility should be Active(Alive) and Not-Active(deceased)
+
 
 
 

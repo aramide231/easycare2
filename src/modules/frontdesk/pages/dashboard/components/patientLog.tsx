@@ -205,7 +205,19 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   }, [location.state, location.pathname, navigate, patients]);
 
   const handleEditPatient = (patient: Patient) => {
-    navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
+    navigate("/frontdesk/registration", {
+      state: {
+        mode: "edit",
+        initialData: {
+          firstName: patient.firstName,
+          surname: patient.lastName,
+          gender: patient.gender === "M" ? "Male" : "Female",
+          phone: patient.phoneNumber,
+          patientType: patient.patientType,
+          patientId: patient.patientId,
+        },
+      },
+    });
   };
 
   const handleFlagProfile = (patient: Patient) => {
