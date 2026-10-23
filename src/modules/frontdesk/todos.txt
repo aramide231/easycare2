@@ -50,78 +50,13 @@ ON FRONTDESK
 
 
 
-Remove registration indicator from the sidebar
-Under Report tab category in the sidebar suffix logs to the name
-Flag profile button under patient view should be more shady for the button background
-In the profile view the three tab at the top "Health info should be inactive
+Remove registration indicator from the sidebar ✅
+Under Report tab category in the sidebar suffix logs to the name ✅
+Flag profile button under patient view should be more shady for the button background ✅
+In the profile view the three tab at the top "Health info should be inactive ✅
 
-The easycare logo on the sidebar should refresh to frontdesk dashboard when clicked
-The file input field border in the registration should be more bold and the placeholder should state the file size(200kb max size), and make the file input field optional
+The easycare logo on the sidebar should refresh to frontdesk dashboard when clicked ✅
+The file input field border in the registration should be more bold and the placeholder should state the file size(200kb max size), and make the file input field optional ✅
 
-Unique Id Number for the label under insurance info reg
-The eligibility should be Active(Alive) and Not-Active(deceased)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    SIWES
-    REPORT FORMAT AND PRESENTAION
-
-INSTRUCTION: 
-a.   Page: Page should be of A4 size
-b.  Font: times new roman, 12
-c.   Justification: the whole document should be fully justified
-d.  Spacing: the body of the report should have 1.5 line spacing
-e.   Margin: 3cm all round
-f.   Paragraph must be justified
-g.   Headings & Subheading: All subheadings and their subheading should be properly formatted.
-h.  Punctuation, spelling and grammar check. Use correct punctuation marks, spelling and grammar should be accurate
-i.	Page Numbering: all pages before chapter one should be given in roman numerals. First page of chapter one should start with 1.
-j.   Figures and table labelling
-k.  Spiral bound
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-PRELIMINARY PAGES
-Title Page
- Declaration
- Acknowledgements
-d.   Table of Contents
-
-CHAPTER ONE – INTRODUCTION
-1.0 Brief introduction about the SIWES, aims and objectives
-1.1 Organisation history: this section should give a brief history of the Organisation, nature of
-the Organisation, products or services of the Organisation, business volume, number of employees etc)
-1.2 Organogram and responsibilities:  this shows the pyramid of the Organisation and relative responsibilities of major positions
-
-CHAPTER TWO – DETAILED STUDENT’S ROLE/RESPONSIBILITIES
-AND DAILY ACTIVITIES
-This section gives a detailed account of the day-to-day activities of the workplace. 
-a.   Student’s role/responsibilities and activities: list and describes in details all activities
-throughout the six months program. (HOSPITAL PRACTICE and HOSPITALITY INDUSTRY or FOOD/WATER INDUSTRY)
-A basic summary of exactly what the student did, for whom, and what types, as well as levels of skills were required.
-       b.   It is important to attach pictures, diagram or show flowchart (where applicable)
-        c.  Description of tools and equipment used
-
- CHAPTER THREE – DISCUSSION
-a.   Discuss experience gained and what you learnt during the SIWES (each job, section or
-department) to reflect on professional identity and practice in work places, as well as the nature and quality of job or service.
-b.   Discuss problems encountered and how it was solved.
-
-CHAPTER FOUR – LIMITATIONS, CONCLUSION AND RECOMMENDATIONS
-a.  Limitations: identify limitations in the facilities provided by the organization in the course of the Internship.
-b.   Conclusion: findings of the student.
-c.   Recommendations: Recommendations based on the limitations.
+Unique Id Number for the label under insurance info reg ✅
+The eligibility should be Active(Alive) and Not-Active(deceased) ✅

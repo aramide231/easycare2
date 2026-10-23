@@ -12,7 +12,7 @@ const PATIENT_TYPE = [
   "WALK-IN",
 ];
 const TREATMENT_GUIDE = ["Capitated", "Fee For Service", "NHIS", "Private"];
-const ELIGIBILITY = ["Active", "Not-Active"];
+const ELIGIBILITY = ["Active(Alive)", "Not-Active(Deceased)"];
 
 const PROVIDER_MAP: Record<string, { [providerName: string]: string }> = {
   HMO: {
@@ -191,7 +191,8 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
   const [providerNames, setProviderNames] = useState<string[]>([]);
   const [providerCode, setProviderCode] = useState<string>("");
 
-  const isPrivate = formData?.patientType === "PRIVATE";
+  const SIMPLE_TYPES = ["PRIVATE", "FAMILY", "STAFF", "WALK-IN"];
+  const isSimpleType = SIMPLE_TYPES.includes(formData?.patientType ?? "");
 
   useEffect(() => {
     const patientTypeValue = formData?.patientType || "";
@@ -237,100 +238,141 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           ))}
         </SelectField>
 
-        {/* Insurance Provider Name */}
-        <SelectField
-          label="Insurance Provider Name"
-          name="insuranceProvider"
-          value={formData?.insuranceProvider}
-          onChange={handleChange}
-          disabled={isPrivate || !providerNames.length}
-        >
-          <option value="">Select an Organization</option>
-          {providerNames.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </SelectField>
+        {isSimpleType ? (
+          <>
+            {/* Unique ID Number */}
+            <InputField
+              label="Unique ID Number"
+              placeholder="P-2025001"
+              value={formData?.patientId}
+              name="patientId"
+              handleChange={handleChange}
+            />
 
-        {/* Insurance Provider Code (auto-filled) */}
-        <InputField
-          label="Insurance Provider Code"
-          placeholder="Auto-filled"
-          value={providerCode}
-          name="insuranceProviderCode"
-          readOnly
-          disabled={isPrivate}
-        />
+            {/* Treatment Guide */}
+            <SelectField
+              label="Treatment Guide"
+              name="treatmentGuide"
+              value={formData?.treatmentGuide}
+              onChange={handleChange}
+            >
+              <option value="">Select one</option>
+              {TREATMENT_GUIDE.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </SelectField>
 
-        {/* Patient ID */}
-        <InputField
-          label="Unique ID"
-          placeholder="P-2025001"
-          value={formData?.patientId}
-          name="patientId"
-          handleChange={handleChange}
-        />
+            {/* Eligibility */}
+            <SelectField
+              label="Eligibility"
+              name="eligibility"
+              value={formData?.eligibility}
+              onChange={handleChange}
+            >
+              <option value="">Select one</option>
+              {ELIGIBILITY.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </SelectField>
+          </>
+        ) : (
+          <>
+            {/* Insurance Provider Name */}
+            <SelectField
+              label="Insurance Provider Name"
+              name="insuranceProvider"
+              value={formData?.insuranceProvider}
+              onChange={handleChange}
+              disabled={!providerNames.length}
+            >
+              <option value="">Select an Organization</option>
+              {providerNames.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </SelectField>
 
-        {/* Insurance Policy Number */}
-        <InputField
-          label="Insurance Policy Number"
-          placeholder="Eg: 012345"
-          value={formData?.insurancePolicyNumber}
-          name="insurancePolicyNumber"
-          handleChange={handleChange}
-          disabled={isPrivate}
-        />
+            {/* Insurance Provider Code (auto-filled) */}
+            <InputField
+              label="Insurance Provider Code"
+              placeholder="Auto-filled"
+              value={providerCode}
+              name="insuranceProviderCode"
+              readOnly
+            />
 
-        {/* Employer Name */}
-        <InputField
-          label="Patient's Employer Name"
-          placeholder="Eg: 7up Bottling Company"
-          value={formData?.employerName}
-          name="employerName"
-          handleChange={handleChange}
-          disabled={isPrivate}
-        />
+            {/* Unique ID Number */}
+            <InputField
+              label="Unique ID Number"
+              placeholder="P-2025001"
+              value={formData?.patientId}
+              name="patientId"
+              handleChange={handleChange}
+            />
 
-        {/* Treatment Guide */}
-        <SelectField
-          label="Treatment Guide"
-          name="treatmentGuide"
-          value={formData?.treatmentGuide}
-          onChange={handleChange}
-        >
-          <option value="">Select one</option>
-          {TREATMENT_GUIDE.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </SelectField>
+            {/* Insurance Policy Number */}
+            <InputField
+              label="Insurance Policy Number"
+              placeholder="Eg: 012345"
+              value={formData?.insurancePolicyNumber}
+              name="insurancePolicyNumber"
+              handleChange={handleChange}
+            />
 
-        {/* Plan Type */}
-        <InputField
-          label="Plan Type"
-          placeholder="Eg: DashfsAAHFAH"
-          value={formData?.planType}
-          name="planType"
-          handleChange={handleChange}
-          disabled={isPrivate}
-        />
+            {/* Employer Name */}
+            <InputField
+              label="Patient's Employer Name"
+              placeholder="Eg: 7up Bottling Company"
+              value={formData?.employerName}
+              name="employerName"
+              handleChange={handleChange}
+            />
 
-        {/* Eligibility */}
-        <SelectField
-          label="Eligibility"
-          name="eligibility"
-          value={formData?.eligibility}
-          onChange={handleChange}
-        >
-          <option value="">Select one</option>
-          {ELIGIBILITY.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </SelectField>
+            {/* Treatment Guide */}
+            <SelectField
+              label="Treatment Guide"
+              name="treatmentGuide"
+              value={formData?.treatmentGuide}
+              onChange={handleChange}
+            >
+              <option value="">Select one</option>
+              {TREATMENT_GUIDE.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </SelectField>
+
+            {/* Plan Type */}
+            <InputField
+              label="Plan Type"
+              placeholder="Eg: DashfsAAHFAH"
+              value={formData?.planType}
+              name="planType"
+              handleChange={handleChange}
+            />
+
+            {/* Eligibility */}
+            <SelectField
+              label="Eligibility"
+              name="eligibility"
+              value={formData?.eligibility}
+              onChange={handleChange}
+            >
+              <option value="">Select one</option>
+              {ELIGIBILITY.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </SelectField>
+          </>
+        )}
       </div>
     </div>
   );

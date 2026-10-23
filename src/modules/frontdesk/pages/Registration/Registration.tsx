@@ -150,7 +150,8 @@ export default function Registration() {
       );
     }
     if (step === 2) {
-      if (formData.patientType === "PRIVATE") return true;
+      const SIMPLE_TYPES = ["PRIVATE", "FAMILY", "STAFF", "WALK-IN"];
+      if (SIMPLE_TYPES.includes(formData.patientType ?? "")) return true;
       return (
         formData.insuranceProvider &&
         formData.insurancePolicyNumber &&
