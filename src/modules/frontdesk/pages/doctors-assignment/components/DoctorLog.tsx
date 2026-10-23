@@ -222,13 +222,12 @@ const DoctorLog = () => {
         return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
       case "HMO":
         return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
-    
     }
   };
 
   // Function to get visit type badge color
   const getVisitTypeClass = (
-    type: "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH"
+    type: "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH",
   ): string => {
     switch (type) {
       case "GEN. CONSULT":
@@ -239,17 +238,16 @@ const DoctorLog = () => {
         return "bg-green-100 text-green-700 border border-[#00C851]";
       case "POST NATAL":
         return "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
-     
     }
   };
 
   const isValidPatientType = (
-    type: string
+    type: string,
   ): type is "COMPANY" | "PRIVATE" | "HMO" =>
     ["COMPANY", "PRIVATE", "HMO"].includes(type);
 
   const isValidVisitType = (
-    type: string
+    type: string,
   ): type is "GEN. CONSULT" | "ANTE. NATAL" | "POST NATAL" | "CHILDBIRTH" =>
     ["GEN. CONSULT", "ANTE. NATAL", "POST NATAL", "CHILDBIRTH"].includes(type);
 
@@ -279,7 +277,7 @@ const DoctorLog = () => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium"
+              className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-md text-sm font-medium"
             >
               <svg
                 className="w-4 h-4 mr-2 text-purple-600"
@@ -416,7 +414,7 @@ const DoctorLog = () => {
                       .includes(search.toLowerCase()) ||
                     patient.phoneNumber
                       .toLowerCase()
-                      .includes(search.toLowerCase())
+                      .includes(search.toLowerCase()),
                 )
                 .map((patient, index) => (
                   <tr

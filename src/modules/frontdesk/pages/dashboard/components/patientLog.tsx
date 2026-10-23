@@ -3,6 +3,7 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 
 // type and datat check
 
@@ -58,6 +59,8 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const [flagPanelOpen, setFlagPanelOpen] = useState(false);
+  const [flaggedPatient, setFlaggedPatient] = useState<Patient | null>(null);
 
   const [patients, setPatients] = useState<Patient[]>([
     {
@@ -205,11 +208,25 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   }, [location.state, location.pathname, navigate, patients]);
 
   const handleEditPatient = (patient: Patient) => {
-    navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
+    navigate("/frontdesk/registration", {
+      state: {
+        mode: "edit",
+        initialData: {
+          firstName: patient.firstName,
+          surname: patient.lastName,
+          gender: patient.gender === "M" ? "Male" : "Female",
+          phone: patient.phoneNumber,
+          patientType: patient.patientType,
+          patientId: patient.patientId,
+        },
+      },
+    });
   };
 
   const handleFlagProfile = (patient: Patient) => {
-    navigate(`/frontdesk/flag-profile/${patient.id}`, { state: { patient } });
+    setFlaggedPatient(patient);
+    setFlagPanelOpen(true);
+    setShowOptions(null);
   };
 
   // Previous function for flagging patient profile
@@ -733,6 +750,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
         )}
       </div>
       <ToastContainer />
+      <FlagPatientPanel
+        open={flagPanelOpen}
+        onClose={() => setFlagPanelOpen(false)}
+        patientName={flaggedPatient?.name}
+        patientId={flaggedPatient?.patientId}
+      />
     </div>
   );
 };

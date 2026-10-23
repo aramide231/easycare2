@@ -273,10 +273,9 @@ const ChildReport = () => {
         return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
     }
   };
-  
 
   const isValidPatientType = (
-    type: string
+    type: string,
   ): type is "COMPANY" | "PRIVATE" | "HMO" =>
     ["COMPANY", "PRIVATE", "HMO"].includes(type);
   return (
@@ -305,7 +304,7 @@ const ChildReport = () => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-full text-sm font-medium"
+              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-md text-sm font-medium"
             >
               <svg
                 className="w-4 h-4 mr-2 text-[#573FD1]"
@@ -444,7 +443,7 @@ const ChildReport = () => {
                       .includes(search.toLowerCase()) ||
                     patient.phoneNumber
                       .toLowerCase()
-                      .includes(search.toLowerCase())
+                      .includes(search.toLowerCase()),
                 )
                 .map((patient, index) => (
                   <tr

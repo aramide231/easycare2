@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
-import { Search, X } from "lucide-react";
+import { Pencil, Search, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { getActiveModuleRole } from "@/lib/authRoutes";
@@ -11,6 +11,7 @@ import {
   buildMockPatients,
   type Patient,
 } from "@/pages/nurse/dashboard/data/mockPatients";
+import type { PatientData } from "@/modules/frontdesk/pages/Registration/Registration";
 
 type Props = {
   open: boolean;
@@ -77,6 +78,28 @@ const PatientSearchModal = ({
     setCurrentPage(1);
   }, [query, setCurrentPage]);
 
+  const isFrontdesk = location.pathname.startsWith("/frontdesk");
+
+  function patientToFormData(p: Patient): Partial<PatientData> {
+    const genderNorm =
+      p.gender === "M" || p.gender.toLowerCase() === "male" ? "Male" : "Female";
+    return {
+      firstName: p.firstName,
+      surname: p.lastName,
+      gender: genderNorm,
+      phone: p.phoneNumber,
+      patientType: p.patientType,
+      patientId: p.patientId,
+    };
+  }
+
+  const handleEdit = (patient: Patient) => {
+    onClose();
+    navigate("/frontdesk/registration", {
+      state: { mode: "edit", initialData: patientToFormData(patient) },
+    });
+  };
+
   const handleSelect = (patient: Patient) => {
     const role = getActiveModuleRole(location.pathname, user?.userRole);
     navigate(`/${role}/patient-profile/${patient.patientId}`, {
@@ -138,13 +161,16 @@ const PatientSearchModal = ({
             </p>
           ) : (
             paginatedItems.map((patient) => (
-              <button
+              <div
                 key={patient.id}
-                type="button"
-                onClick={() => handleSelect(patient)}
-                className="flex w-full items-center justify-between gap-4 rounded-lg px-3 py-3.5 text-left transition hover:bg-purple-50"
+                className="flex w-full items-center justify-between gap-4 rounded-lg px-3 py-3.5 transition hover:bg-purple-50"
               >
-                <div className="flex min-w-0 items-center gap-3">
+                {/* Clickable patient info area */}
+                <button
+                  type="button"
+                  onClick={() => handleSelect(patient)}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                >
                   <img
                     src={clientimage}
                     alt=""
@@ -159,11 +185,26 @@ const PatientSearchModal = ({
                       {formatPatientSex(patient.gender)}
                     </p>
                   </div>
+                </button>
+
+                {/* Right side: last-seen + optional edit button */}
+                <div className="flex shrink-0 items-center gap-2">
+                  <p className="hidden text-right text-xs text-gray-500 sm:block">
+                    {patient.lastSeen} | {patient.time}
+                  </p>
+                  {isFrontdesk && (
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(patient)}
+                      className="flex items-center gap-1 rounded-md border border-[#573FD1] px-2 py-1 text-xs font-medium text-[#573FD1] hover:bg-purple-50"
+                      aria-label={`Edit ${patient.name}`}
+                    >
+                      <Pencil className="h-3 w-3" aria-hidden />
+                      Edit
+                    </button>
+                  )}
                 </div>
-                <p className="hidden shrink-0 text-right text-xs text-gray-500 sm:block">
-                  {patient.lastSeen} | {patient.time}
-                </p>
-              </button>
+              </div>
             ))
           )}
         </div>

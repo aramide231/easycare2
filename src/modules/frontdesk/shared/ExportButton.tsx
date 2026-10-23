@@ -13,7 +13,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ reportTitle }) => {
     <div>
       <button
         onClick={() => setIsPopupOpen(true)}
-        className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium"
+        className="flex items-center border border-purple-400 text-purple-600 px-3 py-1.5 rounded-md text-sm font-medium"
       >
         <svg
           className="w-4 h-4 mr-2 text-purple-600"

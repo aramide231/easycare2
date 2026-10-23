@@ -254,7 +254,7 @@ const AnteLog = () => {
 
   const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
     switch (type) {
-       case "COMPANY":
+      case "COMPANY":
         return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
         return "bg-[#E7EBF3] text-[#103488]  border border-[#103488]";
@@ -264,7 +264,7 @@ const AnteLog = () => {
   };
 
   const isValidPatientType = (
-    type: string
+    type: string,
   ): type is "COMPANY" | "PRIVATE" | "HMO" =>
     ["COMPANY", "PRIVATE", "HMO"].includes(type);
   return (
@@ -292,7 +292,7 @@ const AnteLog = () => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-full text-sm font-medium"
+              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-md text-sm font-medium"
             >
               <svg
                 className="w-4 h-4 mr-2 text-[#573FD1]"
@@ -413,7 +413,7 @@ const AnteLog = () => {
                       .includes(search.toLowerCase()) ||
                     patient.phoneNumber
                       .toLowerCase()
-                      .includes(search.toLowerCase())
+                      .includes(search.toLowerCase()),
                 )
                 .map((patient, index) => (
                   <tr

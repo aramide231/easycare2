@@ -1,12 +1,6 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import {
-  Activity,
-  Syringe,
-  ClipboardCheck,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Activity, Syringe, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import {
   DashboardLayoutIcon,
   ReceiptIcon,
@@ -52,12 +46,12 @@ const PERFORM_ACTION = [
 
 const REPORT = [
   {
-    label: "Ante Natal",
+    label: "Ante Natal Logs",
     icon: PregnantWomanIcon,
     link: "/frontdesk/ante-natal",
   },
   {
-    label: "Child Birth",
+    label: "Child Birth Logs",
     icon: BreastfeedingIcon,
     link: "/frontdesk/child-birth",
   },
@@ -67,19 +61,18 @@ const REPORT = [
     link: "/frontdesk/doctor-assignments",
   },
   {
-    label: "Family Planning",
+    label: "Family Planning Logs",
     icon: FamilyIcon,
     link: "/frontdesk/family-planning",
   },
-  { label: "Immunization", icon: Syringe, link: "/frontdesk/immunization" },
-  { label: "Post Natal", icon: BabyIcon, link: "/frontdesk/post-natal" },
   {
-    label: "Registration",
-    icon: ClipboardCheck,
-    link: "/frontdesk/registration",
+    label: "Immunization Logs",
+    icon: Syringe,
+    link: "/frontdesk/immunization",
   },
+  { label: "Post Natal Logs", icon: BabyIcon, link: "/frontdesk/post-natal" },
   {
-    label: "Registration Log",
+    label: "Registration Logs",
     icon: ReceiptIcon,
     link: "/frontdesk/registration-log",
   },
@@ -87,6 +80,7 @@ const REPORT = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { width, isDragging, isCollapsed, startResizing, toggleCollapse } =
     useSidebar();
 
@@ -156,7 +150,7 @@ export default function Sidebar() {
       >
         {/* Logo Section */}
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => navigate("/frontdesk")}
           className="flex items-center gap-2 overflow-hidden"
         >
           <img

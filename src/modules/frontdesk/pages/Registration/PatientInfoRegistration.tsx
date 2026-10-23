@@ -247,11 +247,16 @@ export default function PatientInfoRegistration({
         {/* Upload Picture — full width */}
         <div className="sm:col-span-2">
           <p className="mb-2 text-sm font-medium text-txt">
-            Upload Profile Picture
+            Upload Profile Picture{" "}
+            <span className="text-txt-muted text-xs">(optional)</span>
           </p>
-          <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-gray-400 hover:bg-gray-50">
+          <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#A5A5A5] p-6 text-gray-400 hover:bg-gray-50">
             <Plus className="mb-2 h-6 w-6" />
-            <span>Click or drag image here</span>
+            <span>
+              {formData?.picture
+                ? formData.picture.name
+                : "Click or drag image here (200kb max size)"}
+            </span>
             <input
               type="file"
               accept="image/*"
