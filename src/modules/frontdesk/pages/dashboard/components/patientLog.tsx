@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { X } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -689,8 +690,22 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
         {/* modal class for sendProfile*/}
         {showSendModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowSendModal(false)}
+          >
+            <div
+              className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowSendModal(false)}
+                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
               <h2 className="text-xl font-bold mb-4 text-gray-800">
                 Select type of Visitation
               </h2>
@@ -705,7 +720,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                       value={option}
                       checked={selectedVisitationType === option}
                       onChange={() => handleCheckboxChange(option)}
-                      className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500 accent-purple-600"
+                      className="w-5 h-5 text-purple-600 border-gray-300 focus:ring-purple-500 accent-purple-600"
                     />
                     <label
                       htmlFor={option}
@@ -729,8 +744,14 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
           </div>
         )}
         {showSuccessMessage && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-12 text-center">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowSuccessMessage(false)}
+          >
+            <div
+              className="bg-white rounded-lg shadow-lg w-full max-w-sm p-12 text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
               <h2 className="text-xl font-bold  mb-4">
                 Patient Successfully Sent
               </h2>

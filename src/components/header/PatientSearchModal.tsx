@@ -120,7 +120,7 @@ const PatientSearchModal = ({
       />
 
       <div
-        className="relative flex w-full max-w-2xl max-h-[min(78vh,calc(100vh-120px))] min-h-[min(480px,78vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
+        className="relative flex w-full max-w-4xl max-h-[min(78vh,calc(100vh-120px))] min-h-[min(480px,78vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
         role="dialog"
         aria-modal="true"
         aria-label="Search patients"

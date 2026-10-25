@@ -73,7 +73,9 @@ const NursePatientProfile = () => {
   const { user } = useAuth();
   const patient = location.state?.patient;
 
-  const [step, setStep] = useState<number>(2);
+  const [step, setStep] = useState<number>(
+    location.pathname.startsWith("/frontdesk") ? 2 : 1,
+  );
   const [flagPanelOpen, setFlagPanelOpen] = useState(false);
   const [flagReports] = useState(() => buildMockFlagReports());
   const flagCount = flagReports.length;
@@ -155,9 +157,7 @@ const NursePatientProfile = () => {
   const assertAncSubmitAllowed = () => {
     if (selectedCategory !== "Ante Natal Care") return true;
     if (isMalePatient(patient?.gender)) {
-      toast.error(
-        "ANC cannot be submitted for a patient registered as Male.",
-      );
+      toast.error("ANC cannot be submitted for a patient registered as Male.");
       return false;
     }
     const age = patientAgeYears(patient?.age);
@@ -467,7 +467,8 @@ const NursePatientProfile = () => {
           ].map((label, index) => {
             const stepNumber = index + 1;
             const isActive = step === stepNumber;
-            const isHealthTab = stepNumber === 1;
+            const isHealthTab =
+              stepNumber === 1 && location.pathname.startsWith("/frontdesk");
             const tabClass = `rounded-lg py-2 text-center text-sm font-semibold transition ${
               isDetailsOpen ? "px-4" : "min-w-0 flex-1 px-3"
             } ${

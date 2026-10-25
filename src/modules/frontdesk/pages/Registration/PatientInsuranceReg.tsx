@@ -12,7 +12,7 @@ const PATIENT_TYPE = [
   "WALK-IN",
 ];
 const TREATMENT_GUIDE = ["Capitated", "Fee For Service", "NHIS", "Private"];
-const ELIGIBILITY = ["Active(Alive)", "Not-Active(Deceased)"];
+const ELIGIBILITY = ["Active - (Alive)", "Not-Active - (Deceased)"];
 
 const PROVIDER_MAP: Record<string, { [providerName: string]: string }> = {
   HMO: {
@@ -281,9 +281,9 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
           </>
         ) : (
           <>
-            {/* Insurance Provider Name */}
+            {/* Provider Name */}
             <SelectField
-              label="Insurance Provider Name"
+              label="Provider Name"
               name="insuranceProvider"
               value={formData?.insuranceProvider}
               onChange={handleChange}
@@ -297,9 +297,9 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
               ))}
             </SelectField>
 
-            {/* Insurance Provider Code (auto-filled) */}
+            {/* Provider Code (auto-filled) */}
             <InputField
-              label="Insurance Provider Code"
+              label="Provider Code"
               placeholder="Auto-filled"
               value={providerCode}
               name="insuranceProviderCode"
@@ -315,18 +315,18 @@ export default function PatientInsuranceReg({ formData, handleChange }: Props) {
               handleChange={handleChange}
             />
 
-            {/* Insurance Policy Number */}
+            {/* Provider Policy Number */}
             <InputField
-              label="Insurance Policy Number"
+              label="Provider Policy Number"
               placeholder="Eg: 012345"
               value={formData?.insurancePolicyNumber}
               name="insurancePolicyNumber"
               handleChange={handleChange}
             />
 
-            {/* Employer Name */}
+            {/* Employer's Name */}
             <InputField
-              label="Patient's Employer Name"
+              label="Employer's Name"
               placeholder="Eg: 7up Bottling Company"
               value={formData?.employerName}
               name="employerName"
