@@ -140,20 +140,6 @@ const NursePatientProfile = () => {
   const assertAncSubmitAllowed = () => {
     if (ancRestriction) {
       toast.error(ancRestriction);
-    if (selectedCategory !== "Ante Natal Care") return true;
-    if (isMalePatient(patient?.gender)) {
-      toast.error("ANC cannot be submitted for a patient registered as Male.");
-      return false;
-    }
-    const age = patientAgeYears(patient?.age);
-    const gender = String(patient?.gender ?? "")
-      .trim()
-      .toLowerCase();
-    const isFemale = gender === "f" || gender === "female";
-    if (isFemale && !Number.isNaN(age) && age < 10) {
-      toast.error(
-        "ANC cannot be submitted for a female patient under 10 years.",
-      );
       return false;
     }
     return true;
