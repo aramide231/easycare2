@@ -45,7 +45,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-4 max-h-sm flex flex-col flex-1">
+    <div className="mx-auto mt-4 flex max-h-sm w-full max-w-sm flex-1 flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
       <div className="flex items-center gap-3">
         <img
           src={clientimage}
@@ -60,19 +60,20 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
         </div>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-3 space-y-2">
         <button
-          className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white py-2 px-3 rounded-lg font-medium shadow-md hover:bg-purple-700 transition"
+          type="button"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#573FD1] px-3 py-2 text-sm font-medium text-white shadow-md transition hover:bg-[#4a35b8]"
           onClick={handleViewProfile}
         >
-          <FaExpandArrowsAlt /> View Patient’s Info
+          <FaExpandArrowsAlt /> View Patient’s Profile
         </button>
         <button
           type="button"
           onClick={handlePreviousPatientRecords}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-purple-600 px-3 py-2 font-medium text-purple-600 shadow-sm transition hover:bg-purple-100"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] px-3 py-2 text-sm font-medium text-[#573FD1] shadow-sm transition hover:bg-purple-50"
         >
-          <FaArrowLeft /> Previous Patient Records
+          <FaArrowLeft /> Prev. Patient Records
         </button>
       </div>
 

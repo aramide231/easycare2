@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Calendar } from "lucide-react";
+import { Calendar, ChevronDown } from "lucide-react";
 import { DateRange, RangeKeyDict } from "react-date-range";
 import { cn } from "@doctor-shared/lib/utils";
 import {
@@ -24,8 +24,15 @@ const QUICK_RANGES = [
   { label: "All Time", start: 9999, end: 0 },
 ] as const;
 
+const formatShortDate = (date: Date) =>
+  date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
 const formatRangeLabel = (start: Date, end: Date) =>
-  `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
+  `${formatShortDate(start)} - ${formatShortDate(end)}`;
 
 const defaultRange = (): DateRangeSelection[] => {
   const { startDate, endDate } = DEFAULT_REPORT_DATE_RANGE;
@@ -40,7 +47,9 @@ type Props = {
 const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeQuickRange, setActiveQuickRange] = useState<string | null>(null);
+  const [activeQuickRange, setActiveQuickRange] = useState<string | null>(
+    "All Time"
+  );
   const [selectedRange, setSelectedRange] =
     useState<DateRangeSelection[]>(defaultRange);
   const [tempRange, setTempRange] = useState<DateRangeSelection[]>(
@@ -106,21 +115,32 @@ const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
   };
 
   const { startDate, endDate } = selectedRange[0];
+  const tempStart = tempRange[0]?.startDate ?? startDate;
+  const tempEnd = tempRange[0]?.endDate ?? endDate;
 
   return (
     <div ref={containerRef} className="relative w-fit">
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex items-center rounded-full border border-[#573FD1] px-3 py-1.5 text-sm font-medium text-[#573FD1]"
+        className="flex items-center gap-2 rounded-full border border-[#573FD1] bg-white px-3.5 py-2 text-sm font-medium text-[#573FD1] shadow-xs transition hover:bg-purple-50"
       >
-        <Calendar className="mr-2 h-4 w-4 shrink-0" />
-        {formatRangeLabel(startDate, endDate)}
+        <Calendar className="h-4 w-4 shrink-0" />
+        <span>{formatRangeLabel(startDate, endDate)}</span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 transition-transform duration-150",
+            isOpen && "rotate-180"
+          )}
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-12 z-50 flex rounded-2xl border border-gray-100 bg-white p-6 shadow-xl">
-          <div className="mr-6 flex w-36 flex-col gap-1 border-r border-gray-100 pr-4">
+        <div className="absolute right-0 top-12 z-50 flex rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl">
+          <div className="mr-5 flex w-36 flex-col gap-1 border-r border-gray-100 pr-4">
+            <span className="mb-1 px-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              Quick Select
+            </span>
             {QUICK_RANGES.map((item) => (
               <button
                 key={item.label}
@@ -128,8 +148,8 @@ const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
                 className={cn(
                   "rounded-lg px-3 py-2 text-left text-sm transition",
                   activeQuickRange === item.label
-                    ? "bg-[#573FD1]/10 font-semibold text-[#573FD1]"
-                    : "text-gray-600 hover:bg-gray-50"
+                    ? "bg-[#573FD1] font-semibold text-white shadow-xs"
+                    : "text-gray-600 hover:bg-purple-50 hover:text-[#573FD1]"
                 )}
                 onClick={() =>
                   setQuickDateRange(item.label, item.start, item.end)
@@ -141,9 +161,19 @@ const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
           </div>
 
           <div>
-            <div className="mb-3 grid grid-cols-2 gap-8 px-2 text-sm font-medium text-gray-700">
-              <span>From:</span>
-              <span>To:</span>
+            <div className="mb-3 grid grid-cols-2 gap-4 rounded-xl bg-purple-50/60 px-3.5 py-2 text-xs font-medium text-gray-700">
+              <div>
+                <span className="text-gray-500">From: </span>
+                <span className="font-semibold text-[#573FD1]">
+                  {formatShortDate(tempStart)}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">To: </span>
+                <span className="font-semibold text-[#573FD1]">
+                  {formatShortDate(tempEnd)}
+                </span>
+              </div>
             </div>
 
             <DateRange
@@ -159,7 +189,7 @@ const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
               className="report-date-range"
             />
 
-            <div className="mt-4 flex justify-end gap-3">
+            <div className="mt-4 flex justify-end gap-3 border-t border-gray-100 pt-3">
               <button
                 type="button"
                 className="rounded-xl border border-[#573FD1]/30 bg-[#573FD1]/5 px-5 py-2 text-sm font-medium text-[#573FD1] transition hover:bg-[#573FD1]/10"
@@ -172,7 +202,7 @@ const ReportDateRangeFilter = ({ onRangeApply }: Props) => {
                 className="rounded-xl bg-[#573FD1] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#4a35b8]"
                 onClick={handleApply}
               >
-                Apply
+                Apply Range
               </button>
             </div>
           </div>

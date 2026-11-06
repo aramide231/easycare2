@@ -34,13 +34,18 @@ const DOCTOR_REPORT_LABELS: Record<string, string> = {
   "/doctor/requisition": "Requisition",
 };
 
+const PERFORM_ACTION_LABELS: Record<string, string> = {
+  "/doctor/make-request": "Make Request",
+  "/doctor/set-reminder": "Set Reminder",
+};
+
 const breadcrumbPatterns = [
-  /^\/doctor\/?$/,
-  /^\/doctor\/dashboard$/,
   /^\/doctor\/notifications-doctor$/,
   /^\/doctor\/admission$/,
   /^\/doctor\/discharge$/,
   /^\/doctor\/available-ward$/,
+  /^\/doctor\/make-request$/,
+  /^\/doctor\/set-reminder$/,
   /^\/doctor\/patient-profile\/.+/,
   /^\/doctor\/account(\/.*)?$/,
   /^\/doctor\/flag-profile\/.+/,
@@ -69,6 +74,7 @@ const Topbar = () => {
     const isFlagProfile = /^\/doctor\/flag-profile\/.+/.test(location.pathname);
     const isPreviousPatientRecords =
       /^\/doctor\/previous-patient-records\/.+/.test(location.pathname);
+    const performActionLabel = PERFORM_ACTION_LABELS[location.pathname];
     const reportLabel = DOCTOR_REPORT_LABELS[location.pathname];
     const patientManagementMatch = location.pathname.match(
       /^\/doctor\/(admission|available-ward|discharge)$/
@@ -80,6 +86,11 @@ const Topbar = () => {
       ? [
           { name: "Dashboard", path: "/doctor" },
           { name: "Prev Medical History", path: location.pathname },
+        ]
+      : performActionLabel
+      ? [
+          { name: "Perform Action", path: "/doctor/make-request" },
+          { name: performActionLabel, path: location.pathname },
         ]
       : reportLabel
       ? [
@@ -189,8 +200,8 @@ const Topbar = () => {
 
   return (
     <header className="w-full shrink-0 border-b border-gray-200 bg-white">
-      <div className="grid min-h-[76px] grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-3 md:px-8">
-        <div className="min-w-0 w-full max-w-md justify-self-start">
+      <div className="flex min-h-[76px] items-center justify-between gap-4 px-4 py-3 md:px-8">
+        <div className="min-w-0 w-full max-w-md">
           {isBreadcrumbPage ? (
             <div className="flex h-10 min-w-0 items-center">
               {renderBreadcrumbs()}
@@ -213,11 +224,8 @@ const Topbar = () => {
           )}
         </div>
 
-        <div className="shrink-0 justify-self-center px-2">
+        <div className="flex shrink-0 items-center justify-end gap-5">
           <Clock />
-        </div>
-
-        <div className="flex shrink-0 items-center justify-end gap-5 justify-self-end">
           <AppGridMenu />
           <ProfileMenu />
         </div>

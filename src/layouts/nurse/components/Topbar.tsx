@@ -495,6 +495,7 @@ const breadcrumbPatterns = [
   /^\/nurse\/reminder$/,
   /^\/nurse\/reports\/.+/,
   /^\/nurse\/patient-profile\/.+/,
+  /^\/nurse\/flag-profile\/.+/,
   /^\/nurse\/previous-patient-records\/.+/,
 ];
 
@@ -550,7 +551,7 @@ const Topbar = () => {
     );
 
     const trailParts =
-      isPatientProfile || isPreviousRecords ? pathParts.slice(0, -1) : pathParts;
+      isPatientProfile || isPreviousRecords || /^\/nurse\/flag-profile\/.+/.test(location.pathname) ? pathParts.slice(0, -1) : pathParts;
 
     const breadcrumbItems = [
       { name: "Dashboard", path: "/nurse" },

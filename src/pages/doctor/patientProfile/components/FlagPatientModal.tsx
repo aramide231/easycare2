@@ -1,5 +1,4 @@
-import { FaFlag } from "react-icons/fa";
-import { X } from "lucide-react";
+import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 import FlagProfileReport from "@doctor-shared/components/FlagProfileReport";
 
 type PatientInfo = {
@@ -8,67 +7,45 @@ type PatientInfo = {
   lastName?: string;
   patientId?: string;
   staffName?: string;
+  flagged?: boolean;
 };
 
 type Props = {
   open: boolean;
   onClose: () => void;
   patient: PatientInfo;
+  /** embedded = slides inside the patient profile card (same as nursing). */
+  variant?: "portal" | "embedded";
 };
 
-const FlagPatientModal = ({ open, onClose, patient }: Props) => {
-  if (!open) return null;
-
+/**
+ * Clinician flag patient panel — uses the same slide-in panel shell as the
+ * nursing module, with the clinician flag report as its body.
+ */
+const FlagPatientModal = ({
+  open,
+  onClose,
+  patient,
+  variant = "embedded",
+}: Props) => {
   const patientName = [patient.firstName, patient.lastName]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="flag-patient-modal-title"
-      onClick={onClose}
+    <FlagPatientPanel
+      open={open}
+      onClose={onClose}
+      patientName={patientName}
+      patientId={patient.patientId}
+      variant={variant}
     >
-      <div
-        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-orange-100">
-              <FaFlag className="text-xl text-orange-500" aria-hidden />
-            </div>
-            <div className="min-w-0">
-              <h2
-                id="flag-patient-modal-title"
-                className="text-lg font-semibold text-gray-900"
-              >
-                Flag Patient
-              </h2>
-              <p className="truncate text-sm text-gray-500">
-                {patientName}
-                {patient.patientId ? ` · ${patient.patientId}` : ""}
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
-            aria-label="Close flag patient modal"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <FlagProfileReport patientOverride={patient} embedded />
-        </div>
-      </div>
-    </div>
+      <FlagProfileReport
+        key={patient.patientId}
+        patientOverride={patient}
+        embedded
+      />
+    </FlagPatientPanel>
   );
 };
 

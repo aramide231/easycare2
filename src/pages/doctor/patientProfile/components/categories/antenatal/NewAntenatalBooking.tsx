@@ -56,7 +56,12 @@ const bookingFields: CategoryFieldConfig[] = [
     type: "select",
     options: GENOTYPE_OPTIONS,
   },
-  { name: "anyDischarge", label: "Any Discharge?", tableLabel: "DISCHARGE" },
+  {
+    name: "anyDischarge",
+    label: "Any Discharge?",
+    tableLabel: "DISCHARGE",
+    placeholder: "Enter discharge details (if any)",
+  },
   {
     name: "highRiskPregnancy",
     label: "High Risk Pregnancy?",
@@ -69,22 +74,20 @@ const bookingFields: CategoryFieldConfig[] = [
     label: "Last Menstrual Period (LMP)",
     tableLabel: "LMP",
     type: "date",
-    placeholder: "Select or type LMP",
   },
   {
     name: "expectedDeliveryDate",
     label: "Estimated Date of Delivery (EDD)",
     tableLabel: "EDD",
-    type: "date",
     readOnly: true,
-    placeholder: "Auto from LMP",
+    placeholder: "Auto-calculated (LMP + 280 days)",
   },
   {
     name: "estimatedGestationalAge",
     label: "Estimated Gestational Age (EGA)",
     tableLabel: "EGA",
     readOnly: true,
-    placeholder: "Auto weeks & days",
+    placeholder: "Auto-calculated (weeks & days)",
   },
   {
     name: "nextAppointmentDate",

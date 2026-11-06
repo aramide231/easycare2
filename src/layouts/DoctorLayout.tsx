@@ -12,24 +12,19 @@ const DoctorLayout = () => {
 
   return (
     <PatientManagementProvider initialDischarged={DOCTOR_DISCHARGED_SEED}>
-      <div className="flex min-h-screen w-full flex-col bg-gray-50/30">
-        <Topbar />
+      <div className="flex h-screen w-full overflow-hidden bg-gray-50/30">
+        {!hideSidebar && (
+          <aside className="hidden md:block shrink-0">
+            <Sidebar />
+          </aside>
+        )}
 
-        <div className="hide-scrollbar flex-1 overflow-y-auto px-3 py-4 md:px-5 lg:px-6">
-          <div
-            className={
-              hideSidebar
-                ? "flex min-h-0 w-full"
-                : "flex min-h-[calc(100dvh-5.75rem)] items-stretch gap-3"
-            }
-          >
-            {!hideSidebar && <Sidebar />}
-
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <Outlet />
-            </div>
+        <main className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          <Topbar />
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 hide-scrollbar">
+            <Outlet />
           </div>
-        </div>
+        </main>
       </div>
     </PatientManagementProvider>
   );

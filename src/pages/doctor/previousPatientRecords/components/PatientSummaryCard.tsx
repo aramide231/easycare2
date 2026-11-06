@@ -1,5 +1,5 @@
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import clientImage from "@doctor-shared/assets/image/haywhy.jpg";
 import type { PreviousPatientSummary } from "../data/medicalHistorySeed";
 
@@ -9,6 +9,8 @@ type Props = {
 
 const PatientSummaryCard = ({ patient }: Props) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith("/nurse") ? "/nurse" : "/doctor";
   const fullName = `${patient.firstName} ${patient.lastName}`;
 
   return (
@@ -29,19 +31,19 @@ const PatientSummaryCard = ({ patient }: Props) => {
         <button
           type="button"
           onClick={() =>
-            navigate(`/doctor/patient-profile/${patient.patientId}`, {
+            navigate(`${basePath}/patient-profile/${patient.patientId}`, {
               state: { patient },
             })
           }
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#573FD1] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#4a35b8]"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#573FD1] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#4a35b8]"
         >
           <ExternalLink className="h-4 w-4" />
           View Patient&apos;s Profile
         </button>
         <button
           type="button"
-          onClick={() => navigate("/doctor")}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] px-4 py-2.5 text-sm font-medium text-[#573FD1] transition hover:bg-[#573FD1]/5"
+          onClick={() => navigate(basePath)}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] bg-white px-4 py-2.5 text-sm font-medium text-[#573FD1] shadow-sm transition hover:bg-purple-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard

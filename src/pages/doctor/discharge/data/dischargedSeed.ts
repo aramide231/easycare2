@@ -1,6 +1,7 @@
 import type { DischargedPatientRecord } from "@doctor-shared/discharge/data/mockDischargedPatients";
+import { calculateAdmissionDays } from "@doctor-shared/admission/lib/calculateAdmissionDays";
 
-export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] = [
+const RAW_DISCHARGED_SEED: Omit<DischargedPatientRecord, "noOfDays">[] = [
   {
     id: 9001,
     name: "Alade Abiodun Area",
@@ -9,12 +10,11 @@ export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] = [
     gender: "Female",
     patientType: "HMO",
     age: 25,
-    dateOfAdmission: "20-Feb-2025",
-    timeOfAdmission: "12:20 PM",
-    remark: "Absconded",
-    dischargeDate: "24-Feb-2025",
-    dischargeTime: "10:24 AM",
-    noOfDays: "4 days",
+    dateOfAdmission: "01-Oct-2026",
+    timeOfAdmission: "08:00 AM",
+    remark: "Discharged",
+    dischargeDate: "03-Oct-2026",
+    dischargeTime: "02:00 PM",
     dischargedBy: "Dr. Easy Test",
   },
   {
@@ -25,12 +25,11 @@ export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] = [
     gender: "Female",
     patientType: "PRIVATE",
     age: 22,
-    dateOfAdmission: "18-Feb-2025",
+    dateOfAdmission: "18-Feb-2026",
     timeOfAdmission: "11:45 AM",
     remark: "Discharged",
-    dischargeDate: "24-Feb-2025",
+    dischargeDate: "24-Feb-2026",
     dischargeTime: "09:15 AM",
-    noOfDays: "6 days",
     dischargedBy: "Dr. Easy Test",
   },
   {
@@ -41,12 +40,11 @@ export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] = [
     gender: "Female",
     patientType: "COMPANY",
     age: 20,
-    dateOfAdmission: "19-Feb-2025",
+    dateOfAdmission: "19-Feb-2026",
     timeOfAdmission: "3:30 PM",
     remark: "DAMA",
-    dischargeDate: "23-Feb-2025",
+    dischargeDate: "23-Feb-2026",
     dischargeTime: "2:10 PM",
-    noOfDays: "4 days",
     dischargedBy: "Dr. Jane Doe",
   },
   {
@@ -57,12 +55,22 @@ export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] = [
     gender: "Female",
     patientType: "STAFF",
     age: 32,
-    dateOfAdmission: "15-Feb-2025",
+    dateOfAdmission: "15-Feb-2026",
     timeOfAdmission: "9:00 AM",
     remark: "Referred",
-    dischargeDate: "22-Feb-2025",
+    dischargeDate: "22-Feb-2026",
     dischargeTime: "4:30 PM",
-    noOfDays: "7 days",
     dischargedBy: "Dr. Easy Test",
   },
 ];
+
+export const DOCTOR_DISCHARGED_SEED: DischargedPatientRecord[] =
+  RAW_DISCHARGED_SEED.map((row) => ({
+    ...row,
+    noOfDays: calculateAdmissionDays(
+      row.dateOfAdmission,
+      row.dischargeDate,
+      row.timeOfAdmission,
+      row.dischargeTime
+    ),
+  }));

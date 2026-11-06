@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Calendar, ChevronDown } from "lucide-react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import {
   formFieldGridClass,
@@ -113,8 +114,32 @@ export default function Stage2Pushing() {
   );
 
   const handleChange = (name: string, value: string) => {
-    setStageTwoForm((prev) => ({ ...prev, [name]: value }));
+    let nextValue = value;
+    if (
+      name === "cervicalDilatation" ||
+      name === "babyWeight" ||
+      name === "babyHeight" ||
+      name === "babyTemperature"
+    ) {
+      nextValue = value.replace(/[^0-9.]/g, "");
+    }
+    setStageTwoForm((prev) => ({ ...prev, [name]: nextValue }));
   };
+
+  const clearForm = useCallback(() => setStageTwoForm({}), []);
+
+  usePendingCategoryDraft(
+    "STAGE 2: PUSHING & BIRTHING",
+    () => {
+      const hasValue = Object.values(stageTwoForm).some((value) =>
+        value?.trim()
+      );
+      if (!hasValue) return null;
+      return { ...stageTwoForm };
+    },
+    [stageTwoForm],
+    clearForm
+  );
 
   const handleSave = () => {
     const hasValue = Object.values(stageTwoForm).some((value) => value?.trim());
@@ -183,9 +208,7 @@ export default function Stage2Pushing() {
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   className={`${formFieldSelectClass} pr-10`}
                 >
-                  <option value="">
-                    {field.placeholder ?? "-Select option-"}
-                  </option>
+                  <option value="">{field.placeholder ?? "-Select option-"}</option>
                   {renderSelectOptions(field.name)}
                 </select>
                 <ChevronDown

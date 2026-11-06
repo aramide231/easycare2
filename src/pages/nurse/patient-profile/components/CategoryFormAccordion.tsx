@@ -4,6 +4,7 @@ import type { SubCategory } from "@/pages/doctor/patientProfile/config/subCatego
 
 type Props = {
   sections: SubCategory[];
+  disableEntry?: boolean;
   expandedCategories: string[];
   onToggle: (label: string) => void;
   /** When set, uses category-specific forms (e.g. Gen Consult Figma). */
@@ -12,12 +13,13 @@ type Props = {
 
 const CategoryFormAccordion = ({
   sections,
+  disableEntry = false,
   expandedCategories,
   onToggle,
   selectedCategory = null,
 }: Props) => {
   return (
-    <div className="flex w-full flex-col divide-y divide-gray-200">
+    <div className="flex min-w-0 w-full max-w-full flex-col divide-y divide-gray-200">
       {sections.map((section) => {
         const isOpen = expandedCategories.includes(section.label);
         const form = resolveCategoryForm(
@@ -27,7 +29,10 @@ const CategoryFormAccordion = ({
         );
 
         return (
-          <div key={section.label} className="py-3 first:pt-0 last:pb-0">
+          <div
+            key={section.label}
+            className="min-w-0 w-full max-w-full py-3 first:pt-0 last:pb-0"
+          >
             <button
               type="button"
               onClick={() => onToggle(section.label)}
@@ -47,14 +52,20 @@ const CategoryFormAccordion = ({
             </button>
 
             <div
-              className={`pt-3 ${isOpen ? "" : "hidden"}`}
+              className={`min-w-0 w-full max-w-full overflow-x-auto pt-3 ${isOpen ? "" : "hidden"}`}
               aria-hidden={!isOpen}
             >
-              {form ?? (
-                <p className="px-1 py-2 text-sm text-gray-500">
-                  Form for this section is not available yet.
-                </p>
-              )}
+              <fieldset
+                disabled={disableEntry}
+                className="block min-w-0 w-full max-w-full border-0 p-0 m-0"
+                style={{ minWidth: 0 }}
+              >
+                {form ?? (
+                  <p className="px-1 py-2 text-sm text-gray-500">
+                    Form for this section is not available yet.
+                  </p>
+                )}
+              </fieldset>
             </div>
           </div>
         );

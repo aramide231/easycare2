@@ -7,13 +7,14 @@ import { getTotalPages } from "@doctor-shared/lib/pagination";
 import { getPatientTypeClass } from "@doctor-shared/lib/patientTypeStyles";
 import type { DischargedPatientRecord } from "@doctor-shared/discharge/data/mockDischargedPatients";
 import { usePatientManagement } from "@doctor-shared/context/PatientManagementContext";
+import { calculateAdmissionDays } from "@doctor-shared/admission/lib/calculateAdmissionDays";
 import {
   getRemarkClass,
   getRemarkDotClass,
 } from "@doctor-shared/discharge/lib/remarkStyles";
 import DischargeActionMenu from "@doctor-shared/discharge/components/DischargeActionMenu";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 50;
 
 function formatRemarkLabel(remark: DischargedPatientRecord["remark"]) {
   return remark === "Referred" ? "Referral" : remark;
@@ -193,7 +194,14 @@ const DoctorDischargedPatientLog = () => {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
-                    {row.noOfDays}
+                    {row.noOfDays && row.noOfDays !== "--"
+                      ? row.noOfDays
+                      : calculateAdmissionDays(
+                          row.dateOfAdmission,
+                          row.dischargeDate,
+                          row.timeOfAdmission,
+                          row.dischargeTime
+                        )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     {row.dischargedBy}

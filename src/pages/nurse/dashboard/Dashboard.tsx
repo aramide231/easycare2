@@ -23,8 +23,8 @@ const NurseDashboard = () => {
   };
 
   return (
-    <div className="flex gap-6 ">
-      <div className="flex-[3]" data-search-panel-region>
+    <div className="flex flex-col gap-6 xl:flex-row">
+      <div className="min-w-0 flex-[3]" data-search-panel-region>
         <DashboardSummary
           outPatientCount={patients.length}
           onRefreshPatients={handleRefreshPatients}

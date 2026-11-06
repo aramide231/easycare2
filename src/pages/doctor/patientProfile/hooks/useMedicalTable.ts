@@ -19,6 +19,21 @@ import { VACCINE_ADMINISTRATION_SEED } from "../data/vaccineAdministrationSeed";
 import { VITAL_SIGNS_SEED } from "../data/vitalSignsSeed";
 import { getGenConsultRecordPatientType } from "./genConsultSession";
 
+export const MEDICATION_REMARK_OPTIONS = [
+  "1st Dose",
+  "2nd Dose",
+  "3rd Dose",
+  "4th Dose",
+  "5th Dose",
+  "Completed",
+  "Declined",
+  "Dispensed",
+  "Given",
+  "Missed",
+  "Not Available",
+  "Served",
+] as const;
+
 function formatMedicalDateTime(date: Date): string {
   const day = String(date.getDate()).padStart(2, "0");
   const month = date.toLocaleString("en-GB", { month: "short" });
@@ -31,6 +46,67 @@ function formatMedicalDateTime(date: Date): string {
   return `${day}-${month}-${year} ${time}`;
 }
 
+const INITIAL_MEDICATION_ROWS: Record<string, unknown>[] = [
+  {
+    id: "med-seed-1",
+    sn: 1,
+    dateTime: "15-Feb-2026 10:25 AM",
+    patientType: "In-Patient",
+    medication: "Folic Acid 5MG",
+    adminRoute: "Oral",
+    dosage: "1 Tab Daily",
+    amount: "N 1,500.00",
+    lineTotal: 1500,
+    remark: "Served",
+    served: true,
+    dispensedBy: "Nurse Titilayo Olayinka",
+    doctor: "Dr. Chibuzor",
+  },
+  {
+    id: "med-seed-2",
+    sn: 2,
+    dateTime: "16-Feb-2026 02:30 PM",
+    patientType: "Out-Patient",
+    medication: "Ferrous Sulphate 200MG",
+    adminRoute: "Oral",
+    dosage: "1 Tab BD",
+    amount: "N 2,500.00",
+    lineTotal: 2500,
+    remark: "1st Dose",
+    served: true,
+    dispensedBy: "Nurse Titilayo Olayinka",
+    doctor: "Dr. Chibuzor",
+  },
+  {
+    id: "med-seed-3",
+    sn: 3,
+    dateTime: "10-Mar-2026 09:15 AM",
+    patientType: "In-Patient",
+    medication: "Paracetamol 500MG",
+    adminRoute: "Oral",
+    dosage: "2 Tabs TDS",
+    amount: "N 1,200.00",
+    lineTotal: 1200,
+    remark: "Given",
+    served: true,
+    dispensedBy: "Nurse Titilayo Olayinka",
+    doctor: "Dr. Chibuzor",
+  },
+];
+
+function buildNursingDispensesFromMedication(
+  medRows: Record<string, unknown>[]
+): Record<string, unknown>[] {
+  return medRows
+    .filter((row) => Boolean(row.served) || Boolean(String(row.remark ?? "").trim()))
+    .map((row, idx) => ({
+      ...row,
+      sn: idx + 1,
+      remark: String(row.remark || "Served"),
+      dispensedBy: String(row.dispensedBy || "Nurse on Duty"),
+    }));
+}
+
 const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
   "VITAL SIGNS": [...VITAL_SIGNS_SEED],
   "PRESENTING COMPLAINTS": [...PRESENTING_COMPLAINTS_SEED],
@@ -39,13 +115,18 @@ const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
   INVESTIGATION: [...INVESTIGATION_SEED],
   TREATMENT: [...TREATMENT_SEED],
   PROCEDURE: [...PROCEDURE_SEED],
+  MEDICATION: [...INITIAL_MEDICATION_ROWS],
   "VACCINE ADMINISTRATION": [...VACCINE_ADMINISTRATION_SEED],
   "REPORT WRITING": [],
   "IN-TAKE CHART": [],
   "OUTPUT CHART": [],
-  "NURSING DISPENSES": [],
+  "NURSING DISPENSES": buildNursingDispensesFromMedication(INITIAL_MEDICATION_ROWS),
   "PHARMACY DISPENSE": [],
+  "NEO NATAL:DIAGNOSIS": [],
+  "NEO NATAL:INVESTIGATION": [],
+  "NEO NATAL:PROCEDURE": [],
   "ACCOUNT REVIEW": [...ACCOUNT_REVIEW_SEED],
+  ADMISSION_BILL: [...ADMISSION_BILL_SEED],
   "ADMISSION BILL": [...ADMISSION_BILL_SEED],
   "SERVICE FEE": [...SERVICE_FEE_SEED],
   "CLAIMS PROCESSOR": [...CLAIMS_PROCESSOR_SEED],
@@ -63,7 +144,7 @@ function cloneInitialTables(): Record<string, Record<string, unknown>[]> {
 }
 
 let tables = cloneInitialTables();
-const userSavedTableKeys = new Set<string>();
+let userSavedTableKeys = new Set<string>();
 const listeners = new Set<() => void>();
 
 const DIAGNOSIS_TABLE_KEY = "DIAGNOSIS";
@@ -75,6 +156,19 @@ const PENDING_INCOMPLETE_KEY = "__incomplete__";
 
 let pendingSectionEntries: Record<string, Record<string, string>> = {};
 const sectionClearListeners = new Map<string, Set<() => void>>();
+
+const patientRecords = new Map<string, { tables: typeof tables; saved: Set<string> }>();
+let activePatientId: string | undefined;
+
+export function openPatientRecord(patientId: string) {
+  if (activePatientId) patientRecords.set(activePatientId, { tables, saved: userSavedTableKeys });
+  const record = patientRecords.get(patientId);
+  tables = record?.tables ?? cloneInitialTables();
+  userSavedTableKeys = record?.saved ?? new Set();
+  pendingSectionEntries = {};
+  activePatientId = patientId;
+  emitChange();
+}
 
 function emitChange() {
   listeners.forEach((listener) => listener());
@@ -132,6 +226,7 @@ function hasPendingSectionEntry(sectionLabel: string): boolean {
 
   switch (sectionLabel) {
     case DIAGNOSIS_TABLE_KEY:
+    case "NEO NATAL:DIAGNOSIS":
       return Boolean(data.diagnosis?.trim());
     case PRESENTING_COMPLAINTS_TABLE_KEY:
       return Boolean(data.complaint?.trim());
@@ -189,9 +284,12 @@ type PendingDiagnosis = {
   icdDiagnosis: "YES" | "NO";
 };
 
-export function setPendingDiagnosis(entry: PendingDiagnosis | null) {
+export function setPendingDiagnosis(
+  entry: PendingDiagnosis | null,
+  key = DIAGNOSIS_TABLE_KEY
+) {
   setPendingSectionEntry(
-    DIAGNOSIS_TABLE_KEY,
+    key,
     entry
       ? {
           diagnosis: entry.diagnosis,
@@ -217,8 +315,11 @@ export function setPendingPhysicalExamination(
   );
 }
 
-export function subscribeDiagnosisFormClear(listener: () => void) {
-  return subscribeSectionFormClear(DIAGNOSIS_TABLE_KEY, listener);
+export function subscribeDiagnosisFormClear(
+  listener: () => void,
+  key = DIAGNOSIS_TABLE_KEY
+) {
+  return subscribeSectionFormClear(key, listener);
 }
 
 export function subscribePresentingComplaintFormClear(listener: () => void) {
@@ -250,6 +351,8 @@ export function areAllSectionsFilled(sectionLabels: string[]): boolean {
   );
 }
 
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
 function appendTableRow(
   tableKey: string,
   data: Record<string, unknown>,
@@ -257,6 +360,111 @@ function appendTableRow(
   doctor: string
 ) {
   const currentTable = tables[tableKey] ?? [];
+  const now = new Date();
+  const nowMs = now.getTime();
+  const formattedNow = formatMedicalDateTime(now);
+
+  // Item 22: If new Diagnosis are entered by the same Clinician under 24 hours, separate entries with "; "
+  if (
+    (tableKey === "DIAGNOSIS" || tableKey.endsWith(":DIAGNOSIS")) &&
+    typeof data.diagnosis === "string" &&
+    data.diagnosis.trim()
+  ) {
+    const incomingDiag = data.diagnosis.trim();
+    const lastIndex = [...currentTable]
+      .map((row, idx) => ({ row, idx }))
+      .reverse()
+      .find(({ row }) => {
+        const sameClinician =
+          (row.doctor && row.doctor === doctor) ||
+          (row.enteredBy && row.enteredBy === enteredBy);
+        const createdAtMs = Number(row.createdAtMs ?? 0);
+        return (
+          sameClinician &&
+          createdAtMs > 0 &&
+          nowMs - createdAtMs <= TWENTY_FOUR_HOURS_MS
+        );
+      })?.idx;
+
+    if (lastIndex !== undefined) {
+      const targetRow = currentTable[lastIndex];
+      const existingDiag = String(targetRow.diagnosis ?? "").trim();
+      const existingParts = existingDiag
+        .split(";")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean);
+      const incomingParts = incomingDiag
+        .split(";")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const newUniqueParts = incomingParts.filter(
+        (part) => !existingParts.includes(part.toLowerCase())
+      );
+      const mergedDiagnosis =
+        newUniqueParts.length > 0
+          ? `${existingDiag}; ${newUniqueParts.join("; ")}`
+          : existingDiag;
+
+      const updatedTable = currentTable.map((row, idx) =>
+        idx === lastIndex
+          ? {
+              ...row,
+              diagnosis: mergedDiagnosis,
+              dateTime: formattedNow,
+              createdAtMs: nowMs,
+            }
+          : row
+      );
+
+      tables = {
+        ...tables,
+        [tableKey]: updatedTable,
+      };
+      userSavedTableKeys.add(tableKey);
+      emitChange();
+      return;
+    }
+  }
+
+  // Expand batched medications into individual rows so each has Amount, Remark, and Dispensed By
+  if (tableKey === "MEDICATION" && Array.isArray(data.medications)) {
+    const medItems = data.medications as Record<string, unknown>[];
+    const expandedRows = medItems.map((med, idx) => {
+      const lineTotal = Number(med.lineTotal ?? med.sellingPrice ?? 0);
+      return {
+        id: `med-${nowMs}-${idx}`,
+        sn: currentTable.length + idx + 1,
+        dateTime: formattedNow,
+        createdAtMs: nowMs,
+        patientType: getGenConsultRecordPatientType(),
+        enteredBy,
+        doctor,
+        medication: String(med.medication ?? "—"),
+        strength: String(med.strength ?? ""),
+        drugForm: String(med.drugForm ?? ""),
+        adminRoute: String(med.adminRoute ?? "Oral"),
+        dosage: String(med.dosage ?? "—"),
+        interval: String(med.interval ?? ""),
+        period: String(med.period ?? ""),
+        quantity: Number(med.quantity ?? 1),
+        lineTotal,
+        amount: formatInvestigationAmount(String(lineTotal)),
+        remark: String(med.remark ?? ""),
+        served: Boolean(med.served),
+        dispensedBy: String(med.dispensedBy ?? "—"),
+      };
+    });
+
+    const nextMedTable = [...currentTable, ...expandedRows];
+    tables = {
+      ...tables,
+      MEDICATION: nextMedTable,
+      "NURSING DISPENSES": buildNursingDispensesFromMedication(nextMedTable),
+    };
+    userSavedTableKeys.add(tableKey);
+    emitChange();
+    return;
+  }
 
   tables = {
     ...tables,
@@ -264,8 +472,8 @@ function appendTableRow(
       ...currentTable,
       {
         sn: currentTable.length + 1,
-        dateTime: formatMedicalDateTime(new Date()),
-        committedAt: Date.now(),
+        dateTime: formattedNow,
+        createdAtMs: nowMs,
         patientType: getGenConsultRecordPatientType(),
         enteredBy,
         doctor,
@@ -274,6 +482,51 @@ function appendTableRow(
     ],
   };
   userSavedTableKeys.add(tableKey);
+  emitChange();
+}
+
+export function updateMedicationDispenseStatus(
+  rowIndex: number,
+  updates: { served?: boolean; remark?: string },
+  dispensedByName: string
+) {
+  const currentMeds = tables.MEDICATION ?? [];
+  if (rowIndex < 0 || rowIndex >= currentMeds.length) return;
+
+  const nowFormatted = formatMedicalDateTime(new Date());
+  const nextMeds = currentMeds.map((row, idx) => {
+    if (idx !== rowIndex) return row;
+    const prevServed = Boolean(row.served);
+    const prevRemark = String(row.remark ?? "");
+    const nextServed =
+      updates.served !== undefined
+        ? updates.served
+        : Boolean(updates.remark?.trim()) || prevServed;
+    const nextRemark =
+      updates.remark !== undefined
+        ? updates.remark
+        : nextServed && !prevRemark
+          ? "Served"
+          : prevRemark;
+
+    const isActioned = nextServed || Boolean(nextRemark.trim());
+
+    return {
+      ...row,
+      served: nextServed,
+      remark: nextRemark,
+      dispensedBy: isActioned ? dispensedByName : "—",
+      dispensedAt: isActioned ? nowFormatted : row.dispensedAt,
+    };
+  });
+
+  tables = {
+    ...tables,
+    MEDICATION: nextMeds,
+    "NURSING DISPENSES": buildNursingDispensesFromMedication(nextMeds),
+  };
+  userSavedTableKeys.add("MEDICATION");
+  userSavedTableKeys.add("NURSING DISPENSES");
   emitChange();
 }
 
@@ -323,53 +576,27 @@ function commitPendingSection(
     rowData.status = rowData.status ?? "Unpaid";
   }
 
-  // Same clinician within 24h: append new diagnosis on the existing row, separated by ;
-  if (tableKey === DIAGNOSIS_TABLE_KEY) {
-    const currentTable = tables[tableKey] ?? [];
-    const latest = currentTable[currentTable.length - 1] as
-      | (Record<string, unknown> & {
-          doctor?: string;
-          diagnosis?: string;
-          committedAt?: number;
-        })
-      | undefined;
-    if (latest?.doctor === doctor) {
-      const latestAt = Number(latest.committedAt ?? 0);
-      const within24h =
-        latestAt > 0 && Date.now() - latestAt <= 24 * 60 * 60 * 1000;
-      const incoming = String(rowData.diagnosis ?? "").trim();
-      const existing = String(latest.diagnosis ?? "").trim();
-      if (within24h && incoming && existing) {
-        tables = {
-          ...tables,
-          [tableKey]: [
-            ...currentTable.slice(0, -1),
-            {
-              ...latest,
-              diagnosis: `${existing}; ${incoming}`,
-              committedAt: Date.now(),
-            },
-          ],
-        };
-        userSavedTableKeys.add(tableKey);
-        emitChange();
-        clearPendingSection(tableKey);
-        return true;
-      }
-    }
-  }
-
   appendTableRow(tableKey, rowData, enteredBy, doctor);
   clearPendingSection(tableKey);
   return true;
 }
 
+/** Read a draft without recording it or clearing the form. */
+export function getPendingSectionRows(key: string): Record<string, unknown>[] {
+  if (!hasPendingSectionEntry(key)) return [];
+  const draft = pendingSectionEntries[key];
+  if (draft[PENDING_BATCH_KEY]) return JSON.parse(draft[PENDING_BATCH_KEY]);
+  if (draft.__payload__) return [JSON.parse(draft.__payload__)];
+  return [{ ...draft }];
+}
+
 /** Commits all draft subcategory entries on category Submit / Preview. */
 export function commitPendingCategoryEntries(
   enteredBy: string,
-  doctor: string
+  doctor: string,
+  sectionKeys = [...Object.keys(pendingSectionEntries)]
 ) {
-  [...Object.keys(pendingSectionEntries)].forEach((tableKey) => {
+  sectionKeys.forEach((tableKey) => {
     commitPendingSection(tableKey, enteredBy, doctor);
   });
 }

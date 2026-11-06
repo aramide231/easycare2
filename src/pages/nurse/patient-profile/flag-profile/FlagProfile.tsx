@@ -1,4 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { useMemo } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { buildMockPatients } from "@/pages/nurse/dashboard/data/mockPatients";
 import FlagProfileReport from "./components/FlagProfileReport";
 
 export type NurseFlagPatient = {
@@ -15,7 +17,20 @@ export type NurseFlagPatient = {
 
 const NurseFlagProfile = () => {
   const location = useLocation();
-  const patient = location.state?.patient as NurseFlagPatient | undefined;
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const patient = useMemo<NurseFlagPatient | undefined>(() => {
+    const fromState = location.state?.patient as NurseFlagPatient | undefined;
+    if (fromState?.firstName && fromState?.lastName && fromState?.patientId) {
+      return fromState;
+    }
+    if (!id) return undefined;
+    const all = buildMockPatients();
+    return all.find(
+      (p) => p.patientId === id || String(p.id) === id,
+    );
+  }, [id, location.state]);
 
   if (!patient?.firstName || !patient?.lastName || !patient?.patientId) {
     return (
@@ -35,8 +50,23 @@ const NurseFlagProfile = () => {
   }
 
   return (
-    <div className="w-full">
-      <FlagProfileReport />
+    <div className="w-full space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-4">
+        <div>
+          <h1 className="text-lg font-bold text-gray-900">Flag Profile</h1>
+          <p className="mt-0.5 text-sm text-gray-500">
+            {patient.firstName} {patient.lastName} &middot; {patient.patientId}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="text-sm font-semibold text-[#573FD1] hover:underline"
+        >
+          &larr; Back
+        </button>
+      </div>
+      <FlagProfileReport key={patient.patientId} patientId={patient.patientId} />
     </div>
   );
 };

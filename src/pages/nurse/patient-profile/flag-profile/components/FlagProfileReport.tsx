@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
-  buildMockFlagReports,
+
   formatFlagDate,
   formatFlagTime,
   type FlagReport,
 } from "../data/mockFlagReports";
 
-const FlagProfileReport = () => {
+import { usePatientFlags } from "../data/usePatientFlags";
+
+const FlagProfileReport = ({ patientId }: { patientId: string }) => {
   const { user } = useAuth();
-  const flaggedByName = user?.fullName ?? "Chibuzor Oladele";
+  const flaggedByName = user?.fullName?.trim() || "Nurse";
 
   const [commentInput, setCommentInput] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [reports, setReports] = useState<FlagReport[]>(() =>
-    buildMockFlagReports(flaggedByName),
-  );
+  const { reports, setReports } = usePatientFlags(patientId);
 
   const handleSaveComment = () => {
     const trimmed = commentInput.trim();

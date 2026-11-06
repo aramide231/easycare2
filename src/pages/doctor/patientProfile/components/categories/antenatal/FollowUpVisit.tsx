@@ -9,17 +9,66 @@ export default function FollowUpVisit() {
   const [followUpForm, setFollowUpForm] = useState<Record<string, string>>({});
 
   const followUpFields = [
-    { name: "ega", label: "Estimated Gestational Age" },
-    { name: "heightOfFundus", label: "Height of Fundus (cm)" },
-    { name: "presentationPosition", label: "Presentation & Position (bpm)" },
-    { name: "relationOfBrim", label: "Relation of Presenting Part of Brim" },
-    { name: "foetalHeart", label: "Foetal Heart" },
-    { name: "urine", label: "Urine" },
-    { name: "bloodPressure", label: "Blood Pressure (mmHg)" },
-    { name: "weight", label: "Weight (Kg)" },
-    { name: "pcv", label: "PCV" },
-    { name: "oedema", label: "Oedema" },
-    { name: "findings", label: "Findings" },
+    {
+      name: "ega",
+      label: "Estimated Gestational Age",
+      placeholder: "e.g. 24 weeks, 3 days",
+    },
+    {
+      name: "heightOfFundus",
+      label: "Height of Fundus (cm)",
+      numeric: true,
+      placeholder: "e.g. 24",
+    },
+    {
+      name: "presentationPosition",
+      label: "Presentation & Position (bpm)",
+      placeholder: "e.g. Cephalic",
+    },
+    {
+      name: "relationOfBrim",
+      label: "Relation of Presenting Part of Brim",
+      placeholder: "Enter relation of presenting part",
+    },
+    {
+      name: "foetalHeart",
+      label: "Foetal Heart",
+      numeric: true,
+      placeholder: "e.g. 142",
+    },
+    {
+      name: "urine",
+      label: "Urine",
+      placeholder: "Enter urine result",
+    },
+    {
+      name: "bloodPressure",
+      label: "Blood Pressure (mmHg)",
+      bp: true,
+      placeholder: "e.g. 120/80",
+    },
+    {
+      name: "weight",
+      label: "Weight (Kg)",
+      numeric: true,
+      placeholder: "e.g. 68",
+    },
+    {
+      name: "pcv",
+      label: "PCV",
+      numeric: true,
+      placeholder: "e.g. 34",
+    },
+    {
+      name: "oedema",
+      label: "Oedema",
+      placeholder: "Enter oedema status",
+    },
+    {
+      name: "findings",
+      label: "Findings",
+      placeholder: "Enter clinical findings",
+    },
     { name: "nextAppointmentDate", label: "Next Appointment Date", type: "date" },
   ];
 
@@ -62,13 +111,23 @@ export default function FollowUpVisit() {
             ) : (
               <input
                 type="text"
+                inputMode={
+                  field.numeric ? "decimal" : field.bp ? "numeric" : undefined
+                }
                 value={followUpForm[field.name] || ""}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  const next = field.bp
+                    ? raw.replace(/[^0-9/]/g, "")
+                    : field.numeric
+                      ? raw.replace(/[^0-9.]/g, "")
+                      : raw;
                   setFollowUpForm({
                     ...followUpForm,
-                    [field.name]: e.target.value,
-                  })
-                }
+                    [field.name]: next,
+                  });
+                }}
+                placeholder={field.placeholder}
                 className={formFieldInputClass}
               />
             )}

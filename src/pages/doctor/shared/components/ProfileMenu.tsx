@@ -22,7 +22,8 @@ export default function ProfileMenu({
   const [helpdeskMessage, setHelpdeskMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const displayName = user?.fullName ?? profile.username ?? "User";
+  const displayName = user?.fullName || profile.username || "Dr. Chibuzor";
+  const displayRole = user?.userRole || "Clinician";
   const avatarSrc = profile.profileImageUrl || clientimage;
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function ProfileMenu({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/20"
+        className="flex items-center gap-2.5 rounded-lg p-1 text-left transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/20"
         aria-label="Account menu"
         aria-expanded={open}
         aria-haspopup="true"
@@ -73,6 +74,14 @@ export default function ProfileMenu({
             alt={displayName}
             className="h-full w-full object-cover"
           />
+        </div>
+        <div className="hidden min-w-0 sm:block">
+          <h3 className="truncate text-sm font-semibold leading-tight text-gray-900">
+            {displayName}
+          </h3>
+          <p className="truncate text-xs capitalize text-gray-500">
+            {displayRole}
+          </p>
         </div>
         <ChevronDown
           className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${

@@ -17,7 +17,7 @@ import { usePatientManagement } from "@doctor-shared/context/PatientManagementCo
 
 import { getPatientTypeClass } from "@doctor-shared/lib/patientTypeStyles";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 50;
 
 type LocationPatient = {
   patientId?: string;

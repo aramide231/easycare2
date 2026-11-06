@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
 import {
   INTERVAL_OPTIONS,
   MEDICATION_LOOKUP,
@@ -15,11 +14,10 @@ import {
   isUnitQuantityForm,
   type MedicationLookupOption,
 } from "../../../data/medicationLookup";
-import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
-import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import NumberedSummaryList from "../../category/NumberedSummaryList";
 import NairaAmountInput from "../../category/NairaAmountInput";
+import MedicationDispenseTable from "./MedicationDispenseTable";
 import {
   formFieldInputClass,
   formFieldSelectClass,
@@ -38,15 +36,6 @@ const ADMIN_ROUTE_OPTIONS = [
   "Sublingual",
   "Rectal",
   "Inhalation",
-];
-
-const medicationDetailsColumns = [
-  { key: "sn", label: "SN" },
-  { key: "dateTime", label: "DATE | TIME" },
-  { key: "patientType", label: "PATIENT TYPE" },
-  { key: "medication", label: "MEDICATION" },
-  { key: "adminRoute", label: "ADMIN ROUTE" },
-  { key: "dosage", label: "DOSAGE" },
 ];
 
 type PickedMedication = {
@@ -193,8 +182,6 @@ export default function Medication() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [quantityInput, setQuantityInput] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const { history: medicationHistory } = useMedicalTable("MEDICATION");
 
   const filteredOptions = useMemo(() => {
     const query = medForm.medication.trim().toLowerCase();
@@ -409,40 +396,6 @@ export default function Medication() {
     return () => document.removeEventListener("mousedown", handlePointerDown);
   }, [dropdownOpen]);
 
-  const historyRows = useMemo(
-    () =>
-      medicationHistory.flatMap((row, rowIndex) => {
-        const payload = row as Record<string, unknown>;
-        const meds = payload.medications;
-
-        if (Array.isArray(meds)) {
-          return meds.map((med, index) => {
-            const item = med as Record<string, unknown>;
-            return {
-              sn: index + 1,
-              dateTime: payload.dateTime,
-              patientType: payload.patientType,
-              medication: item.medication,
-              adminRoute: item.adminRoute ?? "—",
-              dosage: item.dosage,
-            };
-          });
-        }
-
-        return [
-          {
-            sn: rowIndex + 1,
-            dateTime: payload.dateTime,
-            patientType: payload.patientType,
-            medication: payload.medication,
-            adminRoute: payload.adminRoute ?? "—",
-            dosage: payload.dosage,
-          },
-        ];
-      }),
-    [medicationHistory]
-  );
-
   return (
     <div className="space-y-6 text-sm">
       <div className={MEDICATION_ENTRY_GRID_CLASS}>
@@ -529,6 +482,7 @@ export default function Medication() {
             type="text"
             value={medForm.dosage}
             onChange={(e) => updateField("dosage", e.target.value)}
+            placeholder="e.g. 1 Tab / 5ml"
             disabled={!medicationPicked}
             className={`${formFieldInputClass} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-600`}
           />
@@ -642,12 +596,7 @@ export default function Medication() {
         </div>
       )}
 
-      <CategoryMedicalTable
-        title={categoryDetailsTitle("MEDICATION")}
-        columns={medicationDetailsColumns}
-        rows={historyRows}
-        emptyMessage="No medication records yet."
-      />
+      <MedicationDispenseTable />
     </div>
   );
 }
