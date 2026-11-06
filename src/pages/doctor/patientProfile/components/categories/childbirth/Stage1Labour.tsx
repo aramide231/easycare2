@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import {
   formFieldGridClass,
@@ -71,8 +72,29 @@ export default function Stage1Labour() {
   );
 
   const handleChange = (name: string, value: string) => {
-    setStageOneLabourForm((prev) => ({ ...prev, [name]: value }));
+    let nextValue = value;
+    if (name === "bloodPressure") {
+      nextValue = value.replace(/[^0-9/]/g, "");
+    } else if (name === "cervicalDilatation" || name === "fhr") {
+      nextValue = value.replace(/[^0-9.]/g, "");
+    }
+    setStageOneLabourForm((prev) => ({ ...prev, [name]: nextValue }));
   };
+
+  const clearForm = useCallback(() => setStageOneLabourForm({}), []);
+
+  usePendingCategoryDraft(
+    "STAGE 1: LABOUR",
+    () => {
+      const hasValue = Object.values(stageOneLabourForm).some((value) =>
+        value?.trim()
+      );
+      if (!hasValue) return null;
+      return { ...stageOneLabourForm };
+    },
+    [stageOneLabourForm],
+    clearForm
+  );
 
   const handleSave = () => {
     const hasValue = Object.values(stageOneLabourForm).some((value) =>
@@ -133,9 +155,7 @@ export default function Stage1Labour() {
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   className={`${formFieldSelectClass} pr-10`}
                 >
-                  <option value="">
-                    {field.placeholder ?? "-Select option-"}
-                  </option>
+                  <option value="">{field.placeholder ?? "-Select option-"}</option>
                   {renderSelectOptions(field.name)}
                 </select>
                 <ChevronDown
@@ -146,6 +166,13 @@ export default function Stage1Labour() {
             ) : (
               <input
                 type="text"
+                inputMode={
+                  field.name === "bloodPressure" ||
+                  field.name === "cervicalDilatation" ||
+                  field.name === "fhr"
+                    ? "numeric"
+                    : undefined
+                }
                 value={stageOneLabourForm[field.name] || ""}
                 onChange={(e) => handleChange(field.name, e.target.value)}
                 placeholder={field.placeholder}

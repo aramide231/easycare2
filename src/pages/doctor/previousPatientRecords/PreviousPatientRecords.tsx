@@ -13,7 +13,7 @@ import {
   type PreviousPatientSummary,
 } from "./data/medicalHistorySeed";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 50;
 
 const PreviousPatientRecords = () => {
   const navigate = useNavigate();
@@ -54,8 +54,10 @@ const PreviousPatientRecords = () => {
     setCurrentPage(1);
   };
 
+  const basePath = location.pathname.startsWith("/nurse") ? "/nurse" : "/doctor";
+
   const handleViewRecord = (row: MedicalHistoryEntry) => {
-    navigate(`/doctor/patient-profile/${patient.patientId}`, {
+    navigate(`${basePath}/patient-profile/${patient.patientId}`, {
       state: {
         patient,
         consultationRecord: row,

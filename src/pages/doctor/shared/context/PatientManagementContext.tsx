@@ -16,6 +16,7 @@ import {
 } from "@doctor-shared/admission/data/mockWardBeds";
 import { syncWardBedsWithAdmissions } from "@doctor-shared/admission/lib/wardBeds";
 import { actionIdToRemark } from "@doctor-shared/admission/lib/actionToRemark";
+import { calculateAdmissionDays } from "@doctor-shared/admission/lib/calculateAdmissionDays";
 import type { DischargedPatientRecord } from "@doctor-shared/discharge/data/mockDischargedPatients";
 import {
   createAdmissionReportEntry,
@@ -45,6 +46,8 @@ function admissionToDischarged(
   dischargedBy: string
 ): DischargedPatientRecord {
   const now = new Date();
+  const dischargeDate = formatDischargeDate(now);
+  const dischargeTime = formatDischargeTime(now);
   return {
     id: admission.id,
     name: admission.name,
@@ -56,9 +59,14 @@ function admissionToDischarged(
     dateOfAdmission: admission.dateOfAdmission,
     timeOfAdmission: admission.timeOfAdmission,
     remark: actionIdToRemark(actionId),
-    dischargeDate: formatDischargeDate(now),
-    dischargeTime: formatDischargeTime(now),
-    noOfDays: "2 days",
+    dischargeDate,
+    dischargeTime,
+    noOfDays: calculateAdmissionDays(
+      admission.dateOfAdmission,
+      dischargeDate,
+      admission.timeOfAdmission,
+      dischargeTime
+    ),
     dischargedBy,
   };
 }
@@ -66,6 +74,7 @@ function admissionToDischarged(
 function dischargedToAdmission(
   record: DischargedPatientRecord
 ): AdmissionRecord {
+  const now = new Date();
   return {
     id: record.id,
     name: record.name,
@@ -74,8 +83,8 @@ function dischargedToAdmission(
     gender: record.gender,
     patientType: record.patientType,
     age: record.age,
-    dateOfAdmission: record.dateOfAdmission,
-    timeOfAdmission: record.timeOfAdmission,
+    dateOfAdmission: formatDischargeDate(now),
+    timeOfAdmission: formatDischargeTime(now),
     ward: "Not Yet Assigned",
     admittedBy: record.dischargedBy,
   };

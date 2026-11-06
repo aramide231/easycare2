@@ -9,7 +9,7 @@ import {
   type NotificationRow,
 } from "@doctor-shared/data/mockNotifications";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 const NotificationTable: React.FC = () => {
   const { user } = useAuth();

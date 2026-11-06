@@ -58,6 +58,7 @@ export default function FollowUp() {
           </label>
           <textarea
             className={`${formFieldTextareaClass} min-h-0 flex-1`}
+            placeholder="Enter follow-up notes here"
             value={form.notes || ""}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
           />

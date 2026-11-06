@@ -9,6 +9,7 @@ const modulePaths: Record<PreviewModule, string> = {
   doctor: "/doctor",
   hmo: "/hmo/dashboard",
   pharmacy: "/pharmacy",
+  diagnostics: "/diagnostics",
   "diagnostics-and-radiologist": "/diagnostics-and-radiologist",
 };
 

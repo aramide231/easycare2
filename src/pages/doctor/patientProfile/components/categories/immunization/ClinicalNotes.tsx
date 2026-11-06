@@ -29,6 +29,7 @@ export default function ClinicalNotes() {
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
+          placeholder="Enter clinical notes here"
           className={formFieldTextareaClass}
           rows={6}
         />

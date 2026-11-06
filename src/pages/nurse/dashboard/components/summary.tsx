@@ -138,7 +138,7 @@ const DashboardSummaryForAll = ({
         </h2>
         <p className="text-sm text-gray-600">Have a wonderful day at work</p>
       </div>
-      <div className="flex w-full gap-4 p-4">
+      <div className="grid w-full grid-cols-1 gap-4 p-4 md:grid-cols-3">
         {activeSummaryItems.map((item) => (
           <DashboardSummaryCard
             key={item.title}

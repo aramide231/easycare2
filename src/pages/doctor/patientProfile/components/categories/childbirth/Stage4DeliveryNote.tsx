@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
-import { Calendar } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Calendar, ChevronDown } from "lucide-react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import {
   formFieldGridClass,
@@ -298,12 +299,50 @@ export default function Stage4DeliveryNote() {
     field: keyof BabyDetails,
     value: string
   ) => {
+    const nextValue =
+      field === "weight" || field === "length" || field === "headCircumference"
+        ? value.replace(/[^0-9.]/g, "")
+        : value;
     setBabies((prev) => {
       const next = [...prev];
-      next[index] = { ...next[index], [field]: value };
+      next[index] = { ...next[index], [field]: nextValue };
       return next;
     });
   };
+
+  const clearForm = useCallback(() => {
+    setForm({});
+    setBabies([emptyBaby()]);
+  }, []);
+
+  usePendingCategoryDraft(
+    "STAGE 4: DELIVERY NOTE",
+    () => {
+      const hasScalar = Object.values(form).some((value) => value?.trim());
+      const hasBaby = babies.some((baby) =>
+        Object.values(baby).some((value) => value?.trim())
+      );
+      if (!hasScalar && !hasBaby) return null;
+
+      const primaryDateTime =
+        babies.find((baby) => baby.deliveryDateTime.trim())?.deliveryDateTime ??
+        "";
+
+      return {
+        ...form,
+        babyWeight: joinBabyValues(babies, "weight"),
+        babyLength: joinBabyValues(babies, "length"),
+        headCircumference: joinBabyValues(babies, "headCircumference"),
+        babyCondition: joinBabyValues(babies, "condition"),
+        babyGender: joinBabyValues(babies, "gender"),
+        babyImmunization: joinBabyValues(babies, "immunization"),
+        deliveryDateTime: primaryDateTime,
+        babies: JSON.stringify(babies),
+      };
+    },
+    [form, babies],
+    clearForm
+  );
 
   const handleSave = () => {
     const hasScalar = Object.values(form).some((value) => value?.trim());
@@ -357,28 +396,40 @@ export default function Stage4DeliveryNote() {
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Mother&apos;s Mode of Delivery
           </label>
-          <select
-            value={form.deliveryMode || ""}
-            onChange={(e) => handleFormChange("deliveryMode", e.target.value)}
-            className={formFieldSelectClass}
-          >
-            <option value="">-Select option-</option>
-            {renderSelectOptions("deliveryMode")}
-          </select>
+          <div className="relative">
+            <select
+              value={form.deliveryMode || ""}
+              onChange={(e) => handleFormChange("deliveryMode", e.target.value)}
+              className={`${formFieldSelectClass} pr-10`}
+            >
+              <option value="">-Select option-</option>
+              {renderSelectOptions("deliveryMode")}
+            </select>
+            <ChevronDown
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+              aria-hidden
+            />
+          </div>
         </div>
 
         <div className="min-w-0">
           <label className="mb-1 block text-sm font-medium text-gray-700">
             No of Baby
           </label>
-          <select
-            value={form.noOfBaby || ""}
-            onChange={(e) => handleFormChange("noOfBaby", e.target.value)}
-            className={formFieldSelectClass}
-          >
-            <option value="">-Select option-</option>
-            {renderSelectOptions("noOfBaby")}
-          </select>
+          <div className="relative">
+            <select
+              value={form.noOfBaby || ""}
+              onChange={(e) => handleFormChange("noOfBaby", e.target.value)}
+              className={`${formFieldSelectClass} pr-10`}
+            >
+              <option value="">-Select option-</option>
+              {renderSelectOptions("noOfBaby")}
+            </select>
+            <ChevronDown
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+              aria-hidden
+            />
+          </div>
         </div>
 
         <div className="min-w-0">
@@ -471,14 +522,20 @@ export default function Stage4DeliveryNote() {
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Patient Type
           </label>
-          <select
-            value={form.patientType || ""}
-            onChange={(e) => handleFormChange("patientType", e.target.value)}
-            className={formFieldSelectClass}
-          >
-            <option value="">-Select option-</option>
-            {renderSelectOptions("patientType")}
-          </select>
+          <div className="relative">
+            <select
+              value={form.patientType || ""}
+              onChange={(e) => handleFormChange("patientType", e.target.value)}
+              className={`${formFieldSelectClass} pr-10`}
+            >
+              <option value="">-Select option-</option>
+              {renderSelectOptions("patientType")}
+            </select>
+            <ChevronDown
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+              aria-hidden
+            />
+          </div>
         </div>
 
         <div className="min-w-0">
@@ -500,17 +557,22 @@ export default function Stage4DeliveryNote() {
           </label>
           <div className={multiFieldGridClass(babyCount)}>
             {Array.from({ length: babyCount }).map((_, index) => (
-              <select
-                key={`gender-${index}`}
-                value={babies[index]?.gender || ""}
-                onChange={(e) =>
-                  handleBabyChange(index, "gender", e.target.value)
-                }
-                className={formFieldSelectClass}
-              >
-                <option value="">-Select option-</option>
-                {renderSelectOptions("babyGender")}
-              </select>
+              <div key={`gender-${index}`} className="relative">
+                <select
+                  value={babies[index]?.gender || ""}
+                  onChange={(e) =>
+                    handleBabyChange(index, "gender", e.target.value)
+                  }
+                  className={`${formFieldSelectClass} pr-10`}
+                >
+                  <option value="">-Select option-</option>
+                  {renderSelectOptions("babyGender")}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+                  aria-hidden
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -521,17 +583,22 @@ export default function Stage4DeliveryNote() {
           </label>
           <div className={multiFieldGridClass(babyCount)}>
             {Array.from({ length: babyCount }).map((_, index) => (
-              <select
-                key={`immunization-${index}`}
-                value={babies[index]?.immunization || ""}
-                onChange={(e) =>
-                  handleBabyChange(index, "immunization", e.target.value)
-                }
-                className={formFieldSelectClass}
-              >
-                <option value="">-Select option-</option>
-                {renderSelectOptions("babyImmunization")}
-              </select>
+              <div key={`immunization-${index}`} className="relative">
+                <select
+                  value={babies[index]?.immunization || ""}
+                  onChange={(e) =>
+                    handleBabyChange(index, "immunization", e.target.value)
+                  }
+                  className={`${formFieldSelectClass} pr-10`}
+                >
+                  <option value="">-Select option-</option>
+                  {renderSelectOptions("babyImmunization")}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+                  aria-hidden
+                />
+              </div>
             ))}
           </div>
         </div>

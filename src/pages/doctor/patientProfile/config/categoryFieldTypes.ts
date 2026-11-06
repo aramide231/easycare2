@@ -1,6 +1,7 @@
 export type CategoryFieldType =
   | "text"
   | "number"
+  | "bp"
   | "textarea"
   | "select"
   | "date"
@@ -12,6 +13,7 @@ export type CategoryFieldConfig = {
   type?: CategoryFieldType;
   fullWidth?: boolean;
   required?: boolean;
+  readOnly?: boolean;
   placeholder?: string;
   /** Short column header in the shared details table. */
   tableLabel?: string;
@@ -21,8 +23,6 @@ export type CategoryFieldConfig = {
   options?: { value: string; label: string }[];
   /** For type "date" on next-appointment fields — today and future only. */
   dateAllowFutureOnly?: boolean;
-  /** Display-only field (e.g. auto-calculated EDD / EGA / BMI). */
-  readOnly?: boolean;
 };
 
 export type CategoryTableColumn = {

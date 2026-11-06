@@ -10,6 +10,9 @@ type Props = {
   onClose: () => void;
   patientName?: string;
   patientId?: string;
+  ReportComponent?: React.ComponentType;
+  /** Custom panel body (takes precedence over ReportComponent / default report). */
+  children?: React.ReactNode;
   /** embedded = slides inside a relative parent (e.g. patient profile card) */
   variant?: "portal" | "embedded";
 };
@@ -20,6 +23,8 @@ const FlagPatientPanel = ({
   patientName,
   patientId,
   variant = "portal",
+  ReportComponent,
+  children,
 }: Props) => {
   const [isRendered, setIsRendered] = useState(open);
   const [isVisible, setIsVisible] = useState(false);
@@ -133,7 +138,12 @@ const FlagPatientPanel = ({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-          <FlagProfileReport />
+          {children ??
+            (ReportComponent ? (
+              <ReportComponent />
+            ) : (
+              patientId && <FlagProfileReport key={patientId} patientId={patientId} />
+            ))}
         </div>
       </aside>
     </div>

@@ -16,7 +16,8 @@ import {
   type DashboardDateRange,
 } from "./calendar";
 
-const PAGE_SIZE = 50;
+import { PAGE_SIZE } from "@/constant/pagination";
+import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 
 interface PatientsLogProps {
   onSelectPatient: (patient: Patient) => void;
@@ -61,6 +62,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [flagModalPatient, setFlagModalPatient] = useState<Patient | null>(null);
 
   const [internalPatients, setInternalPatients] = useState<Patient[]>(() =>
     buildMockPatients()
@@ -109,20 +111,6 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
   };
 
   const handleFlagPatient = (patient: Patient) => {
-    if (patient.flagged) {
-      const updatedPatients = patients.map((p) =>
-        p.id === patient.id ? { ...p, flagged: false } : p,
-      );
-      setPatients(updatedPatients);
-      setToastMessage("Patient unflagged");
-      toast.success("Patient unflagged");
-      return;
-    }
-
-    const updatedPatients = patients.map((p) =>
-      p.id === patient.id ? { ...p, flagged: true } : p,
-    );
-    setPatients(updatedPatients);
     setShowOptions(null);
     navigate(`/nurse/flag-profile/${patient.patientId}`, {
       state: { patient },
@@ -404,9 +392,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                                 handleFlagPatient(patient);
                               }}
                             >
-                              {patient.flagged
-                                ? "Unflag Profile"
-                                : "Flag Profile"}
+                              Flag Profile
                             </button>
                             {isVisitationPage && (
                               <button
@@ -706,6 +692,15 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
           </div>
         )}
       </div>
+      {flagModalPatient && (
+        <FlagPatientPanel
+          open={Boolean(flagModalPatient)}
+          onClose={() => setFlagModalPatient(null)}
+          patientName={flagModalPatient.name}
+          patientId={flagModalPatient.patientId}
+          variant="portal"
+        />
+      )}
       <ToastContainer />
     </div>
   );

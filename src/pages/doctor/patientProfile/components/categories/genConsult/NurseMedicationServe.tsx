@@ -37,14 +37,12 @@ const detailsColumns = [
 
 type ServeForm = {
   medication: string;
-  amount: string;
   remark: string;
   served: boolean;
 };
 
 const EMPTY_FORM: ServeForm = {
   medication: "",
-  amount: "",
   remark: "",
   served: false,
 };
@@ -59,32 +57,33 @@ export default function NurseMedicationServe() {
   const { history } = useMedicalTable("MEDICATION");
   const nursing = useMedicalTable("NURSING DISPENSES");
 
+  const prescriptions = useMemo(() => history.flatMap((row, rowIndex) =>
+    (Array.isArray(row.medications) ? row.medications : [row]).map((med, index) => ({
+      key: `${rowIndex}:${index}`, medication: String(med.medication ?? ""),
+      amount: String(med.lineTotal ?? med.amount ?? ""), dosage: med.dosage,
+      adminRoute: med.adminRoute, patientType: row.patientType, dateTime: row.dateTime,
+      sn: row.sn,
+    })).filter((med) => med.medication)
+  ), [history]);
+  const selected = prescriptions.find((med) => med.key === form.medication);
   const clearForm = useCallback(() => setForm(EMPTY_FORM), []);
 
   usePendingCategoryDraft(
     "NURSING DISPENSES",
     () => {
-      if (!form.served || !form.medication.trim() || !form.remark.trim()) {
+      if (!form.served || !selected || !form.remark.trim()) {
         return null;
       }
       return {
-        medication: form.medication.trim(),
-        amount: form.amount.trim() || "1",
+        medication: selected.medication,
+        amount: selected.amount,
         remark: form.remark,
         dispensedBy: user?.fullName?.trim() || "Nurse",
-        patientType: "OPD",
+        patientType: String(selected.patientType ?? ""),
       };
     },
-    [form, user?.fullName],
+    [form, selected, user?.fullName],
     clearForm,
-  );
-
-  const clinicianMeds = useMemo(
-    () =>
-      history
-        .map((row) => String(row.medication || "").trim())
-        .filter(Boolean),
-    [history],
   );
 
   return (
@@ -99,7 +98,7 @@ export default function NurseMedicationServe() {
           { key: "dosage", label: "DOSAGE" },
           { key: "adminRoute", label: "ADMIN ROUTE" },
         ]}
-        rows={history}
+        rows={prescriptions}
         emptyMessage="No clinician medications documented yet."
       />
 
@@ -131,9 +130,9 @@ export default function NurseMedicationServe() {
                 className={`${formFieldSelectClass} pr-10 disabled:bg-gray-100`}
               >
                 <option value="">-Select medication-</option>
-                {clinicianMeds.map((med) => (
-                  <option key={med} value={med}>
-                    {med}
+                {prescriptions.map((med) => (
+                  <option key={med.key} value={med.key}>
+                    {med.medication} {med.dosage}
                   </option>
                 ))}
               </select>
@@ -149,14 +148,9 @@ export default function NurseMedicationServe() {
               Amount
             </label>
             <input
-              type="number"
-              inputMode="decimal"
-              value={form.amount}
-              disabled={!form.served}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, amount: e.target.value }))
-              }
-              placeholder="Enter amount"
+              value={selected?.amount ?? ""}
+              readOnly
+              placeholder="Prescription amount"
               className={`${formFieldInputClass} disabled:bg-gray-100`}
             />
           </div>

@@ -30,41 +30,20 @@ import FormPreviewModal, {
 } from "@/pages/doctor/patientProfile/components/FormPreviewModal";
 import {
   commitPendingCategoryEntries,
-  getSectionEntryCount,
+  getPendingSectionRows,
   getSectionTableRows,
-  getUserSavedSectionLabels,
+  isSectionFilled,
 } from "@/pages/doctor/patientProfile/hooks/useMedicalTable";
-import { NEO_NATAL_VITALS_TABLE_KEY } from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
+import { categoryStorageKey } from "@/pages/doctor/patientProfile/lib/categoryStorage";
 import { useAuth } from "@/context/AuthContext";
 import {
   buildPreviewSectionLines,
   sectionSupportsNumberedPreview,
 } from "@/pages/doctor/patientProfile/lib/previewSectionLines";
-import { buildMockFlagReports } from "@/pages/nurse/patient-profile/flag-profile/data/mockFlagReports";
+import { usePatientFlags } from "./flag-profile/data/usePatientFlags";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-function resolveSectionStorageKey(
-  category: string | null,
-  label: string,
-): string {
-  if (category === "Neo Natal Care" && label === "VITAL SIGNS") {
-    return NEO_NATAL_VITALS_TABLE_KEY;
-  }
-  return label;
-}
-
-function isMalePatient(gender: unknown): boolean {
-  const value = String(gender ?? "")
-    .trim()
-    .toLowerCase();
-  return value === "m" || value === "male";
-}
-
-function patientAgeYears(age: unknown): number {
-  const parsed = Number(age);
-  return Number.isFinite(parsed) ? parsed : NaN;
-}
+import { antenatalEntryRestriction } from "./lib/antenatalEligibility";
 
 const NursePatientProfile = () => {
   // const { id } = useParams();
@@ -75,7 +54,7 @@ const NursePatientProfile = () => {
 
   const [step, setStep] = useState<number>(1);
   const [flagPanelOpen, setFlagPanelOpen] = useState(false);
-  const [flagReports] = useState(() => buildMockFlagReports());
+  const { reports: flagReports } = usePatientFlags(patient?.patientId ?? "");
   const flagCount = flagReports.length;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
@@ -89,6 +68,7 @@ const NursePatientProfile = () => {
     () => activeFormSections.map((section) => section.label),
     [activeFormSections],
   );
+  const sectionKeys = categorySectionLabels.map((label) => categoryStorageKey(selectedCategory, label));
   const isComingSoonCategory =
     selectedCategory === "Family Planning" ||
     selectedCategory === "Fertility Clinics" ||
@@ -152,23 +132,12 @@ const NursePatientProfile = () => {
     setExpandedCategories([]);
   };
 
+  const ancRestriction = selectedCategory === "Ante Natal Care"
+    ? antenatalEntryRestriction(patient ?? {})
+    : null;
   const assertAncSubmitAllowed = () => {
-    if (selectedCategory !== "Ante Natal Care") return true;
-    if (isMalePatient(patient?.gender)) {
-      toast.error(
-        "ANC cannot be submitted for a patient registered as Male.",
-      );
-      return false;
-    }
-    const age = patientAgeYears(patient?.age);
-    const gender = String(patient?.gender ?? "")
-      .trim()
-      .toLowerCase();
-    const isFemale = gender === "f" || gender === "female";
-    if (isFemale && !Number.isNaN(age) && age < 10) {
-      toast.error(
-        "ANC cannot be submitted for a female patient under 10 years.",
-      );
+    if (ancRestriction) {
+      toast.error(ancRestriction);
       return false;
     }
     return true;
@@ -180,6 +149,7 @@ const NursePatientProfile = () => {
       commitPendingCategoryEntries(
         user?.fullName?.trim() || "Nurse",
         "Clinician",
+        sectionKeys,
       );
       toast.success("Health information confirmed.");
     } else if (step === 2) {
@@ -193,23 +163,17 @@ const NursePatientProfile = () => {
       return;
     }
 
-    commitPendingCategoryEntries(
-      user?.fullName?.trim() || "Nurse",
-      "Clinician",
-    );
-
-    const savedLabels = getUserSavedSectionLabels(categorySectionLabels);
-    const labelsToShow =
-      savedLabels.length > 0 ? savedLabels : categorySectionLabels;
+    const savedLabels = categorySectionLabels.filter((_, index) => isSectionFilled(sectionKeys[index]));
+    const labelsToShow = savedLabels.length ? savedLabels : categorySectionLabels;
 
     setPreviewCategoryName(selectedCategory);
     setPreviewSections(
       labelsToShow.map((label) => {
-        const storageKey = resolveSectionStorageKey(selectedCategory, label);
-        const rows = getSectionTableRows(storageKey);
+        const storageKey = categoryStorageKey(selectedCategory, label);
+        const rows = [...getSectionTableRows(storageKey), ...getPendingSectionRows(storageKey)];
         return {
           label,
-          count: getSectionEntryCount(storageKey),
+          count: rows.length,
           lines: sectionSupportsNumberedPreview(label)
             ? buildPreviewSectionLines(label, rows)
             : undefined,
@@ -503,9 +467,9 @@ const NursePatientProfile = () => {
         <hr className="mb-3 shrink-0 border-gray-200" />
 
         {/* Step Content */}
-        <div className="mt-2 flex w-full flex-1 flex-col">
+        <div className="mt-2 flex min-w-0 w-full flex-1 flex-col">
           {step === 1 && (
-            <div className="flex w-full flex-1 flex-col">
+            <div className="flex min-w-0 w-full flex-1 flex-col">
               <h2 className="shrink-0 text-xs text-gray-400">Step 1</h2>
               <h3 className="mb-1.5 shrink-0 text-sm font-semibold text-gray-800">
                 Select category
@@ -519,7 +483,7 @@ const NursePatientProfile = () => {
                     selected={selectedCategory === item.label}
                     onClick={() => {
                       setSelectedCategory(item.label);
-                      setExpandedCategories([]);
+                      setExpandedCategories(item.label === "Ante Natal Care" ? ["VITAL SIGNS"] : []);
                     }}
                   />
                 ))}
@@ -534,7 +498,17 @@ const NursePatientProfile = () => {
                 </>
               ) : null}
 
-              <div className="relative flex w-full flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4">
+              <div className="relative flex min-w-0 w-full flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4">
+                {ancRestriction && (
+                  <p role="alert" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                    {ancRestriction}
+                  </p>
+                )}
+                {selectedCategory === "Ante Natal Care" && !ancRestriction && (
+                  <p className="mb-4 text-sm text-gray-600">
+                    Open a section to enter nursing details, then use Preview and Confirm below. Clinician documentation is read-only. EDD and EGA are calculated from the last menstrual period in New Antenatal Booking.
+                  </p>
+                )}
                 {!selectedCategory ? (
                   <div className="pointer-events-none flex flex-col items-center justify-center px-4 py-16 text-center text-sm">
                     <p className="font-medium text-gray-900">
@@ -560,6 +534,8 @@ const NursePatientProfile = () => {
                   </div>
                 ) : (
                   <CategoryFormAccordion
+                    disableEntry={Boolean(ancRestriction)}
+                    key={selectedCategory}
                     sections={activeFormSections}
                     expandedCategories={expandedCategories}
                     onToggle={toggleCategory}
@@ -619,7 +595,7 @@ const NursePatientProfile = () => {
             </div>
           )}
           {step === 3 && (
-            <div className="flex w-full flex-1 flex-col">
+            <div className="flex min-w-0 w-full flex-1 flex-col">
               <h2 className="shrink-0 text-xs text-gray-400">Step 1</h2>
               <h3 className="mb-4 shrink-0 text-sm font-semibold text-gray-800">
                 Upload File

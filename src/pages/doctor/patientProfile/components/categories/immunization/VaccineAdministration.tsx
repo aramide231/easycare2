@@ -12,21 +12,45 @@ import {
   formFieldSelectClass,
 } from "../../../lib/formFieldStyles";
 
+/** Nigerian EPI-style schedule: vaccines listed under each Age-Grade. */
+const VACCINES_BY_AGE_GRADE: Record<string, string[]> = {
+  "At Birth": ["BCG", "Hepatitis B 0 (HepB 0)", "OPV 0"],
+  "6 Weeks": ["OPV 1", "Pentavalent 1", "PCV 1", "Rotavirus 1", "IPV 1"],
+  "10 Weeks": ["OPV 2", "Pentavalent 2", "PCV 2", "Rotavirus 2"],
+  "14 Weeks": ["OPV 3", "Pentavalent 3", "PCV 3", "Rotavirus 3", "IPV 2"],
+  "6 Months": ["Vitamin A (1st Dose)", "Malaria Vaccine 1"],
+  "9 Months": [
+    "Measles 1 (MCV 1)",
+    "Yellow Fever",
+    "Meningitis (Men A)",
+    "Typhoid Conjugate Vaccine (TCV)",
+  ],
+  "12 Months": [
+    "Vitamin A (2nd Dose)",
+    "MMR 1",
+    "Varicella (Chickenpox)",
+    "Pneumococcal Booster",
+  ],
+  "15 Months": ["Measles 2 (MCV 2)", "MMR 2"],
+  "18 Months": ["DPT / Pentavalent Booster", "OPV Booster", "Vitamin A"],
+  "2 Years": ["Typhoid Vaccine", "Meningococcal Conjugate", "Hepatitis A"],
+  "5 Years": ["DPT Booster", "OPV Booster", "MMR Booster"],
+  "9 - 14 Years": ["HPV (Human Papillomavirus)", "Tdap Booster"],
+  "Adult / Booster": [
+    "Tetanus Toxoid (TT)",
+    "Hepatitis B",
+    "Yellow Fever",
+    "Influenza",
+    "COVID-19",
+  ],
+};
+
 const VACCINE_COMMENT_OPTIONS = [
   { value: "Obesity", label: "Obesity" },
   { value: "Overweight", label: "Overweight" },
   { value: "Severely Underweight", label: "Severely Underweight" },
   { value: "Underweight", label: "Underweight" },
-] as const;
-
-/** Nigerian EPI-style schedule: vaccines listed under each Age-Grade. */
-const VACCINES_BY_AGE_GRADE: Record<string, string[]> = {
-  "At Birth": ["BCG", "Hepatitis B", "OPV"],
-  "6 Weeks": ["OPV 1", "Pentavalent 1", "PCV 1", "Rotavirus 1"],
-  "10 Weeks": ["OPV 2", "Pentavalent 2", "PCV 2", "Rotavirus 2"],
-  "14 Weeks": ["OPV 3", "Pentavalent 3", "PCV 3", "IPV"],
-  "9 Months": ["Measles", "Yellow Fever"],
-};
+];
 
 const AGE_GRADE_OPTIONS = Object.keys(VACCINES_BY_AGE_GRADE);
 
@@ -221,21 +245,25 @@ const VaccineAdministration = () => {
   usePendingCategoryDraft(
     "VACCINE ADMINISTRATION",
     () => {
+      const effectiveVaccines =
+        vaccineRow.vaccine.trim() && selectedAgeGrade.trim()
+          ? [...vaccines, { ...vaccineRow, ageGrade: selectedAgeGrade }]
+          : vaccines;
       const hasMeta = Object.values(vaccineForm).some((value) => value.trim());
-      if (vaccines.length === 0 && !hasMeta) return null;
+      if (effectiveVaccines.length === 0 && !hasMeta) return null;
 
       return {
         __payload__: JSON.stringify({
           ...vaccineForm,
-          vaccines,
+          vaccines: effectiveVaccines,
           totalAmount,
           ageGrade: vaccineForm.ageGrade || "",
-          vaccineType: vaccines[0]?.vaccine || "",
-          dosage: vaccines[0]?.dosage || "",
+          vaccineType: effectiveVaccines[0]?.vaccine || "",
+          dosage: effectiveVaccines[0]?.dosage || "",
         }),
       };
     },
-    [vaccineForm, vaccines, totalAmount],
+    [vaccineForm, vaccines, vaccineRow, selectedAgeGrade, totalAmount],
     clearForm
   );
 
@@ -383,13 +411,17 @@ const VaccineAdministration = () => {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            Weight
+            Weight (kg)
           </label>
           <input
+            type="text"
+            inputMode="decimal"
             className={formFieldInputClass}
-            placeholder="Enter weight"
+            placeholder="Enter weight (e.g. 8.5)"
             value={vaccineForm.weight || ""}
-            onChange={(e) => handleMetaChange("weight", e.target.value)}
+            onChange={(e) =>
+              handleMetaChange("weight", e.target.value.replace(/[^0-9.]/g, ""))
+            }
           />
         </div>
 

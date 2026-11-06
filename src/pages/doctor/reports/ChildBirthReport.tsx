@@ -17,7 +17,7 @@ import {
   type ReportDateRange,
 } from "./lib/reportDateRange";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 50;
 
 const isValidPatientType = (type: string): type is PatientType =>
   ["COMPANY", "PRIVATE", "HMO"].includes(type);

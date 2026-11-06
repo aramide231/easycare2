@@ -46,12 +46,12 @@ const CategoryFormWithHistory = ({
   const title = detailsTitle ?? categoryDetailsTitle(sectionName);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 w-full space-y-6">
       <CategoryForm
         fields={fields}
         onSave={save}
         showSaveButton={showSaveButton}
-        pendingTableKey={showSaveButton ? undefined : key}
+        pendingTableKey={key}
       />
       <CategoryMedicalTable
         title={title}

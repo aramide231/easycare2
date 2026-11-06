@@ -1,12 +1,17 @@
+import VitalSigns from "@/pages/nurse/patient-profile/nurse-categories/VitalSigns";
+import VaccineAdministration from "@/pages/nurse/patient-profile/nurse-categories/VaccineAdministration";
+import NewAntenatalBooking from "@/pages/nurse/patient-profile/nurse-categories/NewAntenatalBooking";
+import FollowUp from "@/pages/nurse/patient-profile/nurse-categories/FollowUp";
+import { categoryStorageKey } from "./categoryStorage";
 import type { ComponentType, ReactNode } from "react";
 import { categoryComponents } from "@/pages/doctor/patientProfile/components/CategoryRenderer";
 import Diagnosis from "@/pages/doctor/patientProfile/components/categories/shared/Diagnosis";
 import PresentingComplaints from "@/pages/doctor/patientProfile/components/categories/shared/PresentingComplaints";
 import Medication from "@/pages/doctor/patientProfile/components/categories/shared/Medication";
 import NurseMedicationServe from "@/pages/doctor/patientProfile/components/categories/genConsult/NurseMedicationServe";
-import NursingDispenses from "@/pages/doctor/patientProfile/components/categories/genConsult/NursingDispenses";
+import NurseDispenseHistory from "../components/categories/genConsult/NurseDispenseHistory";
 import NeoNatalVitalSigns from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
-import GenConsultVitalSigns from "@/pages/doctor/patientProfile/components/categories/genConsult/GenConsultVitalSigns";
+import ImmunizationVitalSigns from "@/pages/doctor/patientProfile/components/categories/immunization/ImmunizationVitalSigns";
 import ReadOnlySectionTable from "@/pages/doctor/patientProfile/components/categories/shared/ReadOnlySectionTable";
 
 const ANC_NURSE_READONLY_SECTIONS = new Set([
@@ -41,13 +46,21 @@ export function resolveCategoryForm(
 ): ReactNode {
   const isNurse = module === "nurse";
   const category = selectedCategory ?? "";
+  if (isNurse && category === "Ante Natal Care" && sectionLabel === "VITAL SIGNS") return <VitalSigns nurse />;
+  if (isNurse && category === "Immunization" && sectionLabel === "VACCINE ADMINISTRATION") return <VaccineAdministration nurse />;
+  if (isNurse && category === "Ante Natal Care" && sectionLabel === "NEW ANTENATAL BOOKING") return <NewAntenatalBooking nurse />;
+  if (isNurse && category === "Immunization" && sectionLabel === "FOLLOW-UP") return <FollowUp nurse />;
 
   if (isNurse && category === "Neo Natal Care" && sectionLabel === "VITAL SIGNS") {
     return <NeoNatalVitalSigns />;
   }
 
   if (isNurse && category === "Gen Consult" && sectionLabel === "VITAL SIGNS") {
-    return <GenConsultVitalSigns />;
+    return <ReadOnlySectionTable sectionLabel={sectionLabel} />;
+  }
+
+  if (isNurse && category === "Immunization" && sectionLabel === "VITAL SIGNS") {
+    return <ImmunizationVitalSigns />;
   }
 
   if (isNurse && category === "Ante Natal Care") {
@@ -73,7 +86,7 @@ export function resolveCategoryForm(
       return <NurseMedicationServe />;
     }
     if (sectionLabel === "NURSING DISPENSES") {
-      return <NursingDispenses />;
+      return <NurseDispenseHistory />;
     }
     if (GEN_CONSULT_NURSE_DETAILS_ONLY.has(sectionLabel)) {
       return <ReadOnlySectionTable sectionLabel={sectionLabel} />;
@@ -82,13 +95,13 @@ export function resolveCategoryForm(
 
   if (isNurse && category === "Neo Natal Care") {
     if (sectionLabel === "DIAGNOSIS") {
-      return <Diagnosis />;
+      return <ReadOnlySectionTable sectionLabel={sectionLabel} tableKey={categoryStorageKey(category, sectionLabel)} />;
     }
     if (sectionLabel === "MEDICATION") {
       return <Medication />;
     }
     if (sectionLabel === "INVESTIGATION" || sectionLabel === "PROCEDURE") {
-      return <ReadOnlySectionTable sectionLabel={sectionLabel} />;
+      return <ReadOnlySectionTable sectionLabel={sectionLabel} tableKey={categoryStorageKey(category, sectionLabel)} />;
     }
   }
 

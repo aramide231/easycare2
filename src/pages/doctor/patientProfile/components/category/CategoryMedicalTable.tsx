@@ -18,9 +18,19 @@ type Props = {
   wrapColumns?: string[];
 };
 
+const DEFAULT_WRAP_COLUMNS = new Set([
+  "comment",
+  "comments",
+  "complaint",
+  "findings",
+  "notes",
+  "description",
+]);
+
 /**
- * One shared details-table design for every patient-profile category.
- * Same layout and styling; only title and column definitions change.
+ * Shared details-table design for patient-profile categories.
+ * Supports horizontal scrolling for wide tables (e.g. 15-column Vital Signs details)
+ * without clipping or breaking the layout.
  */
 const CategoryMedicalTable = ({
   title,
@@ -32,19 +42,29 @@ const CategoryMedicalTable = ({
   onLinkClick,
   wrapColumns = [],
 }: Props) => {
+  const isWrapColumn = (key: string) =>
+    wrapColumns.includes(key) || DEFAULT_WRAP_COLUMNS.has(key);
+
   return (
-    <div className="border-t border-gray-200 pt-4">
-      <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-800">
-        {title}
-      </h3>
-      <div className="overflow-x-auto">
-        <table className="min-w-max w-full text-left text-sm">
-          <thead className="border-b border-[#D4D4D4] text-xs uppercase text-gray-500">
+    <div className="min-w-0 w-full max-w-full border-t border-gray-200 pt-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-sm font-bold uppercase tracking-wide text-gray-800">
+          {title}
+        </h3>
+        {columns.length > 8 && (
+          <span className="text-[11px] text-gray-400">
+            Scroll horizontally to view all columns &rarr;
+          </span>
+        )}
+      </div>
+      <div className="w-full max-w-full overflow-x-auto pb-3 overscroll-x-contain">
+        <table className="min-w-max w-full text-left text-sm border-collapse">
+          <thead className="border-b border-[#D4D4D4] bg-gray-50/50 text-xs uppercase text-gray-500">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="whitespace-nowrap px-4 py-2 font-medium"
+                  className="whitespace-nowrap px-4 py-2.5 font-medium"
                 >
                   {col.label}
                 </th>
@@ -56,7 +76,7 @@ const CategoryMedicalTable = ({
               rows.map((row, index) => (
                 <tr
                   key={index}
-                  className={`border-b border-[#D4D4D4] ${
+                  className={`border-b border-[#D4D4D4] transition hover:bg-purple-50/20 ${
                     index % 2 === 0 ? "bg-white" : "bg-[#FAFAFA]"
                   }`}
                 >
@@ -64,8 +84,8 @@ const CategoryMedicalTable = ({
                     <td
                       key={col.key}
                       className={`px-4 py-3 text-gray-800 ${
-                        wrapColumns.includes(col.key)
-                          ? "whitespace-pre-line"
+                        isWrapColumn(col.key)
+                          ? "max-w-xs whitespace-normal break-words"
                           : "whitespace-nowrap"
                       }`}
                     >

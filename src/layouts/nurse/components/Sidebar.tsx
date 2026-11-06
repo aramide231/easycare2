@@ -175,12 +175,12 @@ export default function Sidebar() {
           isCollapsed && "flex-col gap-4"
         }`}
       >
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
+        <Link
+          to="/nurse"
+          reloadDocument
           className="flex min-w-0 items-center gap-2 overflow-hidden rounded-md transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/30"
-          aria-label="Reload page"
-          title="Reload page"
+          aria-label="Open nursing dashboard"
+          title="Open nursing dashboard"
         >
           {isCollapsed ? (
             <EasyCareMark className="h-8 w-8 shrink-0" />
@@ -191,7 +191,7 @@ export default function Sidebar() {
               alt="EasyCare"
             />
           )}
-        </button>
+        </Link>
 
         <button
           type="button"

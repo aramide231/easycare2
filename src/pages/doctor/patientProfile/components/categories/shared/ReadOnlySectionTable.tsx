@@ -1,15 +1,21 @@
 import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
+import { genConsultVitalTableColumns } from "../../../config/clinicalVitalFields";
 import {
-  getSectionTableRows,
   useMedicalTable,
 } from "../../../hooks/useMedicalTable";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
+import InvestigationReview from "./InvestigationReview";
 
 type Props = {
   sectionLabel: string;
+  tableKey?: string;
 };
 
-function buildColumns(sectionLabel: string, rows: Record<string, string>[]) {
+function buildColumns(sectionLabel: string, rows: Record<string, unknown>[]) {
+  if (sectionLabel === "VITAL SIGNS") {
+    return genConsultVitalTableColumns;
+  }
+
   const preferred = [
     "sn",
     "dateTime",
@@ -29,10 +35,12 @@ function buildColumns(sectionLabel: string, rows: Record<string, string>[]) {
   ];
 
   const keys = new Set<string>();
-  preferred.forEach((key) => keys.add(key));
+
   rows.forEach((row) => {
     Object.keys(row).forEach((key) => {
-      if (!["id"].includes(key)) keys.add(key);
+      if (!["id", "committedAt", "createdAtMs"].includes(key) && !key.startsWith("__")) {
+        keys.add(key);
+      }
     });
   });
 
@@ -42,7 +50,7 @@ function buildColumns(sectionLabel: string, rows: Record<string, string>[]) {
 
   const extras = [...keys].filter((key) => !ordered.includes(key));
 
-  return [...ordered, ...extras].slice(0, 8).map((key) => ({
+  return [...ordered, ...extras].map((key) => ({
     key,
     label: key
       .replace(/([A-Z])/g, " $1")
@@ -52,9 +60,16 @@ function buildColumns(sectionLabel: string, rows: Record<string, string>[]) {
 }
 
 /** Table-only clinician documentation review for nurse module. */
-export default function ReadOnlySectionTable({ sectionLabel }: Props) {
-  useMedicalTable(sectionLabel);
-  const rows = getSectionTableRows(sectionLabel);
+export default function ReadOnlySectionTable({ sectionLabel, tableKey = sectionLabel }: Props) {
+  const { history } = useMedicalTable(tableKey);
+  const rows = sectionLabel === "MEDICATION" ? history.flatMap((row) => {
+    const { medications, ...visit } = row;
+    return Array.isArray(medications) ? medications.map((med) => ({ ...visit, ...med })) : [row];
+  }) : history;
+
+  if (sectionLabel === "INVESTIGATION") {
+    return <InvestigationReview tableKey={tableKey} />;
+  }
 
   return (
     <CategoryMedicalTable
