@@ -11,7 +11,7 @@ export default function ActiveFormBar({ currentStep }: ActiveFormBarProps) {
   ];
 
   return (
-    <div className="flex items-center bg-surface text-[#A5A5A5]">
+    <div className="flex items-center justify-center bg-surface text-[#A5A5A5]">
       {steps.map((step, index) => {
         const stepNumber = index + 1;
         const isActive = currentStep === stepNumber;
@@ -24,8 +24,8 @@ export default function ActiveFormBar({ currentStep }: ActiveFormBarProps) {
                 isActive
                   ? "bg-primary/70 text-white"
                   : isCompleted
-                  ? "bg-primary text-white"
-                  : "border-[#A5A5A5]"
+                    ? "bg-primary text-white"
+                    : "border-[#A5A5A5]"
               }`}
             >
               {step.label}

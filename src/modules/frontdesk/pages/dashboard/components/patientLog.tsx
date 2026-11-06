@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { X } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
 
 // type and datat check
 
@@ -49,7 +51,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const [toastMessage, setToastMessage] = useState("");
   // const dropdownRef = useRef(null);
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
-    null
+    null,
   );
 
   // to dynamically reader the headingText
@@ -58,6 +60,8 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const [flagPanelOpen, setFlagPanelOpen] = useState(false);
+  const [flaggedPatient, setFlaggedPatient] = useState<Patient | null>(null);
 
   const [patients, setPatients] = useState<Patient[]>([
     {
@@ -205,11 +209,25 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   }, [location.state, location.pathname, navigate, patients]);
 
   const handleEditPatient = (patient: Patient) => {
-    navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
+    navigate("/frontdesk/registration", {
+      state: {
+        mode: "edit",
+        initialData: {
+          firstName: patient.firstName,
+          surname: patient.lastName,
+          gender: patient.gender === "M" ? "Male" : "Female",
+          phone: patient.phoneNumber,
+          patientType: patient.patientType,
+          patientId: patient.patientId,
+        },
+      },
+    });
   };
 
   const handleFlagProfile = (patient: Patient) => {
-    navigate(`/frontdesk/flag-profile/${patient.id}`, { state: { patient } });
+    setFlaggedPatient(patient);
+    setFlagPanelOpen(true);
+    setShowOptions(null);
   };
 
   // Previous function for flagging patient profile
@@ -227,7 +245,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
     if (isConfirmed && editPatient) {
       const updatedPatients = patients.map((patient) =>
-        patient.id === editPatient.id ? editPatient : patient
+        patient.id === editPatient.id ? editPatient : patient,
       );
       setPatients(updatedPatients);
       setToastMessage("Patient details updated successfully!");
@@ -240,7 +258,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const confirmSave = () => {
     return new Promise((resolve) => {
       const confirmation = window.confirm(
-        "Are you sure you want to save the changes?"
+        "Are you sure you want to save the changes?",
       );
       resolve(confirmation);
     });
@@ -279,7 +297,8 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
   // send profile model
   const [showSendModal, setShowSendModal] = useState(false);
-  const [selectedSendOptions, setSelectedSendOptions] = useState<string[]>([]);
+  const [selectedVisitationType, setSelectedVisitationType] =
+    useState<string>("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const sendOptions = [
@@ -297,18 +316,14 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   ];
 
   const handleCheckboxChange = (option: string) => {
-    setSelectedSendOptions((prev) =>
-      prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option]
-    );
+    setSelectedVisitationType(option);
   };
 
   const handleSendProfile = () => {
-    // Handle logic to send the profile to selected options
-    console.log("Send to:", selectedSendOptions);
-    setShowSendModal(false); // Close modal after send
-    setShowSuccessMessage(true); // Show success screen
+    console.log("Send to:", selectedVisitationType);
+    setShowSendModal(false);
+    setSelectedVisitationType("");
+    setShowSuccessMessage(true);
   };
 
   return (
@@ -394,7 +409,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getPatientTypeClass(
-                        patient.patientType
+                        patient.patientType,
                       )}`}
                     >
                       {patient.patientType}
@@ -403,7 +418,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getVisitTypeClass(
-                        patient.visitType
+                        patient.visitType,
                       )}`}
                     >
                       {patient.visitType}
@@ -422,7 +437,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                           className="text-gray-500"
                           onClick={() =>
                             setShowOptions(
-                              patient.id === showOptions ? null : patient.id
+                              patient.id === showOptions ? null : patient.id,
                             )
                           }
                         >
@@ -675,8 +690,22 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
         {/* modal class for sendProfile*/}
         {showSendModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowSendModal(false)}
+          >
+            <div
+              className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowSendModal(false)}
+                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
               <h2 className="text-xl font-bold mb-4 text-gray-800">
                 Select type of Visitation
               </h2>
@@ -685,16 +714,17 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
                 {sendOptions.map((option) => (
                   <div key={option} className="flex items-center">
                     <input
-                      type="checkbox"
+                      type="radio"
                       id={option}
+                      name="visitationType"
                       value={option}
-                      checked={selectedSendOptions.includes(option)}
+                      checked={selectedVisitationType === option}
                       onChange={() => handleCheckboxChange(option)}
-                      className="w-5 h-5 text-purple-600 border-purple-600 rounded focus:ring-purple-500"
+                      className="w-5 h-5 text-purple-600 border-gray-300 focus:ring-purple-500 accent-purple-600"
                     />
                     <label
                       htmlFor={option}
-                      className="ml-3 text-sm text-gray-700"
+                      className="ml-3 text-sm text-gray-700 cursor-pointer"
                     >
                       {option}
                     </label>
@@ -714,8 +744,14 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
           </div>
         )}
         {showSuccessMessage && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-12 text-center">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowSuccessMessage(false)}
+          >
+            <div
+              className="bg-white rounded-lg shadow-lg w-full max-w-sm p-12 text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
               <h2 className="text-xl font-bold  mb-4">
                 Patient Successfully Sent
               </h2>
@@ -735,6 +771,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
         )}
       </div>
       <ToastContainer />
+      <FlagPatientPanel
+        open={flagPanelOpen}
+        onClose={() => setFlagPanelOpen(false)}
+        patientName={flaggedPatient?.name}
+        patientId={flaggedPatient?.patientId}
+      />
     </div>
   );
 };

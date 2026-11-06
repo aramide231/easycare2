@@ -2,7 +2,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-import { FrontdeskRoutes } from "@/modules/frontdesk";
+import { FrontdeskRoutes, FrontdeskLayout } from "@/modules/frontdesk";
+import BookAppointment from "@/modules/frontdesk/pages/book-appointment/BookAppointment";
 import { HmoRoutes } from "@/modules/hmo";
 import { PharmacyRoutes } from "@/modules/pharmacy";
 import { DiagnosticsRadiologistRoutes } from "@/pages/diagnostics-and-radiologist/routes";
@@ -108,14 +109,21 @@ const RoleBasedRoutes = () => {
       />
       <Route
         path="/auth/verification"
-        element={
-          user ? <Navigate to={homePath} replace /> : <Verification />
-        }
+        element={user ? <Navigate to={homePath} replace /> : <Verification />}
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Frontdesk — available for preview without login */}
       {FrontdeskRoutes()}
+
+      {/* Frontdesk additional routes */}
+      <Route path="/frontdesk" element={<FrontdeskLayout />}>
+        <Route
+          path="previous-patient-records/:patientId"
+          element={<PreviousPatientRecords />}
+        />
+        <Route path="book-appointment" element={<BookAppointment />} />
+      </Route>
 
       {/* HMO — available for preview without login */}
       {HmoRoutes()}
@@ -154,6 +162,7 @@ const RoleBasedRoutes = () => {
             </PatientRecordScope>
           }
         />
+        <Route path="patient-profile/:id" element={<NursePatientProfile />} />
         <Route path="flag-profile/:id" element={<NurseFlagProfile />} />
         <Route
           path="previous-patient-records/:patientId"

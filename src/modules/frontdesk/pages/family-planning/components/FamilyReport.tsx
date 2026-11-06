@@ -241,7 +241,7 @@ const FamilyReport = () => {
 
   const getPatientTypeClass = (type: "COMPANY" | "PRIVATE" | "HMO"): string => {
     switch (type) {
-       case "COMPANY":
+      case "COMPANY":
         return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
         return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
@@ -252,7 +252,7 @@ const FamilyReport = () => {
 
   // Function to get visit type badge color
   const getMethodTypeClass = (
-    type: "NATURAL" | "BARRIER" | "HORMONAL" | "LARCs" | "PERMANENT" | "ECs"
+    type: "NATURAL" | "BARRIER" | "HORMONAL" | "LARCs" | "PERMANENT" | "ECs",
   ): string => {
     switch (type) {
       case "NATURAL":
@@ -273,12 +273,12 @@ const FamilyReport = () => {
   };
 
   const isValidPatientType = (
-    type: string
+    type: string,
   ): type is "COMPANY" | "PRIVATE" | "HMO" =>
     ["COMPANY", "PRIVATE", "HMO"].includes(type);
 
   const isValidMethodType = (
-    type: string
+    type: string,
   ): type is
     | "NATURAL"
     | "BARRIER"
@@ -287,7 +287,7 @@ const FamilyReport = () => {
     | "PERMANENT"
     | "ECs" =>
     ["NATURAL", "BARRIER", "HORMONAL", "LARCs", "PERMANENT", "ECs"].includes(
-      type
+      type,
     );
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 ">
@@ -306,7 +306,7 @@ const FamilyReport = () => {
               onChange={handleSearchChange}
               //onChange={(e) => setSearch(e.target.value)}
               className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              />
+            />
           </div>
         </div>
 
@@ -318,7 +318,7 @@ const FamilyReport = () => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-full text-sm font-medium"
+              className="flex items-center border border-[#573FD1] text-[#573FD1] px-3 py-1.5 rounded-md text-sm font-medium"
             >
               <svg
                 className="w-4 h-4 mr-2 text-[#573FD1]"
@@ -455,7 +455,7 @@ const FamilyReport = () => {
                       .includes(search.toLowerCase()) ||
                     patient.phoneNumber
                       .toLowerCase()
-                      .includes(search.toLowerCase())
+                      .includes(search.toLowerCase()),
                 )
                 .map((patient, index) => (
                   <tr
