@@ -3,19 +3,19 @@
 export type VitalFieldOption = { value: string; label: string };
 
 export const VITAL_COMMENT_OPTIONS: VitalFieldOption[] = [
-  { value: "HYPOTENSIVE", label: "Hypotensive (<90 / <60)" },
-  { value: "NORMAL", label: "Normal (<100-120 / <60-80)" },
-  { value: "ELEVATED", label: "Elevated (120-129 / <80)" },
+  { value: "Hypotensive (<90 / <60)", label: "Hypotensive (<90 / <60)" },
+  { value: "Normal (<100-120 / <60-80)", label: "Normal (<100-120 / <60-80)" },
+  { value: "Elevated (120-129 / <80)", label: "Elevated (120-129 / <80)" },
   {
-    value: "STAGE_1_HYPERTENSIVE",
+    value: "Stage 1 Hypertensive (130-139 / 80-89)",
     label: "Stage 1 Hypertensive (130-139 / 80-89)",
   },
   {
-    value: "STAGE_2_HYPERTENSIVE",
+    value: "Stage 2 Hypertensive (140+ / 90+)",
     label: "Stage 2 Hypertensive (140+ / 90+)",
   },
   {
-    value: "HYPERTENSIVE_CRISIS",
+    value: "Hypertensive Crisis (>160-180 / >100-120)",
     label: "Hypertensive Crisis (>160-180 / >100-120)",
   },
 ];
@@ -88,4 +88,3 @@ export const VITAL_DROPDOWN_FIELD_OPTIONS: Record<string, VitalFieldOption[]> =
   {
     comment: VITAL_COMMENT_OPTIONS,
   };
-

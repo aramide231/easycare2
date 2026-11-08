@@ -5,7 +5,8 @@ import ExportOtpModal from "./ExportOtpModal";
 import ExportDownloadSuccessModal from "./ExportDownloadSuccessModal";
 
 interface ExportPopupProps {
-  reportTitle: string;
+  reportTitle?: string;
+  title?: string;
   tableRef?: React.RefObject<HTMLTableElement | null>;
   isOpen: boolean;
   onClose: () => void;
@@ -23,11 +24,13 @@ function getExportHeading(reportTitle: string) {
 }
 
 const DownloadReport: React.FC<ExportPopupProps> = ({
-  reportTitle,
+  reportTitle: reportTitleProp,
+  title,
   tableRef,
   isOpen,
   onClose,
 }) => {
+  const reportTitle = reportTitleProp ?? title ?? "Report";
   const [format, setFormat] =
     useState<(typeof FORMAT_OPTIONS)[number]["value"]>("xls");
   const [showOtp, setShowOtp] = useState(false);

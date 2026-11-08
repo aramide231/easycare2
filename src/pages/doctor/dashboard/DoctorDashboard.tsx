@@ -31,7 +31,7 @@ const DoctorDashboard = () => {
 
   return (
     <div className="flex gap-6 mt-0 ">
-      <div className="flex-[3]">
+      <div className="min-w-0 flex-[3]" data-search-panel-region>
         <DoctorDashboardSummary />
         <PatientsLog
           onSelectPatient={setSelectedPatient}
@@ -39,14 +39,20 @@ const DoctorDashboard = () => {
         />
       </div>
 
-      <div className="flex-[1]">
+      <div className="flex flex-[1] flex-col">
         <CustomCalendar
           width="100%"
           height="250px"
           value={dateRange ?? undefined}
           onChange={setDateRange}
         />
-        {selectedPatient && <PatientCard patient={selectedPatient} />}
+        {selectedPatient ? (
+          <PatientCard patient={selectedPatient} />
+        ) : (
+          <div className="mx-auto mt-4 flex min-h-[16rem] w-full max-w-sm flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 p-6 text-center text-sm text-gray-500">
+            Select a patient from the log to view their profile summary.
+          </div>
+        )}
       </div>
     </div>
   );

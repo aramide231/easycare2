@@ -141,7 +141,6 @@ const MEDICATION_FORM_KEYWORDS = [
   "Mixture",
   "Foam",
   "Spray",
-  "Drop",
   "Drops",
   "Vial",
   "Amp",
@@ -167,8 +166,20 @@ const MEDICATION_FORM_KEYWORDS = [
   "Mouth Paint",
 ].sort((a, b) => b.length - a.length);
 
-/** IF-condition forms — matched before generic keywords (e.g. Syrup before Suspension). */
-const SYRUP_CREAM_FORM_KEYWORDS = ["Vaginal Cream", "Syrup", "Cream"] as const;
+/** IF-condition forms — matched before generic keywords (e.g. Syrup/Cream/Gel/Drop before Suspension). */
+const SYRUP_CREAM_FORM_KEYWORDS = [
+  "Vaginal Cream",
+  "Eye Drops",
+  "Ear Drops",
+  "Nasal Drops",
+  "Oral Drops",
+  "Syrup",
+  "Cream",
+  "Drops",
+  "Drop",
+  "Gels",
+  "Gel",
+] as const;
 
 const STRENGTH_TOKEN_REGEX =
   /\d+(?:\.\d+)?\s*(?:mg|mcg|g|ml|l|mu|units?|iu|i\.u\.)(?:\/\d+\s*ml)?|\d+(?:\.\d+)?\s*%/gi;
@@ -188,7 +199,7 @@ function normalizeCatalogForm(form: string): string {
   if (/^cream$/i.test(value)) return "Cream";
   if (/^ointment|eye ointment$/i.test(value)) return "Ointment";
   if (/^lotion$/i.test(value)) return "Lotion";
-  if (/^drop|drops|eye drops|ear drops|nasal drops$/i.test(value)) return "Drops";
+  if (/^drops|eye drops|ear drops|nasal drops$/i.test(value)) return "Drops";
   if (/^powder|granule|granules$/i.test(value)) return "Powder";
   if (/^supp|suppository|suppossitory$/i.test(value)) return "Suppository";
   if (/^vial$/i.test(value)) return "Vial";
@@ -364,6 +375,7 @@ export const UNIT_QUANTITY_FORMS = [
   "Eye Drops",
   "Eye Ointment",
   "Foam",
+  "Gel",
   "Gels",
   "Granules",
   "Implant",
@@ -458,17 +470,22 @@ function isTabletOrCapsuleProduct(form: string, medicationName: string): boolean
   return /\btablets?\b|\bcapsules?\b|\btab\/caps\b/.test(name);
 }
 
-/** Syrup/Cream IF: dispensed quantity is always 1 (one bottle/tube). */
+/** Syrup/Cream/Gel/Drop IF: dispensed quantity is always 1 (one bottle/tube). */
 function isSyrupOrCreamProduct(form: string, medicationName: string): boolean {
   if (isTabletOrCapsuleProduct(form, medicationName)) return false;
 
   const normalizedForm = normalizeFormKey(form);
-  if (normalizedForm.includes("syrup") || normalizedForm.includes("cream")) {
+  if (
+    normalizedForm.includes("syrup") ||
+    normalizedForm.includes("cream") ||
+    normalizedForm.includes("drop") ||
+    normalizedForm.includes("gel")
+  ) {
     return true;
   }
 
   const name = medicationName.trim().toLowerCase();
-  if (/\bsyrup\b|\bcream\b/.test(name)) return true;
+  if (/\bsyrup\b|\bcream\b|\bdrops?\b|\bgels?\b/.test(name)) return true;
 
   // e.g. "Syrup/suspension" when form parses as Suspension only
   return normalizedForm === "suspension" && /\bsyrup\b/.test(name);

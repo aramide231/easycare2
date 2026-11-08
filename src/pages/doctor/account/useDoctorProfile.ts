@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import {
   DEFAULT_DOCTOR_PROFILE,
@@ -73,10 +73,14 @@ export function useDoctorProfile() {
   const { user } = useAuth();
   const stored = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  const profile = mergeAuthIntoProfile(
-    stored,
-    user?.fullName,
-    user?.userRole
+  const profile = useMemo(
+    () =>
+      mergeAuthIntoProfile(
+        stored,
+        user?.fullName,
+        user?.userRole
+      ),
+    [stored, user?.fullName, user?.userRole]
   );
 
   const updateProfile = useCallback(

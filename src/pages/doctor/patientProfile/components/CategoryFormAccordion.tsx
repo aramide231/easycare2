@@ -51,7 +51,7 @@ const CategoryFormAccordion = ({
   highlightedSections = [],
 }: Props) => {
   return (
-    <div className="flex w-full flex-col divide-y divide-gray-200">
+    <div className="flex min-w-0 w-full flex-col divide-y divide-gray-200">
       {sections.map((section) => {
         const isOpen = expandedCategories.includes(section.label);
         const FormComponent = resolveFormComponent(
@@ -63,8 +63,8 @@ const CategoryFormAccordion = ({
 
         return (
           <div
-            key={section.label}
-            className={`relative isolate py-3 first:pt-0 last:pb-0 ${
+            key={`${healthCategory ?? "default"}-${section.label}`}
+            className={`relative isolate min-w-0 py-3 first:pt-0 last:pb-0 ${
               isHighlighted ? "rounded-lg ring-2 ring-amber-400 ring-offset-1" : ""
             }`}
           >

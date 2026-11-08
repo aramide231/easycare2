@@ -1,6 +1,6 @@
 import { getTimeGreeting } from "@/lib/dateTime";
 import { useAuth } from "@/context/AuthContext";
-import { FaBell, FaUserCheck } from "react-icons/fa";
+import { FaBell, FaProcedures, FaUserCheck } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { buildMockNotifications } from "@/data/mockNotifications";
@@ -70,7 +70,7 @@ const DashboardSummaryForAll = ({
     {
       title: "In Patient",
       subtitle: `${admissions.length} patients`,
-      icon: <FaUserCheck size={22} className="text-white" />,
+      icon: <FaProcedures size={22} className="text-white" />,
       variant: "dark",
       action: "navigate",
       path: "/nurse/admission",
@@ -97,7 +97,7 @@ const DashboardSummaryForAll = ({
     {
       title: "In Patient",
       subtitle: `${admissions.length} patients`,
-      icon: <FaUserCheck size={22} className="text-white" />,
+      icon: <FaProcedures size={22} className="text-white" />,
       variant: "dark",
       action: "navigate",
       path: "/doctor",
@@ -138,7 +138,7 @@ const DashboardSummaryForAll = ({
         </h2>
         <p className="text-sm text-gray-600">Have a wonderful day at work</p>
       </div>
-      <div className="flex w-full gap-4 p-4">
+      <div className="grid w-full grid-cols-1 gap-4 p-4 md:grid-cols-3">
         {activeSummaryItems.map((item) => (
           <DashboardSummaryCard
             key={item.title}

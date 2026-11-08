@@ -4,6 +4,7 @@ import { ChevronDown, LogOut, Pencil, Send } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
+import EditProfileModal from "@/components/header/EditProfileModal";
 import { useDoctorProfile } from "../../account/useDoctorProfile";
 
 type ProfileMenuProps = {
@@ -12,17 +13,18 @@ type ProfileMenuProps = {
 };
 
 export default function ProfileMenu({
-  editPath = "/doctor/account/profile",
   logoutPath = "/doctor/account?tab=logout",
 }: ProfileMenuProps) {
   const { user } = useAuth();
   const { profile } = useDoctorProfile();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [helpdeskMessage, setHelpdeskMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const displayName = user?.fullName ?? profile.username ?? "User";
+  const displayName = user?.fullName || profile.username || "Dr. Chibuzor";
+  const displayRole = user?.userRole || "Clinician";
   const avatarSrc = profile.profileImageUrl || clientimage;
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function ProfileMenu({
 
   const handleEdit = () => {
     closeMenu();
-    navigate(editPath);
+    setEditModalOpen(true);
   };
 
   const handleHelpdeskSubmit = () => {
@@ -62,7 +64,7 @@ export default function ProfileMenu({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/20"
+        className="flex items-center gap-2.5 rounded-lg p-1 text-left transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/20"
         aria-label="Account menu"
         aria-expanded={open}
         aria-haspopup="true"
@@ -73,6 +75,14 @@ export default function ProfileMenu({
             alt={displayName}
             className="h-full w-full object-cover"
           />
+        </div>
+        <div className="hidden min-w-0 sm:block">
+          <h3 className="truncate text-sm font-semibold leading-tight text-gray-900">
+            {displayName}
+          </h3>
+          <p className="truncate text-xs capitalize text-gray-500">
+            {displayRole}
+          </p>
         </div>
         <ChevronDown
           className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${
@@ -140,6 +150,11 @@ export default function ProfileMenu({
           </button>
         </div>
       ) : null}
+
+      <EditProfileModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+      />
     </div>
   );
 }

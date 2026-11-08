@@ -40,12 +40,12 @@ export function getGenConsultPatientTypeById(
   return GEN_CONSULT_PATIENT_TYPES.find((option) => option.id === id) ?? null;
 }
 
-/** Table column value per spec: options 1 & 3 → Out-Patient; 2 & 4 → In-Patient. */
+/** Table column value: Out-Patient / OPD Review → Out-Patient; In-Patient / Ward Round → In-Patient. */
 export function resolveGenConsultRecordPatientType(
   patientTypeId: GenConsultPatientTypeId | null
 ): string {
-  if (!patientTypeId) return "IN-PATIENT";
-  if (patientTypeId === "out-patient" || patientTypeId === "in-patient") {
+  if (!patientTypeId) return "In-Patient";
+  if (patientTypeId === "out-patient" || patientTypeId === "opd-review") {
     return "Out-Patient";
   }
   return "In-Patient";
@@ -60,5 +60,5 @@ export function shouldShowGenConsultConsultationType(
 export function isAdmittedInPatientType(
   patientTypeId: GenConsultPatientTypeId | null
 ): boolean {
-  return patientTypeId === "in-patient";
+  return patientTypeId === "in-patient" || patientTypeId === "ward-round";
 }

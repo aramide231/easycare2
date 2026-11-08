@@ -4,7 +4,7 @@ import TablePagination from "@doctor-shared/components/TablePagination";
 import { getTotalPages } from "@doctor-shared/lib/pagination";
 import { usePatientManagement } from "@doctor-shared/context/PatientManagementContext";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 const AdmissionReport = () => {
   const { admissionReports } = usePatientManagement();

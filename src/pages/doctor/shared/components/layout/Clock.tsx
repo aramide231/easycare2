@@ -1,54 +1,40 @@
 import { useEffect, useState } from "react";
 
-function getOrdinalSuffix(day: number): string {
-  if (day > 3 && day < 21) return "th";
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
+function formatClockParts(now: Date): { datePart: string; timePart: string } {
+  const day = now.getDate().toString().padStart(2, "0");
+  const month = now.toLocaleString("en-US", { month: "long" });
+  const year = now.getFullYear();
+
+  const rawHours = now.getHours();
+  const period = rawHours >= 12 ? "PM" : "AM";
+  const hours12 = (rawHours % 12 || 12).toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+
+  return {
+    datePart: `${day}-${month}-${year}`,
+    timePart: `${hours12}:${minutes}:${seconds} ${period}`,
+  };
 }
 
 export default function Clock() {
-  const [currentTime, setCurrentTime] = useState<string>("");
+  const [now, setNow] = useState<Date>(() => new Date());
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const day = now.getDate();
-      const month = now.toLocaleString("en-US", { month: "long" });
-      const year = now.getFullYear();
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-
-      setCurrentTime(
-        `${day}${getOrdinalSuffix(day)} ${month} ${year}, ${hours}:${minutes}`
-      );
-    };
-
-    updateTime();
-    const timer = setInterval(updateTime, 1000 * 60);
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
+  const { datePart, timePart } = formatClockParts(now);
+
   return (
     <div className="flex items-center justify-center whitespace-nowrap">
-      <p className="text-center text-sm font-medium text-gray-600">
-        {currentTime ? (
-          <>
-            {currentTime.split(",")[0]},
-            <span className="ml-1 text-gray-500">
-              {currentTime.split(",")[1]}
-            </span>
-          </>
-        ) : (
-          "Loading..."
-        )}
+      <p className="text-center text-sm font-medium text-gray-600 tabular-nums">
+        <span>{datePart}</span>
+        <span className="mx-1.5 text-gray-400">|</span>
+        <span className="text-gray-500">{timePart}</span>
       </p>
     </div>
   );

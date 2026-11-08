@@ -6,6 +6,7 @@ import easyCareLogoFull from "@doctor-shared/assets/icon/Frame 121.svg";
 import hospitalLogo from "@doctor-shared/assets/icon/Frame 5.svg";
 import EasyCareMark from "@doctor-shared/components/layout/EasyCareMark";
 import ChevronToggle from "@doctor-shared/components/layout/ChevronToggle";
+import { useSidebar } from "@/layouts/nurse/hooks/useSidebar";
 import {
   MAIN_MENU,
   PATIENT_MANAGEMENT,
@@ -21,13 +22,11 @@ type SidebarProp = NavItem & {
 
 type MenuSection = "main" | "patientManagement" | "action" | "reports";
 
-const EXPANDED_WIDTH = 240;
-const COLLAPSED_WIDTH = 88;
-
 export default function Sidebar() {
   const location = useLocation();
   const { user } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { width, isDragging, isCollapsed, startResizing, toggleCollapse } =
+    useSidebar();
 
   const [openMenus, setOpenMenus] = useState({
     main: true,
@@ -65,6 +64,10 @@ export default function Sidebar() {
       "/doctor/available-ward",
       "/doctor/discharge",
     ];
+    const performActionPaths = [
+      "/doctor/make-request",
+      "/doctor/set-reminder",
+    ];
     const reportPaths = [
       "/doctor/ante-natal",
       "/doctor/child-birth",
@@ -78,6 +81,9 @@ export default function Sidebar() {
 
     if (patientMgmtPaths.some((p) => location.pathname.startsWith(p))) {
       setOpenMenus((prev) => ({ ...prev, patientManagement: true }));
+    }
+    if (performActionPaths.some((p) => location.pathname.startsWith(p))) {
+      setOpenMenus((prev) => ({ ...prev, action: true }));
     }
     if (reportPaths.some((p) => location.pathname.startsWith(p))) {
       setOpenMenus((prev) => ({ ...prev, reports: true }));
@@ -160,15 +166,29 @@ export default function Sidebar() {
 
   return (
     <aside
-      style={{ width: isCollapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
-      className="flex h-full shrink-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-[width] duration-300 ease-in-out"
+      style={{ width: `${width}px` }}
+      className={`relative bg-white border-r border-gray-200 h-full min-h-0 flex flex-col shrink-0 ${
+        !isDragging && "transition-[width] duration-300 ease-in-out"
+      }`}
     >
       <div
-        className={`flex items-center justify-between px-4 pb-3 pt-4 ${
-          isCollapsed && "flex-col gap-3"
+        role="presentation"
+        onMouseDown={startResizing}
+        className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-[#573FD1]/40 active:bg-[#573FD1] transition-colors z-50"
+      />
+
+      <div
+        className={`px-4 pt-6 pb-4 flex items-center justify-between ${
+          isCollapsed && "flex-col gap-4"
         }`}
       >
-        <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+        <Link
+          to="/doctor"
+          reloadDocument
+          className="flex min-w-0 items-center gap-2 overflow-hidden rounded-md transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/30"
+          aria-label="Open clinician dashboard"
+          title="Open clinician dashboard"
+        >
           {isCollapsed ? (
             <EasyCareMark className="h-8 w-8 shrink-0" />
           ) : (
@@ -178,11 +198,11 @@ export default function Sidebar() {
               alt="EasyCare"
             />
           )}
-        </div>
+        </Link>
 
         <button
           type="button"
-          onClick={() => setIsCollapsed((prev) => !prev)}
+          onClick={toggleCollapse}
           className="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-100"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
@@ -194,11 +214,11 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <div className="mb-3 px-4">
+      <div className="mb-4 px-4">
         <div className="w-full border-b border-gray-200" />
       </div>
 
-      <div className="mb-3 px-4">
+      <div className="mb-4 px-4">
         <div
           className={`flex items-center gap-3 rounded-xl border border-gray-200 bg-[#FAFAFA] p-2.5 ${
             isCollapsed && "justify-center"
@@ -224,11 +244,11 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className="mb-3 px-4">
+      <div className="mb-4 px-4">
         <div className="w-full border-b border-gray-200" />
       </div>
 
-      <nav className="hide-scrollbar flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-3 pb-4">
+      <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto hide-scrollbar px-3 pb-6 space-y-6">
         {renderSection("Main Menu", "main", MAIN_MENU)}
         {renderSection(
           "Patient Management",

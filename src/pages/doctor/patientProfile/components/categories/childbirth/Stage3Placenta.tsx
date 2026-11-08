@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
+import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import {
   formFieldGridClass,
@@ -81,8 +82,29 @@ export default function Stage3Placenta() {
   );
 
   const handleChange = (name: string, value: string) => {
-    setStageThreeForm((prev) => ({ ...prev, [name]: value }));
+    let nextValue = value;
+    if (name === "bloodPressure") {
+      nextValue = value.replace(/[^0-9/]/g, "");
+    } else if (name === "estimatedBloodLoss") {
+      nextValue = value.replace(/[^0-9.]/g, "");
+    }
+    setStageThreeForm((prev) => ({ ...prev, [name]: nextValue }));
   };
+
+  const clearForm = useCallback(() => setStageThreeForm({}), []);
+
+  usePendingCategoryDraft(
+    "STAGE 3: DELIVERY OF PLACENTA",
+    () => {
+      const hasValue = Object.values(stageThreeForm).some((value) =>
+        value?.trim()
+      );
+      if (!hasValue) return null;
+      return { ...stageThreeForm };
+    },
+    [stageThreeForm],
+    clearForm
+  );
 
   const handleSave = () => {
     const hasValue = Object.values(stageThreeForm).some((value) => value?.trim());
@@ -157,9 +179,7 @@ export default function Stage3Placenta() {
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   className={`${formFieldSelectClass} pr-10`}
                 >
-                  <option value="">
-                    {field.placeholder ?? "-Select option-"}
-                  </option>
+                  <option value="">{field.placeholder ?? "-Select option-"}</option>
                   {renderSelectOptions(field.name)}
                 </select>
                 <ChevronDown

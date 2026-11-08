@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useLocation } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import LogSearchBar from "@doctor-shared/components/LogSearchBar";
 import AdmissionActionMenu from "@doctor-shared/admission/components/AdmissionActionMenu";
@@ -17,7 +19,7 @@ import { usePatientManagement } from "@doctor-shared/context/PatientManagementCo
 
 import { getPatientTypeClass } from "@doctor-shared/lib/patientTypeStyles";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 50;
 
 type LocationPatient = {
   patientId?: string;
@@ -28,9 +30,10 @@ type LocationPatient = {
 const DoctorAdmissionLog = () => {
   const location = useLocation();
   const { user } = useAuth();
-  const { admissions, assignPatientToWard, dischargeFromAdmission } =
+  const { admissions, admitPatient, assignPatientToWard, dischargeFromAdmission } =
     usePatientManagement();
   const linkedPatient = location.state?.patient as LocationPatient | undefined;
+  const admitHandledRef = useRef<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(
     () => linkedPatient?.patientId ?? ""
   );
@@ -73,6 +76,36 @@ const DoctorAdmissionLog = () => {
       }
     }
   }, [linkedPatient?.patientId, admissions]);
+
+  useEffect(() => {
+    const incoming = (
+      location.state as { admitPatient?: Record<string, unknown> } | null
+    )?.admitPatient;
+    if (!incoming?.patientId) return;
+
+    const key = String(incoming.patientId);
+    if (admitHandledRef.current === key) return;
+    admitHandledRef.current = key;
+
+    const performedBy = user?.fullName ?? "Unknown User";
+    const admitted = admitPatient(
+      {
+        name: String(incoming.name ?? ""),
+        patientId: String(incoming.patientId ?? ""),
+        phoneNumber: String(incoming.phoneNumber ?? ""),
+        gender: String(incoming.gender ?? ""),
+        patientType: String(incoming.patientType ?? "PRIVATE"),
+        age: Number(incoming.age ?? 0),
+        visitType: String(incoming.visitType ?? ""),
+      },
+      performedBy
+    );
+
+    if (admitted) {
+      setSelectedRowId(admitted.id);
+      toast.success(`${admitted.name} admitted successfully.`);
+    }
+  }, [admitPatient, location.state, user?.fullName]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -337,6 +370,7 @@ const DoctorAdmissionLog = () => {
           onDismiss={() => setTakeActionSuccess(null)}
         />
       )}
+      <ToastContainer position="top-right" autoClose={2500} />
     </div>
   );
 };

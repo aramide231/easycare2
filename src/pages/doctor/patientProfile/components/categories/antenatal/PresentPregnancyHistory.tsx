@@ -2,28 +2,21 @@ import { useCallback, useEffect, useState } from "react";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import FormDatePicker from "../../category/FormDatePicker";
-import {
-  formFieldInputClass,
-  formFieldTextareaClass,
-} from "../../../lib/formFieldStyles";
-import { isValidDateDDMMYY } from "../../../lib/dateFormat";
-import {
-  calculateEddFromLmp,
-  calculateEgaFromLmp,
-} from "../../../lib/pregnancyDates";
+import { calculateEddAndEgaFromLmp } from "../../category/CategoryForm";
+import { formFieldInputClass, formFieldTextareaClass } from "../../../lib/formFieldStyles";
 
 export default function PresentPregnancyHistory() {
   const [form, setForm] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const lmp = form.lmp?.trim() ?? "";
-    if (!lmp || !isValidDateDDMMYY(lmp)) return;
-    const edd = calculateEddFromLmp(lmp);
-    const ega = calculateEgaFromLmp(lmp);
-    setForm((prev) => {
-      if (prev.edd === edd && prev.gestationalAge === ega) return prev;
-      return { ...prev, edd, gestationalAge: ega };
-    });
+    const calculated = calculateEddAndEgaFromLmp(form.lmp || "");
+    if (calculated) {
+      setForm((prev) =>
+        prev.edd === calculated.edd && prev.gestationalAge === calculated.ega
+          ? prev
+          : { ...prev, edd: calculated.edd, gestationalAge: calculated.ega }
+      );
+    }
   }, [form.lmp]);
 
   const fields = [
@@ -31,26 +24,36 @@ export default function PresentPregnancyHistory() {
     {
       name: "edd",
       label: "Estimated Date of Delivery (EDD)",
-      type: "readonly",
-      placeholder: "Auto from LMP",
+      readOnly: true,
+      placeholder: "Auto-calculated (LMP + 280 days)",
     },
     {
       name: "gestationalAge",
       label: "Estimated Gestational Age (EGA)",
-      type: "readonly",
-      placeholder: "Auto weeks & days",
+      readOnly: true,
+      placeholder: "Auto-calculated (weeks & days)",
     },
-    { name: "parity", label: "Gravidity / Parity at Presentation" },
-    { name: "plannedDelivery", label: "Planned Place of Delivery" },
+    {
+      name: "parity",
+      label: "Gravidity / Parity at Presentation",
+      placeholder: "Enter gravidity / parity (e.g. G2P1)",
+    },
+    {
+      name: "plannedDelivery",
+      label: "Planned Place of Delivery",
+      placeholder: "Enter planned place of delivery",
+    },
     {
       name: "riskFactors",
       label: "Risk Factors / High-Risk Notes",
       type: "textarea",
+      placeholder: "Enter risk factors or high-risk notes",
     },
     {
       name: "currentComplaints",
       label: "Current Pregnancy Complaints",
       type: "textarea",
+      placeholder: "Enter current pregnancy complaints",
     },
   ];
 
@@ -66,7 +69,7 @@ export default function PresentPregnancyHistory() {
       return { ...form };
     },
     [form],
-    clearForm,
+    clearForm
   );
 
   return (
@@ -81,7 +84,7 @@ export default function PresentPregnancyHistory() {
                 onChange={(e) =>
                   setForm({ ...form, [field.name]: e.target.value })
                 }
-                placeholder={`Enter ${field.label}`}
+                placeholder={field.placeholder}
                 className={formFieldTextareaClass}
                 rows={3}
               />
@@ -90,23 +93,18 @@ export default function PresentPregnancyHistory() {
                 value={form[field.name] || ""}
                 onChange={(next) => setForm({ ...form, [field.name]: next })}
               />
-            ) : field.type === "readonly" ? (
-              <input
-                type="text"
-                readOnly
-                value={form[field.name] || ""}
-                placeholder={field.placeholder}
-                className={`${formFieldInputClass} bg-gray-50`}
-              />
             ) : (
               <input
                 type="text"
+                readOnly={Boolean(field.readOnly)}
                 value={form[field.name] || ""}
                 onChange={(e) =>
                   setForm({ ...form, [field.name]: e.target.value })
                 }
-                placeholder={`Enter ${field.label}`}
-                className={formFieldInputClass}
+                placeholder={field.placeholder}
+                className={`${formFieldInputClass} ${
+                  field.readOnly ? "bg-gray-50 font-semibold text-gray-800" : ""
+                }`}
               />
             )}
           </div>

@@ -1,44 +1,34 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Search } from "lucide-react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import TablePagination from "@doctor-shared/components/TablePagination";
+import FlagPatientModal from "@/pages/doctor/patientProfile/components/FlagPatientModal";
+import { getTotalPages } from "@doctor-shared/lib/pagination";
 import {
   isDateWithinRange,
   parsePatientLastSeen,
   type DateRangeValue,
 } from "@doctor-shared/lib/dateTime";
+import {
+  buildMockPatients,
+  type Patient,
+} from "@/pages/nurse/dashboardNurse/data/mockPatients";
 
-// type and datat check
-
-type Patient = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  patientId: string;
-  phoneNumber: string;
-  lastSeen: string;
-  time: string;
-  gender: string;
-  age: number;
-  patientType: string;
-  visitType: string;
-  staffName: string;
-  flagged: boolean;
-  bloodPressure: string;
-  name: string;
-};
+const PAGE_SIZE = 50;
 
 interface PatientsLogProps {
   onSelectPatient: (patient: Patient) => void;
   dateRange?: DateRangeValue | null;
 }
-// Custom Toast Component
+
 const Toast = ({ message }: { message: string }) => {
   if (!message) return null;
 
   return (
-    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
+    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg z-50">
       <p>{message}</p>
     </div>
   );
@@ -56,131 +46,35 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  // const dropdownRef = useRef(null);
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
     null
   );
 
-  // to dynamically reader the headingText
-
   const isVisitationPage = location.pathname.includes("visitation");
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
-  const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const moduleBase = location.pathname.startsWith("/nurse")
+    ? "/nurse"
+    : location.pathname.startsWith("/frontdesk")
+      ? "/frontdesk"
+      : "/doctor";
 
-  const [patients, setPatients] = useState<Patient[]>([
-    {
-      id: 1,
-      name: "Abiola Adebayo",
-      firstName: "Abiola",
-      lastName: "Adebayo",
-      patientId: "P-2025001",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "GEN. CONSULT",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "120/80",
-    },
-    {
-      id: 2,
-      name: "Chinonso Eze",
-      firstName: "Chinonso",
-      lastName: "Eze",
-      patientId: "P-2025002",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "PRIVATE",
-      visitType: "GEN. CONSULT",
-      staffName: "Bayo Hammed",
-      flagged: false,
-      bloodPressure: "130/85",
-    },
-    {
-      id: 3,
-      name: "Damilola Ogunleye",
-      firstName: "Damilola",
-      lastName: "Ogunleye",
-      patientId: "P-2025003",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "118/78",
-    },
-    {
-      id: 4,
-      name: "Emeka Nwankwo",
-      firstName: "Emeka",
-      lastName: "Nwankwo",
-      patientId: "P-2025004",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "HMO",
-      visitType: "POST NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "135/90",
-    },
-    {
-      id: 5,
-      name: "Ifeoma Okeke",
-      firstName: "Ifeoma",
-      lastName: "Okeke",
-      patientId: "P-2025005",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "F",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "CHILDBIRTH",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "122/79",
-    },
-    {
-      id: 6,
-      name: "Toluwa Afolabi",
-      firstName: "Toluwa",
-      lastName: "Afolabi",
-      patientId: "P-2025006",
-      phoneNumber: "09012345678",
-      lastSeen: "15-Feb-2020",
-      time: "10:25 AM",
-      gender: "M",
-      age: 31,
-      patientType: "COMPANY",
-      visitType: "ANTE. NATAL",
-      staffName: "Titilayo Olayinka",
-      flagged: false,
-      bloodPressure: "125/82",
-    },
-  ]);
+  const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [flagModalPatient, setFlagModalPatient] = useState<Patient | null>(null);
+
+  const [patients, setPatients] = useState<Patient[]>(() => buildMockPatients());
 
   const getPatientTypeClass = (type: string) => {
     switch (type) {
       case "COMPANY":
         return "bg-blue-100 text-[#573FD1] border border-[#573FD1]";
       case "PRIVATE":
-        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
+        return "bg-[#dbd9d9] text-[#103488] border border-[#103488]";
       case "HMO":
         return "bg-orange-100 text-[#FA7401] border border-[#FA7401]";
+      default:
+        return "bg-gray-100 text-gray-700 border border-gray-300";
     }
   };
 
@@ -192,23 +86,26 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
         return "bg-green-100 text-green-700 border border-[#00C851]";
       case "POST NATAL":
         return "bg-[#FDFDFD] text-[#626262] border border-[#626262]";
-        
       default:
-        return "bg-[#dbd9d9] text-[#103488]  border border-[#103488]";
+        return "bg-[#dbd9d9] text-[#103488] border border-[#103488]";
     }
   };
 
   const handleEditPatient = (patient: Patient) => {
-    navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
+    setShowOptions(null);
+    if (moduleBase === "/frontdesk") {
+      navigate(`/frontdesk/edit/${patient.id}`, { state: { patient } });
+    } else {
+      setEditPatient(patient);
+      setIsModalOpen(true);
+    }
   };
 
-  const handleFlagPatient = (patient: Patient) => {
-    const updatedPatients = patients.map((p) =>
-      p.id === patient.id ? { ...p, flagged: !p.flagged } : p
-    );
-    setPatients(updatedPatients);
-    setToastMessage(patient.flagged ? "Patient unflagged" : "Patient flagged");
-    toast.success(patient.flagged ? "Patient unflagged" : "Patient flagged");
+  const handleFlagProfile = (patient: Patient) => {
+    setShowOptions(null);
+    navigate(`${moduleBase}/flag-profile/${patient.id}`, {
+      state: { patient },
+    });
   };
 
   const handleSaveChanges = async () => {
@@ -248,8 +145,6 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // filter model for the search button
-
   const filteredPatients = patients.filter((patient) => {
     if (dateRange) {
       const lastSeenDate = parsePatientLastSeen(patient.lastSeen);
@@ -275,7 +170,23 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
     );
   });
 
-  // send profile model
+  const totalPages = getTotalPages(filteredPatients.length, PAGE_SIZE);
+
+  const paginatedPatients = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredPatients.slice(start, start + PAGE_SIZE);
+  }, [filteredPatients, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, dateRange]);
+
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
   const [showSendModal, setShowSendModal] = useState(false);
   const [selectedSendOptions, setSelectedSendOptions] = useState<string[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -303,32 +214,41 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
   };
 
   const handleSendProfile = () => {
-    // Handle logic to send the profile to selected options
-    console.log("Send to:", selectedSendOptions);
-    setShowSendModal(false); // Close modal after send
-    setShowSuccessMessage(true); // Show success screen
+    setShowSendModal(false);
+    setShowSuccessMessage(true);
   };
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 max-w-6xl mx-auto">
       <Toast message={toastMessage} />
 
-      <div className="flex flex-col md:flex-row md:items-center  mb-6 md:space-x-0">
-        <h1 className="text-xl font-bold text-gray-800 md:mr-2">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <h1 className="shrink-0 text-xl font-bold text-gray-800">
           {headingText}
         </h1>
-        <input
-          type="search"
-          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full md:w-1/2 p-2.5 md:ml-0"
-          placeholder="Search for patients"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="flex w-full min-w-0 flex-1 items-center rounded-xl border border-[#D4D4D4] bg-white sm:max-w-md">
+          <Search
+            className="ml-3 h-4 w-4 shrink-0 text-gray-400"
+            strokeWidth={2}
+            aria-hidden
+          />
+          <span
+            className="mx-3 h-5 w-px shrink-0 bg-[#D4D4D4]"
+            aria-hidden
+          />
+          <input
+            type="search"
+            className="min-w-0 flex-1 border-0 bg-transparent py-2.5 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-0"
+            placeholder="Search for patients"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="border-t border-gray-200 pt-4 overflow-x-auto">
         <table className="min-w-full text-sm text-left">
-          <thead className="text-xs text-gray-500 uppercase">
+          <thead className="border-b border-[#D4D4D4] text-xs text-gray-500 uppercase">
             <tr>
               <th className="px-4 py-2 font-medium whitespace-nowrap">SN</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
@@ -354,21 +274,23 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
             </tr>
           </thead>
           <tbody>
-            {filteredPatients.length > 0 ? (
-              filteredPatients.map((patient) => (
+            {paginatedPatients.length > 0 ? (
+              paginatedPatients.map((patient, rowIndex) => (
                 <tr
                   key={patient.id}
-                  className={`${
+                  className={`cursor-pointer border-b border-[#D4D4D4] ${
                     selectedPatientId === patient.id
                       ? "bg-gray-100"
-                      : "bg-white"
-                  } cursor-pointer`}
+                      : "bg-white hover:bg-gray-50"
+                  }`}
                   onClick={() => {
                     setSelectedPatientId(patient.id);
                     onSelectPatient(patient);
                   }}
                 >
-                  <td className="px-4 py-3 whitespace-nowrap">{patient.id}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {(currentPage - 1) * PAGE_SIZE + rowIndex + 1}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-col">
                       <span className="font-medium">{patient.name}</span>
@@ -410,49 +332,81 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                   <td className="px-4 py-3 whitespace-nowrap">
                     {patient.staffName}
                   </td>
-                  {isVisitationPage && (
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <div
-                        className="relative"
-                        ref={showOptions === patient.id ? dropdownRef : null}
+                  <td
+                    className="px-4 py-3 whitespace-nowrap"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div
+                      className="relative"
+                      ref={showOptions === patient.id ? dropdownRef : null}
+                    >
+                      <button
+                        type="button"
+                        className="rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                        aria-label="Patient actions"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowOptions(
+                            patient.id === showOptions ? null : patient.id
+                          );
+                        }}
                       >
-                        <button
-                          className="text-gray-500"
-                          onClick={() =>
-                            setShowOptions(
-                              patient.id === showOptions ? null : patient.id
-                            )
-                          }
-                        >
-                          <HiOutlineDotsVertical size={20} />
-                        </button>
-                        {showOptions === patient.id && (
-                          <div className="absolute right-0 flex flex-col mt-2 bg-white border shadow-lg rounded-lg w-48 z-10">
+                        <HiOutlineDotsVertical size={20} />
+                      </button>
+                      {showOptions === patient.id && (
+                        <div className="absolute right-0 z-20 mt-2 flex w-48 flex-col rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                          {isVisitationPage && (
                             <button
-                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => handleEditPatient(patient)}
+                              type="button"
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditPatient(patient);
+                              }}
                             >
                               Edit Profile
                             </button>
+                          )}
+                          <button
+                            type="button"
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowOptions(null);
+                              navigate(`${moduleBase}/admission`, {
+                                state: { admitPatient: patient },
+                              });
+                            }}
+                          >
+                            Admit
+                          </button>
+                          <button
+                            type="button"
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFlagProfile(patient);
+                            }}
+                          >
+                            Flag Profile
+                          </button>
+                          {isVisitationPage && (
                             <button
-                              className="w-full px-4 py-2 mb-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => handleFlagPatient(patient)}
-                            >
-                              {patient.flagged
-                                ? "Unflag Profile"
-                                : "Flag Profile"}
-                            </button>
-                            <button
-                              className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                              onClick={() => setShowSendModal(true)}
+                              type="button"
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowOptions(null);
+                                setShowSendModal(true);
+                              }}
                             >
                               Send Profile
                             </button>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  )}
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
@@ -472,7 +426,12 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
           </tbody>
         </table>
 
-        {/* modal class  editpatients*/}
+        <TablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+
         {isModalOpen && editPatient && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg max-h-[90vh] overflow-y-auto">
@@ -654,6 +613,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
 
               <div className="mt-6 flex justify-end gap-2">
                 <button
+                  type="button"
                   className="bg-gray-200 text-gray-800 px-4 py-2 rounded"
                   onClick={() => {
                     setIsModalOpen(false);
@@ -663,7 +623,8 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                   Cancel
                 </button>
                 <button
-                  className="bg-[#573FD1] text-white px-4 py-2 rounded hover:bg-[#573FD1]"
+                  type="button"
+                  className="bg-[#573FD1] text-white px-4 py-2 rounded hover:bg-[#4a35b8]"
                   onClick={handleSaveChanges}
                 >
                   Save Changes
@@ -673,7 +634,6 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
           </div>
         )}
 
-        {/* modal class for sendProfile*/}
         {showSendModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
@@ -702,10 +662,18 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                 ))}
               </div>
 
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-3">
                 <button
+                  type="button"
+                  onClick={() => setShowSendModal(false)}
+                  className="w-1/2 rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
                   onClick={handleSendProfile}
-                  className=" w-[100%] px-10 py-2 text-sm font-medium text-white bg-[#573FD1] rounded hover:bg-[#573FD1]"
+                  className="w-1/2 px-6 py-2 text-sm font-medium text-white bg-[#573FD1] rounded hover:bg-[#4a35b8]"
                 >
                   Confirm
                 </button>
@@ -716,17 +684,17 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
         {showSuccessMessage && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-12 text-center">
-              <h2 className="text-xl font-bold  mb-4">
+              <h2 className="text-xl font-bold mb-4">
                 Patient Successfully Sent
               </h2>
 
               <button
+                type="button"
                 onClick={() => {
                   setShowSuccessMessage(false);
-                  // Add your route logic here
-                  navigate("/frontdesk/dashboard");
+                  navigate(moduleBase);
                 }}
-                className=" w-full px-5 py-2 text-sm font-medium text-white bg-[#573FD1] rounded hover:bg-[#573FD1]"
+                className="w-full px-5 py-2 text-sm font-medium text-white bg-[#573FD1] rounded hover:bg-[#4a35b8]"
               >
                 Go to Dashboard
               </button>
@@ -734,6 +702,14 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
           </div>
         )}
       </div>
+      {flagModalPatient && (
+        <FlagPatientModal
+          open={Boolean(flagModalPatient)}
+          onClose={() => setFlagModalPatient(null)}
+          patient={flagModalPatient}
+          variant="portal"
+        />
+      )}
       <ToastContainer />
     </div>
   );
