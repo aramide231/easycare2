@@ -1,5 +1,5 @@
 import { useAuth } from "@doctor-shared/context/useAuth";
-import { FaBell, FaHospitalUser, FaUserCheck } from "react-icons/fa";
+import { FaBell, FaProcedures, FaUserCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import DashboardSummaryCard from "./DashboardSummaryCard";
 
@@ -24,7 +24,7 @@ const summaryItems: SummaryItem[] = [
   {
     title: "In Patient",
     subtitle: "10 patients",
-    icon: <FaHospitalUser size={24} className="text-white" />,
+    icon: <FaProcedures size={24} className="text-white" />,
     variant: "dark",
     path: "/doctor/admission",
   },

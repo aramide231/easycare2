@@ -355,30 +355,54 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
                       </button>
                       {showOptions === patient.id && (
                         <div className="absolute right-0 z-20 mt-2 flex w-48 flex-col rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                          {isVisitationPage && (
+                            <button
+                              type="button"
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditPatient(patient);
+                              }}
+                            >
+                              Edit Profile
+                            </button>
+                          )}
                           <button
                             type="button"
                             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => handleEditPatient(patient)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowOptions(null);
+                              navigate(`${moduleBase}/admission`, {
+                                state: { admitPatient: patient },
+                              });
+                            }}
                           >
-                            Edit Profile
+                            Admit
                           </button>
                           <button
                             type="button"
                             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => handleFlagProfile(patient)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFlagProfile(patient);
+                            }}
                           >
                             Flag Profile
                           </button>
-                          <button
-                            type="button"
-                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => {
-                              setShowOptions(null);
-                              setShowSendModal(true);
-                            }}
-                          >
-                            Send Profile
-                          </button>
+                          {isVisitationPage && (
+                            <button
+                              type="button"
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowOptions(null);
+                                setShowSendModal(true);
+                              }}
+                            >
+                              Send Profile
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>

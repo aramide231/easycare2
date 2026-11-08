@@ -4,6 +4,7 @@ import { ChevronDown, LogOut, Pencil, Send } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
+import EditProfileModal from "@/components/header/EditProfileModal";
 import { useDoctorProfile } from "../../account/useDoctorProfile";
 
 type ProfileMenuProps = {
@@ -12,13 +13,13 @@ type ProfileMenuProps = {
 };
 
 export default function ProfileMenu({
-  editPath = "/doctor/account/profile",
   logoutPath = "/doctor/account?tab=logout",
 }: ProfileMenuProps) {
   const { user } = useAuth();
   const { profile } = useDoctorProfile();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [helpdeskMessage, setHelpdeskMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +41,7 @@ export default function ProfileMenu({
 
   const handleEdit = () => {
     closeMenu();
-    navigate(editPath);
+    setEditModalOpen(true);
   };
 
   const handleHelpdeskSubmit = () => {
@@ -149,6 +150,11 @@ export default function ProfileMenu({
           </button>
         </div>
       ) : null}
+
+      <EditProfileModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+      />
     </div>
   );
 }

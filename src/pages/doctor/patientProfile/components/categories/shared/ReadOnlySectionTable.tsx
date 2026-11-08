@@ -5,6 +5,7 @@ import {
 } from "../../../hooks/useMedicalTable";
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import InvestigationReview from "./InvestigationReview";
+import MedicationDispenseTable from "./MedicationDispenseTable";
 
 type Props = {
   sectionLabel: string;
@@ -69,6 +70,10 @@ export default function ReadOnlySectionTable({ sectionLabel, tableKey = sectionL
 
   if (sectionLabel === "INVESTIGATION") {
     return <InvestigationReview tableKey={tableKey} />;
+  }
+
+  if (sectionLabel === "MEDICATION") {
+    return <MedicationDispenseTable />;
   }
 
   return (

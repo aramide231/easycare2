@@ -25,6 +25,7 @@ const NotificationTable: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const isNurseRoute = location.pathname.startsWith("/nurse");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
     null,
@@ -181,17 +182,19 @@ const NotificationTable: React.FC = () => {
                       >
                         View Px Profile
                       </button>
-                      <button
-                        type="button"
-                        className="text-red-500 hover:text-red-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(patient.id);
-                        }}
-                        aria-label="Delete notification"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      {!isNurseRoute && (
+                        <button
+                          type="button"
+                          className="text-red-500 hover:text-red-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(patient.id);
+                          }}
+                          aria-label="Delete notification"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

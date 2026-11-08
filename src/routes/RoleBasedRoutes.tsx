@@ -162,7 +162,6 @@ const RoleBasedRoutes = () => {
             </PatientRecordScope>
           }
         />
-        <Route path="patient-profile/:id" element={<NursePatientProfile />} />
         <Route path="flag-profile/:id" element={<NurseFlagProfile />} />
         <Route
           path="previous-patient-records/:patientId"
@@ -174,7 +173,14 @@ const RoleBasedRoutes = () => {
       <Route path="/doctor" element={<DoctorLayout />}>
         <Route index element={<DoctorDashboard />} />
         <Route path="notifications-doctor" element={<DoctorNotification />} />
-        <Route path="patient-profile/:id" element={<DoctorPatientProfile />} />
+        <Route
+          path="patient-profile/:id"
+          element={
+            <PatientRecordScope>
+              <DoctorPatientProfile />
+            </PatientRecordScope>
+          }
+        />
         <Route path="account" element={<DoctorAccountSettings />} />
         <Route path="account/profile" element={<DoctorYourProfile />} />
         <Route path="flag-profile/:id" element={<DoctorFlagProfile />} />

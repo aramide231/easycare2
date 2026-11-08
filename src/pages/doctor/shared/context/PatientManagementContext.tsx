@@ -90,6 +90,16 @@ function dischargedToAdmission(
   };
 }
 
+export type AdmitPatientInput = {
+  name: string;
+  patientId: string;
+  phoneNumber: string;
+  gender: string;
+  patientType: string;
+  age: number;
+  visitType?: string;
+};
+
 type PatientManagementContextValue = {
   admissions: AdmissionRecord[];
   dischargedPatients: DischargedPatientRecord[];
@@ -97,6 +107,10 @@ type PatientManagementContextValue = {
   dischargeReports: DischargeReportEntry[];
   wardBeds: WardBed[];
   setAdmissions: React.Dispatch<React.SetStateAction<AdmissionRecord[]>>;
+  admitPatient: (
+    patient: AdmitPatientInput,
+    performedBy: string
+  ) => AdmissionRecord | null;
   assignPatientToWard: (
     admission: AdmissionRecord,
     wardName: string,
@@ -197,6 +211,53 @@ export function PatientManagementProvider({
     setWardBeds((prev) => prev.filter((bed) => bed.id !== id));
   }, []);
 
+  const admitPatient = useCallback(
+    (patient: AdmitPatientInput, performedBy: string) => {
+      const existing = admissions.find(
+        (row) =>
+          row.patientId.toLowerCase() === patient.patientId.toLowerCase()
+      );
+      if (existing) return existing;
+
+      const now = new Date();
+      const admission: AdmissionRecord = {
+        id: Date.now(),
+        name: patient.name,
+        patientId: patient.patientId,
+        phoneNumber: patient.phoneNumber,
+        gender: patient.gender,
+        patientType: patient.patientType,
+        age: patient.age,
+        dateOfAdmission: formatDischargeDate(now),
+        timeOfAdmission: formatDischargeTime(now),
+        ward: "Not Yet Assigned",
+        admittedBy: performedBy,
+      };
+
+      setAdmissions((prev) => {
+        const next = [admission, ...prev];
+        setWardBeds((beds) => syncWardBedsWithAdmissions(beds, next));
+        return next;
+      });
+      setAdmissionReports((prev) => [
+        createAdmissionReportEntry({
+          patientName: admission.name,
+          patientId: admission.patientId,
+          action: "Admitted",
+          ward: admission.ward,
+          performedBy,
+          physicianName: performedBy,
+          date: admission.dateOfAdmission,
+          time: admission.timeOfAdmission,
+        }),
+        ...prev,
+      ]);
+
+      return admission;
+    },
+    [admissions]
+  );
+
   const assignPatientToWard = useCallback(
     (admission: AdmissionRecord, wardName: string, performedBy: string) => {
       setAdmissions((prev) => {
@@ -284,6 +345,7 @@ export function PatientManagementProvider({
       dischargeReports,
       wardBeds,
       setAdmissions,
+      admitPatient,
       assignPatientToWard,
       dischargeFromAdmission,
       readmitPatient,
@@ -298,6 +360,7 @@ export function PatientManagementProvider({
       admissionReports,
       dischargeReports,
       wardBeds,
+      admitPatient,
       assignPatientToWard,
       dischargeFromAdmission,
       readmitPatient,

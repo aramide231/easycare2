@@ -1,6 +1,6 @@
 import { getTimeGreeting } from "@/lib/dateTime";
 import { useAuth } from "@/context/AuthContext";
-import { FaBell, FaUserCheck } from "react-icons/fa";
+import { FaBell, FaProcedures, FaUserCheck } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { buildMockNotifications } from "@/data/mockNotifications";
@@ -70,7 +70,7 @@ const DashboardSummaryForAll = ({
     {
       title: "In Patient",
       subtitle: `${admissions.length} patients`,
-      icon: <FaUserCheck size={22} className="text-white" />,
+      icon: <FaProcedures size={22} className="text-white" />,
       variant: "dark",
       action: "navigate",
       path: "/nurse/admission",
@@ -97,7 +97,7 @@ const DashboardSummaryForAll = ({
     {
       title: "In Patient",
       subtitle: `${admissions.length} patients`,
-      icon: <FaUserCheck size={22} className="text-white" />,
+      icon: <FaProcedures size={22} className="text-white" />,
       variant: "dark",
       action: "navigate",
       path: "/doctor",

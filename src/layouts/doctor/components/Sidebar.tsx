@@ -167,7 +167,7 @@ export default function Sidebar() {
   return (
     <aside
       style={{ width: `${width}px` }}
-      className={`relative bg-white border-r border-gray-200 min-h-screen flex flex-col shrink-0 ${
+      className={`relative bg-white border-r border-gray-200 h-full min-h-0 flex flex-col shrink-0 ${
         !isDragging && "transition-[width] duration-300 ease-in-out"
       }`}
     >
@@ -182,7 +182,13 @@ export default function Sidebar() {
           isCollapsed && "flex-col gap-4"
         }`}
       >
-        <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+        <Link
+          to="/doctor"
+          reloadDocument
+          className="flex min-w-0 items-center gap-2 overflow-hidden rounded-md transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#573FD1]/30"
+          aria-label="Open clinician dashboard"
+          title="Open clinician dashboard"
+        >
           {isCollapsed ? (
             <EasyCareMark className="h-8 w-8 shrink-0" />
           ) : (
@@ -192,7 +198,7 @@ export default function Sidebar() {
               alt="EasyCare"
             />
           )}
-        </div>
+        </Link>
 
         <button
           type="button"
@@ -242,7 +248,7 @@ export default function Sidebar() {
         <div className="w-full border-b border-gray-200" />
       </div>
 
-      <nav className="hide-scrollbar flex-1 space-y-6 overflow-y-auto overflow-x-hidden px-3 pb-6">
+      <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto hide-scrollbar px-3 pb-6 space-y-6">
         {renderSection("Main Menu", "main", MAIN_MENU)}
         {renderSection(
           "Patient Management",

@@ -45,7 +45,7 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient }) => {
   };
 
   return (
-    <div className="mx-auto mt-4 flex max-h-sm w-full max-w-sm flex-1 flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+    <div className="mx-auto mt-4 flex w-full max-w-sm flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
       <div className="flex items-center gap-3">
         <img
           src={clientimage}

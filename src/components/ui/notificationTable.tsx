@@ -1,10 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import emptyNotification from "@/assets/image/empty-notification.png";
 import TablePagination from "@/pages/nurse/shared/components/TablePagination";
 import { getTotalPages } from "@/pages/nurse/shared/lib/pagination";
-import { useAuth } from "@/context/AuthContext";
 import {
   buildMockNotifications,
   type NotificationRow,
@@ -14,14 +12,12 @@ import { PAGE_SIZE } from "@/constant/pagination";
 
 const NotificationTable: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const canDelete = user?.userRole === "admin";
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
     null,
   );
-  const [patients, setPatients] = useState<NotificationRow[]>(() =>
+  const [patients] = useState<NotificationRow[]>(() =>
     buildMockNotifications(),
   );
 
@@ -43,10 +39,6 @@ const NotificationTable: React.FC = () => {
       "FAMILY PLAN": "bg-orange-100 text-orange-700 border border-orange-400",
     };
     return visitClasses[type] || "bg-gray-100 text-gray-700";
-  };
-
-  const handleDelete = (id: number) => {
-    setPatients((prev) => prev.filter((p) => p.id !== id));
   };
 
   const filteredPatients = patients.filter((patient) => {
@@ -112,7 +104,6 @@ const NotificationTable: React.FC = () => {
                   <th className="px-4 py-2 font-medium">PATIENT TYPE</th>
                   <th className="px-4 py-2 font-medium">SENDER&apos;S NAME</th>
                   <th className="px-4 py-2 font-medium">ACTION</th>
-                  {canDelete && <th className="px-4 py-2 font-medium"></th>}
                 </tr>
               </thead>
 
@@ -197,19 +188,6 @@ const NotificationTable: React.FC = () => {
                         View Px Profile
                       </button>
                     </td>
-
-                    {canDelete && (
-                      <td className="px-4 py-3 text-red-500 cursor-pointer">
-                        <Trash2
-                          size={18}
-                          className="hover:text-red-700"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(patient.id);
-                          }}
-                        />
-                      </td>
-                    )}
                   </tr>
                 ))}
               </tbody>
