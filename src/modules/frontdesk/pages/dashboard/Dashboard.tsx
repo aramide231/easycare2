@@ -4,6 +4,7 @@ import DashboardSummary from "./components/DashboardSummary";
 
 import Calendar from "./components/calendar";
 import PatientCard from "@frontdesk/shared/patientCard";
+import EmptyPatientState from "./components/EmptyPatientState";
 
 type Patient = {
   id: number;
@@ -33,9 +34,13 @@ const FrontdeskDashboard = () => {
         <PatientsLog onSelectPatient={setSelectedPatient} />
       </div>
 
-      <div className="flex-1 h-full">
+      <div className="flex-1 flex flex-col gap-4">
         <Calendar />
-        {selectedPatient && <PatientCard patient={selectedPatient} />}
+        {selectedPatient ? (
+          <PatientCard patient={selectedPatient} />
+        ) : (
+          <EmptyPatientState />
+        )}
       </div>
     </div>
   );

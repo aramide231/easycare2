@@ -91,10 +91,10 @@ const DashboardSummary = () => {
     <div className="flex flex-col w-full">
       {/* Header Section */}
       <div className="p-4 mb-2">
-        <h2 className="text-3xl font-bold text-gray-800">
+        <h2 className="text-xl font-bold text-gray-800">
           {getGreeting()}, {user?.fullName || "User"}
         </h2>
-        <p className="text-gray-500 text-lg mt-1">{getSubtitle()}</p>
+        <p className="text-gray-500 text-sm mt-1">{getSubtitle()}</p>
       </div>
 
       {/* Grids Section */}

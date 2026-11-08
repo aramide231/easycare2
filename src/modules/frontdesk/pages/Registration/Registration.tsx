@@ -1,4 +1,5 @@
 import { ChangeEvent, useState } from "react";
+import { useLocation } from "react-router-dom";
 import ActiveFormBar from "./components/ActiveFormBar";
 import FormHeader from "./components/FormHeader";
 import PatientInfoRegistration from "./PatientInfoRegistration";
@@ -35,34 +36,48 @@ export type PatientData = {
   emergencyContactRelationship?: string;
 };
 
+const EMPTY_FORM: PatientData = {
+  firstName: "",
+  surname: "",
+  middleName: "",
+  gender: "",
+  email: "",
+  phone: "",
+  maritalStatus: "",
+  dob: "",
+  stateOfOrigin: "",
+  age: "",
+  religion: "",
+  occupation: "",
+  address: "",
+  picture: null,
+  patientType: "",
+  insuranceProvider: "",
+  insuranceProviderCode: "",
+  patientId: "",
+  insurancePolicyNumber: "",
+  employerName: "",
+  treatmentGuide: "",
+  planType: "",
+  eligibility: "",
+  emergencyContactName: "",
+  emergencyContactPhone: "",
+  emergencyContactRelationship: "",
+};
+
+type RouteState = {
+  mode?: "edit";
+  initialData?: Partial<PatientData>;
+} | null;
+
 export default function Registration() {
+  const location = useLocation();
+  const routeState = (location.state as RouteState) ?? null;
+  const isEditMode = routeState?.mode === "edit";
+
   const [formData, setFormData] = useState<PatientData>({
-    firstName: "",
-    surname: "",
-    middleName: "",
-    gender: "",
-    email: "",
-    phone: "",
-    maritalStatus: "",
-    dob: "",
-    stateOfOrigin: "",
-    age: "",
-    religion: "",
-    occupation: "",
-    address: "",
-    picture: null,
-    patientType: "",
-    insuranceProvider: "",
-    insuranceProviderCode: "",
-    patientId: "",
-    insurancePolicyNumber: "",
-    employerName: "",
-    treatmentGuide: "",
-    planType: "",
-    eligibility: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-    emergencyContactRelationship: "",
+    ...EMPTY_FORM,
+    ...(routeState?.initialData ?? {}),
   });
 
   const [step, setStep] = useState(1);
@@ -135,6 +150,8 @@ export default function Registration() {
       );
     }
     if (step === 2) {
+      const SIMPLE_TYPES = ["PRIVATE", "FAMILY", "STAFF", "WALK-IN"];
+      if (SIMPLE_TYPES.includes(formData.patientType ?? "")) return true;
       return (
         formData.insuranceProvider &&
         formData.insurancePolicyNumber &&
@@ -167,11 +184,20 @@ export default function Registration() {
   };
 
   return (
-    <div className="pt-15 space-y-10 lg:flex flex-col items-center">
-      <FormHeader />
-      <ActiveFormBar currentStep={step} />
+    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-10">
+      <div className="mb-6 space-y-6">
+        <FormHeader
+          title={isEditMode ? "Edit Patient Profile" : "Create a Profile"}
+          subtitle={
+            isEditMode
+              ? "Update the patient's information below"
+              : "Fill the form to create a patient's profile"
+          }
+        />
+        <ActiveFormBar currentStep={step} />
+      </div>
 
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
         {step === 1 && (
           <PatientInfoRegistration
             formData={formData}
@@ -197,41 +223,41 @@ export default function Registration() {
         )}
 
         {step === 4 && <PatientRegSuccess />}
+
+        {step < 4 && (
+          <div className="flex items-center justify-between pt-2">
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={() => setStep(step - 1)}
+                className="rounded-lg border border-[#A5A5A5] px-6 py-2 cursor-pointer hover:bg-gray-50"
+              >
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
+
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="rounded-lg border bg-primary px-6 py-2 text-white cursor-pointer hover:bg-primary/90"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="rounded-lg border bg-primary px-6 py-2 text-white cursor-pointer hover:bg-primary/90"
+              >
+                {isEditMode ? "Update Patient" : "Submit"}
+              </button>
+            )}
+          </div>
+        )}
       </form>
-
-      {step < 4 && (
-        <div className="flex justify-between gap-[480px]">
-          {step > 1 ? (
-            <button
-              type="button"
-              onClick={() => setStep(step - 1)}
-              className="py-1 px-4 border rounded-lg border-[#A5A5A5] cursor-pointer"
-            >
-              Back
-            </button>
-          ) : (
-            <div></div>
-          )}
-
-          {step < 3 ? (
-            <button
-              type="button"
-              onClick={handleNext}
-              className="py-1 px-4 border rounded-lg bg-primary text-white cursor-pointer hover:bg-primary/90"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="py-1 px-4 border rounded-lg bg-primary text-white cursor-pointer hover:bg-primary/90"
-            >
-              Submit
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

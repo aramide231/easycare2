@@ -43,18 +43,7 @@ import {
 import { usePatientFlags } from "./flag-profile/data/usePatientFlags";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-function isMalePatient(gender: unknown): boolean {
-  const value = String(gender ?? "")
-    .trim()
-    .toLowerCase();
-  return value === "m" || value === "male";
-}
-
-function patientAgeYears(age: unknown): number {
-  const parsed = Number(age);
-  return Number.isFinite(parsed) ? parsed : NaN;
-}
+import { antenatalEntryRestriction } from "./lib/antenatalEligibility";
 
 const NursePatientProfile = () => {
   // const { id } = useParams();
@@ -63,7 +52,9 @@ const NursePatientProfile = () => {
   const { user } = useAuth();
   const patient = location.state?.patient;
 
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(
+    location.pathname.startsWith("/frontdesk") ? 2 : 1,
+  );
   const [flagPanelOpen, setFlagPanelOpen] = useState(false);
   const { reports: flagReports } = usePatientFlags(patient?.patientId ?? "");
   const flagCount = flagReports.length;
@@ -143,27 +134,12 @@ const NursePatientProfile = () => {
     setExpandedCategories([]);
   };
 
-  const ancRestricted = selectedCategory === "Ante Natal Care" && (
-    isMalePatient(patient?.gender) ||
-    (/^(f|female)$/i.test(String(patient?.gender ?? "").trim()) && patientAgeYears(patient?.age) < 10)
-  );
+  const ancRestriction = selectedCategory === "Ante Natal Care"
+    ? antenatalEntryRestriction(patient ?? {})
+    : null;
   const assertAncSubmitAllowed = () => {
-    if (selectedCategory !== "Ante Natal Care") return true;
-    if (isMalePatient(patient?.gender)) {
-      toast.error(
-        "ANC cannot be submitted for a patient registered as Male.",
-      );
-      return false;
-    }
-    const age = patientAgeYears(patient?.age);
-    const gender = String(patient?.gender ?? "")
-      .trim()
-      .toLowerCase();
-    const isFemale = gender === "f" || gender === "female";
-    if (isFemale && !Number.isNaN(age) && age < 10) {
-      toast.error(
-        "ANC cannot be submitted for a female patient under 10 years.",
-      );
+    if (ancRestriction) {
+      toast.error(ancRestriction);
       return false;
     }
     return true;
@@ -288,118 +264,135 @@ const NursePatientProfile = () => {
             <ChevronLeft className="h-5 w-5 shrink-0 text-[#573FD1]" />
           </button>
 
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-          <div>
-            <h3 className="mb-2 text-xs font-bold tracking-wide text-gray-800">
-              PERSONAL DETAILS
-            </h3>
-            <div className="space-y-1.5 text-sm text-gray-600">
-              <p>
-                <span className="font-medium text-gray-700">Last Name:</span>{" "}
-                {patient.lastName}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">First Name:</span>{" "}
-                {patient.firstName}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Middle Name:</span>{" "}
-                OluwaPac
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Phone NO:</span>{" "}
-                {patient.phoneNumber}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Email:</span>{" "}
-                {patient.email || "Not available"}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Gender:</span>{" "}
-                {patient.gender}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Age:</span>{" "}
-                {patient.age}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Marital Status:</span>{" "}
-                Married
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Address:</span> 2,
-                Omega lane, Lekki, Lagos.
-              </p>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+            <div>
+              <h3 className="mb-2 text-xs font-bold tracking-wide text-gray-800">
+                PERSONAL DETAILS
+              </h3>
+              <div className="space-y-1.5 text-sm text-gray-600">
+                <p>
+                  <span className="font-medium text-gray-700">Last Name:</span>{" "}
+                  {patient.lastName}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">First Name:</span>{" "}
+                  {patient.firstName}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Middle Name:
+                  </span>{" "}
+                  OluwaPac
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Phone NO:</span>{" "}
+                  {patient.phoneNumber}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Email:</span>{" "}
+                  {patient.email || "Not available"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Gender:</span>{" "}
+                  {patient.gender}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Age:</span>{" "}
+                  {patient.age}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Marital Status:
+                  </span>{" "}
+                  Married
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Address:</span> 2,
+                  Omega lane, Lekki, Lagos.
+                </p>
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+
+            <div>
+              <h3 className="mb-2 text-xs font-bold tracking-wide text-gray-800">
+                INSURANCE DETAILS
+              </h3>
+              <div className="space-y-1.5 text-sm text-gray-600">
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Insurance Type:
+                  </span>{" "}
+                  HMO
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Insurance Group No:
+                  </span>{" "}
+                  LDW/200
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Employer Name:
+                  </span>{" "}
+                  7up Bottling Company
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Eligibility:
+                  </span>{" "}
+                  <span className="text-green-600">Active</span>
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Insurance Provider Name:
+                  </span>{" "}
+                  Leadway HMO
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Treatment Guide:
+                  </span>{" "}
+                  Fee for service
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Policy No:</span>{" "}
+                  bd2345
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">
+                    Patient Type:
+                  </span>{" "}
+                  {patient.visitType || "Gen. consult"}
+                </p>
+              </div>
             </div>
           </div>
 
-          <hr className="border-gray-200" />
-
-          <div>
-            <h3 className="mb-2 text-xs font-bold tracking-wide text-gray-800">
-              INSURANCE DETAILS
-            </h3>
-            <div className="space-y-1.5 text-sm text-gray-600">
-              <p>
-                <span className="font-medium text-gray-700">Insurance Type:</span>{" "}
-                HMO
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Insurance Group No:</span>{" "}
-                LDW/200
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Employer Name:</span>{" "}
-                7up Bottling Company
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Eligibility:</span>{" "}
-                <span className="text-green-600">Active</span>
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">
-                  Insurance Provider Name:
-                </span>{" "}
-                Leadway HMO
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Treatment Guide:</span>{" "}
-                Fee for service
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Policy No:</span> bd2345
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Patient Type:</span>{" "}
-                {patient.visitType || "Gen. consult"}
-              </p>
-            </div>
+          <div className="mt-auto shrink-0 space-y-3 pt-4">
+            <button
+              type="button"
+              onClick={() => setFlagPanelOpen(true)}
+              className="flex w-full items-center justify-between gap-2 rounded-lg border border-orange-200 bg-orange-100 px-3 py-2.5 text-sm font-medium text-orange-600 transition hover:bg-orange-200"
+            >
+              <span className="flex items-center gap-2">
+                <FaFlag className="text-base" />
+                Flag Profile
+              </span>
+              <span className="rounded-md bg-white px-2 py-0.5 text-xs font-semibold text-orange-600 ring-1 ring-orange-200">
+                {flagCount}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={handlePreviousRecords}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] bg-purple-50 px-3 py-2.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-100"
+            >
+              <Undo2 className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+              Prev. Patient Records
+            </button>
           </div>
-        </div>
-
-        <div className="mt-auto shrink-0 space-y-3 pt-4">
-          <button
-            type="button"
-            onClick={() => setFlagPanelOpen(true)}
-            className="flex w-full items-center justify-between gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2.5 text-sm font-medium text-orange-600 transition hover:bg-orange-100"
-          >
-            <span className="flex items-center gap-2">
-              <FaFlag className="text-base" />
-              Flag Profile
-            </span>
-            <span className="rounded-md bg-white px-2 py-0.5 text-xs font-semibold text-orange-600 ring-1 ring-orange-200">
-              {flagCount}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={handlePreviousRecords}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#573FD1] bg-purple-50 px-3 py-2.5 text-sm font-medium text-[#573FD1] transition hover:bg-purple-100"
-          >
-            <Undo2 className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-            Prev. Patient Records
-          </button>
-        </div>
         </div>
       </div>
 
@@ -440,20 +433,29 @@ const NursePatientProfile = () => {
           ].map((label, index) => {
             const stepNumber = index + 1;
             const isActive = step === stepNumber;
+            const isHealthTab =
+              stepNumber === 1 && location.pathname.startsWith("/frontdesk");
             const tabClass = `rounded-lg py-2 text-center text-sm font-semibold transition ${
               isDetailsOpen ? "px-4" : "min-w-0 flex-1 px-3"
             } ${
-              isActive
-                ? "bg-[#573FD1] text-white shadow-sm"
-                : "border border-gray-300 bg-white text-gray-500 hover:border-[#573FD1]/40 hover:text-[#573FD1]"
+              isHealthTab
+                ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-300 hover:bg-gray-200 hover:text-gray-400"
+                : isActive
+                  ? "bg-[#573FD1] text-white shadow-sm"
+                  : "border border-gray-300 bg-white text-gray-500 hover:border-[#573FD1]/40 hover:text-[#573FD1]"
             }`;
+
+            const handleClick = () => {
+              if (isHealthTab) return;
+              handleStepChange(stepNumber);
+            };
 
             if (isDetailsOpen) {
               return (
                 <div key={stepNumber} className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => handleStepChange(stepNumber)}
+                    onClick={handleClick}
                     className={tabClass}
                   >
                     {label}
@@ -473,7 +475,7 @@ const NursePatientProfile = () => {
               <div key={stepNumber} className="contents">
                 <button
                   type="button"
-                  onClick={() => handleStepChange(stepNumber)}
+                  onClick={handleClick}
                   className={tabClass}
                 >
                   {label}
@@ -509,7 +511,7 @@ const NursePatientProfile = () => {
                     selected={selectedCategory === item.label}
                     onClick={() => {
                       setSelectedCategory(item.label);
-                      setExpandedCategories([]);
+                      setExpandedCategories(item.label === "Ante Natal Care" ? ["VITAL SIGNS"] : []);
                     }}
                   />
                 ))}
@@ -525,6 +527,16 @@ const NursePatientProfile = () => {
               ) : null}
 
               <div className="relative flex min-w-0 w-full flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4">
+                {ancRestriction && (
+                  <p role="alert" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                    {ancRestriction}
+                  </p>
+                )}
+                {selectedCategory === "Ante Natal Care" && !ancRestriction && (
+                  <p className="mb-4 text-sm text-gray-600">
+                    Open a section to enter nursing details, then use Preview and Confirm below. Clinician documentation is read-only. EDD and EGA are calculated from the last menstrual period in New Antenatal Booking.
+                  </p>
+                )}
                 {!selectedCategory ? (
                   <div className="pointer-events-none flex flex-col items-center justify-center px-4 py-16 text-center text-sm">
                     <p className="font-medium text-gray-900">
@@ -550,7 +562,7 @@ const NursePatientProfile = () => {
                   </div>
                 ) : (
                   <CategoryFormAccordion
-                    disableEntry={ancRestricted}
+                    disableEntry={Boolean(ancRestriction)}
                     key={selectedCategory}
                     sections={activeFormSections}
                     expandedCategories={expandedCategories}

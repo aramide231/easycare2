@@ -10,6 +10,7 @@ import ManageCard from "@frontdesk/pages/manage-card/ManageCard";
 import ReminderPage from "@frontdesk/pages/set-reminder/ReminderPage";
 import SetReminder from "@frontdesk/pages/set-reminder/components/SetReminder";
 import ViewReminder from "@frontdesk/pages/set-reminder/components/ViewReminder";
+import BookAppointment from "@frontdesk/pages/book-appointment/BookAppointment";
 import DoctorAssignment from "@frontdesk/pages/doctors-assignment/DoctorAssignment";
 import AnteNatal from "@frontdesk/pages/ante-natal/AnteNatal";
 import ChildBirth from "@frontdesk/pages/child-birth/ChildBirth";
@@ -23,6 +24,7 @@ import PatientInsuranceReg from "@frontdesk/pages/Registration/PatientInsuranceR
 import PatientEmergencyReg from "@frontdesk/pages/Registration/PatientEmergencyReg";
 import PatientRegSuccess from "@frontdesk/pages/Registration/PatientRegSuccess";
 import FlagProfile from "@frontdesk/pages/flag-profile/FlagProfile";
+import PatientProfile from "@/pages/nurse/patient-profile/PatientProfile";
 
 /**
  * Frontdesk module routes — self-contained under /frontdesk.
@@ -45,6 +47,7 @@ export function FrontdeskRoutes() {
       <Route path="reminder" element={<ReminderPage />} />
       <Route path="reminder/set-reminder" element={<SetReminder />} />
       <Route path="reminder/view-schedule" element={<ViewReminder />} />
+      <Route path="book-appointment" element={<BookAppointment />} />
       <Route path="doctor-assignments" element={<DoctorAssignment />} />
       <Route path="ante-natal" element={<AnteNatal />} />
       <Route path="child-birth" element={<ChildBirth />} />
@@ -53,6 +56,7 @@ export function FrontdeskRoutes() {
       <Route path="family-planning" element={<FamilyPlanning />} />
       <Route path="registration-log" element={<RegistrationLog />} />
       <Route path="flag-profile/:id" element={<FlagProfile />} />
+      <Route path="patient-profile/:id" element={<PatientProfile />} />
     </Route>
   );
 }

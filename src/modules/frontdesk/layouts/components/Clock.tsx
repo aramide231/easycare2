@@ -1,57 +1,33 @@
 import { useEffect, useState } from "react";
+import { formatClockDateTime } from "@/lib/dateTime";
 
 export default function Clock() {
-  const [currentTime, setCurrentTime] = useState<string>("");
+  const [currentTime, setCurrentTime] = useState(() =>
+    formatClockDateTime(new Date()),
+  );
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
-
-      const day = now.getDate();
-      const month = now.toLocaleString("en-US", { month: "long" });
-      const year = now.getFullYear();
-
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-
-      const formatted = `${day}${getOrdinalSuffix(
-        day,
-      )} ${month} ${year}, ${hours}:${minutes}`;
-      setCurrentTime(formatted);
+      setCurrentTime(formatClockDateTime(new Date()));
     };
 
-    updateTime(); // initial call
-    const timer = setInterval(updateTime, 1000 * 60); // update every 1 minute
-
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Function to get ordinal suffix (st, nd, rd, th)
-  const getOrdinalSuffix = (day: number): string => {
-    if (day > 3 && day < 21) return "th";
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
-  };
+  const [datePart, timePart] = currentTime.split(" | ");
 
   return (
-    <div className="flex items-center gap-6">
-      <p className="text-muted text-sm font-medium">
-        {currentTime ? (
+    <div className="flex items-center justify-center whitespace-nowrap">
+      <p className="text-center text-sm font-medium text-gray-600">
+        {datePart}
+        {timePart ? (
           <>
-            {currentTime.split(",")[0]},{" "}
-            <span className="text-txt-muted">{currentTime.split(",")[1]}</span>
+            <span className="mx-1 text-gray-400">|</span>
+            <span className="text-gray-500">{timePart}</span>
           </>
-        ) : (
-          "Loading..."
-        )}
+        ) : null}
       </p>
     </div>
   );

@@ -168,8 +168,8 @@ const ManageAccess = () => {
 
   const filteredPatients = patients.filter((patient) =>
     Object.values(patient).some((value) =>
-      value.toString().toLowerCase().includes(search.toLowerCase())
-    )
+      value.toString().toLowerCase().includes(search.toLowerCase()),
+    ),
   );
 
   const toggleSelectAll = (): void => {
@@ -183,7 +183,7 @@ const ManageAccess = () => {
 
   const toggleSelect = (id: string): void => {
     setSelected((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
     );
   };
 
@@ -391,6 +391,7 @@ const ManageAccess = () => {
                     onCheckedChange={toggleSelectAll}
                   />
                 </TableHead>
+                <TableHead className="uppercase">S/N</TableHead>
                 <TableHead className="uppercase">Patient Name</TableHead>
                 <TableHead className="uppercase">Reg Date</TableHead>
                 <TableHead className="uppercase">Last Seen</TableHead>
@@ -402,7 +403,7 @@ const ManageAccess = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPatients.map((patient) => (
+              {filteredPatients.map((patient, index) => (
                 <TableRow
                   key={patient.id}
                   className="h-16 border-b border-gray-200"
@@ -412,6 +413,9 @@ const ManageAccess = () => {
                       checked={selected.includes(patient.id)}
                       onCheckedChange={() => toggleSelect(patient.id)}
                     />
+                  </TableCell>
+                  <TableCell className="text-gray-500 font-medium">
+                    {index + 1}
                   </TableCell>
                   <TableCell>{patient.name}</TableCell>
                   <TableCell>{patient.regDate}</TableCell>
@@ -424,10 +428,10 @@ const ManageAccess = () => {
                         patient.patientType === "COMPANY"
                           ? "bg-blue-100 text-[#573FD1] border border-[#573FD1]"
                           : patient.patientType === "PRIVATE"
-                          ? "bg-[#E7EBF3] text-[#103488]  border border-[#103488]"
-                          : patient.patientType === "HMO"
-                          ? "bg-orange-100 text-[#FA7401] border border-[#FA7401]"
-                          : ""
+                            ? "bg-[#E7EBF3] text-[#103488]  border border-[#103488]"
+                            : patient.patientType === "HMO"
+                              ? "bg-orange-100 text-[#FA7401] border border-[#FA7401]"
+                              : ""
                       }`}
                     >
                       {patient.patientType}
