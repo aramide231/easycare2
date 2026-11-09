@@ -46,8 +46,11 @@ export const DEFAULT_META_TABLE_COLUMNS: CategoryTableColumn[] = [
 /** e.g. "VITAL SIGNS" → "VITAL SIGNS DETAILS" */
 export function categoryDetailsTitle(sectionName: string): string {
   const trimmed = sectionName.trim();
-  if (trimmed.toUpperCase().endsWith(" DETAILS")) return trimmed.toUpperCase();
-  return `${trimmed.toUpperCase()} DETAILS`;
+  const upper = trimmed.toUpperCase();
+  if (upper === "MEDICAL IMAGING") return "IMAGING DETAILS";
+  if (upper === "X-RAY (RADIOGRAPHY)") return "X-RAY DETAILS";
+  if (upper.endsWith(" DETAILS")) return upper;
+  return `${upper} DETAILS`;
 }
 
 export function buildTableColumnsFromFields(

@@ -96,7 +96,7 @@ export default function ReadOnlySectionTable({
   }
 
   if (sectionLabel === "MEDICAL IMAGING") {
-    return <InvestigationReview tableKey={tableKey} noun="Medical Imaging" />;
+    return <InvestigationReview tableKey={tableKey} noun="Imaging" />;
   }
 
   if (sectionLabel === "X-RAY (RADIOGRAPHY)") {

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, LogOut, Pencil, Send } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
-import { AUTH_SIGNIN_PATH } from "@/lib/authRoutes";
+import { AUTH_SIGNIN_PATH, getActiveModuleRole } from "@/lib/authRoutes";
 import EditProfileModal from "./EditProfileModal";
 import { formatOrdinalDate } from "@/lib/dateTime";
 import clientimage from "@/assets/image/haywhy.jpg";
@@ -11,6 +11,7 @@ import clientimage from "@/assets/image/haywhy.jpg";
 const ProfileMenu = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [helpdeskMessage, setHelpdeskMessage] = useState("");
@@ -22,17 +23,24 @@ const ProfileMenu = () => {
     nurse: "Nurse",
     admin: "Administrator",
     pharmacist: "Pharmacist",
+    pharmacy: "Pharmacist",
     lab: "Lab Technician",
+    laboratory: "Lab Technician",
+    diagnostics: "Diagnostics Personnel",
+    "diagnostics-and-radiologist": "Radiologist / Diagnostics",
+    hmo: "HMO Personnel",
     accountant: "Accountant",
   };
 
   const displayName = user?.fullName ?? "John Doe";
 
+  const activeRole = getActiveModuleRole(location.pathname, user?.userRole);
   const roleLabel =
-    user?.userRole && user.userRole.length > 0
-      ? (roleDisplayNames[user.userRole.toLowerCase()] ??
-        user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1))
-      : "Front Desk Personnel";
+    roleDisplayNames[activeRole.toLowerCase()] ??
+    (user?.userRole && user.userRole.length > 0
+      ? roleDisplayNames[user.userRole.toLowerCase()] ??
+        user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1)
+      : "Nurse");
 
   const registrationDate = formatOrdinalDate(new Date(2025, 0, 31));
   const lastLoginDate = formatOrdinalDate(new Date(2025, 6, 15));

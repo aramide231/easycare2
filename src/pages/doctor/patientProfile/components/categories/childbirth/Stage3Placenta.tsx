@@ -67,9 +67,15 @@ const stageThreePairFields: PairField[] = [
 
 const placentaTableColumns = [
   { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
   { key: "placentaDelivery", label: "PLACENTA DELIVERY" },
   { key: "placentaComplications", label: "PLACENTA COMPLICATIONS" },
-  { key: "estimatedBloodLoss", label: "ESTIMATED BLOOD LOSS" },
+  { key: "estimatedBloodLoss", label: "ESTIMATED BLOOD LOSS (ML)" },
+  { key: "hemorrhage", label: "EXCESSIVE BLEEDING / HEMORRHAGE" },
+  { key: "uterusContraction", label: "UTERUS CONTRACTION" },
+  { key: "uterineAtony", label: "UTERINE ATONY" },
+  { key: "bloodPressure", label: "BLOOD PRESSURE (B.P)" },
+  { key: "tpr", label: "T.P.R" },
 ];
 
 export default function Stage3Placenta() {

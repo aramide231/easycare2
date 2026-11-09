@@ -19,10 +19,11 @@ const outputTableColumns = [
   { key: "vomit", label: "VOMIT" },
   { key: "stool", label: "STOOL" },
   { key: "outputTotal", label: "OUTPUT-TOTAL" },
+  { key: "fluidBalance", label: "FLUID BALANCE" },
 ];
 
 function parseVolume(value: string): number {
-  const parsed = parseFloat(value.replace(/[^\d.]/g, ""));
+  const parsed = parseFloat(value.replace(/[^\d.-]/g, ""));
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
@@ -36,6 +37,12 @@ export default function OutputChart() {
     stool: "",
   });
   const { history } = useMedicalTable("OUTPUT CHART");
+  const { history: intakeHistory } = useMedicalTable("IN-TAKE CHART");
+
+  const latestIntake = useMemo(() => {
+    const raw = intakeHistory[0]?.intakeTotal;
+    return parseVolume(String(raw ?? "0"));
+  }, [intakeHistory]);
 
   const outputTotal = useMemo(
     () =>
@@ -47,6 +54,12 @@ export default function OutputChart() {
       parseVolume(form.stool),
     [form]
   );
+
+  const fluidBalanceVal = latestIntake - outputTotal;
+  const fluidBalanceStr =
+    outputTotal > 0 || latestIntake > 0
+      ? `${fluidBalanceVal > 0 ? "+" : ""}${fluidBalanceVal}`
+      : "";
 
   const updateField = (name: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -73,11 +86,27 @@ export default function OutputChart() {
       return {
         ...form,
         outputTotal: String(outputTotal),
+        fluidBalance: fluidBalanceStr,
       };
     },
-    [form, outputTotal],
+    [form, outputTotal, fluidBalanceStr],
     clearForm
   );
+
+  const tableRows = history.map((row, idx) => {
+    if (row.fluidBalance !== undefined && row.fluidBalance !== "") {
+      return row;
+    }
+    const matchingIntake = parseVolume(
+      String(intakeHistory[idx]?.intakeTotal ?? intakeHistory[0]?.intakeTotal ?? "0")
+    );
+    const out = parseVolume(String(row.outputTotal ?? "0"));
+    const bal = matchingIntake - out;
+    return {
+      ...row,
+      fluidBalance: bal > 0 ? `+${bal}` : String(bal),
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -97,7 +126,7 @@ export default function OutputChart() {
 
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            Urine
+            Urine (Output 1)
           </label>
           <input
             type="text"
@@ -136,7 +165,7 @@ export default function OutputChart() {
 
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            Urine
+            Urine (Output 2)
           </label>
           <input
             type="text"
@@ -160,7 +189,7 @@ export default function OutputChart() {
           />
         </div>
 
-        <div className="col-span-2">
+        <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Output-Total
           </label>
@@ -169,7 +198,30 @@ export default function OutputChart() {
             readOnly
             value={outputTotal > 0 ? String(outputTotal) : ""}
             placeholder="Auto-calculated"
-            className={`${formFieldInputClass} max-w-[calc(50%-0.5rem)] bg-gray-100 text-gray-600`}
+            className={`${formFieldInputClass} bg-gray-100 font-medium text-gray-700`}
+          />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Fluid Balance (Input - Output)
+          </label>
+          <input
+            type="text"
+            readOnly
+            value={fluidBalanceStr}
+            placeholder={
+              latestIntake > 0
+                ? `Input (${latestIntake}) - Output (${outputTotal})`
+                : "Auto-calculated"
+            }
+            className={`${formFieldInputClass} bg-gray-100 font-semibold ${
+              fluidBalanceVal < 0
+                ? "text-red-600"
+                : fluidBalanceVal > 0
+                  ? "text-emerald-700"
+                  : "text-gray-700"
+            }`}
           />
         </div>
       </div>
@@ -177,7 +229,7 @@ export default function OutputChart() {
       <CategoryMedicalTable
         title={categoryDetailsTitle("OUTPUT CHART")}
         columns={outputTableColumns}
-        rows={history}
+        rows={tableRows}
         emptyMessage="No output chart entries recorded yet."
       />
     </div>

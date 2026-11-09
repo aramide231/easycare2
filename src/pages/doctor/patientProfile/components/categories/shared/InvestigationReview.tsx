@@ -33,11 +33,21 @@ export default function InvestigationReview({
     result: "VIEW",
   }));
 
+  const columns = [
+    { key: "sn", label: "SN" },
+    { key: "dateTime", label: "DATE | TIME" },
+    { key: "patientType", label: "PATIENT TYPE" },
+    { key: "investigation", label: noun.toUpperCase() },
+    { key: "amount", label: "AMOUNT" },
+    { key: "result", label: "RESULT" },
+    { key: "doctor", label: "DOCTOR" },
+  ];
+
   return (
     <>
       <CategoryMedicalTable
         title={categoryDetailsTitle(tableKey)}
-        columns={investigationTableColumns}
+        columns={columns}
         rows={tableRows}
         linkColumns={["result"]}
         onLinkClick={(row) => remarkView.openRow(row)}

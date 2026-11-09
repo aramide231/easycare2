@@ -45,7 +45,7 @@ const VARIANTS: Record<
   { tableKey: string; noun: string; lookup: InvestigationLookupOption[] }
 > = {
   lab: { tableKey: "INVESTIGATION", noun: "Investigation", lookup: INVESTIGATION_LOOKUP },
-  imaging: { tableKey: "MEDICAL IMAGING", noun: "Medical Imaging", lookup: MEDICAL_IMAGING_LOOKUP },
+  imaging: { tableKey: "MEDICAL IMAGING", noun: "Imaging", lookup: MEDICAL_IMAGING_LOOKUP },
   xray: { tableKey: "X-RAY (RADIOGRAPHY)", noun: "X-Ray", lookup: XRAY_LOOKUP },
 };
 
@@ -174,6 +174,19 @@ export default function Investigation({ fieldLayout, variant = "lab" }: Props) {
     ? "grid w-full grid-cols-1 items-end gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(140px,2fr)_auto]"
     : `${formFieldGridClass} items-end lg:grid-cols-[minmax(0,1fr)_minmax(140px,0.75fr)_auto]`;
 
+  const columns = useMemo(
+    () => [
+      { key: "sn", label: "SN" },
+      { key: "dateTime", label: "DATE | TIME" },
+      { key: "patientType", label: "PATIENT TYPE" },
+      { key: "investigation", label: noun.toUpperCase() },
+      { key: "amount", label: "AMOUNT" },
+      { key: "remarks", label: "RESULT" },
+      { key: "doctor", label: "DOCTOR" },
+    ],
+    [noun]
+  );
+
   return (
     <div className="space-y-6">
       <div className={entryRowClass}>
@@ -273,7 +286,7 @@ export default function Investigation({ fieldLayout, variant = "lab" }: Props) {
 
       <CategoryMedicalTable
         title={categoryDetailsTitle(TABLE_KEY)}
-        columns={investigationTableColumns}
+        columns={columns}
         rows={tableRows}
         linkColumns={["remarks"]}
         onLinkClick={(row) => remarkView.openRow(row)}
