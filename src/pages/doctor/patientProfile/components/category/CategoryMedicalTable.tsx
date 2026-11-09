@@ -51,8 +51,8 @@ const CategoryMedicalTable = ({
         <h3 className="text-sm font-bold uppercase tracking-wide text-gray-800">
           {title}
         </h3>
-        {columns.length > 8 && (
-          <span className="text-[11px] text-gray-400">
+        {columns.length > 5 && (
+          <span className="text-[11px] font-medium text-[#573FD1]">
             Scroll horizontally to view all columns &rarr;
           </span>
         )}

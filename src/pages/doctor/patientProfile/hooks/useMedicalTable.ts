@@ -2,6 +2,7 @@ import { useSyncExternalStore } from "react";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import { DIAGNOSIS_SEED } from "../data/diagnosisSeed";
 import { INVESTIGATION_SEED } from "../data/investigationSeed";
+import { IMAGING_SEED, XRAY_SEED } from "../data/imagingSeed";
 import { PHYSICAL_EXAMINATION_SEED } from "../data/physicalExaminationSeed";
 import { PRESENTING_COMPLAINTS_SEED } from "../data/presentingComplaintsSeed";
 import { PROCEDURE_SEED } from "../data/procedureSeed";
@@ -113,8 +114,8 @@ const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
   "PHYSICAL EXAMINATION": [...PHYSICAL_EXAMINATION_SEED],
   DIAGNOSIS: [...DIAGNOSIS_SEED],
   INVESTIGATION: [...INVESTIGATION_SEED],
-  "MEDICAL IMAGING": [],
-  "X-RAY (RADIOGRAPHY)": [],
+  "MEDICAL IMAGING": [...IMAGING_SEED],
+  "X-RAY (RADIOGRAPHY)": [...XRAY_SEED],
   TREATMENT: [...TREATMENT_SEED],
   PROCEDURE: [...PROCEDURE_SEED],
   MEDICATION: [...INITIAL_MEDICATION_ROWS],
@@ -144,6 +145,7 @@ const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
       vomit: "—",
       stool: "Formed x1",
       outputTotal: "500",
+      fluidBalance: "+200",
     },
   ],
   "PRE-OPERATION NOTE": [

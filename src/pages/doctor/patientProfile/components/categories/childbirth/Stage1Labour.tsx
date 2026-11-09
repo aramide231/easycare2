@@ -54,12 +54,16 @@ const stageOneLabourPairFields: PairField[] = [
 ];
 
 const labourTableColumns = [
-  { key: "sn", label: "S/N" },
-  { key: "dateTime", label: "DATE" },
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
   { key: "patientType", label: "PATIENT TYPE" },
-  { key: "intensity", label: "INT. OF CONT." },
-  { key: "cervicalDilatation", label: "C.V" },
+  { key: "intensity", label: "INTENSITY OF CONTRACTIONS" },
+  { key: "cervicalDilatation", label: "CERVICAL DILATATION (4HRLY)" },
   { key: "presentation", label: "PRESENTATION" },
+  { key: "fhr", label: "FETAL HEART RATE (FHR)" },
+  { key: "bloodPressure", label: "BLOOD PRESSURE (B.P)" },
+  { key: "tpr", label: "T.P.R" },
+  { key: "additional", label: "ADDITIONAL(S)" },
 ];
 
 export default function Stage1Labour() {

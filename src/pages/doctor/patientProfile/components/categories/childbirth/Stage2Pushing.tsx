@@ -73,10 +73,14 @@ const stageTwoPairFields: PairField[] = [
 const pushingTableColumns = [
   { key: "sn", label: "SN" },
   { key: "deliveryDateTime", label: "DATE | TIME" },
-  { key: "cervicalDilatation", label: "C.V" },
-  { key: "deliveryMode", label: "MODE" },
+  { key: "cervicalDilatation", label: "CERVICAL DILATATION" },
+  { key: "deliveryMode", label: "MOTHER'S MODE OF DELIVERY" },
   { key: "apgarScore", label: "APGAR SCORE" },
-  { key: "babyGender", label: "GENDER" },
+  { key: "babyGender", label: "BABY'S GENDER" },
+  { key: "babyWeight", label: "BABY'S WEIGHT (KG)" },
+  { key: "babyHeight", label: "BABY'S HEIGHT (CM)" },
+  { key: "babyTemperature", label: "BABY'S TEMP" },
+  { key: "abnormality", label: "CONGENITAL ABNORMALITY" },
 ];
 
 function SuffixInput({

@@ -49,6 +49,10 @@ export function resolveCategoryForm(
 ): ReactNode {
   const isNurse = module === "nurse";
   const category = selectedCategory ?? "";
+  if (isNurse && sectionLabel === "MEDICATION") {
+    return <ReadOnlySectionTable sectionLabel={sectionLabel} category={category} />;
+  }
+
   if (isNurse && category === "Ante Natal Care" && sectionLabel === "VITAL SIGNS") return <VitalSigns nurse />;
   if (isNurse && category === "Immunization" && sectionLabel === "VACCINE ADMINISTRATION") return <VaccineAdministration nurse />;
   if (isNurse && category === "Ante Natal Care" && sectionLabel === "NEW ANTENATAL BOOKING") return <NewAntenatalBooking nurse />;
@@ -89,9 +93,6 @@ export function resolveCategoryForm(
     if (sectionLabel === "PRESENTING COMPLAINTS") {
       return <PresentingComplaints />;
     }
-    if (sectionLabel === "MEDICATION") {
-      return <NurseMedicationServe />;
-    }
     if (sectionLabel === "NURSING DISPENSES") {
       return <NurseDispenseHistory />;
     }
@@ -103,9 +104,6 @@ export function resolveCategoryForm(
   if (isNurse && category === "Neo Natal Care") {
     if (sectionLabel === "DIAGNOSIS") {
       return <ReadOnlySectionTable sectionLabel={sectionLabel} tableKey={categoryStorageKey(category, sectionLabel)} />;
-    }
-    if (sectionLabel === "MEDICATION") {
-      return <Medication />;
     }
     if (
       sectionLabel === "INVESTIGATION" ||
