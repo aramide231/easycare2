@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
+import { MEDICAL_IMAGING_LOOKUP, XRAY_LOOKUP } from "../../../data/imagingLookup";
 import {
   INVESTIGATION_LOOKUP,
   formatInvestigationNaira,
@@ -32,10 +33,21 @@ const investigationTableColumns = [
   { key: "patientType", label: "PATIENT TYPE" },
   { key: "investigation", label: "INVESTIGATION" },
   { key: "amount", label: "AMOUNT" },
-  { key: "remarks", label: "REMARKS" },
+  { key: "remarks", label: "RESULT" },
+  { key: "doctor", label: "DOCTOR" },
 ];
 
-const TABLE_KEY = "INVESTIGATION";
+export type InvestigationVariant = "lab" | "imaging" | "xray";
+
+/** Lab tests, scans and x-rays share one look but are stored and priced separately. */
+const VARIANTS: Record<
+  InvestigationVariant,
+  { tableKey: string; noun: string; lookup: InvestigationLookupOption[] }
+> = {
+  lab: { tableKey: "INVESTIGATION", noun: "Investigation", lookup: INVESTIGATION_LOOKUP },
+  imaging: { tableKey: "MEDICAL IMAGING", noun: "Medical Imaging", lookup: MEDICAL_IMAGING_LOOKUP },
+  xray: { tableKey: "X-RAY (RADIOGRAPHY)", noun: "X-Ray", lookup: XRAY_LOOKUP },
+};
 
 type SelectedInvestigation = {
   id: string;
@@ -45,9 +57,11 @@ type SelectedInvestigation = {
 
 type Props = {
   fieldLayout?: "wide-investigation";
+  variant?: InvestigationVariant;
 };
 
-export default function Investigation({ fieldLayout }: Props) {
+export default function Investigation({ fieldLayout, variant = "lab" }: Props) {
+  const { tableKey: TABLE_KEY, noun, lookup } = VARIANTS[variant];
   const [search, setSearch] = useState("");
   const [amountInput, setAmountInput] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -59,11 +73,11 @@ export default function Investigation({ fieldLayout }: Props) {
 
   const filteredOptions = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return INVESTIGATION_LOOKUP;
-    return INVESTIGATION_LOOKUP.filter((option) =>
+    if (!query) return lookup;
+    return lookup.filter((option) =>
       option.name.toLowerCase().includes(query)
     );
-  }, [search]);
+  }, [search, lookup]);
 
   const entryAmount = parseAmountDigits(amountInput);
   const totalAmount = picked.reduce((sum, item) => sum + item.amount, 0);
@@ -116,7 +130,7 @@ export default function Investigation({ fieldLayout }: Props) {
     setSearch(value);
     setDropdownOpen(true);
 
-    const exactMatch = INVESTIGATION_LOOKUP.find(
+    const exactMatch = lookup.find(
       (option) => option.name.toLowerCase() === value.trim().toLowerCase()
     );
     if (exactMatch) {
@@ -168,7 +182,7 @@ export default function Investigation({ fieldLayout }: Props) {
           className={`relative min-w-0 ${isWideInvestigation ? "" : "col-span-2 lg:col-span-1"}`}
         >
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            Investigation
+            {noun}
           </label>
           <div className="relative">
             <input
@@ -176,7 +190,7 @@ export default function Investigation({ fieldLayout }: Props) {
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               onFocus={() => setDropdownOpen(true)}
-              placeholder="Type or select investigation"
+              placeholder={`Type or select ${noun.toLowerCase()}`}
               className={`${formFieldInputClass} pr-10`}
             />
             <Search
@@ -189,7 +203,7 @@ export default function Investigation({ fieldLayout }: Props) {
             <ul className="absolute left-0 right-0 top-full z-30 mt-1 max-h-52 overflow-y-auto rounded-[8px] border border-gray-200 bg-white py-1 shadow-lg">
               {filteredOptions.length === 0 ? (
                 <li className="px-3 py-2 text-sm text-gray-500">
-                  No investigation found
+                  No {noun.toLowerCase()} found
                 </li>
               ) : (
                 filteredOptions.map((option) => (
@@ -227,7 +241,7 @@ export default function Investigation({ fieldLayout }: Props) {
           disabled={!canAddInvestigation}
           className="h-[45px] whitespace-nowrap rounded-lg bg-[#573FD1] px-4 text-xs font-bold uppercase tracking-wide text-white hover:bg-[#4a35b8] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Add Investigation
+          Add {noun}
         </button>
       </div>
 
@@ -258,7 +272,7 @@ export default function Investigation({ fieldLayout }: Props) {
       )}
 
       <CategoryMedicalTable
-        title={categoryDetailsTitle("INVESTIGATION")}
+        title={categoryDetailsTitle(TABLE_KEY)}
         columns={investigationTableColumns}
         rows={tableRows}
         linkColumns={["remarks"]}
@@ -268,7 +282,7 @@ export default function Investigation({ fieldLayout }: Props) {
       <MedicalRemarkViewPanel
         open={remarkView.isOpen}
         onClose={remarkView.close}
-        title="Investigation Results"
+        title={`${noun} Results`}
         subtitle={
           remarkView.selectedRow
             ? String(remarkView.selectedRow.investigation ?? "")
@@ -284,6 +298,7 @@ export default function Investigation({ fieldLayout }: Props) {
           <InvestigationResultContent
             investigationName={String(remarkView.selectedRow.investigation ?? "")}
             dateTime={String(remarkView.selectedRow.dateTime ?? "")}
+            doctor={String(remarkView.selectedRow.doctor ?? "")}
           />
         ) : null}
       </MedicalRemarkViewPanel>

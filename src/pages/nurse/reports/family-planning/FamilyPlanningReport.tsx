@@ -1,5 +1,6 @@
-import FamilyPlanningLog from "./components/FamilyPlanningLog";
+import ComingSoonPage from "@/components/ui/ComingSoonPage";
 
-const FamilyPlanningReport = () => <FamilyPlanningLog />;
+/** Report details are hidden until Family Planning is released ("Info Available Soon"). */
+const FamilyPlanningReport = () => <ComingSoonPage title="Family Planning" emphasized />;
 
 export default FamilyPlanningReport;

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import ProfileInlineFieldGrid, {
@@ -41,7 +42,6 @@ export default function PostOperationNote() {
 
   const {
     history: postOpHistory,
-    remove: deletePostOp,
   } = useMedicalTable("POST-OPERATION NOTE");
 
   const clearForm = useCallback(() => setForm({}), []);
@@ -82,43 +82,24 @@ export default function PostOperationNote() {
         renderSelectOptions={renderSelectOptions}
       />
 
-      {postOpHistory.length > 0 && (
-        <div className="overflow-x-auto">
-          <h4 className="mb-2 font-semibold">POST-OPERATION NOTE DETAILS</h4>
-
-          <table className="min-w-max w-full border text-left text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>S/N</th>
-                <th>Date | Time</th>
-                <th>Surgeon</th>
-                <th>Procedure</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {postOpHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.surgeon}</td>
-                  <td>{row.procedureFindings}</td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => deletePostOp(index)}
-                      className="rounded bg-red-500 px-2 py-1 text-xs text-white"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <CategoryMedicalTable
+        title="POST-OPERATION NOTE DETAILS"
+        columns={[
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "surgeon", label: "SURGEON" },
+  { key: "procedureFindings", label: "PROCEDURE / FINDINGS" },
+  { key: "swabCount", label: "SWAB COUNT CORRECT" },
+  { key: "bloodLoss", label: "BLOOD LOSS" },
+  { key: "bloodPressure", label: "B.P" },
+  { key: "pulse", label: "PULSE" },
+  { key: "respiration", label: "RESP / SPO2" },
+  { key: "signature", label: "SIGNATURE" },
+]}
+        rows={postOpHistory}
+        emptyMessage="No post-operation notes recorded yet."
+      />
     </div>
   );
 }

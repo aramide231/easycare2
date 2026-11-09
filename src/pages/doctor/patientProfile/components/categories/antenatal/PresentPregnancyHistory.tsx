@@ -132,7 +132,7 @@ export default function PresentPregnancyHistory() {
                   <td className="px-2 py-1">{idx + 1}</td>
                   {fields.map((f) => (
                     <td key={f.name} className="px-2 py-1">
-                      {entry[f.name] ?? "—"}
+                      {String(entry[f.name] ?? "—")}
                     </td>
                   ))}
                   <td className="px-2 py-1">

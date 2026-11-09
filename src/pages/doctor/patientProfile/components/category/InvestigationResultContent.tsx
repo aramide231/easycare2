@@ -6,11 +6,14 @@ import {
 type Props = {
   investigationName: string;
   dateTime?: string;
+  /** Requesting doctor, captured by the system when the order was made. */
+  doctor?: string;
 };
 
 export default function InvestigationResultContent({
   investigationName,
   dateTime,
+  doctor,
 }: Props) {
   const report =
     getInvestigationResultReport(investigationName) ??
@@ -22,6 +25,9 @@ export default function InvestigationResultContent({
         <p className="text-sm font-semibold text-gray-900">{report.investigation}</p>
         {report.reportedAt ? (
           <p className="text-xs text-gray-600">Reported: {report.reportedAt}</p>
+        ) : null}
+        {doctor ? (
+          <p className="text-xs text-gray-600">Requested by: {doctor}</p>
         ) : null}
         {report.reportedBy ? (
           <p className="text-xs text-gray-600">{report.reportedBy}</p>

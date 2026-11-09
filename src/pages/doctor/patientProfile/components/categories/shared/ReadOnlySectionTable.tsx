@@ -6,10 +6,29 @@ import {
 import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import InvestigationReview from "./InvestigationReview";
 import MedicationDispenseTable from "./MedicationDispenseTable";
+import Procedure from "./Procedure";
+
+const physicalExamColumns = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "general", label: "GENERAL" },
+  { key: "cns", label: "CNS" },
+  { key: "chest", label: "CHEST" },
+  { key: "cvs", label: "CVS" },
+  { key: "abdomen", label: "ABDOMEN" },
+  { key: "dre", label: "DRE" },
+  { key: "ve", label: "VE" },
+  { key: "mss", label: "MSS" },
+  { key: "ent", label: "ENT" },
+  { key: "comments", label: "COMMENTS" },
+  { key: "doctor", label: "DOCTOR" },
+];
 
 type Props = {
   sectionLabel: string;
   tableKey?: string;
+  category?: string;
 };
 
 function buildColumns(sectionLabel: string, rows: Record<string, unknown>[]) {
@@ -61,7 +80,11 @@ function buildColumns(sectionLabel: string, rows: Record<string, unknown>[]) {
 }
 
 /** Table-only clinician documentation review for nurse module. */
-export default function ReadOnlySectionTable({ sectionLabel, tableKey = sectionLabel }: Props) {
+export default function ReadOnlySectionTable({
+  sectionLabel,
+  tableKey = sectionLabel,
+  category,
+}: Props) {
   const { history } = useMedicalTable(tableKey);
   const rows = sectionLabel === "MEDICATION" ? history.flatMap((row) => {
     const { medications, ...visit } = row;
@@ -70,6 +93,31 @@ export default function ReadOnlySectionTable({ sectionLabel, tableKey = sectionL
 
   if (sectionLabel === "INVESTIGATION") {
     return <InvestigationReview tableKey={tableKey} />;
+  }
+
+  if (sectionLabel === "MEDICAL IMAGING") {
+    return <InvestigationReview tableKey={tableKey} noun="Medical Imaging" />;
+  }
+
+  if (sectionLabel === "X-RAY (RADIOGRAPHY)") {
+    return <InvestigationReview tableKey={tableKey} noun="X-Ray" />;
+  }
+
+  if (sectionLabel === "PROCEDURE") {
+    return <Procedure nurse category={category} />;
+  }
+
+  if (sectionLabel === "PHYSICAL EXAMINATION") {
+    return (
+      <CategoryMedicalTable
+        title={categoryDetailsTitle(sectionLabel)}
+        columns={physicalExamColumns}
+        rows={history}
+        emptyMessage="No physical examination recorded yet."
+        emptyCellLabel="nil"
+        wrapColumns={["general", "cns", "chest", "cvs", "abdomen", "dre", "ve", "mss", "ent", "comments"]}
+      />
+    );
   }
 
   if (sectionLabel === "MEDICATION") {

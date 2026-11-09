@@ -14,10 +14,17 @@ const investigationTableColumns = [
   { key: "investigation", label: "INVESTIGATION" },
   { key: "amount", label: "AMOUNT" },
   { key: "result", label: "RESULT" },
+  { key: "doctor", label: "DOCTOR" },
 ];
 
 /** Nurse: review investigation history (table only). */
-export default function InvestigationReview({ tableKey = "INVESTIGATION" }: { tableKey?: string }) {
+export default function InvestigationReview({
+  tableKey = "INVESTIGATION",
+  noun = "Investigation",
+}: {
+  tableKey?: string;
+  noun?: string;
+}) {
   const { history } = useMedicalTable(tableKey);
   const remarkView = useMedicalRemarkView();
 
@@ -29,7 +36,7 @@ export default function InvestigationReview({ tableKey = "INVESTIGATION" }: { ta
   return (
     <>
       <CategoryMedicalTable
-        title={categoryDetailsTitle("INVESTIGATION")}
+        title={categoryDetailsTitle(tableKey)}
         columns={investigationTableColumns}
         rows={tableRows}
         linkColumns={["result"]}
@@ -39,7 +46,7 @@ export default function InvestigationReview({ tableKey = "INVESTIGATION" }: { ta
       <MedicalRemarkViewPanel
         open={remarkView.isOpen}
         onClose={remarkView.close}
-        title="Investigation Results"
+        title={`${noun} Results`}
         subtitle={
           remarkView.selectedRow
             ? String(remarkView.selectedRow.investigation ?? "")
@@ -55,6 +62,7 @@ export default function InvestigationReview({ tableKey = "INVESTIGATION" }: { ta
           <InvestigationResultContent
             investigationName={String(remarkView.selectedRow.investigation ?? "")}
             dateTime={String(remarkView.selectedRow.dateTime ?? "")}
+            doctor={String(remarkView.selectedRow.doctor ?? "")}
           />
         ) : null}
       </MedicalRemarkViewPanel>

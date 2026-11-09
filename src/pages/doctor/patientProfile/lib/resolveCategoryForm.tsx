@@ -12,6 +12,7 @@ import NurseMedicationServe from "@/pages/doctor/patientProfile/components/categ
 import NurseDispenseHistory from "../components/categories/genConsult/NurseDispenseHistory";
 import NeoNatalVitalSigns from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
 import ImmunizationVitalSigns from "@/pages/doctor/patientProfile/components/categories/immunization/ImmunizationVitalSigns";
+import GenConsultVitalSigns from "@/pages/doctor/patientProfile/components/categories/genConsult/GenConsultVitalSigns";
 import ReadOnlySectionTable from "@/pages/doctor/patientProfile/components/categories/shared/ReadOnlySectionTable";
 
 const ANC_NURSE_READONLY_SECTIONS = new Set([
@@ -19,6 +20,8 @@ const ANC_NURSE_READONLY_SECTIONS = new Set([
   "PHYSICAL EXAMINATION",
   "DIAGNOSIS",
   "INVESTIGATION",
+  "MEDICAL IMAGING",
+  "X-RAY (RADIOGRAPHY)",
   "PROCEDURE",
   "MEDICATION",
 ]);
@@ -28,10 +31,10 @@ const GEN_CONSULT_NURSE_DETAILS_ONLY = new Set([
   "PHYSICAL EXAMINATION",
   "DIAGNOSIS",
   "INVESTIGATION",
+  "MEDICAL IMAGING",
+  "X-RAY (RADIOGRAPHY)",
   "PROCEDURE",
   "REPORT WRITING",
-  "IN-TAKE CHART",
-  "OUTPUT CHART",
   "PHARMACY DISPENSE",
 ]);
 
@@ -56,6 +59,10 @@ export function resolveCategoryForm(
   }
 
   if (isNurse && category === "Gen Consult" && sectionLabel === "VITAL SIGNS") {
+    return <GenConsultVitalSigns />;
+  }
+
+  if (isNurse && category === "Immunization" && sectionLabel === "MEDICATION") {
     return <ReadOnlySectionTable sectionLabel={sectionLabel} />;
   }
 
@@ -71,7 +78,7 @@ export function resolveCategoryForm(
       return <PresentingComplaints />;
     }
     if (ANC_NURSE_READONLY_SECTIONS.has(sectionLabel)) {
-      return <ReadOnlySectionTable sectionLabel={sectionLabel} />;
+      return <ReadOnlySectionTable sectionLabel={sectionLabel} category={category} />;
     }
   }
 
@@ -89,7 +96,7 @@ export function resolveCategoryForm(
       return <NurseDispenseHistory />;
     }
     if (GEN_CONSULT_NURSE_DETAILS_ONLY.has(sectionLabel)) {
-      return <ReadOnlySectionTable sectionLabel={sectionLabel} />;
+      return <ReadOnlySectionTable sectionLabel={sectionLabel} category={category} />;
     }
   }
 
@@ -100,7 +107,12 @@ export function resolveCategoryForm(
     if (sectionLabel === "MEDICATION") {
       return <Medication />;
     }
-    if (sectionLabel === "INVESTIGATION" || sectionLabel === "PROCEDURE") {
+    if (
+      sectionLabel === "INVESTIGATION" ||
+      sectionLabel === "MEDICAL IMAGING" ||
+      sectionLabel === "X-RAY (RADIOGRAPHY)" ||
+      sectionLabel === "PROCEDURE"
+    ) {
       return <ReadOnlySectionTable sectionLabel={sectionLabel} tableKey={categoryStorageKey(category, sectionLabel)} />;
     }
   }

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import CategoryMedicalTable from "../../category/CategoryMedicalTable";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import ProfileInlineFieldGrid, {
@@ -28,7 +29,6 @@ export default function PreOperationNote() {
 
   const {
     history: preOpHistory,
-    remove: deletePreOp,
   } = useMedicalTable("PRE-OPERATION NOTE");
 
   const clearForm = useCallback(() => setForm({}), []);
@@ -117,47 +117,28 @@ export default function PreOperationNote() {
         renderSelectOptions={renderSelectOptions}
       />
 
-      {preOpHistory.length > 0 && (
-        <div className="overflow-x-auto">
-          <h4 className="mb-2 font-semibold">PRE-OPERATION NOTE DETAILS</h4>
-
-          <table className="min-w-max w-full border text-left text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th>S/N</th>
-                <th>Date | Time</th>
-                <th>Pre-Op HB/PCV</th>
-                <th>Genotype</th>
-                <th>HIV</th>
-                <th>Hepatitis</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {preOpHistory.map((row, index) => (
-                <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.preOpHB}</td>
-                  <td>{row.genotype}</td>
-                  <td>{row.hiv}</td>
-                  <td>{row.hepatitis}</td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => deletePreOp(index)}
-                      className="rounded bg-red-500 px-2 py-1 text-xs text-white"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <CategoryMedicalTable
+        title="PRE-OPERATION NOTE DETAILS"
+        columns={[
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "preOpHB", label: "PRE-OP HB/PCV" },
+  { key: "genotype", label: "GENOTYPE" },
+  { key: "hiv", label: "HIV" },
+  { key: "hepatitis", label: "HEPATITIS" },
+  { key: "bloodGroup", label: "BLOOD GROUP" },
+  { key: "allergies", label: "ALLERGIES" },
+  { key: "operationProposed", label: "OPERATION PROPOSED" },
+  { key: "indication", label: "INDICATION" },
+  { key: "operationState", label: "OPERATION STATE" },
+  { key: "proposedDate", label: "PROPOSED DATE" },
+  { key: "consentGiven", label: "CONSENT GIVEN" },
+  { key: "signature", label: "SIGNATURE" },
+]}
+        rows={preOpHistory}
+        emptyMessage="No pre-operation notes recorded yet."
+      />
     </div>
   );
 }

@@ -155,12 +155,12 @@ export default function FollowUpVisit() {
             <tbody>
               {followUpVisits.map((row, index) => (
                 <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType}</td>
-                  <td>{row.ega}</td>
-                  <td>{row.heightOfFundus}</td>
-                  <td>{row.presentationPosition}</td>
+                  <td>{String(row.sn ?? index + 1)}</td>
+                  <td>{String(row.dateTime ?? "—")}</td>
+                  <td>{String(row.patientType ?? "—")}</td>
+                  <td>{String(row.ega ?? "—")}</td>
+                  <td>{String(row.heightOfFundus ?? "—")}</td>
+                  <td>{String(row.presentationPosition ?? "—")}</td>
                   <td>
                     <button
                       onClick={() => deleteFollowUp(index)}

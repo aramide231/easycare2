@@ -12,6 +12,7 @@ const presentingComplaintsTableColumns = [
   { key: "dateTime", label: "DATE | TIME" },
   { key: "patientType", label: "PATIENT TYPE" },
   { key: "complaint", label: "COMPLAINTS / HISTORY OF PRESENTING COMPLAINTS" },
+  { key: "doctor", label: "DOCTOR" },
 ];
 
 export default function DoctorPresentingComplaints() {

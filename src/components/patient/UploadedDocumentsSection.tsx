@@ -77,7 +77,7 @@ const UploadedDocumentsSection = ({
   patientName,
   patientId,
   phoneNumber,
-  variant = "doctor",
+  variant: _variant = "doctor",
   viewMode,
   hidePanelPicker = false,
 }: Props) => {

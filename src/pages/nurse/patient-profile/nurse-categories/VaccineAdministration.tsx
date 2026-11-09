@@ -37,7 +37,7 @@ const VACCINES_BY_AGE_GRADE: Record<string, string[]> = {
   "2 Years": ["Typhoid Vaccine", "Meningococcal Conjugate", "Hepatitis A"],
   "5 Years": ["DPT Booster", "OPV Booster", "MMR Booster"],
   "9 - 14 Years": ["HPV (Human Papillomavirus)", "Tdap Booster"],
-  "Adult / Booster": [
+  "Adult (18+)": [
     "Tetanus Toxoid (TT)",
     "Hepatitis B",
     "Yellow Fever",
@@ -57,8 +57,26 @@ const SITE_OPTIONS = [
   "Right Thigh",
   "Left Arm",
   "Right Arm",
-  "Oral",
+  "Mouth",
 ];
+
+/** Standard price list (naira) per vaccine; unknown vaccines fall back to the default price. */
+const DEFAULT_VACCINE_PRICE = 5000;
+const VACCINE_PRICES: Record<string, number> = {
+  BCG: 2500,
+  "Hepatitis B 0 (HepB 0)": 3000,
+  "OPV 0": 1500,
+  "Yellow Fever": 8000,
+  "Tetanus Toxoid (TT)": 2000,
+  "Hepatitis B": 6000,
+  Influenza: 7500,
+  "COVID-19": 10000,
+  "HPV (Human Papillomavirus)": 25000,
+  "Malaria Vaccine 1": 9000,
+};
+function vaccinePrice(vaccine: string): string {
+  return String(VACCINE_PRICES[vaccine] ?? DEFAULT_VACCINE_PRICE);
+}
 
 const vaccineDetailsColumns = [
   { key: "sn", label: "SN" },
@@ -153,6 +171,7 @@ function SelectField({
 }
 
 const nursingCommentOptions = [
+  "Normal Weight",
   "Obesity",
   "Overweight",
   "Severely Underweight",
@@ -209,7 +228,11 @@ const VaccineAdministration = ({ nurse = false }: { nurse?: boolean }) => {
   };
 
   const handleRowChange = (name: keyof VaccineRow, value: string) => {
-    setVaccineRow((prev) => ({ ...prev, [name]: value }));
+    setVaccineRow((prev) => ({
+      ...prev,
+      [name]: value,
+      ...(name === "vaccine" ? { amount: value ? vaccinePrice(value) : "" } : {}),
+    }));
   };
 
   const handleMetaChange = (name: string, value: string) => {
@@ -340,7 +363,7 @@ const VaccineAdministration = ({ nurse = false }: { nurse?: boolean }) => {
           <NairaAmountInput
             value={sanitizeAmountDigits(vaccineRow.amount)}
             onChange={(digits) => handleRowChange("amount", digits)}
-            readOnly={!selectedAgeGrade}
+            readOnly
           />
         </div>
 
@@ -355,7 +378,9 @@ const VaccineAdministration = ({ nurse = false }: { nurse?: boolean }) => {
       </div>
 
       {vaccines.length > 0 && (
-        <div className="space-y-2">
+        <div className="w-full max-w-full space-y-2 overflow-x-auto pb-2">
+          <p className="text-[11px] text-gray-400">Scroll horizontally to view all columns &rarr;</p>
+          <div className="min-w-[760px]">
           <div className="hidden text-xs uppercase text-gray-500 sm:grid sm:grid-cols-[2rem_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.7fr)_minmax(0,0.9fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_4.5rem] sm:gap-2 sm:px-3 sm:pb-1">
             <span>S/N</span>
             <span>Age Grade</span>
@@ -405,6 +430,7 @@ const VaccineAdministration = ({ nurse = false }: { nurse?: boolean }) => {
 
           <div className="text-right text-base font-semibold text-gray-900">
             TOTAL: {formatNaira(totalAmount)}
+          </div>
           </div>
         </div>
       )}

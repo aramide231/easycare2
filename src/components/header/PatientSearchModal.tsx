@@ -32,7 +32,7 @@ const PatientSearchModal = ({
   open,
   onClose,
   initialQuery = "",
-  anchorRef,
+  anchorRef: _anchorRef,
 }: Props) => {
   const { user } = useAuth();
   const navigate = useNavigate();

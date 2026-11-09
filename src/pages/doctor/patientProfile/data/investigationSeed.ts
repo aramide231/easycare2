@@ -5,6 +5,7 @@ export const INVESTIGATION_SEED = [
     patientType: "Out-Patient",
     investigation: "HVS",
     amount: "N 4,000.00",
+    doctor: "Dr. Chibuzor",
     hasResult: true,
   },
   {
@@ -13,6 +14,7 @@ export const INVESTIGATION_SEED = [
     patientType: "In-Patient",
     investigation: "FBC",
     amount: "N 6,500.00",
+    doctor: "Dr. Chibuzor",
     hasResult: true,
   },
   {
@@ -21,6 +23,7 @@ export const INVESTIGATION_SEED = [
     patientType: "Out-Patient",
     investigation: "Urinalysis",
     amount: "N 3,000.00",
+    doctor: "Dr. Chibuzor",
     hasResult: true,
   },
   {
@@ -29,6 +32,7 @@ export const INVESTIGATION_SEED = [
     patientType: "Out-Patient",
     investigation: "Malaria RDT",
     amount: "N 1,500.00",
+    doctor: "Dr. Chibuzor",
     hasResult: false,
   },
 ];

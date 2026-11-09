@@ -53,7 +53,7 @@ export default function ProfileInlineFieldGrid({
               rows={field.rows ?? 4}
               value={values[field.name] || ""}
               onChange={(e) => onChange(field.name, e.target.value)}
-              placeholder={field.placeholder}
+              placeholder={field.placeholder || "-Input text here-"}
               className={formFieldTextareaClass}
             />
           ) : field.type === "select" ? (
@@ -70,7 +70,7 @@ export default function ProfileInlineFieldGrid({
               type={field.type || "text"}
               value={values[field.name] || ""}
               onChange={(e) => onChange(field.name, e.target.value)}
-              placeholder={field.placeholder}
+              placeholder={field.placeholder || "-Input text here-"}
               className={formFieldInputClass}
             />
           )}

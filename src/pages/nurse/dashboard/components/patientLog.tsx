@@ -112,9 +112,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({
 
   const handleFlagPatient = (patient: Patient) => {
     setShowOptions(null);
-    navigate(`/nurse/flag-profile/${patient.patientId}`, {
-      state: { patient },
-    });
+    setFlagModalPatient(patient);
   };
 
   const handleSaveChanges = async () => {
