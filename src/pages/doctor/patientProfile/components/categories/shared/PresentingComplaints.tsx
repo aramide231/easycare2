@@ -8,6 +8,7 @@ const presentingComplaintsTableColumns = [
   { key: "dateTime", label: "DATE | TIME" },
   { key: "patientType", label: "PATIENT TYPE" },
   { key: "complaint", label: "COMPLAINTS / HISTORY OF PRESENTING COMPLAINTS" },
+  { key: "doctor", label: "DOCTOR" },
 ];
 
 /** Read-only Clinician documentation table — used on Nurse module. */

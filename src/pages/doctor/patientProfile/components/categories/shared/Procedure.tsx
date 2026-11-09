@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import { categoryDetailsTitle } from "../../../config/categoryFieldTypes";
+import { HealthCategoryContext } from "../../../lib/categoryStorage";
 import {
   PROCEDURE_LOOKUP,
   formatProcedureNaira,
@@ -21,15 +22,31 @@ import NumberedSummaryList from "../../category/NumberedSummaryList";
 import NairaAmountInput, {
   parseAmountDigits,
 } from "../../category/NairaAmountInput";
-import { formFieldInputClass } from "../../../lib/formFieldStyles";
+import {
+  formFieldInputClass,
+  formFieldSelectClass,
+  formFieldTextareaClass,
+} from "../../../lib/formFieldStyles";
 
-const procedureHistoryColumns = [
+/** Antenatal Procedure: Dr column is at the centre (col 4 of 7). */
+const ancProcedureHistoryColumns = [
+  { key: "sn", label: "SN" },
+  { key: "dateTime", label: "DATE | TIME" },
+  { key: "patientType", label: "PATIENT TYPE" },
+  { key: "doctor", label: "DOCTOR" },
+  { key: "procedure", label: "PROCEDURE" },
+  { key: "price", label: "PRICE" },
+  { key: "remarks", label: "RESULT" },
+];
+
+/** Gen Consult Procedure: Dr column is last. */
+const genConsultProcedureHistoryColumns = [
   { key: "sn", label: "SN" },
   { key: "dateTime", label: "DATE | TIME" },
   { key: "patientType", label: "PATIENT TYPE" },
   { key: "procedure", label: "PROCEDURE" },
   { key: "price", label: "PRICE" },
-  { key: "remarks", label: "REMARKS" },
+  { key: "remarks", label: "RESULT" },
   { key: "doctor", label: "DOCTOR" },
 ];
 
@@ -41,9 +58,22 @@ type SelectedProcedure = {
   amount: number;
 };
 
-export default function Procedure() {
+type ProcedureProps = {
+  /** Nurse view: no procedure ordering, only findings write-up + details table. */
+  nurse?: boolean;
+  category?: string | null;
+};
+
+export default function Procedure({ nurse = false, category }: ProcedureProps) {
+  const activeCategory = category ?? useContext(HealthCategoryContext);
+  const isAntenatal = activeCategory === "Ante Natal Care";
+  const columns = isAntenatal
+    ? ancProcedureHistoryColumns
+    : genConsultProcedureHistoryColumns;
   const { user } = useAuth();
   const doctorName = user?.fullName ? `Dr. ${user.fullName}` : "Dr. Chibuzor";
+  const [findings, setFindings] = useState("");
+  const [findingsRow, setFindingsRow] = useState("");
 
   const [search, setSearch] = useState("");
   const [amountInput, setAmountInput] = useState("");
@@ -73,6 +103,8 @@ export default function Procedure() {
   }, []);
 
   const clearForm = useCallback(() => {
+    setFindings("");
+    setFindingsRow("");
     setPicked([]);
     clearEntryFields();
   }, [clearEntryFields]);
@@ -80,6 +112,17 @@ export default function Procedure() {
   usePendingCategoryDraft(
     TABLE_KEY,
     () => {
+      if (nurse) {
+        if (!findings.trim() || findingsRow === "") return null;
+        return {
+          __payload__: JSON.stringify({
+            __findingsUpdate: true,
+            rowIndex: Number(findingsRow),
+            findings: findings.trim(),
+            findingsBy: user?.fullName?.trim() || "",
+          }),
+        };
+      }
       if (picked.length === 0) return null;
 
       return buildBatchPendingEntry(
@@ -88,11 +131,13 @@ export default function Procedure() {
           price: formatProcedureNaira(item.amount),
           remarks: "",
           doctor: doctorName,
-          hasResult: "false",
+          findings: findings.trim(),
+          findingsBy: findings.trim() ? user?.fullName?.trim() || "" : "",
+          hasResult: findings.trim() ? "true" : "false",
         }))
       );
     },
-    [picked, doctorName],
+    [picked, doctorName, findings, findingsRow, nurse, user?.fullName],
     clearForm
   );
 
@@ -156,6 +201,7 @@ export default function Procedure() {
 
   return (
     <div className="space-y-6 text-sm">
+      {!nurse && (
       <div className="grid w-full grid-cols-1 items-end gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(140px,2fr)_auto]">
         <div ref={dropdownRef} className="relative min-w-0">
           <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -221,6 +267,7 @@ export default function Procedure() {
           Add Procedure
         </button>
       </div>
+      )}
 
       {picked.length > 0 && (
         <div className="space-y-2">
@@ -248,9 +295,45 @@ export default function Procedure() {
         </div>
       )}
 
+      {nurse && (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Procedure Done
+          </label>
+          <select
+            value={findingsRow}
+            onChange={(e) => setFindingsRow(e.target.value)}
+            className={`${formFieldSelectClass} pr-10`}
+          >
+            <option value="">-Select procedure to document-</option>
+            {history.map((row, index) => (
+              <option key={index} value={index}>
+                {`${row.sn ?? index + 1}. ${String(row.procedure ?? "")} (${String(row.dateTime ?? "")})`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-gray-700">
+          Procedure Findings / Notes
+        </label>
+        <textarea
+          value={findings}
+          onChange={(e) => setFindings(e.target.value)}
+          placeholder="Document findings on the procedure done on the patient..."
+          rows={8}
+          className={`${formFieldTextareaClass} min-h-[180px]`}
+        />
+        <p className="mt-1 text-xs text-gray-500">
+          Saved on Confirm. It can then be opened with VIEW under the RESULT column.
+        </p>
+      </div>
+
       <CategoryMedicalTable
         title={categoryDetailsTitle("PROCEDURE")}
-        columns={procedureHistoryColumns}
+        columns={columns}
         rows={tableRows}
         linkColumns={["remarks"]}
         onLinkClick={(row) => remarkView.openRow(row)}
@@ -281,10 +364,23 @@ export default function Procedure() {
                 {String(remarkView.selectedRow.dateTime ?? "")}
               </p>
             </div>
-            <p className="text-sm text-gray-700">
-              Procedure completed as documented. Full structured reports will
-              connect here when the procedure module is wired.
-            </p>
+            {remarkView.selectedRow.findings ? (
+              <div className="space-y-2">
+                <p className="whitespace-pre-wrap break-words text-sm text-gray-800">
+                  {String(remarkView.selectedRow.findings)}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Doctor: {String(remarkView.selectedRow.doctor ?? "-")}
+                  {remarkView.selectedRow.findingsBy
+                    ? ` | Documented by: ${String(remarkView.selectedRow.findingsBy)}`
+                    : ""}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-700">
+                Procedure completed as documented.
+              </p>
+            )}
           </div>
         ) : null}
       </MedicalRemarkViewPanel>

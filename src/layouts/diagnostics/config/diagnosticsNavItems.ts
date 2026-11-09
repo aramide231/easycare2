@@ -11,7 +11,7 @@ import { BlockIcon } from "@/svgs/frontdesk/svg";
 
 export type NavItem = {
   label: string;
-  icon: ElementType<{ className?: string; strokeWidth?: number }>;
+  icon: ElementType<{ className?: string; strokeWidth?: number | string }>;
   link: string;
 };
 

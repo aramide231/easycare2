@@ -186,7 +186,7 @@ export default function NursingDispenses() {
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-2.5 text-gray-800">
-                          {String(row.dispensedBy || "Nurse Titilayo Olayinka")}
+                          {String(row.dispensedBy || "Titilayo Olayinka")}
                         </td>
                       </tr>
                     );

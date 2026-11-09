@@ -59,7 +59,7 @@ const INITIAL_MEDICATION_ROWS: Record<string, unknown>[] = [
     lineTotal: 1500,
     remark: "Served",
     served: true,
-    dispensedBy: "Nurse Titilayo Olayinka",
+    dispensedBy: "Titilayo Olayinka",
     doctor: "Dr. Chibuzor",
   },
   {
@@ -74,7 +74,7 @@ const INITIAL_MEDICATION_ROWS: Record<string, unknown>[] = [
     lineTotal: 2500,
     remark: "1st Dose",
     served: true,
-    dispensedBy: "Nurse Titilayo Olayinka",
+    dispensedBy: "Titilayo Olayinka",
     doctor: "Dr. Chibuzor",
   },
   {
@@ -89,7 +89,7 @@ const INITIAL_MEDICATION_ROWS: Record<string, unknown>[] = [
     lineTotal: 1200,
     remark: "Given",
     served: true,
-    dispensedBy: "Nurse Titilayo Olayinka",
+    dispensedBy: "Titilayo Olayinka",
     doctor: "Dr. Chibuzor",
   },
 ];
@@ -103,7 +103,7 @@ function buildNursingDispensesFromMedication(
       ...row,
       sn: idx + 1,
       remark: String(row.remark || "Served"),
-      dispensedBy: String(row.dispensedBy || "Nurse on Duty"),
+      dispensedBy: String(row.dispensedBy || "—"),
     }));
 }
 
@@ -113,13 +113,82 @@ const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
   "PHYSICAL EXAMINATION": [...PHYSICAL_EXAMINATION_SEED],
   DIAGNOSIS: [...DIAGNOSIS_SEED],
   INVESTIGATION: [...INVESTIGATION_SEED],
+  "MEDICAL IMAGING": [],
+  "X-RAY (RADIOGRAPHY)": [],
   TREATMENT: [...TREATMENT_SEED],
   PROCEDURE: [...PROCEDURE_SEED],
   MEDICATION: [...INITIAL_MEDICATION_ROWS],
   "VACCINE ADMINISTRATION": [...VACCINE_ADMINISTRATION_SEED],
   "REPORT WRITING": [],
-  "IN-TAKE CHART": [],
-  "OUTPUT CHART": [],
+  "IN-TAKE CHART": [
+    {
+      sn: 1,
+      dateTime: "15-Feb-2026 10:25 AM",
+      patientType: "In-Patient",
+      fluidType: "IV",
+      iv: "500ml Normal Saline",
+      oral: "200ml Water",
+      rectal: "—",
+      intakeTotal: "700",
+    },
+  ],
+  "OUTPUT CHART": [
+    {
+      sn: 1,
+      dateTime: "15-Feb-2026 10:25 AM",
+      patientType: "In-Patient",
+      gastricAspiration: "50ml",
+      blood: "—",
+      urine: "450ml",
+      urineOutput: "—",
+      vomit: "—",
+      stool: "Formed x1",
+      outputTotal: "500",
+    },
+  ],
+  "PRE-OPERATION NOTE": [
+    {
+      sn: 1,
+      dateTime: "15-Feb-2026 10:25 AM",
+      patientType: "In-Patient",
+      preOpHB: "12.5 g/dL",
+      genotype: "AA",
+      hiv: "Negative (-)",
+      hepatitis: "Negative (-)",
+      bloodGroup: "O+",
+      allergies: "NKDA",
+      operationProposed: "Appendectomy",
+      indication: "Acute Appendicitis",
+      operationState: "Emergency",
+      proposedDate: "15-Feb-2026",
+      consentGiven: "YES",
+      signature: "Signed",
+    },
+  ],
+  "POST-OPERATION NOTE": [
+    {
+      sn: 1,
+      dateTime: "15-Feb-2026 01:30 PM",
+      patientType: "In-Patient",
+      surgeon: "Dr. Adebayo",
+      procedureFindings: "Open appendectomy completed, inflamed appendix excised without perforation.",
+      swabCount: "YES",
+      bloodLoss: "50 ml",
+      bloodPressure: "118/76",
+      pulse: "74",
+      respiration: "18 / 98%",
+      signature: "Signed",
+    },
+  ],
+  "POST-OPERATION ORDERS": [
+    {
+      sn: 1,
+      dateTime: "15-Feb-2026 02:00 PM",
+      patientType: "In-Patient",
+      ordersNote: "NPO for 6 hours post-op, IV fluids 1L D/S over 8h, monitor vitals q4h, elevate head of bed.",
+      enteredBy: "Dr. Adebayo",
+    },
+  ],
   "NURSING DISPENSES": buildNursingDispensesFromMedication(INITIAL_MEDICATION_ROWS),
   "PHARMACY DISPENSE": [],
   "NEO NATAL:DIAGNOSIS": [],
@@ -359,6 +428,29 @@ function appendTableRow(
   enteredBy: string,
   doctor: string
 ) {
+  if (tableKey === "PROCEDURE" && data.__findingsUpdate) {
+    const rowIndex = Number(data.rowIndex);
+    const proc = tables.PROCEDURE ?? [];
+    if (rowIndex >= 0 && rowIndex < proc.length) {
+      tables = {
+        ...tables,
+        PROCEDURE: proc.map((row, idx) =>
+          idx === rowIndex
+            ? {
+                ...row,
+                findings: String(data.findings ?? ""),
+                findingsBy: String(data.findingsBy || enteredBy),
+                hasResult: true,
+              }
+            : row
+        ),
+      };
+      userSavedTableKeys.add(tableKey);
+      emitChange();
+    }
+    return;
+  }
+
   const currentTable = tables[tableKey] ?? [];
   const now = new Date();
   const nowMs = now.getTime();
@@ -564,7 +656,10 @@ function commitPendingSection(
   }
 
   if (
-    (tableKey === "INVESTIGATION" || tableKey === "INVOICE") &&
+    (tableKey === "INVESTIGATION" ||
+      tableKey === "MEDICAL IMAGING" ||
+      tableKey === "X-RAY (RADIOGRAPHY)" ||
+      tableKey === "INVOICE") &&
     rowData.amount
   ) {
     rowData.amount = formatInvestigationAmount(String(rowData.amount));

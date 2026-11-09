@@ -43,7 +43,10 @@ import {
 import { usePatientFlags } from "./flag-profile/data/usePatientFlags";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { antenatalEntryRestriction } from "./lib/antenatalEligibility";
+import {
+  antenatalEntryRestriction,
+  childBirthEntryRestriction,
+} from "./lib/antenatalEligibility";
 
 const NursePatientProfile = () => {
   // const { id } = useParams();
@@ -134,9 +137,12 @@ const NursePatientProfile = () => {
     setExpandedCategories([]);
   };
 
-  const ancRestriction = selectedCategory === "Ante Natal Care"
-    ? antenatalEntryRestriction(patient ?? {})
-    : null;
+  const ancRestriction =
+    selectedCategory === "Ante Natal Care"
+      ? antenatalEntryRestriction(patient ?? {})
+      : selectedCategory === "Child Birth"
+        ? childBirthEntryRestriction(patient ?? {})
+        : null;
   const assertAncSubmitAllowed = () => {
     if (ancRestriction) {
       toast.error(ancRestriction);
@@ -162,27 +168,26 @@ const NursePatientProfile = () => {
   const handlePreview = () => {
     if (!selectedCategory) {
       toast.info("Select a category to preview.");
-      return;
+    } else {
+      const savedLabels = categorySectionLabels.filter((_, index) => isSectionFilled(sectionKeys[index]));
+      const labelsToShow = savedLabels.length ? savedLabels : categorySectionLabels;
+
+      setPreviewCategoryName(selectedCategory);
+      setPreviewSections(
+        labelsToShow.map((label) => {
+          const storageKey = categoryStorageKey(selectedCategory, label);
+          const rows = [...getSectionTableRows(storageKey), ...getPendingSectionRows(storageKey)];
+          return {
+            label,
+            count: rows.length,
+            lines: sectionSupportsNumberedPreview(label)
+              ? buildPreviewSectionLines(label, rows)
+              : undefined,
+          };
+        }),
+      );
+      setShowPreviewModal(true);
     }
-
-    const savedLabels = categorySectionLabels.filter((_, index) => isSectionFilled(sectionKeys[index]));
-    const labelsToShow = savedLabels.length ? savedLabels : categorySectionLabels;
-
-    setPreviewCategoryName(selectedCategory);
-    setPreviewSections(
-      labelsToShow.map((label) => {
-        const storageKey = categoryStorageKey(selectedCategory, label);
-        const rows = [...getSectionTableRows(storageKey), ...getPendingSectionRows(storageKey)];
-        return {
-          label,
-          count: rows.length,
-          lines: sectionSupportsNumberedPreview(label)
-            ? buildPreviewSectionLines(label, rows)
-            : undefined,
-        };
-      }),
-    );
-    setShowPreviewModal(true);
   };
 
   const handleSubmit = () => {
@@ -530,11 +535,6 @@ const NursePatientProfile = () => {
                 {ancRestriction && (
                   <p role="alert" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
                     {ancRestriction}
-                  </p>
-                )}
-                {selectedCategory === "Ante Natal Care" && !ancRestriction && (
-                  <p className="mb-4 text-sm text-gray-600">
-                    Open a section to enter nursing details, then use Preview and Confirm below. Clinician documentation is read-only. EDD and EGA are calculated from the last menstrual period in New Antenatal Booking.
                   </p>
                 )}
                 {!selectedCategory ? (

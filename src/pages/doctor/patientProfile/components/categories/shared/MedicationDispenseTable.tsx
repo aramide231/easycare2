@@ -11,11 +11,7 @@ export default function MedicationDispenseTable() {
   const { user } = useAuth();
   const { history: medicationHistory } = useMedicalTable("MEDICATION");
 
-  const dispensedByName = user?.fullName
-    ? user.fullName.toLowerCase().startsWith("nurse")
-      ? user.fullName
-      : `Nurse ${user.fullName}`
-    : "Nurse Titilayo Olayinka";
+  const dispensedByName = user?.fullName?.trim() || "Titilayo Olayinka";
 
   return (
     <div className="space-y-3">

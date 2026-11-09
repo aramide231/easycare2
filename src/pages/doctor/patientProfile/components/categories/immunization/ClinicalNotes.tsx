@@ -53,10 +53,10 @@ export default function ClinicalNotes() {
             <tbody>
               {notesHistory.map((row, index) => (
                 <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType}</td>
-                  <td>{row.notes}</td>
+                  <td>{String(row.sn ?? index + 1)}</td>
+                  <td>{String(row.dateTime ?? "—")}</td>
+                  <td>{String(row.patientType ?? "—")}</td>
+                  <td>{String(row.notes ?? "—")}</td>
                   <td>
                     <button
                       type="button"

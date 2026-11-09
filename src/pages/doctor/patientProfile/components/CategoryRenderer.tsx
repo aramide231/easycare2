@@ -22,6 +22,8 @@ import PhysicalExamination from "./categories/shared/PhysicalExamination";
 import PreOperationNote from "./categories/surgical/PreOperationNote";
 import PostOperationOrders from "./categories/surgical/PostOperationOrders";
 import PostOperationNote from "./categories/surgical/PostOperationNotes";
+import MedicalImagingForm from "./categories/shared/MedicalImagingForm";
+import XRayForm from "./categories/shared/XRayForm";
 import Procedure from "./categories/shared/Procedure";
 import ReportWriting from "./categories/genConsult/ReportWriting";
 import IntakeCharts from "./categories/genConsult/IntakeCharts";
@@ -41,6 +43,8 @@ export const categoryComponents: Record<string, ComponentType> = {
   "PRESENTING COMPLAINTS": PresentingComplaints,
   "PHYSICAL EXAMINATION": PhysicalExamination,
   INVESTIGATION: Investigation,
+  "MEDICAL IMAGING": MedicalImagingForm,
+  "X-RAY (RADIOGRAPHY)": XRayForm,
   TREATMENT: Treatment,
   DIAGNOSIS: DoctorDiagnosis,
   PROCEDURE: Procedure,
