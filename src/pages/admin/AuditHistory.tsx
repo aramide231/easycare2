@@ -6,6 +6,7 @@ const blank: AuditFilters = { action: "", outcome: "", channel: "", actor_id: ""
 const control = "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#573FD1]";
 const button = "rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm disabled:opacity-50";
 const labels: Record<string, string> = {
+  record_id: "Related record ID",
   category_id: "Patient category ID", contact_count: "Emergency contacts", contacts_changed: "Emergency contacts changed",
   duplicates_acknowledged: "Possible duplicates reviewed", contacts: "Emergency contacts", sex: "Sex", date_of_birth: "Date of birth",
   dob_estimated: "Estimated birth date", phone: "Phone", marital_status: "Marital status", religion: "Religion",
@@ -58,7 +59,7 @@ export default function AuditHistory() {
   return <section aria-labelledby="audit-title">
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div><h1 id="audit-title" className="text-2xl font-bold">Audit history</h1>
-        <p className="mt-2 max-w-3xl text-sm text-slate-600">Review staff account changes, recovery, sign-in and file activity. Times use UTC. Select Refresh to include new activity.</p></div>
+        <p className="mt-2 max-w-3xl text-sm text-slate-600">Review patient, staff, recovery, sign-in and file activity. Times use UTC. Select Refresh to include new activity.</p></div>
       <button className={button} disabled={loading} onClick={refresh}>Refresh</button>
     </div>
     <form onSubmit={search} className="mb-6 rounded-xl border bg-white p-5">
