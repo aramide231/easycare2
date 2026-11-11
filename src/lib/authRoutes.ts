@@ -18,7 +18,12 @@ export const AUTH_SIGNIN_PATH = "/auth?tab=signin";
 
 export function isModuleAllowed(pathname: string, roles: string[], permissions: string[] = []): boolean {
   const module = pathname.split("/")[1];
-  if (module === "admin") return permissions.includes("staff.manage");
+  if (module === "admin") {
+    const section = pathname.split("/")[2];
+    if (section === "audit") return permissions.includes("audit.view");
+    if (section === "users") return permissions.includes("staff.manage");
+    return permissions.includes("staff.manage") || permissions.includes("audit.view");
+  }
   if (["diagnostics", "diagnostics-and-radiologist"].includes(module)) {
     return roles.some((role) => ["diagnostics", "laboratory", "diagnostics-and-radiologist"].includes(role));
   }

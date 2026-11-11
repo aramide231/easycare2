@@ -73,6 +73,7 @@ import DiagnosticsPatientProfile from "@/pages/diagnostics/patient-profile/Diagn
 import DiagnosticsPreviousPatientRecords from "@/pages/diagnostics/previous-patient-records/DiagnosticsPreviousPatientRecords";
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
+import AuditHistory from "@/pages/admin/AuditHistory";
 import StaffAdministration from "@/pages/admin/StaffAdministration";
 import StaffRecovery from "@/pages/auth/components/StaffRecovery";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
@@ -128,7 +129,7 @@ const RoleBasedRoutes = () => {
       <Route path="/access-pending" element={<AccountAccess />} />
       <Route path="/modules" element={<PreviewEntry />} />
 
-      {/* Frontdesk — available for preview without login */}
+      {/* Frontdesk â€” available for preview without login */}
       {FrontdeskRoutes()}
 
       {/* Frontdesk additional routes */}
@@ -140,13 +141,13 @@ const RoleBasedRoutes = () => {
         <Route path="book-appointment" element={<BookAppointment />} />
       </Route>
 
-      {/* HMO — available for preview without login */}
+      {/* HMO â€” available for preview without login */}
       {HmoRoutes()}
 
-      {/* Pharmacy — available for preview without login */}
+      {/* Pharmacy â€” available for preview without login */}
       {PharmacyRoutes()}
 
-      {/* Diagnostics & Radiologist — available for preview without login */}
+      {/* Diagnostics & Radiologist â€” available for preview without login */}
       {DiagnosticsRadiologistRoutes()}
 
       {/* Nurse */}
@@ -184,7 +185,7 @@ const RoleBasedRoutes = () => {
         />
       </Route>
 
-      {/* Doctor (Clinician) — hooked up from EasyCare-Aramide */}
+      {/* Doctor (Clinician) â€” hooked up from EasyCare-Aramide */}
       <Route path="/doctor" element={<DoctorLayout />}>
         <Route index element={<DoctorDashboard />} />
         <Route path="notifications-doctor" element={<DoctorNotification />} />
@@ -231,7 +232,7 @@ const RoleBasedRoutes = () => {
         />
       </Route>
 
-      {/* Diagnostics / Laboratory — hooked up from EasyCare-Aramide */}
+      {/* Diagnostics / Laboratory â€” hooked up from EasyCare-Aramide */}
       <Route path="/diagnostics" element={<DiagnosticsLayout />}>
         <Route index element={<DiagnosticsDashboard />} />
         <Route path="notifications" element={<DiagnosticsNotifications />} />
@@ -259,6 +260,7 @@ const RoleBasedRoutes = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<StaffAdministration />} />
+          <Route path="audit" element={<AuditHistory />} />
         </Route>
       </Route>
 

@@ -15,7 +15,7 @@ export default function AdminLayout() {
   return <div className="min-h-screen bg-slate-50 text-slate-900">
     <header className="border-b bg-white">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-5">
-        <Link to="/admin/users" className="text-xl font-bold text-[#573FD1]">EasyCare <span className="ml-3 text-sm font-normal text-slate-500">Administration</span></Link>
+        <Link to="/admin" className="text-xl font-bold text-[#573FD1]">EasyCare <span className="ml-3 text-sm font-normal text-slate-500">Administration</span></Link>
         <div className="flex items-center gap-4 text-sm">
           <span>{user?.fullName}</span>
           <Link to="/modules" className="text-[#573FD1] underline">Modules</Link>
@@ -23,6 +23,10 @@ export default function AdminLayout() {
         </div>
       </div>
     </header>
+    <nav aria-label="Administration" className="mx-auto flex max-w-7xl gap-6 px-5 pt-5 text-sm font-medium">
+      {user?.permissions?.includes("staff.manage") && <Link className="text-[#573FD1] underline" to="/admin/users">Staff accounts</Link>}
+      {user?.permissions?.includes("audit.view") && <Link className="text-[#573FD1] underline" to="/admin/audit">Audit history</Link>}
+    </nav>
     {error && <p role="alert" className="mx-auto max-w-7xl px-5 pt-4 text-red-700">{error}</p>}
     <main className="mx-auto max-w-7xl p-5 md:p-8"><Outlet /></main>
   </div>;

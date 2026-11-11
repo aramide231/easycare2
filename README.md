@@ -1,5 +1,7 @@
 # EasyCare frontend
 
+The read-only audit viewer is available at `/admin/audit` to staff with `audit.view`. It filters staff/security activity by action, outcome, source, actor/record IDs and UTC dates. Pagination retains the current history boundary; Refresh includes new activity. Reviewers can access this screen without staff-management permission. Run the backend migrations and seeder for the independent audit grant baseline before using it. Audit history does not display submitted credentials or personal profile values.
+
 ## Local staff sign-in
 
 Start the Laravel backend in the sibling `backend` directory with `dev.cmd start`, then run `npm run dev` here and open the printed URL. The tracked development API base is `/api/v1`; Vite proxies it to the local backend on port 8000. Production hosting must route `/api/v1` to Laravel on the hospital server.
@@ -8,13 +10,15 @@ Create the first administrator through `dev.cmd artisan staff:create --role=admi
 
 New accounts choose their first password through `/forgot-password`, using a code issued after administrator identity verification. Codes expire after 15 minutes, work once and are displayed only at issuance. Recovery works through the local server without an email provider. For sole-administrator recovery, the trusted server console provides `dev.cmd artisan staff:recover their-username`. The hospital must approve the identity-verification procedure before production use. Recovery revokes existing sessions; disabled accounts remain disabled.
 
-Sign-in uses HTTP-only Laravel session cookies, CSRF protection and an in-memory identity store. Reload checks the server session; private routes require server-returned roles, and administration requires `staff.manage`. Profile/module menus provide a staff-administration entry when permitted. Logout invalidates the server session before reloading sign-in. Local browser storage is not trusted as authentication. Clinical and patient screens still contain demonstration data and await their backend implementation.
+Sign-in uses HTTP-only Laravel session cookies, CSRF protection and an in-memory identity store. Reload checks the server session; private routes require server-returned roles, and staff management requires `staff.manage` and audit review requires `audit.view`. Profile/module menus provide a staff-administration entry when permitted. Logout invalidates the server session before reloading sign-in. Local browser storage is not trusted as authentication. Clinical and patient screens still contain demonstration data and await their backend implementation.
 
 Profiles display the current server staff record. Browser-only profile/password edits are removed; profile or access changes go through staff administration. Account, role, permission and department changes clear private forms, patient caches, pending requests and session-owned document URLs. Routine refreshes preserve same-account drafts. Other tabs recheck the server after sign-in, sign-out or recovery, and old browser-history patient state is discarded before rendering. Known legacy private storage keys are removed while unrelated preferences remain. Clinical screens still require their own backend workflows and patient isolation.
 
-Run `npm test` for eleven session-isolation regression checks using Node's test runner and the installed TypeScript compiler. The checks include late old-account responses, stale `401` failures, writes waiting for CSRF, disabled storage, private caches and object-URL revocation. No additional packages are required. These tests run separately from the full repository type check.
+Run `npm test` for twelve session and route-permission regression checks using Node's test runner and the installed TypeScript compiler. The checks include late old-account responses, stale `401` failures, writes waiting for CSRF, disabled storage, private caches object-URL revocation, and separate audit/staff-management access. No additional packages are required. These tests run separately from the full repository type check.
 
 Task 12 verification: eleven frontend tests and twenty-five browser checks pass, including multi-tab account changes, history isolation, expiry and staff administration/recovery. The production build passes. The full repository TypeScript check reports 125 remaining errors outside changed files; see the backend development notes for details.
+
+Task 13 verification: twelve frontend tests and thirty-nine browser checks pass, including the audit viewer, reviewer-only access and permission revocation. The production build passes. The full repository type check still has 125 existing errors outside changed files.
 
 ## React + TypeScript + Vite template notes
 

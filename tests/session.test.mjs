@@ -168,3 +168,14 @@ test("patient tables and pending clinical work cannot carry over to another staf
   medical.openPatientRecord("patient-A");
   assert.equal(JSON.stringify(medical.getSectionTableRows("REPORT WRITING")).includes("private staff A note"), false);
 });
+
+
+test("audit reviewers and staff managers have separate administration routes", () => {
+  const { isModuleAllowed } = loadSource("src/lib/authRoutes.ts");
+  assert.equal(isModuleAllowed("/admin/audit", ["doctor"], ["audit.view"]), true);
+  assert.equal(isModuleAllowed("/admin/users", ["doctor"], ["audit.view"]), false);
+  assert.equal(isModuleAllowed("/admin", [], ["audit.view"]), true);
+  assert.equal(isModuleAllowed("/admin/audit", ["admin"], ["staff.manage"]), false);
+  assert.equal(isModuleAllowed("/admin/users", [], ["staff.manage"]), true);
+  assert.equal(isModuleAllowed("/admin/audit", ["admin"], []), false);
+});
