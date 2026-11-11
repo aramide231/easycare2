@@ -116,6 +116,9 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
           {user?.permissions?.includes("audit.view") && <Link to="/admin/audit"
             className="rounded-xl border border-[#573FD1] p-6 text-lg font-semibold text-[#573FD1] hover:bg-purple-50"
           >Audit history</Link>}
+          {user?.permissions?.includes("files.view_own") && <Link to="/admin/files"
+            className="rounded-xl border border-[#573FD1] p-6 text-lg font-semibold text-[#573FD1] hover:bg-purple-50"
+          >My files</Link>}
         </div>
       </div>
     </div>

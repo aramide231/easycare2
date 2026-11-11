@@ -7,16 +7,6 @@ import MedicalRemarkViewPanel, {
   rowHasUploadedResult,
 } from "@/pages/doctor/patientProfile/components/category/MedicalRemarkViewPanel";
 
-const investigationTableColumns = [
-  { key: "sn", label: "SN" },
-  { key: "dateTime", label: "DATE | TIME" },
-  { key: "patientType", label: "PATIENT TYPE" },
-  { key: "investigation", label: "INVESTIGATION" },
-  { key: "amount", label: "AMOUNT" },
-  { key: "result", label: "RESULT" },
-  { key: "doctor", label: "DOCTOR" },
-];
-
 /** Nurse: review investigation history (table only). */
 export default function InvestigationReview({
   tableKey = "INVESTIGATION",

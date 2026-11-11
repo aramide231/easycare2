@@ -1,4 +1,5 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { WriteAttempt, isUncertainWrite, writeErrorMessage } from "@/api/client/writeAttempt";
 import { ApiError } from "@/api/client/apClient";
 import { issueResetCode, listStaff, saveStaff, staffOptions, type ManagedStaff, type StaffInput, type StaffOptions, type StaffPage } from "@/api/staff";
 import { useAuth } from "@/context/AuthContext";
@@ -30,6 +31,10 @@ export default function StaffAdministration() {
   const [editing, setEditing] = useState<ManagedStaff | "new" | null>(null);
   const [draft, setDraft] = useState<StaffInput>(blank);
   const [busy, setBusy] = useState(false);
+  const attempt = useRef(new WriteAttempt());
+  const resetAttempt = useRef(new WriteAttempt());
+  const [uncertain, setUncertain] = useState(false);
+  const [resetUncertain, setResetUncertain] = useState(false);
   const [resetTarget, setResetTarget] = useState<ManagedStaff | null>(null);
   const [resetPassword, setResetPassword] = useState("");
   const [verified, setVerified] = useState(false);
@@ -57,9 +62,12 @@ export default function StaffAdministration() {
   }, [id, canManage, canReset]);
 
   function field<K extends keyof StaffInput>(key: K, value: StaffInput[K]) {
+    if (key !== "current_password") attempt.current.reset();
     setDraft((old) => ({ ...old, [key]: value }));
   }
   const closePanels = () => {
+    attempt.current.reset(); resetAttempt.current.reset();
+    setUncertain(false); setResetUncertain(false);
     setEditing(null); setResetTarget(null); setResetResult(null);
     setDraft(blank); setResetPassword(""); setVerified(false);
   };
@@ -77,16 +85,18 @@ export default function StaffAdministration() {
     if (editing === null || busy) return;
     setBusy(true); setError(""); setNotice("");
     try {
-      const response = await saveStaff(editing === "new" ? null : editing.id, draft);
+      const response = await saveStaff(editing === "new" ? null : editing.id, draft, attempt.current.key());
+      attempt.current.reset(); setUncertain(false);
       setEditing(null); setDraft(blank); setRevision((value) => value + 1);
       setNotice(editing === "new"
         ? "Account created. Verify the staff member and issue a reset code so they can set their first password."
         : "Staff account updated.");
       if (response.data.id === user?.id) await restoreSession();
     } catch (cause) {
-      setError(cause instanceof ApiError && cause.status === 409
+      setUncertain((old) => old || isUncertainWrite(cause));
+      setError(cause instanceof ApiError && cause.code === "conflict"
         ? "This account changed while you were editing. Cancel and reload the latest record before saving."
-        : cause instanceof Error ? cause.message : "Unable to save staff.");
+        : writeErrorMessage(cause));
       setDraft((value) => ({ ...value, current_password: "" }));
     } finally { setBusy(false); }
   };
@@ -95,14 +105,16 @@ export default function StaffAdministration() {
     if (!resetTarget || !verified || busy) return;
     setBusy(true); setError("");
     try {
-      const response = await issueResetCode(resetTarget, resetPassword);
+      const response = await issueResetCode(resetTarget, resetPassword, resetAttempt.current.key());
+      resetAttempt.current.reset(); setResetUncertain(false);
       setResetTarget(response.data.user);
       setResetResult({ code: response.data.reset_code, expires: response.data.expires_at });
       setResetPassword(""); setRevision((value) => value + 1);
     } catch (cause) {
-      setError(cause instanceof ApiError && cause.status === 409
+      setResetUncertain((old) => old || isUncertainWrite(cause));
+      setError(cause instanceof ApiError && cause.code === "conflict"
         ? "This account changed. Close this panel and reload the latest record."
-        : cause instanceof Error ? cause.message : "Unable to issue a reset code.");
+        : writeErrorMessage(cause));
       setResetPassword("");
     } finally { setBusy(false); }
   };
@@ -118,8 +130,9 @@ export default function StaffAdministration() {
 
     {editing !== null && options && <section aria-labelledby="staff-editor-title" className="rounded-xl border bg-white p-5 shadow-sm">
       <div className="mb-5 flex items-center justify-between gap-3"><h2 id="staff-editor-title" className="text-xl font-semibold">{editing === "new" ? "Create staff account" : "Edit " + editing.name}</h2><button disabled={busy} className={secondary} onClick={closePanels}>Cancel</button></div>
+      {uncertain && <p role="status" className="mb-4 text-sm text-amber-900">The save may already have completed. Retry this unchanged form to confirm it, or cancel and reload the saved staff record before making another change.</p>}
       <form onSubmit={(event) => void save(event)} className="space-y-5">
-        <fieldset disabled={busy} className="grid gap-4 md:grid-cols-2">
+        <fieldset disabled={busy || uncertain} className="grid gap-4 md:grid-cols-2">
           {editing === "new" && <label className="text-sm font-medium">Username<input autoComplete="off" required minLength={3} maxLength={64} pattern="[a-z0-9][a-z0-9._\-]*" className={control} value={draft.username} onChange={(e) => field("username", e.target.value)} /></label>}
           {textFields.map(([key, label]) => <label key={key} className="text-sm font-medium">{label}<input
             type={key === "email" ? "email" : "text"} required={key === "first_name" || key === "last_name"}
@@ -128,7 +141,7 @@ export default function StaffAdministration() {
           /></label>)}
           <label className="text-sm font-medium">Department<select aria-label="Department" disabled={self} className={control} value={draft.department_id ?? ""} onChange={(e) => field("department_id", e.target.value ? Number(e.target.value) : null)}><option value="">Unassigned</option>{options.departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}</select></label>
         </fieldset>
-        <fieldset disabled={busy || self} className="rounded-lg border p-4">
+        <fieldset disabled={busy || self || uncertain} className="rounded-lg border p-4">
           <legend className="px-1 text-sm font-medium">Assigned roles</legend>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{options.roles.map((role) => <label key={role.code} className="flex items-center gap-2 text-sm">
             <input type="checkbox" disabled={!role.assignable} checked={draft.role_codes.includes(role.code)} onChange={(e) => field("role_codes", e.target.checked ? [...draft.role_codes, role.code] : draft.role_codes.filter((code) => code !== role.code))} />
@@ -136,25 +149,26 @@ export default function StaffAdministration() {
           </label>)}</div>
           <p className="mt-3 text-xs text-slate-500">No roles means no module access. Assign only the access this staff member needs.</p>
         </fieldset>
-        <label className="flex items-center gap-2 text-sm"><input type="checkbox" disabled={busy || self} checked={draft.is_active} onChange={(e) => field("is_active", e.target.checked)} />Account active</label>
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" disabled={busy || self || uncertain} checked={draft.is_active} onChange={(e) => field("is_active", e.target.checked)} />Account active</label>
         {self && <p className="text-sm text-slate-600">Another administrator must change your roles, department or active status.</p>}
         <p className="text-sm text-slate-600">Changing access ends this staff member's existing sessions. Saving also invalidates any pending reset code.</p>
         <label className="block max-w-md text-sm font-medium">Your current password<input type="password" autoComplete="current-password" required disabled={busy} className={control} value={draft.current_password} onChange={(e) => field("current_password", e.target.value)} /></label>
-        <button className={primary} disabled={busy}>{busy ? "Saving..." : "Save staff account"}</button>
+        <button className={primary} disabled={busy}>{busy ? "Saving..." : uncertain ? "Retry save" : "Save staff account"}</button>
       </form>
     </section>}
 
     {resetTarget && <section aria-labelledby="reset-title" className="rounded-xl border border-purple-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3"><h2 id="reset-title" className="text-xl font-semibold">Password recovery for {resetTarget.name}</h2><button disabled={busy} className={secondary} onClick={closePanels}>Close</button></div>
+      {resetUncertain && <p role="status" className="mt-4 text-sm text-amber-900">The code may already have been issued. Check the previous issuance before requesting a replacement. A saved code cannot be shown again.</p>}
       {resetResult ? <div className="mt-4 space-y-3">
         <p className="text-sm">Give this code privately to the verified staff member. It is shown only in this panel and works once.</p>
         <label className="block text-sm font-medium">One-use reset code<input aria-label="One-use reset code" readOnly value={resetResult.code} className={control + " font-mono"} onFocus={(e) => e.target.select()} /></label>
         <p className="text-sm">Expires {new Date(resetResult.expires).toLocaleString()}. Use username <strong>{resetTarget.username}</strong> at <strong>/forgot-password</strong>.</p>
       </div> : <form className="mt-4 space-y-4" onSubmit={(event) => void issue(event)}>
         <p className="text-sm text-slate-600">Verify identity using the hospital procedure first. A new code expires in 15 minutes and replaces any previous code. The staff member chooses their own password.</p>
-        <label className="flex items-center gap-2 text-sm"><input required type="checkbox" disabled={busy} checked={verified} onChange={(e) => setVerified(e.target.checked)} />I have verified this staff member's identity.</label>
+        <label className="flex items-center gap-2 text-sm"><input required type="checkbox" disabled={busy || resetUncertain} checked={verified} onChange={(e) => setVerified(e.target.checked)} />I have verified this staff member's identity.</label>
         <label className="block max-w-md text-sm font-medium">Your current password<input required disabled={busy} type="password" autoComplete="current-password" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} className={control} /></label>
-        <button className={primary} disabled={busy || !verified}>{busy ? "Issuing..." : "Issue reset code"}</button>
+        <button className={primary} disabled={busy || !verified}>{busy ? "Issuing..." : resetUncertain ? "Check previous issuance" : "Issue reset code"}</button>
       </form>}
     </section>}
 

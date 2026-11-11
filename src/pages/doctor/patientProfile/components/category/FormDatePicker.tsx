@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import DatePicker from "react-datepicker";
+import DatePicker, { type ReactDatePickerCustomHeaderProps } from "react-datepicker";
 import { Calendar, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import "@/styles/datepicker.css";
@@ -110,7 +110,7 @@ const FormDatePicker = ({
           increaseMonth,
           prevMonthButtonDisabled,
           nextMonthButtonDisabled,
-        }) => (
+        }: ReactDatePickerCustomHeaderProps) => (
           <div className="flex items-center justify-between gap-1.5 border-b border-gray-100 bg-purple-50/60 px-3 py-2.5">
             <button
               type="button"

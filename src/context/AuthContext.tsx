@@ -24,8 +24,8 @@ function displayUser(staff: StaffUser): User {
     id: staff.id,
     fullName: staff.name,
     userRole: roles.find((role) => role in ROLE_HOME_PATHS
-      && (role !== "admin" || (staff.permissions.includes("staff.manage") || staff.permissions.includes("audit.view"))))
-      || ((staff.permissions.includes("staff.manage") || staff.permissions.includes("audit.view")) ? "admin" : ""),
+      && (role !== "admin" || (staff.permissions.includes("staff.manage") || staff.permissions.includes("audit.view") || staff.permissions.includes("files.view_own"))))
+      || ((staff.permissions.includes("staff.manage") || staff.permissions.includes("audit.view") || staff.permissions.includes("files.view_own")) ? "admin" : ""),
     roles,
     permissions: staff.permissions,
   };

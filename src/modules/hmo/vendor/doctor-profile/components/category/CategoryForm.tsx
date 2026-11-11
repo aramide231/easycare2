@@ -2,24 +2,24 @@ import { useState, useEffect, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import type { CategoryFieldConfig } from "../../config/categoryFieldTypes";
 import { YES_NO_OPTIONS } from "../../config/categoryFieldTypes";
-import { VITAL_DROPDOWN_FIELD_OPTIONS } from "../../config/vitalFieldOptions";
+import { VITAL_DROPDOWN_FIELD_OPTIONS } from "@/pages/doctor/patientProfile/config/vitalFieldOptions";
 import {
   DATE_PLACEHOLDER,
   isValidDateDDMMYY,
-} from "../../lib/dateFormat";
+} from "@/pages/doctor/patientProfile/lib/dateFormat";
 import FormDatePicker from "./FormDatePicker";
-import { isFutureAppointmentDateField } from "../../lib/dateFieldRules";
+import { isFutureAppointmentDateField } from "@/pages/doctor/patientProfile/lib/dateFieldRules";
 import NairaAmountInput, { sanitizeAmountDigits } from "./NairaAmountInput";
 import {
   formFieldGridClass,
   formFieldInputClass,
   formFieldSelectClass,
   formFieldTextareaClass,
-} from "../../lib/formFieldStyles";
+} from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 import {
   setPendingSectionEntry,
   subscribeSectionFormClear,
-} from "../../hooks/useMedicalTable";
+} from "@/pages/doctor/patientProfile/hooks/useMedicalTable";
 
 type Props = {
   fields: CategoryFieldConfig[];

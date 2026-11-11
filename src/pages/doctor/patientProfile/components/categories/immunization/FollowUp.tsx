@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { displayText } from "@/lib/displayText";
 import { useMedicalTable } from "../../../hooks/useMedicalTable";
 import { usePendingCategoryDraft } from "../../../hooks/usePendingCategoryDraft";
 import FormDatePicker from "../../category/FormDatePicker";
@@ -84,11 +85,11 @@ export default function FollowUp() {
             <tbody>
               {followUpHistory.map((row, index) => (
                 <tr key={index} className="even:bg-gray-50">
-                  <td>{row.sn}</td>
-                  <td>{row.dateTime}</td>
-                  <td>{row.patientType || "OPD"}</td>
-                  <td>{row.appointmentDate}</td>
-                  <td>{row.nurse}</td>
+                  <td>{displayText(row.sn)}</td>
+                  <td>{displayText(row.dateTime)}</td>
+                  <td>{displayText(row.patientType)}</td>
+                  <td>{displayText(row.appointmentDate)}</td>
+                  <td>{displayText(row.nurse)}</td>
                   <td>
                     <button
                       type="button"

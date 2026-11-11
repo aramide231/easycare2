@@ -281,7 +281,9 @@ export function subscribeSectionFormClear(
     sectionClearListeners.set(tableKey, new Set());
   }
   sectionClearListeners.get(tableKey)!.add(listener);
-  return () => sectionClearListeners.get(tableKey)?.delete(listener);
+  return () => {
+    sectionClearListeners.get(tableKey)?.delete(listener);
+  };
 }
 
 function notifySectionClear(tableKey: string) {

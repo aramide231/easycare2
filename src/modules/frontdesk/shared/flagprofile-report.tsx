@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 interface FlagReport {
   id: number;
@@ -10,9 +10,7 @@ interface FlagReport {
 }
 
 export default function FlagProfileReport() {
-  // const navigate = useNavigate();
   const { state } = useLocation();
-  const { id } = useParams();
 
   const patient = state?.patient;
 

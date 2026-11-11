@@ -12,6 +12,7 @@ export class ApiError extends Error {
     public status: number,
     public code?: string,
     public errors?: Record<string, string[]>,
+    public retryAfterSeconds?: number,
   ) {
     super(message);
     this.name = "ApiError";
@@ -37,6 +38,13 @@ export function setCsrfToken(token: string | null) {
 
 function assertSession(revision: number) {
   if (useAuthStore.getState().revision !== revision) throw new SessionChangedError();
+}
+
+function retryAfter(response: Response): number | undefined {
+  const value = response.headers.get("Retry-After");
+  if (!value) return undefined;
+  const seconds = /^\d+$/.test(value) ? Number(value) : Math.ceil((Date.parse(value) - Date.now()) / 1000);
+  return Number.isFinite(seconds) && seconds > 0 ? seconds : undefined;
 }
 
 async function fetchFromServer(url: string, options: RequestInit): Promise<Response> {
@@ -69,6 +77,7 @@ async function readResponse(response: Response): Promise<ApiBody> {
 async function bootstrapCsrf(revision: number): Promise<void> {
   const controller = new AbortController();
   requests.add(controller);
+  const timeout = setTimeout(() => controller.abort(), 30000);
   try {
     const response = await fetchFromServer(BASE_URL + "/auth/csrf-token", {
       credentials: "include", cache: "no-store", headers: { Accept: "application/json" }, signal: controller.signal,
@@ -79,14 +88,15 @@ async function bootstrapCsrf(revision: number): Promise<void> {
       throw new ApiError(body.message || "Unable to start a secure session.", response.status, body.code);
     }
     csrfToken = body.data.csrf_token;
-  } finally { requests.delete(controller); }
+  } finally { clearTimeout(timeout); requests.delete(controller); }
 }
 
-interface FetchOptions extends RequestInit { data?: unknown; }
+interface FetchOptions extends RequestInit { data?: unknown; responseType?: "json" | "blob"; }
 
 export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
   const revision = useAuthStore.getState().revision;
-  const { data, headers: customHeaders, signal, ...customConfig } = options;
+  const { data, headers: customHeaders, signal, responseType = "json", ...customConfig } = options;
+  const multipart = typeof FormData !== "undefined" && data instanceof FormData;
   const method = (customConfig.method || (data !== undefined ? "POST" : "GET")).toUpperCase();
   const mutating = !["GET", "HEAD", "OPTIONS"].includes(method);
   const controller = new AbortController();
@@ -94,6 +104,7 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
   signal?.addEventListener("abort", cancel, { once: true });
   if (signal?.aborted) cancel();
   requests.add(controller);
+  const timeout = setTimeout(() => controller.abort(), 30000);
   try {
     if (mutating && !csrfToken) {
       if (!csrfRequest) {
@@ -107,24 +118,35 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
     if (controller.signal.aborted) throw new ApiError("The request was cancelled.", 0, "request_cancelled");
     const headers = new Headers(customHeaders);
     headers.set("Accept", "application/json");
-    if (data !== undefined) headers.set("Content-Type", "application/json");
+    if (multipart) headers.delete("Content-Type");
+    else if (data !== undefined) headers.set("Content-Type", "application/json");
     if (mutating && csrfToken) headers.set("X-CSRF-TOKEN", csrfToken);
     const response = await fetchFromServer(BASE_URL + endpoint, {
       ...customConfig, method, headers, credentials: "include", cache: "no-store", signal: controller.signal,
-      ...(data !== undefined ? { body: JSON.stringify(data) } : {}),
+      ...(data !== undefined ? { body: multipart ? data as FormData : JSON.stringify(data) } : {}),
     });
     assertSession(revision);
     if (response.status === 204) return {} as T;
-    const body = await readResponse(response);
-    assertSession(revision);
     if (!response.ok) {
+      const body = await readResponse(response);
+      assertSession(revision);
       if (response.status === 401) useAuthStore.getState().clearAuth();
       if (response.status === 419) csrfToken = null;
       throw new ApiError(
         Object.values(body.errors || {}).flat()[0] as string || body.message || "The request failed.",
-        response.status, body.code, body.errors,
+        response.status, body.code, body.errors, retryAfter(response),
       );
     }
+    if (responseType === "blob") {
+      if (response.headers.get("Content-Type")?.split(";")[0].trim() !== "application/octet-stream") {
+        throw new ApiError("The hospital server returned an unreadable file response.", response.status, "invalid_response");
+      }
+      const blob = await response.blob();
+      assertSession(revision);
+      return blob as T;
+    }
+    const body = await readResponse(response);
+    assertSession(revision);
     return body as unknown as T;
   } catch (cause) {
     if (useAuthStore.getState().revision !== revision && !(cause instanceof ApiError && cause.status === 401)) {
@@ -132,6 +154,7 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
     }
     throw cause;
   } finally {
+    clearTimeout(timeout);
     requests.delete(controller);
     signal?.removeEventListener("abort", cancel);
   }

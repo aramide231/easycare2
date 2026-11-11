@@ -21,7 +21,7 @@ export function syncWardBedsWithAdmissions(
   beds: WardBed[],
   admissions: AdmissionRecord[]
 ): WardBed[] {
-  const next = beds.map((bed) => ({ ...bed, occupiedByAdmissionId: null }));
+  const next: WardBed[] = beds.map((bed) => ({ ...bed, occupiedByAdmissionId: null }));
 
   for (const admission of admissions) {
     if (admission.ward === UNASSIGNED_WARD) continue;

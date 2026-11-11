@@ -118,7 +118,7 @@ export function parseAnteNatalDate(dateStr: string): Date {
 }
 
 export function buildMockAnteNatalRecords(): AnteNatalRecord[] {
-  const records = SEED.map((record) => {
+  const records: AnteNatalRecord[] = SEED.map((record) => {
     const dates = mockBookDates(record.id % 10);
     return {
       ...record,

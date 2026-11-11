@@ -7,8 +7,6 @@ import type { ComponentType, ReactNode } from "react";
 import { categoryComponents } from "@/pages/doctor/patientProfile/components/CategoryRenderer";
 import Diagnosis from "@/pages/doctor/patientProfile/components/categories/shared/Diagnosis";
 import PresentingComplaints from "@/pages/doctor/patientProfile/components/categories/shared/PresentingComplaints";
-import Medication from "@/pages/doctor/patientProfile/components/categories/shared/Medication";
-import NurseMedicationServe from "@/pages/doctor/patientProfile/components/categories/genConsult/NurseMedicationServe";
 import NurseDispenseHistory from "../components/categories/genConsult/NurseDispenseHistory";
 import NeoNatalVitalSigns from "@/pages/doctor/patientProfile/components/categories/neonatal/NeoNatalVitalSigns";
 import ImmunizationVitalSigns from "@/pages/doctor/patientProfile/components/categories/immunization/ImmunizationVitalSigns";

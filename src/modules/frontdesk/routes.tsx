@@ -1,4 +1,4 @@
-import { Route } from "react-router-dom";
+import { Navigate, Route } from "react-router-dom";
 
 import FrontdeskLayout from "@frontdesk/layouts/FrontdeskLayout";
 import FrontdeskDashboard from "@frontdesk/pages/dashboard/Dashboard";
@@ -19,9 +19,6 @@ import Immunization from "@frontdesk/pages/immunization/Immunization";
 import FamilyPlanning from "@frontdesk/pages/family-planning/FamilyPlanning";
 import RegistrationLog from "@frontdesk/pages/RegistrationLog";
 import Registration from "@frontdesk/pages/Registration/Registration";
-import PatientInfoRegistration from "@frontdesk/pages/Registration/PatientInfoRegistration";
-import PatientInsuranceReg from "@frontdesk/pages/Registration/PatientInsuranceReg";
-import PatientEmergencyReg from "@frontdesk/pages/Registration/PatientEmergencyReg";
 import PatientRegSuccess from "@frontdesk/pages/Registration/PatientRegSuccess";
 import FlagProfile from "@frontdesk/pages/flag-profile/FlagProfile";
 import PatientProfile from "@/pages/nurse/patient-profile/PatientProfile";
@@ -37,9 +34,9 @@ export function FrontdeskRoutes() {
       <Route path="edit/:id" element={<EditPatient />} />
       <Route path="visitation-log" element={<Visitation />} />
       <Route path="registration" element={<Registration />} />
-      <Route path="patient-info-reg" element={<PatientInfoRegistration />} />
-      <Route path="patient-Insurance-reg" element={<PatientInsuranceReg />} />
-      <Route path="patient-emergency-reg" element={<PatientEmergencyReg />} />
+      <Route path="patient-info-reg" element={<Navigate to="/frontdesk/registration" replace />} />
+      <Route path="patient-Insurance-reg" element={<Navigate to="/frontdesk/registration" replace />} />
+      <Route path="patient-emergency-reg" element={<Navigate to="/frontdesk/registration" replace />} />
       <Route path="patient-reg-success" element={<PatientRegSuccess />} />
       <Route path="notifications" element={<Notifications />} />
       <Route path="manage-access" element={<ManageAccess />} />

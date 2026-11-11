@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { X } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import FlagPatientPanel from "@/components/patient/FlagPatientPanel";
@@ -47,8 +47,7 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const [showOptions, setShowOptions] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const [_isModalOpen, setIsModalOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage] = useState("");
   // const dropdownRef = useRef(null);
   const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
     null,
@@ -59,7 +58,6 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   const isVisitationPage = location.pathname.includes("visitation");
   const headingText = isVisitationPage ? "Visitation Log" : "Patients Log";
 
-  const [editPatient, setEditPatient] = useState<Patient | null>(null);
   const [flagPanelOpen, setFlagPanelOpen] = useState(false);
   const [flaggedPatient, setFlaggedPatient] = useState<Patient | null>(null);
 
@@ -240,29 +238,6 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
   //   toast.success(patient.flagged ? "Patient unflagged" : "Patient flagged");
   // };
 
-  const _handleSaveChanges = async () => {
-    const isConfirmed = await confirmSave();
-
-    if (isConfirmed && editPatient) {
-      const updatedPatients = patients.map((patient) =>
-        patient.id === editPatient.id ? editPatient : patient,
-      );
-      setPatients(updatedPatients);
-      setToastMessage("Patient details updated successfully!");
-      setIsModalOpen(false);
-      setEditPatient(null);
-      toast.success("Patient details updated successfully!");
-    }
-  };
-
-  const confirmSave = () => {
-    return new Promise((resolve) => {
-      const confirmation = window.confirm(
-        "Are you sure you want to save the changes?",
-      );
-      resolve(confirmation);
-    });
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -488,205 +463,6 @@ const PatientsLog: React.FC<PatientsLogProps> = ({ onSelectPatient }) => {
 
         {/* Modal function never used.......... */}
         {/* modal class  editpatients*/}
-        {/* {_isModalOpen && editPatient && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">Edit Patient</h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={editPatient.name}
-                    onChange={(e) =>
-                      setEditPatient({ ...editPatient, name: e.target.value })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    value={editPatient.phoneNumber}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        phoneNumber: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Patient ID
-                  </label>
-                  <input
-                    type="text"
-                    value={editPatient.patientId}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        patientId: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Gender
-                  </label>
-                  <select
-                    value={editPatient.gender}
-                    onChange={(e) =>
-                      setEditPatient({ ...editPatient, gender: e.target.value })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  >
-                    <option value="M">Male</option>
-                    <option value="F">Female</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Age
-                  </label>
-                  <input
-                    type="number"
-                    value={editPatient.age}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        age: Number(e.target.value),
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Patient Type
-                  </label>
-                  <select
-                    value={editPatient.patientType}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        patientType: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  >
-                    <option value="COMPANY">Company</option>
-                    <option value="PRIVATE">Private</option>
-                    <option value="HMO">HMO</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Visit Type
-                  </label>
-                  <select
-                    value={editPatient.visitType}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        visitType: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  >
-                    <option value="GEN. CONSULT">General Consult</option>
-                    <option value="ANTE. NATAL">Ante Natal</option>
-                    <option value="POST NATAL">Post Natal</option>
-                    <option value="CHILDBIRTH">Childbirth</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Staff Name
-                  </label>
-                  <input
-                    type="text"
-                    value={editPatient.staffName}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        staffName: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Last Seen (Date)
-                  </label>
-                  <input
-                    type="text"
-                    value={editPatient.lastSeen}
-                    onChange={(e) =>
-                      setEditPatient({
-                        ...editPatient,
-                        lastSeen: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="e.g. 15-Feb-2020"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Time
-                  </label>
-                  <input
-                    type="text"
-                    value={editPatient.time}
-                    onChange={(e) =>
-                      setEditPatient({ ...editPatient, time: e.target.value })
-                    }
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="e.g. 10:25 AM"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end gap-2">
-                <button
-                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setEditPatient(null);
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                  onClick={_handleSaveChanges}
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        )} */}
 
         {/* modal class for sendProfile*/}
         {showSendModal && (

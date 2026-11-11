@@ -26,7 +26,7 @@ function FieldRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function TextSectionContent({ fields }: TreatmentTextSection) {
+function TextSectionContent({ fields }: Pick<TreatmentTextSection, "fields">) {
   const midpoint = Math.ceil(fields.length / 2);
   const left = fields.slice(0, midpoint);
   const right = fields.slice(midpoint);

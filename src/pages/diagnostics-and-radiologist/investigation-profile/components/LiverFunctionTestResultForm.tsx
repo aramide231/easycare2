@@ -9,7 +9,6 @@ import {
   LFT_PARAMETER_ROWS,
   LFT_SPECIMEN_OPTIONS,
   URINARY_PROTEIN_ROWS,
-  type CardiacMarker,
   type LftParameter,
   type LftResultValues,
 } from "../data/liverFunctionTest";

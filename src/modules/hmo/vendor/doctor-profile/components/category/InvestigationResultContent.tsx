@@ -1,7 +1,7 @@
 import {
   getInvestigationResultReport,
   type InvestigationResultReport,
-} from "../../data/investigationResultsSeed";
+} from "@/pages/doctor/patientProfile/data/investigationResultsSeed";
 
 type Props = {
   investigationName: string;

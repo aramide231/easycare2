@@ -1,4 +1,4 @@
-import { formFieldInputClass } from "../../lib/formFieldStyles";
+import { formFieldInputClass } from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 
 export function sanitizeAmountDigits(value: string): string {
   return value.replace(/\D/g, "");

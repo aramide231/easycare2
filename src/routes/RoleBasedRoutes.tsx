@@ -73,6 +73,7 @@ import DiagnosticsPatientProfile from "@/pages/diagnostics/patient-profile/Diagn
 import DiagnosticsPreviousPatientRecords from "@/pages/diagnostics/previous-patient-records/DiagnosticsPreviousPatientRecords";
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
+import PrivateFiles from "@/pages/admin/PrivateFiles";
 import AuditHistory from "@/pages/admin/AuditHistory";
 import StaffAdministration from "@/pages/admin/StaffAdministration";
 import StaffRecovery from "@/pages/auth/components/StaffRecovery";
@@ -261,6 +262,7 @@ const RoleBasedRoutes = () => {
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<StaffAdministration />} />
           <Route path="audit" element={<AuditHistory />} />
+          <Route path="files" element={<PrivateFiles />} />
         </Route>
       </Route>
 

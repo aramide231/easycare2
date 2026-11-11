@@ -33,7 +33,13 @@ import PharmacyDispenses from "./categories/genConsult/PharmacyDispenses";
 import PreviousDentalHistory from "./categories/specialistConsult/PreviousDentalHistory";
 import PreviousDentalMedication from "./categories/specialistConsult/PreviousDentalMedication";
 
-export const categoryComponents: Record<string, ComponentType> = {
+export type CategoryFormProps = {
+  fieldLayout?: "wide-investigation";
+  nurse?: boolean;
+  category?: string;
+};
+
+export const categoryComponents: Record<string, ComponentType<CategoryFormProps>> = {
   "VITAL SIGNS": VitalSigns,
   "PREVIOUS MEDICAL HISTORY": PreviousMedicalHistory,
   "FAMILY MEDICAL HISTORY": FamilyMedicalHistory,

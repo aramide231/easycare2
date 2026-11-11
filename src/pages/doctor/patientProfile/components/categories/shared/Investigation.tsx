@@ -27,16 +27,6 @@ import {
   formFieldInputClass,
 } from "../../../lib/formFieldStyles";
 
-const investigationTableColumns = [
-  { key: "sn", label: "SN" },
-  { key: "dateTime", label: "DATE | TIME" },
-  { key: "patientType", label: "PATIENT TYPE" },
-  { key: "investigation", label: "INVESTIGATION" },
-  { key: "amount", label: "AMOUNT" },
-  { key: "remarks", label: "RESULT" },
-  { key: "doctor", label: "DOCTOR" },
-];
-
 export type InvestigationVariant = "lab" | "imaging" | "xray";
 
 /** Lab tests, scans and x-rays share one look but are stored and priced separately. */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, type FC } from "react";
 
 import authImg from "../../../assets/auth/auth-slide.png";
 import authImg2 from "../../../assets/auth/auth-slide2.png";
@@ -23,7 +23,7 @@ const SLIDES: SlideItem[] = [
 
 const AUTO_SLIDE_INTERVAL = 5000; // 5 seconds
 
-export const Carousel: React.FC = () => {
+export const Carousel: FC = () => {
   // We reverse the original array, and prepend a clone of the FIRST slide
   // For 2 slides, the layout becomes: [Slide1_Clone, Slide2, Slide1]
   const REVERSED_SLIDES = [SLIDES[0], ...[...SLIDES].reverse()];

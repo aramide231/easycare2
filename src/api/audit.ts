@@ -1,6 +1,12 @@
 import { apiFetch } from "@/api/client/apClient";
 
 export const auditActions = {
+  "command.replayed": "Previous save confirmed",
+  "file.uploaded": "File uploaded",
+  "file.listed": "File list viewed",
+  "file.viewed": "File details viewed",
+  "file.download_authorized": "File download authorized",
+  "file.integrity_checked": "File integrity checked",
   "staff.created": "Staff account created",
   "staff.updated": "Staff account updated",
   "staff.recovery_issued": "Recovery code issued",
@@ -17,7 +23,7 @@ export interface AuditEvent {
   outcome: "succeeded" | "denied" | "failed";
   channel: "http" | "console";
   actor_id: number | null;
-  subject_type: "staff" | "role" | "audit";
+  subject_type: "staff" | "role" | "audit" | "file";
   subject_id: number | null;
   request_id: string;
   occurred_at: string;

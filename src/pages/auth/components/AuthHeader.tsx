@@ -1,4 +1,4 @@
-import React from "react";
+import type { FC } from "react";
 
 interface AuthHeaderProps {
   title: string;
@@ -6,7 +6,7 @@ interface AuthHeaderProps {
   className?: string;
 }
 
-export const AuthHeader: React.FC<AuthHeaderProps> = ({
+export const AuthHeader: FC<AuthHeaderProps> = ({
   title,
   description,
   className = "",

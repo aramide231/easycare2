@@ -5,8 +5,8 @@ import {
   DATE_PLACEHOLDER,
   formatDateToDDMMYY,
   parseDDMMYY,
-} from "../../lib/dateFormat";
-import { formFieldInputClass } from "../../lib/formFieldStyles";
+} from "@/pages/doctor/patientProfile/lib/dateFormat";
+import { formFieldInputClass } from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 
 type Props = {
   value: string;

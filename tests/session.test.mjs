@@ -179,3 +179,163 @@ test("audit reviewers and staff managers have separate administration routes", (
   assert.equal(isModuleAllowed("/admin/users", [], ["staff.manage"]), true);
   assert.equal(isModuleAllowed("/admin/audit", ["admin"], []), false);
 });
+
+
+test("multipart uploads keep the browser boundary and the session CSRF token", async () => {
+  setStaff(1);
+  loadSource("src/api/client/apClient.ts").setCsrfToken("private-csrf");
+  const data = new FormData();
+  data.set("file", new Blob(["private document"], {type: "application/pdf"}), "report.pdf");
+  let sent;
+  globalThis.fetch = async (_url, options) => { sent = options; return new Response(JSON.stringify({data: {id: 7}})); };
+  const result = await apiFetch("/files", {method: "POST", data, headers: {"Content-Type": "application/json"}});
+  assert.equal(result.data.id, 7);
+  assert.equal(sent.body, data);
+  assert.equal(sent.headers.has("Content-Type"), false);
+  assert.equal(sent.headers.get("X-CSRF-TOKEN"), "private-csrf");
+  assert.equal(sent.credentials, "include");
+  assert.equal(sent.cache, "no-store");
+});
+
+test("private downloads preserve bytes and expose JSON authorization failures", async () => {
+  setStaff(1);
+  globalThis.fetch = async () => new Response(new Uint8Array([0, 255, 13, 10]), {headers: {"Content-Type": "application/octet-stream"}});
+  const blob = await apiFetch("/files/7/download", {responseType: "blob"});
+  assert.deepEqual([...new Uint8Array(await blob.arrayBuffer())], [0, 255, 13, 10]);
+  globalThis.fetch = async () => new Response(JSON.stringify({message: "File access denied", code: "forbidden"}), {status: 403});
+  await assert.rejects(apiFetch("/files/7/download", {responseType: "blob"}), error => error.status === 403 && error.message === "File access denied");
+});
+
+test("a download body finishing after an account change cannot be returned", async () => {
+  setStaff(1);
+  const body = deferred(), started = deferred();
+  globalThis.fetch = async () => ({
+    status: 200, ok: true, headers: new Headers({"Content-Type": "application/octet-stream"}),
+    blob: () => { started.resolve(); return body.promise; },
+  });
+  const pending = apiFetch("/files/7/download", {responseType: "blob"});
+  const rejected = assert.rejects(pending, SessionChangedError);
+  await started.promise;
+  setStaff(2);
+  body.resolve(new Blob(["staff 1 private document"]));
+  await rejected;
+});
+
+test("a successful HTML response cannot be saved as a private file", async () => {
+  setStaff(1);
+  globalThis.fetch = async () => new Response("<html>wrong route</html>", {headers: {"Content-Type": "text/html"}});
+  await assert.rejects(apiFetch("/files/7/download", {responseType: "blob"}), error => error.code === "invalid_response");
+});
+
+test("file-only staff can enter their own library without staff or audit access", () => {
+  const { isModuleAllowed } = loadSource("src/lib/authRoutes.ts");
+  assert.equal(isModuleAllowed("/admin/files", [], ["files.view_own"]), true);
+  assert.equal(isModuleAllowed("/admin", [], ["files.view_own"]), true);
+  assert.equal(isModuleAllowed("/admin/audit", [], ["files.view_own"]), false);
+  assert.equal(isModuleAllowed("/admin/users", [], ["files.view_own"]), false);
+  assert.equal(isModuleAllowed("/admin/files", ["admin"], ["staff.manage"]), false);
+  assert.equal(isModuleAllowed("/admin/files", [], ["files.upload"]), false);
+});
+
+
+test("section form unsubscribe returns void and removes only its own listener", () => {
+  const { subscribeSectionFormClear, clearPendingSectionEntries } = loadSource("src/pages/doctor/patientProfile/hooks/useMedicalTable.ts");
+  let first = 0;
+  let second = 0;
+  const stopFirst = subscribeSectionFormClear("TYPECHECK_TEST", () => { first += 1; });
+  const stopSecond = subscribeSectionFormClear("TYPECHECK_TEST", () => { second += 1; });
+  try {
+    clearPendingSectionEntries(["TYPECHECK_TEST"]);
+    assert.deepEqual([first, second], [1, 1]);
+    assert.equal(stopFirst(), undefined);
+    clearPendingSectionEntries(["TYPECHECK_TEST"]);
+    assert.deepEqual([first, second], [1, 2]);
+    assert.equal(stopFirst(), undefined);
+  } finally { stopFirst(); stopSecond(); }
+});
+
+
+test("write keys survive a lost response, change for new work, and cannot cross an access boundary", async () => {
+  const { WriteAttempt } = loadSource("src/api/client/writeAttempt.ts");
+  const attempt = new WriteAttempt();
+  setStaff(1);
+  const first = attempt.key();
+  assert.match(first, /^[0-9a-f]{32}$/);
+  let calls = 0;
+  const { saveStaff } = loadSource("src/api/staff.ts");
+  const { setCsrfToken } = loadSource("src/api/client/apClient.ts");
+  setCsrfToken("synthetic-csrf");
+  globalThis.fetch = async (_url, options) => {
+    calls++;
+    assert.equal(options.headers.get("Idempotency-Key"), first);
+    throw new TypeError("Synthetic lost connection");
+  };
+  await assert.rejects(saveStaff(null, {username: "synthetic"}, attempt.key()), error => error.code === "network_error");
+  assert.equal(calls, 1, "a failed write must never be automatically replayed");
+  assert.equal(attempt.key(), first);
+  attempt.reset();
+  const second = attempt.key();
+  assert.notEqual(second, first);
+  setStaff(2);
+  assert.notEqual(attempt.key(), second);
+});
+
+test("multipart uploads pass the explicit key without changing the selected bytes", async () => {
+  setStaff(1);
+  const { uploadFile } = loadSource("src/api/files.ts");
+  const { setCsrfToken } = loadSource("src/api/client/apClient.ts");
+  setCsrfToken("synthetic-csrf");
+  const file = new File(["synthetic document"], "synthetic.pdf", {type: "application/pdf"});
+  globalThis.fetch = async (_url, options) => {
+    assert.equal(options.headers.get("Idempotency-Key"), "synthetic-command-key-000001");
+    assert.equal(await options.body.get("file").text(), "synthetic document");
+    assert.equal(options.headers.has("Content-Type"), false);
+    return new Response(JSON.stringify({data:{id:7,byte_size:file.size}}), {headers:{"Content-Type":"application/json"}});
+  };
+  const result = await uploadFile(file, "synthetic-command-key-000001");
+  assert.equal(result.data.id, 7);
+});
+
+test("retry rules expose Retry-After without automatically retrying a busy save", async () => {
+  setStaff(1);
+  const { setCsrfToken } = loadSource("src/api/client/apClient.ts");
+  const { isUncertainWrite, writeErrorMessage } = loadSource("src/api/client/writeAttempt.ts");
+  setCsrfToken("synthetic-csrf");
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls++;
+    return new Response(JSON.stringify({code:"write_busy",message:"Another save is using this record."}), {
+      status:503,headers:{"Content-Type":"application/json","Retry-After":"3"},
+    });
+  };
+  await assert.rejects(apiFetch("/staff-management", {method:"POST", data:{}}), error => {
+    assert.equal(error.retryAfterSeconds, 3);
+    assert.equal(isUncertainWrite(error), true);
+    assert.match(writeErrorMessage(error), /Wait 3 seconds/);
+    return true;
+  });
+  assert.equal(calls, 1);
+});
+
+test("known validation conflicts and permission failures differ from an unconfirmed save", () => {
+  const { ApiError } = loadSource("src/api/client/apClient.ts");
+  const { isUncertainWrite } = loadSource("src/api/client/writeAttempt.ts");
+  assert.equal(isUncertainWrite(new ApiError("Invalid",422)), false);
+  assert.equal(isUncertainWrite(new ApiError("Stale",409,"conflict")), false);
+  assert.equal(isUncertainWrite(new ApiError("Forbidden",403)), false);
+  assert.equal(isUncertainWrite(new ApiError("Unreadable",200,"invalid_response")), true);
+  assert.equal(isUncertainWrite(new ApiError("Cancelled",0,"request_cancelled")), true);
+});
+
+
+test("a successful JSON response without a matching write outcome cannot confirm a save", async () => {
+  setStaff(1);
+  const { uploadFile } = loadSource("src/api/files.ts");
+  const { saveStaff } = loadSource("src/api/staff.ts");
+  const { setCsrfToken } = loadSource("src/api/client/apClient.ts");
+  setCsrfToken("synthetic-csrf");
+  globalThis.fetch = async () => new Response(JSON.stringify({data:{status:"healthy"}}), {headers:{"Content-Type":"application/json"}});
+  const file = new File(["synthetic document"], "synthetic.pdf");
+  await assert.rejects(uploadFile(file,"synthetic-command-000001"), error => error.code === "invalid_response");
+  await assert.rejects(saveStaff(null,{username:"synthetic"},"synthetic-command-000002"), error => error.code === "invalid_response");
+});

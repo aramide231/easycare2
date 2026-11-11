@@ -6,7 +6,7 @@ import {
   buildTableColumnsFromFields,
   categoryDetailsTitle,
 } from "../../config/categoryFieldTypes";
-import { useMedicalTable } from "../../hooks/useMedicalTable";
+import { useMedicalTable } from "@/pages/doctor/patientProfile/hooks/useMedicalTable";
 import CategoryForm from "./CategoryForm";
 import CategoryMedicalTable from "./CategoryMedicalTable";
 

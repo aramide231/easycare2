@@ -24,6 +24,7 @@ export function loadSource(relative) {
     fileName: filename,
   }).outputText;
   const requireSource = (specifier) => {
+    if (specifier.startsWith("@hmo/")) return loadSource("src/modules/hmo/" + specifier.slice(5));
     if (specifier.startsWith("@/")) return loadSource("src/" + specifier.slice(2));
     if (specifier.startsWith("@doctor-shared/")) return loadSource("src/pages/doctor/shared/" + specifier.slice(15));
     if (specifier.startsWith(".")) return loadSource(resolve(dirname(filename), specifier));

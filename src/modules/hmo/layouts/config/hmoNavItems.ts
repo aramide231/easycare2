@@ -12,7 +12,7 @@ import { CalendarDays, ClipboardList, Stethoscope } from "lucide-react";
 
 export type NavItem = {
   label: string;
-  icon: ElementType<{ className?: string; strokeWidth?: number }>;
+  icon: ElementType<{ className?: string; strokeWidth?: string | number }>;
   link: string;
 };
 

@@ -193,7 +193,7 @@ export default function CreateBooking({ onConfirm }: Props) {
           <PhoneInput
             country="ng"
             value={form.phone}
-            onChange={(val) => set("phone", val)}
+            onChange={(val: string) => set("phone", val)}
             containerClass="!w-full"
             inputClass="!w-full !rounded-lg !border !border-gray-300 !text-sm !py-2.5 focus:!border-[#573FD1] focus:!ring-1 focus:!ring-[#573FD1]"
             enableSearch

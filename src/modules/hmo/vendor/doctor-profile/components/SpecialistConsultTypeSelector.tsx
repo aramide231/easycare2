@@ -2,8 +2,8 @@ import { ChevronDown } from "lucide-react";
 import {
   SPECIALIST_CONSULT_TYPES,
   getConsultTypeById,
-} from "../config/specialistConsultTypes";
-import { formFieldSelectClass } from "../lib/formFieldStyles";
+} from "@/pages/doctor/patientProfile/config/specialistConsultTypes";
+import { formFieldSelectClass } from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 import NairaAmountInput from "./category/NairaAmountInput";
 
 type Props = {

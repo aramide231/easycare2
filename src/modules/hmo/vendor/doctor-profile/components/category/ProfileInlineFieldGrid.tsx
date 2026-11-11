@@ -5,7 +5,7 @@ import {
   formFieldInputClass,
   formFieldSelectClass,
   formFieldTextareaClass,
-} from "../../lib/formFieldStyles";
+} from "@/pages/doctor/patientProfile/lib/formFieldStyles";
 
 export type InlineFieldConfig = {
   name: string;

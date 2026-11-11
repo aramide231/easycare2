@@ -175,7 +175,9 @@ const SEED: Omit<PaymentHistoryRecord, "id">[] = [
 const METHODS: PaymentMethod[] = ["Cash", "POS", "Cheque", "Transfer"];
 
 export function buildMockPaymentHistoryRecords(): PaymentHistoryRecord[] {
-  return expandMockRecords(SEED, MOCK_HMO_LIST_TOTAL, (base, index) => ({
+  return expandMockRecords<PaymentHistoryRecord>(
+    SEED.map((record, index) => ({ ...record, id: `pay-${index + 1}` })),
+    MOCK_HMO_LIST_TOTAL, (base, index) => ({
     ...base,
     id: `pay-${index + 1}`,
     type: index % 3 === 0 ? "Deposit" : "Payment",

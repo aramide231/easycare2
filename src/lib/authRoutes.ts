@@ -20,9 +20,10 @@ export function isModuleAllowed(pathname: string, roles: string[], permissions: 
   const module = pathname.split("/")[1];
   if (module === "admin") {
     const section = pathname.split("/")[2];
+    if (section === "files") return permissions.includes("files.view_own");
     if (section === "audit") return permissions.includes("audit.view");
     if (section === "users") return permissions.includes("staff.manage");
-    return permissions.includes("staff.manage") || permissions.includes("audit.view");
+    return permissions.includes("staff.manage") || permissions.includes("audit.view") || permissions.includes("files.view_own");
   }
   if (["diagnostics", "diagnostics-and-radiologist"].includes(module)) {
     return roles.some((role) => ["diagnostics", "laboratory", "diagnostics-and-radiologist"].includes(role));

@@ -33,6 +33,11 @@ export function createSessionObjectUrl(blob: Blob) {
   return url;
 }
 
+export function revokeSessionObjectUrl(url: string) {
+  objectUrls.delete(url);
+  URL.revokeObjectURL(url);
+}
+
 export function staffAccessScope(user: StaffUser) {
   return JSON.stringify([
     user.id, user.department?.id ?? null, user.is_active,

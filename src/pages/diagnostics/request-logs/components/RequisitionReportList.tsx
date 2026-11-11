@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { parseDDMMYYYY } from "@/pages/doctor/patientProfile/lib/dateFormat";
 import { DateRange, type RangeKeyDict } from "react-date-range";
 import MedicalRemarkViewPanel from "@/pages/doctor/patientProfile/components/category/MedicalRemarkViewPanel";
 import RequisitionDownloadButton from "./RequisitionDownloadButton";
@@ -94,7 +95,13 @@ export default function RequisitionReportList() {
 
   const filtered = useMemo(() => {
     const q = searchTerm.toLowerCase();
+    const start = new Date(dateRange.startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(dateRange.endDate);
+    end.setHours(23, 59, 59, 999);
     return REQUISITION_LOG_ROWS.filter((row) => {
+      const date = parseDDMMYYYY(row.dateTime.split(" ")[0]);
+      if (!date || date < start || date > end) return false;
       return (
         row.name.toLowerCase().includes(q) ||
         row.phoneNumber.includes(q) ||
@@ -105,11 +112,11 @@ export default function RequisitionReportList() {
         row.dateTime.toLowerCase().includes(q)
       );
     });
-  }, [searchTerm]);
+  }, [searchTerm, dateRange]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, dateRange]);
 
   const paginatedRows = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;

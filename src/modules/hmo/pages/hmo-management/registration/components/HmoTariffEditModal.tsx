@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Pencil, X } from "lucide-react";
+import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import type { HmoTariffItem } from "../data/mockHmoTariffData";
 

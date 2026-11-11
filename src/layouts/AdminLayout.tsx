@@ -26,6 +26,7 @@ export default function AdminLayout() {
     <nav aria-label="Administration" className="mx-auto flex max-w-7xl gap-6 px-5 pt-5 text-sm font-medium">
       {user?.permissions?.includes("staff.manage") && <Link className="text-[#573FD1] underline" to="/admin/users">Staff accounts</Link>}
       {user?.permissions?.includes("audit.view") && <Link className="text-[#573FD1] underline" to="/admin/audit">Audit history</Link>}
+      {user?.permissions?.includes("files.view_own") && <Link className="text-[#573FD1] underline" to="/admin/files">My files</Link>}
     </nav>
     {error && <p role="alert" className="mx-auto max-w-7xl px-5 pt-4 text-red-700">{error}</p>}
     <main className="mx-auto max-w-7xl p-5 md:p-8"><Outlet /></main>
