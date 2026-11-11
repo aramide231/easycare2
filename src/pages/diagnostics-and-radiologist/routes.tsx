@@ -8,8 +8,7 @@ import SetReminder from "./set-reminder/SetReminder";
 import InvestigationLogs from "./investigation-logs/InvestigationLogs";
 import RequestLogs from "./request-logs/RequestLogs";
 import VisitationLog from "./visitation/VisitationLog";
-import DiagnosticsPatientProfile from "./patient-profile/DiagnosticsPatientProfile";
-import DiagnosticsPreviousPatientRecords from "./previous-patient-records/DiagnosticsPreviousPatientRecords";
+import { PatientRouteRedirect } from "@/components/patient/patientWorkspace";
 import InvestigationProfile from "./investigation-profile/InvestigationProfile";
 
 export function DiagnosticsRadiologistRoutes() {
@@ -27,10 +26,10 @@ export function DiagnosticsRadiologistRoutes() {
       <Route path="investigation-logs" element={<InvestigationLogs />} />
       <Route path="request-logs" element={<RequestLogs />} />
       <Route path="visitation-logs" element={<VisitationLog />} />
-      <Route path="patient-profile/:id" element={<DiagnosticsPatientProfile />} />
+      <Route path="patient-profile/:id" element={<PatientRouteRedirect />} />
       <Route
         path="previous-patient-records/:id"
-        element={<DiagnosticsPreviousPatientRecords />}
+        element={<PatientRouteRedirect suffix="/history" />}
       />
       <Route
         path="investigation-profile/:id"

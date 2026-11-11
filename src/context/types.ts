@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { PatientData } from "@/types/patient";
 
 export interface User {
   id?: number;
@@ -30,7 +29,6 @@ export interface AuthContextType {
   signup: (data: SignupData) => Promise<void>;
   signIn: (username: string, password: string) => Promise<User | null>;
   signOut: () => Promise<void>;
-  creationOfPatient: (patient: PatientData) => void;
   updateSessionUser: (user: User) => void;
   sessionError: string | null;
   retrySession: () => Promise<void>;

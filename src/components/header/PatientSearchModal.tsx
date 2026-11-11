@@ -1,228 +1,27 @@
-import { useEffect, useMemo, useState, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { createPortal } from "react-dom";
-import { Pencil, Search, X } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { getActiveModuleRole } from "@/lib/authRoutes";
-import clientimage from "@/assets/image/haywhy.jpg";
-import TablePagination from "@/pages/nurse/shared/components/TablePagination";
-import { usePaginatedList } from "@/hooks/usePaginatedList";
-import {
-  buildMockPatients,
-  type Patient,
-} from "@/pages/nurse/dashboard/data/mockPatients";
-import type { PatientData } from "@/modules/frontdesk/pages/Registration/Registration";
+import { useNavigate } from "react-router-dom";
+import PatientRegistry from "@/pages/patients/PatientRegistry";
 
-type Props = {
-  open: boolean;
-  onClose: () => void;
-  initialQuery?: string;
-  anchorRef: RefObject<HTMLElement | null>;
-};
-
-const SEARCH_PATIENTS = buildMockPatients();
-
-function formatPatientSex(gender: string): string {
-  if (gender === "M" || gender.toLowerCase() === "male") return "Male";
-  if (gender === "F" || gender.toLowerCase() === "female") return "Female";
-  return gender;
-}
-
-const PatientSearchModal = ({
-  open,
-  onClose,
-  initialQuery = "",
-  anchorRef: _anchorRef,
-}: Props) => {
-  const { user } = useAuth();
+export default function PatientSearchModal({ open, onClose, initialQuery = "" }: {
+  open: boolean; onClose: () => void; initialQuery?: string; anchorRef: RefObject<HTMLElement | null>;
+}) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [query, setQuery] = useState(initialQuery);
-
-  useEffect(() => {
-    if (open) setQuery(initialQuery);
-  }, [open, initialQuery]);
-
+  const dialog = useRef<HTMLDialogElement>(null);
+  const close = useRef(onClose);
+  close.current = onClose;
   useEffect(() => {
     if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open, onClose]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return SEARCH_PATIENTS;
-    return SEARCH_PATIENTS.filter(
-      (patient) =>
-        patient.name.toLowerCase().includes(q) ||
-        patient.patientId.toLowerCase().includes(q) ||
-        patient.phoneNumber.includes(q),
-    );
-  }, [query]);
-
-  const { currentPage, setCurrentPage, totalPages, paginatedItems } =
-    usePaginatedList(filtered);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [query, setCurrentPage]);
-
-  const isFrontdesk = location.pathname.startsWith("/frontdesk");
-
-  function patientToFormData(p: Patient): Partial<PatientData> {
-    const genderNorm =
-      p.gender === "M" || p.gender.toLowerCase() === "male" ? "Male" : "Female";
-    return {
-      firstName: p.firstName,
-      surname: p.lastName,
-      gender: genderNorm,
-      phone: p.phoneNumber,
-      patientType: p.patientType,
-      patientId: p.patientId,
-    };
-  }
-
-  const handleEdit = (patient: Patient) => {
-    onClose();
-    navigate("/frontdesk/registration", {
-      state: { mode: "edit", initialData: patientToFormData(patient) },
-    });
-  };
-
-  const handleSelect = (patient: Patient) => {
-    const role = getActiveModuleRole(location.pathname, user?.userRole);
-    navigate(`/${role}/patient-profile/${patient.patientId}`, {
-      state: { patient },
-    });
-    onClose();
-  };
-
+    const element = dialog.current;
+    const previous = document.activeElement as HTMLElement | null;
+    element?.showModal();
+    const cancel = (event: Event) => { event.preventDefault(); close.current(); };
+    element?.addEventListener("cancel", cancel);
+    return () => { element?.removeEventListener("cancel", cancel); element?.close(); previous?.focus(); };
+  }, [open]);
   if (!open) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4">
-      <button
-        type="button"
-        className="absolute inset-0 bg-black/40"
-        aria-label="Close search"
-        onClick={onClose}
-      />
-
-      <div
-        className="relative flex w-full max-w-4xl max-h-[min(78vh,calc(100vh-120px))] min-h-[min(480px,78vh)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Search patients"
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50"
-          aria-label="Close search"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        <div className="px-5 py-4 pr-14">
-          <div className="relative min-w-0">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center gap-3 pl-4">
-              <Search
-                className="h-[18px] w-[18px] text-gray-500"
-                strokeWidth={2.5}
-              />
-              <span className="pb-0.5 text-lg font-light text-gray-300">|</span>
-            </div>
-            <input
-              type="text"
-              autoFocus
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search Patients ID"
-              className="h-12 w-full rounded-lg border border-gray-200 bg-white pl-14 pr-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-2 focus:border-[#573FD1] focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="min-h-0 flex-1 overflow-y-auto border-t border-gray-100 px-3 py-1">
-          {paginatedItems.length === 0 ? (
-            <p className="px-4 py-10 text-center text-sm text-gray-500">
-              No patients found for &quot;{query}&quot;
-            </p>
-          ) : (
-            paginatedItems.map((patient) => (
-              <div
-                key={patient.id}
-                className="flex w-full items-center justify-between gap-4 rounded-lg px-3 py-3.5 transition hover:bg-purple-50"
-              >
-                {/* Clickable patient info area */}
-                <button
-                  type="button"
-                  onClick={() => handleSelect(patient)}
-                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                >
-                  <img
-                    src={clientimage}
-                    alt=""
-                    className="h-10 w-10 shrink-0 rounded-full object-cover"
-                  />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-900">
-                      {patient.name}
-                    </p>
-                    <p className="mt-0.5 truncate text-xs text-gray-500">
-                      {patient.patientId} | {patient.phoneNumber} |{" "}
-                      {formatPatientSex(patient.gender)}
-                    </p>
-                  </div>
-                </button>
-
-                {/* Right side: last-seen + optional edit button */}
-                <div className="flex shrink-0 items-center gap-2">
-                  <p className="hidden text-right text-xs text-gray-500 sm:block">
-                    {patient.lastSeen} | {patient.time}
-                  </p>
-                  {isFrontdesk && (
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(patient)}
-                      className="flex items-center gap-1 rounded-md border border-[#573FD1] px-2 py-1 text-xs font-medium text-[#573FD1] hover:bg-purple-50"
-                      aria-label={`Edit ${patient.name}`}
-                    >
-                      <Pencil className="h-3 w-3" aria-hidden />
-                      Edit
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {filtered.length > 0 && (
-          <div className="border-t border-gray-100 px-4 py-3">
-            <TablePagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-              className="border-t-0 pt-0"
-            />
-          </div>
-        )}
-      </div>
-    </div>,
-    document.body,
-  );
-};
-
-export default PatientSearchModal;
+  return createPortal(<dialog ref={dialog} aria-label="Search saved patients" className="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-5xl overflow-y-auto rounded-2xl border bg-white p-5 shadow-xl backdrop:bg-black/40">
+    <div className="mb-5 flex justify-end"><button className="rounded-lg border px-4 py-2 text-sm" onClick={onClose}>Close patient search</button></div>
+    <PatientRegistry initialQuery={initialQuery} onSelect={(id) => { onClose(); navigate("/patients/" + id, { state: null }); }} />
+  </dialog>, document.body);
+}

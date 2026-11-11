@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { Route } from "react-router-dom";
+import { PatientRouteRedirect } from "@/components/patient/patientWorkspace";
 
 import HmoLayout from "@hmo/layouts/HmoLayout";
 
@@ -50,16 +51,6 @@ const HmoPreAuthorisationLogs = lazy(
   () =>
     import("@hmo/pages/reports/pre-authorisation-logs/PreAuthorisationLogs"),
 );
-const HmoPatientProfile = lazy(
-  () => import("@hmo/pages/patient-profile/PatientProfile"),
-);
-const HmoFlagProfile = lazy(
-  () => import("@hmo/pages/patient-profile/flag-profile/FlagProfile"),
-);
-const PreviousPatientRecords = lazy(
-  () => import("@hmo/vendor/previous-records/PreviousPatientRecords"),
-);
-
 /**
  * HMO module routes — self-contained under /hmo.
  * Mount inside RoleBasedRoutes (preview-accessible like frontdesk).
@@ -87,11 +78,11 @@ export function HmoRoutes() {
         path="pre-authorisation-logs"
         element={<HmoPreAuthorisationLogs />}
       />
-      <Route path="patient-profile/:id" element={<HmoPatientProfile />} />
-      <Route path="flag-profile/:id" element={<HmoFlagProfile />} />
+      <Route path="patient-profile/:id" element={<PatientRouteRedirect />} />
+      <Route path="flag-profile/:id" element={<PatientRouteRedirect />} />
       <Route
         path="previous-patient-records/:patientId"
-        element={<PreviousPatientRecords />}
+        element={<PatientRouteRedirect suffix="/history" />}
       />
     </Route>
   );

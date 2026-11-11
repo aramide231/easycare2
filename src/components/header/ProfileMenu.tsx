@@ -42,7 +42,7 @@ const ProfileMenu = () => {
     (user?.userRole && user.userRole.length > 0
       ? roleDisplayNames[user.userRole.toLowerCase()] ??
         user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1)
-      : "Nurse");
+      : "Staff member");
 
   const registrationDate = staff?.created_at ? formatOrdinalDate(new Date(staff.created_at)) : "Not recorded";
   const lastLoginDate = staff?.last_login_at ? formatOrdinalDate(new Date(staff.last_login_at)) : "Not recorded";
@@ -161,6 +161,12 @@ const ProfileMenu = () => {
               Submit
             </button>
           </div>
+
+          {user?.permissions?.includes("patients.view") && <button
+            type="button"
+            onClick={() => { setOpen(false); navigate("/patients"); }}
+            className="mb-3 w-full rounded-lg border border-[#573FD1] py-2.5 text-sm font-medium text-[#573FD1]"
+          >Patient records</button>}
 
           {user?.permissions?.includes("staff.manage") && <button
             type="button"

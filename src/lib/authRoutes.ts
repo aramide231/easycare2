@@ -18,6 +18,7 @@ export const AUTH_SIGNIN_PATH = "/auth?tab=signin";
 
 export function isModuleAllowed(pathname: string, roles: string[], permissions: string[] = []): boolean {
   const module = pathname.split("/")[1];
+  if (module === "patients") return permissions.includes("patients.view");
   if (module === "admin") {
     const section = pathname.split("/")[2];
     if (section === "files") return permissions.includes("files.view_own");
@@ -45,5 +46,5 @@ export function getActiveModuleRole(
     return "diagnostics-and-radiologist";
   if (pathname.startsWith("/diagnostics")) return "diagnostics";
   if (pathname.startsWith("/admin")) return "admin";
-  return userRole?.toLowerCase() || "nurse";
+  return userRole?.toLowerCase() || "staff";
 }

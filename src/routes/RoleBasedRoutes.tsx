@@ -17,10 +17,7 @@ import ComingSoonPage from "@/components/ui/ComingSoonPage";
 import ReminderPage from "@frontdesk/pages/set-reminder/ReminderPage";
 
 // import Nurse component
-import PatientRecordScope from "@/pages/doctor/patientProfile/components/PatientRecordScope";
 import NurseDashboard from "@/pages/nurse/dashboard/Dashboard";
-import NursePatientProfile from "@/pages/nurse/patient-profile/PatientProfile";
-import NurseFlagProfile from "@/pages/nurse/patient-profile/flag-profile/FlagProfile";
 import NurseAdmission from "@/pages/nurse/patient-management/admission/Admission";
 import NurseAvailableWard from "@/pages/nurse/patient-management/available-ward/AvailableWard";
 import NurseDischarge from "@/pages/nurse/patient-management/discharge/Discharge";
@@ -36,15 +33,12 @@ import NurseMakeRequest from "@/pages/nurse/perform-action/make-request/MakeRequ
 import NurseSetReminder from "@/pages/nurse/perform-action/set-reminder/SetReminder";
 import NurseReportWriting from "@/pages/nurse/reports/report-writing/ReportWriting";
 import NurseRequisition from "@/pages/nurse/reports/requisition/Requisition";
-import PreviousPatientRecords from "@/pages/shared/previousPatientRecords/PreviousPatientRecords";
 
 // import doctors (clinician) component from EasyCare-Aramide
 import DoctorDashboard from "@/pages/doctor/dashboard/DoctorDashboard";
 import DoctorNotification from "@/pages/doctor/notifications/DoctorNotifications";
-import DoctorPatientProfile from "@/pages/doctor/patientProfile/PatientProfile";
 import DoctorAccountSettings from "@/pages/doctor/account/AccountSettings";
 import DoctorYourProfile from "@/pages/doctor/account/YourProfile";
-import DoctorFlagProfile from "@/pages/doctor/flag-profile/DoctorFlagProfile";
 import DoctorAdmission from "@/pages/doctor/admission/Admission";
 import DoctorDischarge from "@/pages/doctor/discharge/Discharge";
 import DoctorAdmissionReport from "@/pages/doctor/reports/AdmissionReport";
@@ -55,8 +49,6 @@ import DoctorFamilyPlanningReport from "@/pages/doctor/reports/FamilyPlanningRep
 import DoctorImmunizationReport from "@/pages/doctor/reports/ImmunizationReport";
 import DoctorLogsReport from "@/pages/doctor/reports/DoctorLogsReport";
 import DoctorPostNatalReport from "@/pages/doctor/reports/PostNatalReport";
-import DoctorPreviousPatientRecords from "@/pages/doctor/previousPatientRecords/PreviousPatientRecords";
-import DoctorRegistrationReport from "@/pages/doctor/reports/RegistrationReport";
 import DoctorMakeRequest from "@/pages/nurse/makeRequest/MakeRequest";
 
 // import Diagnostics / Laboratory component from EasyCare-Aramide
@@ -69,8 +61,11 @@ import InvestigativeList from "@/pages/diagnostics/investigative-list/Investigat
 import DiagnosticsRequestLogs from "@/pages/diagnostics/request-logs/RequestLogs";
 import InvestigationLogs from "@/pages/diagnostics/investigation-logs/InvestigationLogs";
 import InvestigationProfile from "@/pages/diagnostics/investigation-profile/InvestigationProfile";
-import DiagnosticsPatientProfile from "@/pages/diagnostics/patient-profile/DiagnosticsPatientProfile";
-import DiagnosticsPreviousPatientRecords from "@/pages/diagnostics/previous-patient-records/DiagnosticsPreviousPatientRecords";
+import PatientWorkspace, { PatientRouteRedirect } from "@/components/patient/patientWorkspace";
+import PatientRegistry from "@/pages/patients/PatientRegistry";
+import PatientEditor from "@/pages/patients/PatientEditor";
+import PatientProfile from "@/pages/patients/PatientProfile";
+import PatientAccess from "@/pages/patients/PatientAccess";
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import PrivateFiles from "@/pages/admin/PrivateFiles";
@@ -129,6 +124,14 @@ const RoleBasedRoutes = () => {
       <Route element={<AuthGuard />}>
       <Route path="/access-pending" element={<AccountAccess />} />
       <Route path="/modules" element={<PreviewEntry />} />
+      <Route path="/patients" element={<PatientWorkspace />}>
+        <Route index element={<PatientRegistry />} />
+        <Route path="register" element={<PatientEditor />} />
+        <Route path="access" element={<PatientAccess />} />
+        <Route path=":id" element={<PatientProfile />} />
+        <Route path=":id/edit" element={<PatientEditor editing />} />
+        <Route path=":id/history" element={<PatientProfile historyOnly />} />
+      </Route>
 
       {/* Frontdesk â€” available for preview without login */}
       {FrontdeskRoutes()}
@@ -137,7 +140,7 @@ const RoleBasedRoutes = () => {
       <Route path="/frontdesk" element={<FrontdeskLayout />}>
         <Route
           path="previous-patient-records/:patientId"
-          element={<PreviousPatientRecords />}
+          element={<PatientRouteRedirect suffix="/history" />}
         />
         <Route path="book-appointment" element={<BookAppointment />} />
       </Route>
@@ -174,15 +177,13 @@ const RoleBasedRoutes = () => {
         <Route
           path="patient-profile/:id"
           element={
-            <PatientRecordScope>
-              <NursePatientProfile />
-            </PatientRecordScope>
+            <PatientRouteRedirect />
           }
         />
-        <Route path="flag-profile/:id" element={<NurseFlagProfile />} />
+        <Route path="flag-profile/:id" element={<PatientRouteRedirect />} />
         <Route
           path="previous-patient-records/:patientId"
-          element={<PreviousPatientRecords />}
+          element={<PatientRouteRedirect suffix="/history" />}
         />
       </Route>
 
@@ -193,17 +194,15 @@ const RoleBasedRoutes = () => {
         <Route
           path="patient-profile/:id"
           element={
-            <PatientRecordScope>
-              <DoctorPatientProfile />
-            </PatientRecordScope>
+            <PatientRouteRedirect />
           }
         />
         <Route path="account" element={<DoctorAccountSettings />} />
         <Route path="account/profile" element={<DoctorYourProfile />} />
-        <Route path="flag-profile/:id" element={<DoctorFlagProfile />} />
+        <Route path="flag-profile/:id" element={<PatientRouteRedirect />} />
         <Route
           path="previous-patient-records/:patientId"
-          element={<DoctorPreviousPatientRecords />}
+          element={<PatientRouteRedirect suffix="/history" />}
         />
         <Route path="admission" element={<DoctorAdmission />} />
         <Route path="available-ward" element={<NurseAvailableWard />} />
@@ -218,7 +217,7 @@ const RoleBasedRoutes = () => {
         <Route path="ante-natal" element={<DoctorAnteNatalReport />} />
         <Route path="child-birth" element={<DoctorChildBirthReport />} />
         <Route path="post-natal" element={<DoctorPostNatalReport />} />
-        <Route path="registration-log" element={<DoctorRegistrationReport />} />
+        <Route path="registration-log" element={<PatientRegistry />} />
         <Route
           path="family-planning"
           element={<DoctorFamilyPlanningReport />}
@@ -245,11 +244,11 @@ const RoleBasedRoutes = () => {
         <Route path="investigation-logs" element={<InvestigationLogs />} />
         <Route
           path="patient-profile/:id"
-          element={<DiagnosticsPatientProfile />}
+          element={<PatientRouteRedirect />}
         />
         <Route
           path="previous-patient-records/:id"
-          element={<DiagnosticsPreviousPatientRecords />}
+          element={<PatientRouteRedirect suffix="/history" />}
         />
         <Route
           path="investigation-profile/:id"

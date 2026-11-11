@@ -1,17 +1,20 @@
 import { useRef, useState } from "react";
 import { Search } from "lucide-react";
 import PatientSearchModal from "./PatientSearchModal";
+import { useAuth } from "@/context/AuthContext";
 
 type Props = {
   className?: string;
 };
 
 const HeaderPatientSearch = ({ className = "" }: Props) => {
+  const { user } = useAuth();
+  const canView = user?.permissions?.includes("patients.view") ?? false;
   const anchorRef = useRef<HTMLDivElement>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const openSearch = () => setModalOpen(true);
+  const openSearch = () => { if (canView) setModalOpen(true); };
 
   return (
     <>
@@ -25,6 +28,9 @@ const HeaderPatientSearch = ({ className = "" }: Props) => {
         </div>
         <input
           type="text"
+          disabled={!canView}
+          aria-label="Search saved patients"
+          maxLength={100}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={openSearch}
@@ -32,7 +38,7 @@ const HeaderPatientSearch = ({ className = "" }: Props) => {
           onKeyDown={(e) => {
             if (e.key === "Enter") openSearch();
           }}
-          placeholder="Search with Surname, Other Names, Unique ID, Enrollee Policy/Code Number or Telephone Number"
+          placeholder={canView ? "Search saved patients by name, phone or card number" : "Patient search requires permission"}
           className="h-12 w-full cursor-pointer rounded-lg border border-gray-200 bg-white pl-14 pr-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-2 focus:border-[#573FD1] focus:outline-none"
         />
       </div>

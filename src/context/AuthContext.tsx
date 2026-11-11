@@ -12,7 +12,6 @@ const AuthContext = createContext<AuthContextType>({
   signup: async () => {},
   signIn: async () => null,
   signOut: async () => {},
-  creationOfPatient: () => {},
   updateSessionUser: () => {},
   sessionError: null,
   retrySession: async () => {},
@@ -99,10 +98,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await logoutStaff();
   };
 
-  const creationOfPatient = () => {
-    throw new Error("Patient registration is not connected to the backend yet.");
-  };
-
   const updateSessionUser = () => {
     void restoreSession();
   };
@@ -115,7 +110,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         signup,
         signIn,
         signOut,
-        creationOfPatient,
         updateSessionUser,
         sessionError,
         retrySession: () => restoreSession(true),

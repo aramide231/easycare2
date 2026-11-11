@@ -1,11 +1,10 @@
 import { useLayoutEffect, useState, type ReactNode } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { openPatientRecord } from "../hooks/useMedicalTable";
 
 export default function PatientRecordScope({ children }: { children: ReactNode }) {
   const { id } = useParams();
-  const { state } = useLocation();
-  const patientId = String(state?.patient?.patientId ?? id);
+  const patientId = String(id ?? "");
   const [ready, setReady] = useState<string>();
   useLayoutEffect(() => {
     openPatientRecord(patientId);
