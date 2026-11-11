@@ -74,8 +74,9 @@ import DiagnosticsPreviousPatientRecords from "@/pages/diagnostics/previous-pati
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
-import Verification from "@/pages/auth/components/Verification";
-import ForgotPassword from "@/pages/auth/components/ForgotPassword";
+import { AuthGuard } from "@/components/guards/AuthGuard";
+import { AUTH_SIGNIN_PATH, getRoleHomePath } from "@/lib/authRoutes";
+import AccountAccess from "@/pages/auth/components/AccountAccess";
 import PreviewEntry from "@/pages/preview/PreviewEntry";
 
 function AuthLoadingScreen() {
@@ -89,17 +90,25 @@ function AuthLoadingScreen() {
 }
 
 const RoleBasedRoutes = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, sessionError, retrySession } = useAuth();
 
   if (loading) {
     return <AuthLoadingScreen />;
   }
 
-  const homePath = "/";
+  if (sessionError) {
+    return <main className="mx-auto max-w-lg p-10 text-center">
+      <h1 className="text-xl font-bold">Unable to verify your session</h1>
+      <p role="alert" className="my-4">Check your connection to the hospital server and try again.</p>
+      <button className="rounded bg-purple-700 px-5 py-3 text-white" onClick={() => void retrySession()}>Retry connection</button>
+    </main>;
+  }
+
+  const homePath = user ? getRoleHomePath(user.userRole) : AUTH_SIGNIN_PATH;
 
   return (
     <Routes>
-      <Route path="/" element={<PreviewEntry />} />
+      <Route path="/" element={<Navigate to={homePath} replace />} />
 
       <Route
         path="/auth"
@@ -109,9 +118,13 @@ const RoleBasedRoutes = () => {
       />
       <Route
         path="/auth/verification"
-        element={user ? <Navigate to={homePath} replace /> : <Verification />}
+        element={<Navigate to={homePath} replace />}
       />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/forgot-password" element={<AccountAccess recovery />} />
+
+      <Route element={<AuthGuard />}>
+      <Route path="/access-pending" element={<AccountAccess />} />
+      <Route path="/modules" element={<PreviewEntry />} />
 
       {/* Frontdesk — available for preview without login */}
       {FrontdeskRoutes()}
@@ -241,12 +254,11 @@ const RoleBasedRoutes = () => {
       </Route>
 
       {/* Admin */}
-      {user?.userRole === "admin" && (
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<div>User Management</div>} />
         </Route>
-      )}
+      </Route>
 
       <Route path="*" element={<Navigate to={homePath} replace />} />
     </Routes>

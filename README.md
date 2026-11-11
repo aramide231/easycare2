@@ -1,4 +1,16 @@
-# React + TypeScript + Vite
+# EasyCare frontend
+
+## Local staff sign-in
+
+Start the Laravel backend in the sibling `backend` directory with `dev.cmd start`, then run `npm run dev` here and open the printed URL. The tracked development API base is `/api/v1`; Vite proxies it to the local backend on port 8000. Production hosting must route `/api/v1` to Laravel on the hospital server.
+
+Create staff accounts through `dev.cmd artisan staff:create --role=admin` in the backend directory, using your own privately prompted password. No account or password is seeded. Public account requests and recovery are handled by the hospital administrator until the administration workflows are built.
+
+Sign-in uses HTTP-only Laravel session cookies, CSRF protection and an in-memory identity store. Reload checks the server session; private routes require server-returned roles. Logout invalidates the server session before reloading sign-in. Local browser storage is not trusted as authentication. Clinical and patient screens still contain demonstration data and await their backend implementation.
+
+The production build passes. The full repository TypeScript check has outstanding errors outside the changed authentication files; see the backend development notes for verification details.
+
+## React + TypeScript + Vite template notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

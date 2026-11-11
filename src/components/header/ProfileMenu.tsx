@@ -70,10 +70,14 @@ const ProfileMenu = () => {
     setOpen(false);
   };
 
-  const handleLogout = () => {
-    signOut();
-    setOpen(false);
-    navigate(AUTH_SIGNIN_PATH);
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setOpen(false);
+      navigate(AUTH_SIGNIN_PATH, { replace: true });
+    } catch {
+      toast.error("Unable to sign out. Check your connection and try again.");
+    }
   };
 
   return (

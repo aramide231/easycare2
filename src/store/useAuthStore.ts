@@ -1,30 +1,24 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { User } from "@/pages/auth/types/auth";
+import type { StaffUser } from "@/types/session";
 
 interface AuthState {
-  token: string | null;
-  user: User | null;
-  isAuthenticated: boolean;
-  setAuth: (token: string, user: User) => void;
+  user: StaffUser | null;
+  status: "checking" | "authenticated" | "guest" | "error";
+  error: string | null;
+  revision: number;
+  expiresAt: number | null;
+  setUser: (user: StaffUser, expiresAt: number) => void;
+  setError: (message: string) => void;
   clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      token: null,
-      user: null,
-      isAuthenticated: false,
-
-      // Call this when login/register succeeds
-      setAuth: (token, user) => set({ token, user, isAuthenticated: true }),
-
-      // Call this on logout, or if the API returns a 401 Unauthorized
-      clearAuth: () => set({ token: null, user: null, isAuthenticated: false }),
-    }),
-    {
-      name: "easycare-auth", // Key used in localStorage
-    },
-  ),
-);
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  status: "checking",
+  error: null,
+  revision: 0,
+  expiresAt: null,
+  setUser: (user, expiresAt) => set((state) => ({ user, expiresAt, status: "authenticated", error: null, revision: state.revision + 1 })),
+  setError: (error) => set((state) => ({ user: null, expiresAt: null, status: "error", error, revision: state.revision + 1 })),
+  clearAuth: () => set((state) => ({ user: null, expiresAt: null, status: "guest", error: null, revision: state.revision + 1 })),
+}));

@@ -11,10 +11,18 @@ export const ROLE_HOME_PATHS: Record<string, string> = {
 };
 
 export function getRoleHomePath(role: string): string {
-  return ROLE_HOME_PATHS[role] ?? "/auth?tab=signin";
+  return ROLE_HOME_PATHS[role] ?? "/access-pending";
 }
 
 export const AUTH_SIGNIN_PATH = "/auth?tab=signin";
+
+export function isModuleAllowed(pathname: string, roles: string[]): boolean {
+  const module = pathname.split("/")[1];
+  if (["diagnostics", "diagnostics-and-radiologist"].includes(module)) {
+    return roles.some((role) => ["diagnostics", "laboratory", "diagnostics-and-radiologist"].includes(role));
+  }
+  return !(module in ROLE_HOME_PATHS) || roles.includes(module);
+}
 
 /** Prefer the module in the URL so preview/demo navigation stays in the right area. */
 export function getActiveModuleRole(

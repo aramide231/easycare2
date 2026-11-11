@@ -1,104 +1,94 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from "react";
-import { AuthContextType, AuthProviderProps, User, SignupData } from "./types";
-import { PatientData } from "@/types/patient";
+import { createContext, useContext, useEffect } from "react";
+import type { AuthContextType, AuthProviderProps, User } from "./types";
+import { clearLegacyIdentity, loginStaff, logoutStaff, restoreSession } from "@/api/auth/session";
+import { useAuthStore } from "@/store/useAuthStore";
+import { ROLE_HOME_PATHS } from "@/lib/authRoutes";
+import type { StaffUser } from "@/types/session";
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   signup: async () => {},
   signIn: async () => null,
-  signOut: () => {},
+  signOut: async () => {},
   creationOfPatient: () => {},
   updateSessionUser: () => {},
+  sessionError: null,
+  retrySession: async () => {},
 });
 
-const SESSION_KEY = "easyCareSession";
-
-function persistSession(user: User) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-}
-
-function readSession(): User | null {
-  const stored = localStorage.getItem(SESSION_KEY);
-  if (!stored) return null;
-
-  try {
-    const parsed = JSON.parse(stored) as User;
-    if (parsed.fullName && parsed.userRole) return parsed;
-  } catch {
-    localStorage.removeItem(SESSION_KEY);
-  }
-
-  return null;
+function displayUser(staff: StaffUser): User {
+  const roles = staff.roles.map((role) => role.code);
+  return {
+    id: staff.id,
+    fullName: staff.name,
+    userRole: roles.find((role) => role in ROLE_HOME_PATHS) || "",
+    roles,
+    permissions: staff.permissions,
+  };
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const staff = useAuthStore((state) => state.user);
+  const status = useAuthStore((state) => state.status);
+  const sessionError = useAuthStore((state) => state.error);
+  const user = staff ? displayUser(staff) : null;
+  const loading = status === "checking";
 
   useEffect(() => {
-    setUser(readSession());
-    setLoading(false);
+    clearLegacyIdentity();
+    void restoreSession();
+    let lastInteraction = Date.now();
+    let lastVerification = Date.now();
+    const interact = () => { lastInteraction = Date.now(); };
+    const refresh = () => {
+      if (document.visibilityState === "visible" && useAuthStore.getState().status === "authenticated") {
+        lastVerification = Date.now();
+        void restoreSession();
+      }
+    };
+    const checkSession = () => {
+      const { expiresAt } = useAuthStore.getState();
+      const activeRecently = Date.now() - lastInteraction < 60_000;
+      if ((expiresAt !== null && Date.now() >= expiresAt) || (activeRecently && Date.now() - lastVerification >= 60_000)) refresh();
+    };
+    document.addEventListener("pointerdown", interact);
+    document.addEventListener("keydown", interact);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    const interval = window.setInterval(checkSession, 15_000);
+    return () => {
+      document.removeEventListener("pointerdown", interact);
+      document.removeEventListener("keydown", interact);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+      window.clearInterval(interval);
+    };
   }, []);
 
-  const signup = async (data: SignupData) => {
-    const fullName = `${data.firstName} ${data.lastName}`;
-    const nextUser: User = {
-      fullName,
-      userRole: data.userRole,
-    };
-
-    localStorage.setItem(
-      "mockUser",
-      JSON.stringify({
-        ...data,
-        name: fullName,
-      }),
-    );
-
-    persistSession(nextUser);
-    setUser(nextUser);
-
-    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+  const signup = async () => {
+    throw new Error("Contact your hospital administrator to request a staff account.");
   };
 
   const signIn = async (
     username: string,
     password: string,
   ): Promise<User | null> => {
-    const stored = localStorage.getItem("mockUser");
-    if (!stored) return null;
-
-    const parsed = JSON.parse(stored);
-    const matchesIdentity =
-      parsed.email === username || parsed.username === username;
-    if (!matchesIdentity || parsed.password !== password) return null;
-
-    const nextUser: User = {
-      fullName: parsed.name,
-      userRole: parsed.userRole,
-    };
-
-    persistSession(nextUser);
-    setUser(nextUser);
-    return nextUser;
+    const result = await loginStaff(username, password);
+    return displayUser(result.data.user);
   };
 
-  const signOut = () => {
-    localStorage.removeItem(SESSION_KEY);
-    setUser(null);
+  const signOut = async () => {
+    await logoutStaff();
   };
 
-  const creationOfPatient = (data: PatientData) => {
-    const stored = JSON.parse(localStorage.getItem("patients") || "[]");
-    const updated = [...stored, data];
-    localStorage.setItem("patients", JSON.stringify(updated));
+  const creationOfPatient = () => {
+    throw new Error("Patient registration is not connected to the backend yet.");
   };
 
-  const updateSessionUser = (nextUser: User) => {
-    persistSession(nextUser);
-    setUser(nextUser);
+  const updateSessionUser = () => {
+    void restoreSession();
   };
 
   return (
@@ -111,6 +101,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         signOut,
         creationOfPatient,
         updateSessionUser,
+        sessionError,
+        retrySession: restoreSession,
       }}
     >
       {children}

@@ -1,25 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-import { apiFetch } from "@/api/client/apClient";
-import { useAuthStore } from "@/store/useAuthStore";
-import { LoginPayload, LoginResponse } from "@/pages/auth/types/auth";
+import { loginStaff } from "@/api/auth/session";
+import type { LoginPayload } from "@/pages/auth/types/auth";
 
 export const useLogin = () => {
-  // Grab the setter from Zustand
-  const setAuth = useAuthStore((state) => state.setAuth);
-
   return useMutation({
     mutationFn: (credentials: LoginPayload) =>
-      apiFetch<LoginResponse>("/auth/login", {
-        data: credentials,
-      }),
-    onSuccess: (response) => {
-      setAuth(response.data.token, response.data.user);
-
-      toast.success(response.message || "Logged in successfully!");
-
-      console.log("User logged in:", response.data.user.username);
+      loginStaff(credentials.email_or_username || credentials.email || "", credentials.password),
+    onSuccess: () => {
+      toast.success("Logged in successfully!");
     },
 
     onError: (error: Error) => {

@@ -1,4 +1,6 @@
 import { Icon } from "@iconify/react";
+import { useAuth } from "@/context/AuthContext";
+import { isModuleAllowed } from "@/lib/authRoutes";
 
 export type PreviewModule =
   | "frontdesk"
@@ -64,6 +66,7 @@ const moduleOptions: {
 ];
 
 const ModuleSelectionModal = ({ onSelect }: Props) => {
+  const { user } = useAuth();
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
@@ -74,7 +77,7 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
       <div className="w-full max-w-4xl rounded-2xl bg-white p-8 shadow-2xl">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-[#573FD1]">
-            EasyCare Preview
+            EasyCare
           </p>
           <h1
             id="module-selection-title"
@@ -83,12 +86,12 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
             Choose what you want to go into
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Select a module to continue reviewing this build.
+            Select one of your assigned modules to continue.
           </p>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {moduleOptions.map((option) => (
+          {moduleOptions.filter((option) => isModuleAllowed(`/${option.id}`, user?.roles || [])).map((option) => (
             <button
               key={option.id}
               type="button"
