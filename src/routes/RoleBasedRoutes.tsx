@@ -73,6 +73,8 @@ import DiagnosticsPatientProfile from "@/pages/diagnostics/patient-profile/Diagn
 import DiagnosticsPreviousPatientRecords from "@/pages/diagnostics/previous-patient-records/DiagnosticsPreviousPatientRecords";
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
+import StaffAdministration from "@/pages/admin/StaffAdministration";
+import StaffRecovery from "@/pages/auth/components/StaffRecovery";
 import AuthenticationPage from "@/pages/auth/AuthenticationPage";
 import { AuthGuard } from "@/components/guards/AuthGuard";
 import { AUTH_SIGNIN_PATH, getRoleHomePath } from "@/lib/authRoutes";
@@ -120,7 +122,7 @@ const RoleBasedRoutes = () => {
         path="/auth/verification"
         element={<Navigate to={homePath} replace />}
       />
-      <Route path="/forgot-password" element={<AccountAccess recovery />} />
+      <Route path="/forgot-password" element={<StaffRecovery />} />
 
       <Route element={<AuthGuard />}>
       <Route path="/access-pending" element={<AccountAccess />} />
@@ -256,7 +258,7 @@ const RoleBasedRoutes = () => {
       {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
-          <Route path="users" element={<div>User Management</div>} />
+          <Route path="users" element={<StaffAdministration />} />
         </Route>
       </Route>
 

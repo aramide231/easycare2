@@ -6,10 +6,12 @@ import { useAuth } from "@/context/AuthContext";
 import { AUTH_SIGNIN_PATH, getActiveModuleRole } from "@/lib/authRoutes";
 import EditProfileModal from "./EditProfileModal";
 import { formatOrdinalDate } from "@/lib/dateTime";
+import { useAuthStore } from "@/store/useAuthStore";
 import clientimage from "@/assets/image/haywhy.jpg";
 
 const ProfileMenu = () => {
   const { user, signOut } = useAuth();
+  const staff = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -32,7 +34,7 @@ const ProfileMenu = () => {
     accountant: "Accountant",
   };
 
-  const displayName = user?.fullName ?? "John Doe";
+  const displayName = staff?.name ?? user?.fullName ?? "Staff member";
 
   const activeRole = getActiveModuleRole(location.pathname, user?.userRole);
   const roleLabel =
@@ -42,8 +44,8 @@ const ProfileMenu = () => {
         user.userRole.charAt(0).toUpperCase() + user.userRole.slice(1)
       : "Nurse");
 
-  const registrationDate = formatOrdinalDate(new Date(2025, 0, 31));
-  const lastLoginDate = formatOrdinalDate(new Date(2025, 6, 15));
+  const registrationDate = staff?.created_at ? formatOrdinalDate(new Date(staff.created_at)) : "Not recorded";
+  const lastLoginDate = staff?.last_login_at ? formatOrdinalDate(new Date(staff.last_login_at)) : "Not recorded";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -123,7 +125,7 @@ const ProfileMenu = () => {
                 className="flex shrink-0 items-center gap-1 rounded-md border border-[#573FD1] px-2.5 py-1 text-xs font-medium text-[#573FD1] hover:bg-purple-50"
               >
                 <Pencil className="h-3.5 w-3.5" aria-hidden />
-                Edit
+                View profile
               </button>
             </div>
             <p className="mb-2 text-sm text-gray-800">
@@ -159,6 +161,12 @@ const ProfileMenu = () => {
               Submit
             </button>
           </div>
+
+          {user?.permissions?.includes("staff.manage") && <button
+            type="button"
+            onClick={() => { setOpen(false); navigate("/admin/users"); }}
+            className="mb-3 w-full rounded-lg border border-[#573FD1] py-2.5 text-sm font-medium text-[#573FD1]"
+          >Staff administration</button>}
 
           {/* Logout */}
           <button

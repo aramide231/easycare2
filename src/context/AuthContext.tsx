@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect } from "react";
 import type { AuthContextType, AuthProviderProps, User } from "./types";
-import { clearLegacyIdentity, loginStaff, logoutStaff, restoreSession } from "@/api/auth/session";
+import { clearLegacyIdentity, loginStaff, logoutStaff, restoreSession, watchSessionChanges } from "@/api/auth/session";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ROLE_HOME_PATHS } from "@/lib/authRoutes";
 import type { StaffUser } from "@/types/session";
@@ -23,7 +23,9 @@ function displayUser(staff: StaffUser): User {
   return {
     id: staff.id,
     fullName: staff.name,
-    userRole: roles.find((role) => role in ROLE_HOME_PATHS) || "",
+    userRole: roles.find((role) => role in ROLE_HOME_PATHS
+      && (role !== "admin" || staff.permissions.includes("staff.manage")))
+      || (staff.permissions.includes("staff.manage") ? "admin" : ""),
     roles,
     permissions: staff.permissions,
   };
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const staff = useAuthStore((state) => state.user);
   const status = useAuthStore((state) => state.status);
   const sessionError = useAuthStore((state) => state.error);
+  const expiresAt = useAuthStore((state) => state.expiresAt);
   const user = staff ? displayUser(staff) : null;
   const loading = status === "checking";
 
@@ -43,20 +46,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     let lastVerification = Date.now();
     const interact = () => { lastInteraction = Date.now(); };
     const refresh = () => {
-      if (document.visibilityState === "visible" && useAuthStore.getState().status === "authenticated") {
+      const state = useAuthStore.getState();
+      if (document.visibilityState === "visible" && ["authenticated", "error"].includes(state.status)) {
         lastVerification = Date.now();
-        void restoreSession();
+        void restoreSession(state.expiresAt !== null && Date.now() >= state.expiresAt);
       }
     };
     const checkSession = () => {
       const { expiresAt } = useAuthStore.getState();
       const activeRecently = Date.now() - lastInteraction < 60_000;
-      if ((expiresAt !== null && Date.now() >= expiresAt) || (activeRecently && Date.now() - lastVerification >= 60_000)) refresh();
+      if (useAuthStore.getState().status === "authenticated"
+        && ((expiresAt !== null && Date.now() >= expiresAt) || (activeRecently && Date.now() - lastVerification >= 60_000))) refresh();
     };
+    const stopWatching = watchSessionChanges(() => { void restoreSession(true); });
+    const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) void restoreSession(true); };
     document.addEventListener("pointerdown", interact);
     document.addEventListener("keydown", interact);
     window.addEventListener("focus", refresh);
     document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("pageshow", onPageShow);
     const interval = window.setInterval(checkSession, 15_000);
     return () => {
       document.removeEventListener("pointerdown", interact);
@@ -64,8 +72,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       window.removeEventListener("focus", refresh);
       document.removeEventListener("visibilitychange", refresh);
       window.clearInterval(interval);
+      window.removeEventListener("pageshow", onPageShow);
+      stopWatching();
     };
   }, []);
+
+  useEffect(() => {
+    if (expiresAt === null) return;
+    const timeout = window.setTimeout(() => { void restoreSession(true); }, Math.max(0, expiresAt - Date.now()));
+    return () => window.clearTimeout(timeout);
+  }, [expiresAt]);
 
   const signup = async () => {
     throw new Error("Contact your hospital administrator to request a staff account.");
@@ -102,7 +118,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         creationOfPatient,
         updateSessionUser,
         sessionError,
-        retrySession: restoreSession,
+        retrySession: () => restoreSession(true),
       }}
     >
       {children}

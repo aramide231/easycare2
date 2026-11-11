@@ -2,15 +2,14 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-import { apiFetch } from "@/api/client/apClient";
 import { SignupPayload, SignupResponse } from "@/pages/auth/types/auth";
 
 export const useSignup = () => {
   return useMutation({
-    mutationFn: (userData: SignupPayload) =>
-      apiFetch<SignupResponse>("/auth/register", {
-        data: userData,
-      }),
+    mutationFn: async (userData: SignupPayload): Promise<SignupResponse> => {
+      void userData;
+      throw new Error("Contact your hospital administrator to create a staff account.");
+    },
 
     onSuccess: (response) => {
       toast.success(response.message || "Account created successfully!");

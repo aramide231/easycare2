@@ -11,6 +11,8 @@ export interface StaffUser {
   department: { id: number; code: string; name: string } | null;
   roles: { code: string; name: string }[];
   permissions: string[];
+  created_at: string;
+  last_login_at: string | null;
 }
 
 export interface StaffSessionResponse {

@@ -1,9 +1,12 @@
 import { useSyncExternalStore } from "react";
+import { registerSessionCleanup } from "@/lib/sessionScope";
 import { buildMockFlagReports, type FlagReport } from "./mockFlagReports";
 
 // Session data follows the patient between dashboard and profile views.
 const byPatient = new Map<string, FlagReport[]>();
 const listeners = new Set<() => void>();
+
+registerSessionCleanup(() => { byPatient.clear(); });
 
 function subscribe(listener: () => void) {
   listeners.add(listener);

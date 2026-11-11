@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import clientimage from "@doctor-shared/assets/image/haywhy.jpg";
 import EditProfileModal from "@/components/header/EditProfileModal";
-import { useDoctorProfile } from "../../account/useDoctorProfile";
+import { useAuthStore } from "@/store/useAuthStore";
 
 type ProfileMenuProps = {
   editPath?: string;
@@ -16,16 +16,16 @@ export default function ProfileMenu({
   logoutPath = "/doctor/account?tab=logout",
 }: ProfileMenuProps) {
   const { user } = useAuth();
-  const { profile } = useDoctorProfile();
+  const staff = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [helpdeskMessage, setHelpdeskMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const displayName = user?.fullName || profile.username || "Dr. Chibuzor";
+  const displayName = staff?.name || user?.fullName || "Staff member";
   const displayRole = user?.userRole || "Clinician";
-  const avatarSrc = profile.profileImageUrl || clientimage;
+  const avatarSrc = clientimage;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -97,11 +97,11 @@ export default function ProfileMenu({
             <div className="min-w-0 space-y-1 text-sm text-gray-700">
               <p>
                 <span className="text-gray-600">Reg Date:</span>{" "}
-                {profile.registrationDate}
+                {staff?.created_at ? new Date(staff.created_at).toLocaleDateString() : "Not recorded"}
               </p>
               <p>
                 <span className="text-gray-600">Last Login:</span>{" "}
-                {profile.lastLogin}
+                {staff?.last_login_at ? new Date(staff.last_login_at).toLocaleString() : "Not recorded"}
               </p>
               <p>
                 <span className="text-gray-600">Account Completion:</span>{" "}
@@ -114,7 +114,7 @@ export default function ProfileMenu({
               className="inline-flex shrink-0 items-center gap-1 rounded-md border border-[#573FD1] px-2.5 py-1 text-xs font-medium text-[#573FD1] hover:bg-purple-50"
             >
               <Pencil className="h-3 w-3" />
-              Edit
+              View profile
             </button>
           </div>
 

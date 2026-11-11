@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { isModuleAllowed } from "@/lib/authRoutes";
 
@@ -109,6 +110,9 @@ const ModuleSelectionModal = ({ onSelect }: Props) => {
               </span>
             </button>
           ))}
+          {user?.permissions?.includes("staff.manage") && <Link to="/admin/users"
+            className="rounded-xl border border-[#573FD1] p-6 text-lg font-semibold text-[#573FD1] hover:bg-purple-50"
+          >Staff administration</Link>}
         </div>
       </div>
     </div>

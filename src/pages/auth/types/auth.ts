@@ -1,30 +1,12 @@
-export interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-  phone_no: string;
-  username: string;
-  email: string;
-  email_verified_at: string | null;
-  terms_agreed: boolean;
-  created_at: string;
-  updated_at: string;
-  is_active: boolean;
-  account_activated: boolean;
-}
+import type { StaffUser, StaffSessionResponse } from "@/types/session";
+
+export type User = StaffUser;
+export type LoginResponse = StaffSessionResponse;
 
 export interface LoginPayload {
   email_or_username?: string;
   email?: string;
   password: string;
-}
-
-export interface LoginResponse {
-  message: string;
-  data: {
-    token: string;
-    user: User;
-  };
 }
 
 export interface SignupPayload {
@@ -47,7 +29,6 @@ export interface SignupPayload {
 export interface SignupResponse {
   message: string;
   data?: {
-    token?: string;
     user?: User;
   };
 }

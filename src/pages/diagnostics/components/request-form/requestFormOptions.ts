@@ -106,73 +106,10 @@ function normalizePhoneDigits(phone: string): string {
   return digits;
 }
 
-/**
- * Looks up a registered staff member by mobile number from the DBase / session.
- */
+/** Demo-directory lookup only; browser storage never supplies staff identity. */
 export function lookupStaffNameByPhone(phone: string): string | null {
   const normalized = normalizePhoneDigits(phone);
   if (normalized.length < 8) return null;
 
-  // 1. Check registered mockUser in localStorage
-  try {
-    const rawMockUser = localStorage.getItem("mockUser");
-    if (rawMockUser) {
-      const parsed = JSON.parse(rawMockUser) as {
-        phone?: string;
-        phoneNumber?: string;
-        name?: string;
-        firstName?: string;
-        lastName?: string;
-      };
-      const userPhone = normalizePhoneDigits(
-        parsed.phone ?? parsed.phoneNumber ?? ""
-      );
-      if (
-        userPhone &&
-        (userPhone === normalized ||
-          userPhone.slice(-8) === normalized.slice(-8))
-      ) {
-        const fullName =
-          parsed.name ||
-          `${parsed.firstName ?? ""} ${parsed.lastName ?? ""}`.trim();
-        if (fullName) return fullName;
-      }
-    }
-  } catch {
-    // ignore storage errors
-  }
-
-  // 2. Check STAFF_DIRECTORY_DB by exact or last-8-digits match
-  const exactOrSuffixMatch = STAFF_DIRECTORY_DB.find((staff) => {
-    const staffDigits = normalizePhoneDigits(staff.phoneNumber);
-    return (
-      staffDigits === normalized ||
-      (normalized.length >= 10 &&
-        staffDigits.slice(-8) === normalized.slice(-8))
-    );
-  });
-
-  if (exactOrSuffixMatch) {
-    return exactOrSuffixMatch.name;
-  }
-
-  // 3. When a full 10-11 digit staff mobile number is entered, resolve from active session or directory
-  if (normalized.length >= 10) {
-    try {
-      const rawSession = sessionStorage.getItem("easyCareSession");
-      if (rawSession) {
-        const sessionUser = JSON.parse(rawSession) as { fullName?: string };
-        if (sessionUser?.fullName?.trim()) {
-          return sessionUser.fullName.trim();
-        }
-      }
-    } catch {
-      // ignore
-    }
-    const index =
-      Number(normalized.slice(-2) || "0") % STAFF_DIRECTORY_DB.length;
-    return STAFF_DIRECTORY_DB[index].name;
-  }
-
-  return null;
+  return STAFF_DIRECTORY_DB.find((staff) => normalizePhoneDigits(staff.phoneNumber) === normalized)?.name ?? null;
 }

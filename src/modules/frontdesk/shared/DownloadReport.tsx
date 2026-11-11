@@ -1,3 +1,4 @@
+import { createSessionObjectUrl } from "@/lib/sessionScope";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 
@@ -61,7 +62,7 @@ const DownloadReport: React.FC<ExportPopupProps> = ({
         type: "application/json",
       });
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
+      link.href = createSessionObjectUrl(blob);
       link.download = `${title.replace(/\s+/g, "_").toLowerCase()}.json`;
       document.body.appendChild(link);
       link.click();
@@ -77,7 +78,7 @@ const DownloadReport: React.FC<ExportPopupProps> = ({
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold">{title}</h2>
           <button onClick={onClose} className="text-gray-500">
-            ✖
+            âœ–
           </button>
         </div>
 

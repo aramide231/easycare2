@@ -1,3 +1,4 @@
+import { createSessionObjectUrl } from "@/lib/sessionScope";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FileText, X } from "lucide-react";
 import { FaCloudUploadAlt, FaFolderOpen } from "react-icons/fa";
@@ -192,7 +193,7 @@ const UploadedDocumentsSection = ({
       uploadDate: formatUploadDate(now),
       uploadTime: formatUploadTime(now),
       uploadedBy: user?.fullName ?? "Unknown User",
-      objectUrl: URL.createObjectURL(item.file),
+      objectUrl: createSessionObjectUrl(item.file),
     }));
 
     setDocuments((prev) => [...entries, ...prev]);
@@ -302,7 +303,7 @@ const UploadedDocumentsSection = ({
               Click to browse or drag and drop one or more files here
             </p>
             <p className="mt-3 text-xs text-gray-400">
-              JPEG, PNG, or PDF — max 3MB each
+              JPEG, PNG, or PDF â€” max 3MB each
             </p>
           </button>
 
@@ -342,7 +343,7 @@ const UploadedDocumentsSection = ({
                           }`}
                         >
                           {formatFileSize(item.file.size)}
-                          {isInvalid ? ` · ${item.error}` : ""}
+                          {isInvalid ? ` Â· ${item.error}` : ""}
                         </p>
                       </div>
                     </div>
@@ -394,7 +395,7 @@ const UploadedDocumentsSection = ({
                   className="flex-1 rounded-lg bg-[#573FD1] py-3 text-sm font-medium text-white hover:bg-[#4a35b8] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isUploading
-                    ? "Uploading…"
+                    ? "Uploadingâ€¦"
                     : `Confirm (${validPendingFiles.length})`}
                 </button>
               </div>
@@ -451,7 +452,7 @@ const UploadedDocumentsSection = ({
                             {doc.displayName}
                           </span>
                           <span className="text-xs text-gray-500">
-                            {patientName} · {patientId}
+                            {patientName} Â· {patientId}
                             {phoneNumber ? ` | ${phoneNumber}` : ""}
                           </span>
                           <span className="text-xs text-gray-400">

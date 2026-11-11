@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { registerSessionCleanup } from "@/lib/sessionScope";
 import { useAuth } from "@doctor-shared/context/useAuth";
 import { DIAGNOSIS_SEED } from "../data/diagnosisSeed";
 import { INVESTIGATION_SEED } from "../data/investigationSeed";
@@ -209,9 +210,7 @@ const INITIAL_TABLES: Record<string, Record<string, unknown>[]> = {
 };
 
 function cloneInitialTables(): Record<string, Record<string, unknown>[]> {
-  return Object.fromEntries(
-    Object.entries(INITIAL_TABLES).map(([key, rows]) => [key, [...rows]])
-  );
+  return structuredClone(INITIAL_TABLES);
 }
 
 let tables = cloneInitialTables();
@@ -230,6 +229,15 @@ const sectionClearListeners = new Map<string, Set<() => void>>();
 
 const patientRecords = new Map<string, { tables: typeof tables; saved: Set<string> }>();
 let activePatientId: string | undefined;
+
+registerSessionCleanup(() => {
+  tables = cloneInitialTables();
+  userSavedTableKeys = new Set();
+  pendingSectionEntries = {};
+  patientRecords.clear();
+  activePatientId = undefined;
+  sectionClearListeners.clear();
+});
 
 export function openPatientRecord(patientId: string) {
   if (activePatientId) patientRecords.set(activePatientId, { tables, saved: userSavedTableKeys });

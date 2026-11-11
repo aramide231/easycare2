@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FaCloudUploadAlt } from "react-icons/fa";
 // useAuth not required in this component
 
@@ -34,7 +34,6 @@ type PatientFormProps = {
 
 const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
   // creationOfPatient is not used in this component
-  const navigate = useNavigate();
   const location = useLocation();
   const isEditMode = location.pathname.includes("/edit");
 
@@ -65,7 +64,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
   });
 
   const [step, setStep] = useState<number>(1);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [submissionError, setSubmissionError] = useState("");
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -91,16 +90,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
   ) => {
     e.preventDefault();
 
-    // Get current patients from localStorage
-    const storedPatients = JSON.parse(localStorage.getItem("patients") || "[]");
-
-    // // Append new patient
-    const updatedPatients = [...storedPatients, formData];
-
-    // // Save back to localStorage
-    localStorage.setItem("patients", JSON.stringify(updatedPatients));
-
-    setIsSubmitted(true);
+    setSubmissionError("Patient registration and editing are not connected to the hospital server yet. This profile has not been saved.");
   };
 
   return (
@@ -144,8 +134,8 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
           }
         )}
       </div>
-      {!isSubmitted ? (
-        <>
+      {submissionError && <p role="alert" className="my-4 rounded-lg bg-red-50 p-3 text-sm text-red-800">{submissionError}</p>}
+      <>
           {step === 1 && (
             <>
               <h2 className="text-sm text-gray-400 mb-2">Step 1</h2>
@@ -464,21 +454,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ patientData }) => {
               </button>
             )}
           </div>
-        </>
-      ) : (
-        <div className="text-center mt-20">
-          <h1 className="text-xl font-bold mb-4">Patient Profile Updated</h1>
-          <p className="text-gray-600 mb-8">
-            You can now access your dashboard and manage your patient care.
-          </p>
-          <button
-            onClick={() => navigate("/frontdesk/dashboard")}
-            className="bg-purple-600 text-white px-10 py-3 rounded-lg"
-          >
-            Go to Dashboard
-          </button>
-        </div>
-      )}
+      </>
     </div>
   );
 };

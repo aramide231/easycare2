@@ -16,8 +16,9 @@ export function getRoleHomePath(role: string): string {
 
 export const AUTH_SIGNIN_PATH = "/auth?tab=signin";
 
-export function isModuleAllowed(pathname: string, roles: string[]): boolean {
+export function isModuleAllowed(pathname: string, roles: string[], permissions: string[] = []): boolean {
   const module = pathname.split("/")[1];
+  if (module === "admin") return permissions.includes("staff.manage");
   if (["diagnostics", "diagnostics-and-radiologist"].includes(module)) {
     return roles.some((role) => ["diagnostics", "laboratory", "diagnostics-and-radiologist"].includes(role));
   }

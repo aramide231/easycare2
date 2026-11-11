@@ -1,7 +1,5 @@
+import { Navigate } from "react-router-dom";
 
-
-const AdminDashboard = () => {
-  return <div>Admin board</div>;
-};
-
-export default AdminDashboard;
+export default function AdminDashboard() {
+  return <Navigate to="/admin/users" replace />;
+}

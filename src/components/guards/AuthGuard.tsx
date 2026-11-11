@@ -11,10 +11,10 @@ export const AuthGuard = () => {
 
   if (!user) {
     // Redirect to login, but save the attempted URL in route state
-    return <Navigate to={AUTH_SIGNIN_PATH} state={{ from: location }} replace />;
+    return <Navigate to={AUTH_SIGNIN_PATH} replace />;
   }
 
-  if (!isModuleAllowed(location.pathname, user.roles || [])) {
+  if (!isModuleAllowed(location.pathname, user.roles || [], user.permissions || [])) {
     return <main className="mx-auto max-w-lg p-10 text-center">
       <h1 className="text-xl font-bold">Access denied</h1>
       <p className="my-4">Your staff account does not have access to this module.</p>
