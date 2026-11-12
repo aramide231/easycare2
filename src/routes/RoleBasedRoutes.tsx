@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { FrontdeskRoutes, FrontdeskLayout } from "@/modules/frontdesk";
-import BookAppointment from "@/modules/frontdesk/pages/book-appointment/BookAppointment";
 import { HmoRoutes } from "@/modules/hmo";
 import { PharmacyRoutes } from "@/modules/pharmacy";
 import { DiagnosticsRadiologistRoutes } from "@/pages/diagnostics-and-radiologist/routes";
@@ -66,6 +65,13 @@ import PatientRegistry from "@/pages/patients/PatientRegistry";
 import PatientEditor from "@/pages/patients/PatientEditor";
 import PatientProfile from "@/pages/patients/PatientProfile";
 import PatientAccess from "@/pages/patients/PatientAccess";
+import VisitWorkspace from "@/components/visits/visitWorkspace";
+import Appointments from "@/pages/visits/Appointments";
+import CreateBooking from "@/pages/visits/BookingForm";
+import BookingDetail from "@/pages/visits/BookingDetail";
+import VisitRegister from "@/pages/visits/VisitRegister";
+import VisitDetail from "@/pages/visits/VisitDetail";
+import WalkIn from "@/pages/visits/VisitForms";
 
 import AdminDashboard from "@/pages/admin/dashboard/AdminDashboard";
 import PrivateFiles from "@/pages/admin/PrivateFiles";
@@ -133,6 +139,15 @@ const RoleBasedRoutes = () => {
         <Route path=":id/history" element={<PatientProfile historyOnly />} />
       </Route>
 
+      <Route element={<VisitWorkspace />}>
+        <Route path="/appointments" element={<Appointments />} />
+        <Route path="/appointments/new" element={<CreateBooking />} />
+        <Route path="/appointments/:id" element={<BookingDetail />} />
+        <Route path="/visits" element={<VisitRegister />} />
+        <Route path="/visits/new" element={<WalkIn />} />
+        <Route path="/visits/:id" element={<VisitDetail />} />
+      </Route>
+
       {/* Frontdesk â€” available for preview without login */}
       {FrontdeskRoutes()}
 
@@ -142,7 +157,6 @@ const RoleBasedRoutes = () => {
           path="previous-patient-records/:patientId"
           element={<PatientRouteRedirect suffix="/history" />}
         />
-        <Route path="book-appointment" element={<BookAppointment />} />
       </Route>
 
       {/* HMO â€” available for preview without login */}
@@ -190,6 +204,7 @@ const RoleBasedRoutes = () => {
       {/* Doctor (Clinician) â€” hooked up from EasyCare-Aramide */}
       <Route path="/doctor" element={<DoctorLayout />}>
         <Route index element={<DoctorDashboard />} />
+        <Route path="visits" element={<VisitRegister initialQueues mineOnly />} />
         <Route path="notifications-doctor" element={<DoctorNotification />} />
         <Route
           path="patient-profile/:id"

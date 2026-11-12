@@ -1,5 +1,3 @@
-import DoctorLog from "@doctor-shared/reports/frontdesk/DoctorLog";
+import VisitRegister from "@/pages/visits/VisitRegister";
 
-const DoctorLogsReport = () => <DoctorLog />;
-
-export default DoctorLogsReport;
+export default function DoctorLogsReport() { return <VisitRegister />; }

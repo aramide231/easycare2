@@ -9,7 +9,7 @@ const FrontdeskLayout = () => {
         <Sidebar />
       </aside>
 
-      <main className="flex flex-col flex-1 overflow-y-auto py-4 shrink">
+      <main className="flex flex-col flex-1 min-w-0 overflow-y-auto py-4 shrink">
         <Topbar />
         <div className="mt-4">
           <Outlet />

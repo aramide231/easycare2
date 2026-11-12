@@ -27,6 +27,8 @@ export default function PatientProfile({ historyOnly = false }: { historyOnly?: 
         <div className="flex min-w-0 items-center gap-4"><div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-violet-100 text-2xl font-semibold text-violet-800" aria-hidden="true">{patient.first_name.slice(0, 1)}{patient.last_name.slice(0, 1)}</div>
           <div className="min-w-0"><h1 className="break-words text-2xl font-bold">{patientName(patient)}</h1><p className="mt-1 break-words text-sm text-slate-600">{patient.mrn} · Record #{patient.id} · {patient.category.name}</p><p className="mt-1 text-xs text-slate-500">Version {patient.version}</p></div></div>
         <div className="flex flex-wrap gap-2"><button className={patientSecondary} onClick={record.reload}>Refresh patient</button>
+          {user?.permissions?.includes("appointments.view") && user.permissions.includes("appointments.create") && <Link className={patientSecondary} to={"/appointments/new?patient_id=" + patient.id}>Book appointment</Link>}
+          {user?.permissions?.includes("encounters.view") && <Link className={patientSecondary} to={"/visits?patient_id=" + patient.id}>Patient visits</Link>}
           {user?.permissions?.includes("patients.update") && <Link className={patientSecondary} to={"/patients/" + patient.id + "/edit"}>Edit patient</Link>}
           {user?.permissions?.includes("patients.access.manage") && <Link className={patientSecondary} to={"/patients/access?id=" + patient.id}>Manage patient access</Link>}</div>
       </div>

@@ -18,6 +18,8 @@ export const AUTH_SIGNIN_PATH = "/auth?tab=signin";
 
 export function isModuleAllowed(pathname: string, roles: string[], permissions: string[] = []): boolean {
   const module = pathname.split("/")[1];
+  if (module === "appointments") return permissions.includes("appointments.view");
+  if (module === "visits") return permissions.includes("encounters.view") && permissions.includes("patients.view");
   if (module === "patients") return permissions.includes("patients.view");
   if (module === "admin") {
     const section = pathname.split("/")[2];

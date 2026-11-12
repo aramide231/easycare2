@@ -56,7 +56,7 @@ const REPORT = [
     link: "/frontdesk/child-birth",
   },
   {
-    label: "Doctor Logs",
+    label: "Clinician Assignments",
     icon: Activity,
     link: "/frontdesk/doctor-assignments",
   },
