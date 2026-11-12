@@ -1,6 +1,16 @@
 import { apiFetch } from "@/api/client/apClient";
 
 export const auditActions = {
+  "appointment.attended": "Appointment arrival recorded",
+  "encounter.opened": "Visit opened",
+  "encounter.assigned": "Clinician assigned",
+  "encounter.reassigned": "Clinician reassigned",
+  "encounter.accepted": "Visit accepted by clinician",
+  "encounter.completed": "Visit completed",
+  "encounter.cancelled": "Visit cancelled",
+  "encounter.listed": "Visit queues searched",
+  "encounter.viewed": "Visit viewed",
+  "encounter.history_viewed": "Visit history viewed",
   "appointment.created": "Appointment booked",
   "appointment.updated": "Booking details updated",
   "appointment.rescheduled": "Appointment rescheduled",
@@ -50,7 +60,7 @@ export interface AuditEvent {
   outcome: "succeeded" | "denied" | "failed";
   channel: "http" | "console";
   actor_id: number | null;
-  subject_type: "staff" | "role" | "audit" | "file" | "patient" | "appointment";
+  subject_type: "staff" | "role" | "audit" | "file" | "patient" | "appointment" | "encounter";
   subject_id: number | null;
   request_id: string;
   occurred_at: string;
