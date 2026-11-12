@@ -59,7 +59,7 @@ export default function AuditHistory() {
   return <section aria-labelledby="audit-title">
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div><h1 id="audit-title" className="text-2xl font-bold">Audit history</h1>
-        <p className="mt-2 max-w-3xl text-sm text-slate-600">Review patient, staff, recovery, sign-in and file activity. Times use UTC. Select Refresh to include new activity.</p></div>
+        <p className="mt-2 max-w-3xl text-sm text-slate-600">Review appointment, patient, staff, recovery, sign-in and file activity. Times use UTC. Select Refresh to include new activity.</p></div>
       <button className={button} disabled={loading} onClick={refresh}>Refresh</button>
     </div>
     <form onSubmit={search} className="mb-6 rounded-xl border bg-white p-5">
@@ -72,7 +72,7 @@ export default function AuditHistory() {
           <option value="">All sources</option><option value="http">Web app</option><option value="console">Server console</option></select></div>
         <label className="text-sm font-medium">Staff actor ID<input className={control} inputMode="numeric" pattern="[1-9][0-9]*" value={draft.actor_id} onChange={(event) => field("actor_id", event.target.value)} /></label>
         <div><label htmlFor="audit-subject_type" className="text-sm font-medium">Record type</label><select id="audit-subject_type" className={control} value={draft.subject_type} onChange={(event) => field("subject_type", event.target.value)}>
-          <option value="">All record types</option><option value="staff">Staff account</option><option value="role">Role</option><option value="patient">Patient</option><option value="file">File</option><option value="audit">Audit history</option></select></div>
+          <option value="">All record types</option><option value="staff">Staff account</option><option value="role">Role</option><option value="patient">Patient</option><option value="appointment">Appointment</option><option value="file">File</option><option value="audit">Audit history</option></select></div>
         <label className="text-sm font-medium">Record ID<input className={control} inputMode="numeric" pattern="[1-9][0-9]*" disabled={!draft.subject_type} value={draft.subject_id} onChange={(event) => field("subject_id", event.target.value)} /></label>
         <label className="text-sm font-medium">From date (UTC)<input className={control} type="date" value={draft.from} max={draft.to || undefined} onChange={(event) => field("from", event.target.value)} /></label>
         <label className="text-sm font-medium">To date (UTC)<input className={control} type="date" value={draft.to} min={draft.from || undefined} onChange={(event) => field("to", event.target.value)} /></label>
@@ -92,7 +92,7 @@ export default function AuditHistory() {
             <td className="whitespace-nowrap px-4 py-4"><time dateTime={event.occurred_at}>{event.occurred_at.slice(0, 19).replace("T", " ")}</time><p className="mt-1 text-xs text-slate-500">Event #{event.id}</p></td>
             <td className="px-4 py-4">{auditActions[event.action] || event.action}<p className="mt-1 text-xs text-slate-500">{event.channel === "console" ? "Server console" : "Web app"}</p></td>
             <td className="px-4 py-4">{event.actor_id !== null ? "Staff #" + event.actor_id : event.channel === "console" ? "Server console" : "Unauthenticated"}</td>
-            <td className="px-4 py-4">{event.subject_type === "audit" ? "Audit history" : event.subject_type === "staff" ? "Staff account" : event.subject_type === "patient" ? "Patient" : event.subject_type === "file" ? "File" : "Role"}{event.subject_id !== null && " #" + event.subject_id}</td>
+            <td className="px-4 py-4">{event.subject_type === "audit" ? "Audit history" : event.subject_type === "staff" ? "Staff account" : event.subject_type === "patient" ? "Patient" : event.subject_type === "appointment" ? "Appointment" : event.subject_type === "file" ? "File" : "Role"}{event.subject_id !== null && " #" + event.subject_id}</td>
             <td className="px-4 py-4"><span className={"rounded-full px-2 py-1 text-xs font-medium " + outcomeStyle[event.outcome]}>{outcomes[event.outcome]}</span></td>
             <td className="max-w-xs px-4 py-4">{Object.keys(event.safe_summary).length > 0 ? <details><summary className="cursor-pointer text-[#573FD1]">View details</summary>
               <dl className="mt-3 space-y-2">{Object.entries(event.safe_summary).map(([key, value]) => <div key={key}><dt className="text-xs font-medium text-slate-500">{labels[key] || key}</dt><dd className="break-words">{summaryValue(value)}</dd></div>)}</dl></details> : <span className="text-slate-500">No additional details</span>}</td>
