@@ -1,6 +1,17 @@
 import { apiFetch } from "@/api/client/apClient";
 
 export const auditActions = {
+  "prescription.created": "Prescription draft created",
+  "prescription.updated": "Prescription draft updated",
+  "prescription.signed": "Prescription signed",
+  "prescription.amended": "Prescription corrected",
+  "prescription.voided": "Prescription voided",
+  "prescription.stopped": "Prescription stopped",
+  "prescription.completed": "Prescription completed",
+  "prescription.listed": "Prescriptions searched",
+  "prescription.viewed": "Prescription viewed",
+  "prescription.history_viewed": "Prescription revisions viewed",
+  "patient.history_viewed": "Patient clinical history viewed",
   "clinical.created": "Clinical draft created",
   "clinical.updated": "Clinical draft updated",
   "clinical.signed": "Clinical record signed",
